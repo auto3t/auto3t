@@ -1,0 +1,9 @@
+__pycache__
+.venv
+.vscode
+.mypy_ache
+
+# local env
+config.py
+volume
+autot/db.sqlite3

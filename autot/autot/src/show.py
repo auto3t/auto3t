@@ -52,6 +52,8 @@ class TVMazeShow:
             "status": self._parse_show_status(response["status"]),
             "image_url": self._get_image_url(response),
         }
+        if len(response["schedule"].get("days", [])) > 2:
+            show_data.update({"is_daily": True})
 
         return show_data
 

@@ -78,6 +78,7 @@ class TVShow(BaseModel):
     status = models.CharField(
         choices=SHOW_STATUS, max_length=1, null=True, blank=True
     )
+    is_daily = models.BooleanField(default=False)
     search_keywords = models.ManyToManyField(SearchWord)
 
     def __str__(self):
@@ -166,6 +167,16 @@ class TVEpisode(BaseModel):
     def identifyer(self) -> str:
         """build S00E00 identifyer"""
         return f"S{str(self.season.number).zfill(2)}E{str(self.number).zfill(2)}"
+
+    @property
+    def search_query(self) -> str:
+        """build search query"""
+        if self.season.show.is_daily:
+            seach_identifyer = self.release_date.strftime("%Y.%m.%d")
+        else:
+            seach_identifyer = self.identifyer
+
+        return f"{self.season.show.name} {seach_identifyer}"
 
     @property
     def file_name(self) -> str:

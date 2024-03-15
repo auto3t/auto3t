@@ -51,12 +51,8 @@ class Jackett(BaseIndexer):
         """build jacket search url"""
         base = self.CONFIG["JK_URL"]
         key = self.CONFIG["JK_API_KEY"]
-        show = episode.season.show.name
-        season_nr = str(episode.season.number).zfill(2)
-        episode_nr = str(episode.number).zfill(2)
         key_words = self.parse_keywords(episode.get_keywords)
-        query = quote(f"{show} S{season_nr}E{episode_nr} {key_words}")
-
+        query = quote(f"{episode.search_query} {key_words}")
         url = f"{base}/api/v2.0/indexers/all/results?apikey={key}&Query={query}&Category[]=5000"
 
         return url

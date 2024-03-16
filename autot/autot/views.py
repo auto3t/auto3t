@@ -1,40 +1,43 @@
 """all api views"""
 
+from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.reverse import reverse
 
 from autot.models import TVShow, TVSeason, TVEpisode
 from autot.serializers import TVShowSerializer, TVSeasonSerializer, TVEpisodeSerializer
 
 
-class TVShowView(APIView):
+class APIRootView(APIView):
+    """root api view list all endpoints"""
+
+    def get(self, request, format=None):
+        """get request"""
+        data = {
+            "show-list": reverse("show-list", request=request, format=format),
+            "season-list": reverse("season-list", request=request, format=format),
+            "episode-list": reverse("episode-list", request=request, format=format),
+        }
+        return Response(data)
+
+
+class TVShowView(ListAPIView):
     """tv show api view"""
 
-    def get(self, request):
-        """handle get request"""
-        queryset = TVShow.objects.all()
-        serializer = TVShowSerializer(queryset, many=True)
-
-        return Response(serializer.data)
+    queryset = TVShow.objects.all()
+    serializer_class = TVShowSerializer
 
 
-class TVSeasonView(APIView):
+class TVSeasonView(ListAPIView):
     """tv season api view"""
 
-    def get(self, request):
-        """handle get request"""
-        queryset = TVSeason.objects.all()
-        serializer = TVSeasonSerializer(queryset, many=True)
-
-        return Response(serializer.data)
+    queryset = TVSeason.objects.all()
+    serializer_class = TVSeasonSerializer
 
 
-class TVEpisodeView(APIView):
+class TVEpisodeView(ListAPIView):
     """tv episode api view"""
 
-    def get(self, request):
-        """handle get request"""
-        queryset = TVEpisode.objects.all()
-        serializer = TVEpisodeSerializer(queryset, many=True)
-
-        return Response(serializer.data)
+    queryset = TVEpisode.objects.all()
+    serializer_class = TVEpisodeSerializer

@@ -3,13 +3,15 @@
 from pathlib import Path
 from urllib.parse import parse_qs
 
+import pytz
+
 from django.db import models
 
 
 class BaseModel(models.Model):
     """base model to enherit from"""
 
-    remote_server_id = models.CharField(max_length=255)
+    remote_server_id = models.CharField(max_length=255, unique=True)
     date_added = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     release_date = models.DateTimeField(null=True, blank=True)
@@ -75,10 +77,12 @@ class TVShow(BaseModel):
     ]
 
     name = models.CharField(max_length=255)
+    search_name = models.CharField(max_length=255, null=True, blank=True)
     status = models.CharField(
         choices=SHOW_STATUS, max_length=1, null=True, blank=True
     )
     is_daily = models.BooleanField(default=False)
+    show_time_zone = models.CharField(max_length=255, default="UTC")
     search_keywords = models.ManyToManyField(SearchWord)
 
     def __str__(self):
@@ -171,12 +175,14 @@ class TVEpisode(BaseModel):
     @property
     def search_query(self) -> str:
         """build search query"""
+        show_search = self.season.show.search_name or self.season.show.name
         if self.season.show.is_daily:
-            seach_identifyer = self.release_date.strftime("%Y.%m.%d")
+            time_zone = pytz.timezone(self.season.show.show_time_zone)
+            seach_identifyer = self.release_date.astimezone(time_zone).strftime("%Y.%m.%d")
         else:
             seach_identifyer = self.identifyer
 
-        return f"{self.season.show.name} {seach_identifyer}"
+        return f"{show_search} {seach_identifyer}"
 
     @property
     def file_name(self) -> str:

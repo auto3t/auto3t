@@ -6,3 +6,4 @@ ipython
 isort
 pylint-django
 types-requests
+types-pytz

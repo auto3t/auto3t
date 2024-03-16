@@ -3,6 +3,7 @@
 from datetime import datetime
 from urllib import parse
 
+import pytz
 from django.db.models import QuerySet
 from django.utils import timezone
 from autot.models import TVEpisode, TVShow, TVSeason
@@ -14,6 +15,7 @@ class TVMazeShow:
 
     def __init__(self, show_id: int):
         self.show_id = show_id
+        self.timezone = pytz.timezone("UTC")
 
     def validate(self) -> None:
         """import show as needed"""
@@ -24,10 +26,21 @@ class TVMazeShow:
     def get_show(self) -> TVShow:
         """get or create show"""
         response = self._get_remote_show()
+        self._get_time_zone(response)
         show_data = self._parse_show(response)
-        show, created = TVShow.objects.update_or_create(**show_data)
+
+        show, created = TVShow.objects.get_or_create(remote_server_id=self.show_id, defaults=show_data)
         if created:
-            print(f"created new show: {show}")
+            print(f"created new show: {show.name}")
+        else:
+            fields_changed = False
+            for key, value in show_data.items():
+                if getattr(show, key) != value:
+                    setattr(show, key, value)
+                    fields_changed = True
+
+            if fields_changed:
+                show.save()
 
         return show
 
@@ -41,6 +54,13 @@ class TVMazeShow:
 
         return response
 
+    def _get_time_zone(self, response: dict) -> None:
+        """set show time zone if available"""
+        if response.get("network"):
+            show_time_zone = response["network"]["country"].get("timezone")
+            if show_time_zone:
+                self.timezone = pytz.timezone(show_time_zone)
+
     def _parse_show(self, response: dict) -> dict:
         """parse API response to model"""
         show_data = {
@@ -51,6 +71,7 @@ class TVMazeShow:
             "name": response["name"],
             "status": self._parse_show_status(response["status"]),
             "image_url": self._get_image_url(response),
+            "show_time_zone": self.timezone.zone,
         }
         if len(response["schedule"].get("days", [])) > 2:
             show_data.update({"is_daily": True})
@@ -151,10 +172,9 @@ class TVMazeShow:
         if not date_response:
             return None
 
-        if not "T" in date_response:
-            date_response = f"{date_response}T00:00:00+00:00"
-
         date_time_obj = datetime.fromisoformat(date_response)
+        if not timezone.is_aware(date_time_obj):
+            date_time_obj = timezone.make_aware(date_time_obj, timezone=self.timezone)
 
         return date_time_obj
 

@@ -52,7 +52,7 @@ class Torrent(models.Model):
         ("a", "archived"),
     ]
 
-    magnet = models.TextField()
+    magnet = models.TextField(unique=True)
     torrent_type = models.CharField(choices=TORRENT_TYPE, max_length=1)
     torrent_state = models.CharField(choices=TORRENT_STATE, max_length=1, default="u")
 
@@ -110,6 +110,9 @@ class TVSeason(BaseModel):
     show = models.ForeignKey(TVShow, on_delete=models.CASCADE)
     search_keywords = models.ManyToManyField(SearchWord)
 
+    class Meta:
+        unique_together = ("show", "number")
+
     def __str__(self):
         """set string representation"""
         return f"{self.show.name} S{str(self.number).zfill(2)}"
@@ -144,6 +147,9 @@ class TVEpisode(BaseModel):
     status = models.CharField(choices=EPISODE_STATUS, max_length=1, null=True, blank=True)
     torrent = models.ForeignKey(Torrent, null=True, blank=True, on_delete=models.CASCADE)
     search_keywords = models.ManyToManyField(SearchWord)
+
+    class Meta:
+        unique_together = ("season", "number")
 
     def __str__(self):
         """set string representation"""

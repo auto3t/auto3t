@@ -5,8 +5,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
-from autot.models import TVShow, TVSeason, TVEpisode
-from autot.serializers import TVShowSerializer, TVSeasonSerializer, TVEpisodeSerializer
+from autot.models import TVShow, TVSeason, TVEpisode, Torrent
+from autot.serializers import (
+    TorrentSerializer,
+    TVEpisodeSerializer,
+    TVSeasonSerializer,
+    TVShowSerializer,
+)
 
 
 class APIRootView(APIView):
@@ -15,11 +20,19 @@ class APIRootView(APIView):
     def get(self, request, format=None):
         """get request"""
         data = {
+            "torrent-list": reverse("torrent-list", request=request, format=format),
             "show-list": reverse("show-list", request=request, format=format),
             "season-list": reverse("season-list", request=request, format=format),
             "episode-list": reverse("episode-list", request=request, format=format),
         }
         return Response(data)
+
+
+class TorrentView(ListAPIView):
+    """torrent api view"""
+
+    queryset = Torrent.objects.all()
+    serializer_class = TorrentSerializer
 
 
 class TVShowView(ListAPIView):

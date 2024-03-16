@@ -2,3 +2,4 @@ Django==5.0.2
 requests==2.31.0
 transmission-rpc==7.0.3
 pytz==2024.1
+djangorestframework==3.14.0

@@ -178,7 +178,7 @@ class TVEpisode(BaseModel):
         show_search = self.season.show.search_name or self.season.show.name
         if self.season.show.is_daily:
             time_zone = pytz.timezone(self.season.show.show_time_zone)
-            seach_identifyer = self.release_date.astimezone(time_zone).strftime("%Y.%m.%d")
+            seach_identifyer = self.release_date.astimezone(time_zone).strftime("%Y.%m.%d")  # pylint: disable=no-member
         else:
             seach_identifyer = self.identifyer
 

@@ -37,6 +37,7 @@ class TVMazeShow:
             for key, value in show_data.items():
                 if getattr(show, key) != value:
                     setattr(show, key, value)
+                    print(f"{show.name}: update [{key}] to [{value}]")
                     fields_changed = True
 
             if fields_changed:
@@ -91,9 +92,21 @@ class TVMazeShow:
         seasons_remote = self._get_remote_seasons()
         for season_response in seasons_remote:
             season_data = self._parse_season(season_response, show)
-            season, created = TVSeason.objects.update_or_create(**season_data)
+            season, created = TVSeason.objects.get_or_create(
+                number=season_data["number"], show=show, defaults=season_data
+            )
             if created:
                 print(f"created new season: {season}")
+            else:
+                fields_changed = False
+                for key, value in season_data.items():
+                    if getattr(season, key) != value:
+                        setattr(season, key, value)
+                        print(f"{season}: update [{key}] to [{value}]")
+                        fields_changed = True
+
+                if fields_changed:
+                    season.save()
 
         seasons = TVSeason.objects.filter(show=show)
 
@@ -129,9 +142,21 @@ class TVMazeShow:
         for episode in episode_response:
             season = seasons.get(number=episode["season"])
             episode_data = self._parse_episode(episode, season)
-            episode, created = TVEpisode.objects.update_or_create(**episode_data)
+            episode, created = TVEpisode.objects.get_or_create(
+                number=episode_data["number"], season=season, defaults=episode_data
+            )
             if created:
-                print(f"created new episode {episode}")
+                print(f"created new episode: {episode}")
+            else:
+                fields_changed = False
+                for key, value in episode_data.items():
+                    if getattr(episode, key) != value:
+                        setattr(episode, key, value)
+                        print(f"{episode}: update [{key}] to [{value}]")
+                        fields_changed = True
+
+                if fields_changed:
+                    episode.save()
 
     def _get_remote_episodes(self) -> dict:
         """get episodes of show"""

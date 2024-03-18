@@ -38,3 +38,4 @@ class EpisodeStatus:
             torrent = Torrent.objects.create(magnet=magnet, torrent_type="t")
             episode.torrent = torrent
             episode.save()
+            print(f"{episode}: added magnet {torrent.magnet_hash}")

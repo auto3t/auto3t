@@ -46,7 +46,7 @@ class Episode(JF):
         url = "Items?Recursive=true&IncludeItemTypes=Episode&fields=ProviderIds"
         response = self.make_request(url, "GET")
 
-        jf_ids = {i["ProviderIds"]["TvMaze"]: i["Id"] for i in response["Items"]}
+        jf_ids = {i["ProviderIds"]["TvMaze"]: i["Id"] for i in response["Items"] if "TvMaze" in i["ProviderIds"]}
 
         return jf_ids
 

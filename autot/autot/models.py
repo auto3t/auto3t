@@ -84,6 +84,7 @@ class TVShow(BaseModel):
     is_daily = models.BooleanField(default=False)
     show_time_zone = models.CharField(max_length=255, default="UTC")
     search_keywords = models.ManyToManyField(SearchWord)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         """set string representation"""

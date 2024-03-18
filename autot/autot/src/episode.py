@@ -9,6 +9,12 @@ from autot.src.search import Jackett
 class EpisodeStatus:
     """find episode status"""
 
+    def refresh(self):
+        """refresh all episode status"""
+        self.set_upcoming()
+        self.set_searching()
+        self.find_magnets()
+
     def set_upcoming(self):
         """set upcoming state if has release date"""
         to_update = TVEpisode.objects.filter(status__isnull=True, release_date__isnull=False)
@@ -25,7 +31,7 @@ class EpisodeStatus:
 
     def find_magnets(self):
         """find magnet links for searching episodes"""
-        to_search = TVEpisode.objects.filter(status="s")
+        to_search = TVEpisode.objects.filter(status="s").exclude(torrent__isnull=False)
         if not to_search:
             return
 

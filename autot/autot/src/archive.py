@@ -53,6 +53,8 @@ class Archiver:
         episode_path = episode.get_archive_path(suffix=download_path.suffix)
         archive_path = self.CONFIG["TV_BASE_FOLDER"] / episode_path
         download_path.rename(archive_path)
+        episode.status = "f"
+        episode.save()
 
     def _get_valid_media_file(self, tm_torrent: TransmissionTorrent) -> str:
         """get valid media file"""

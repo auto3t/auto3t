@@ -14,6 +14,7 @@ def refresh_all_shows():
     """refresh all shows"""
     all_active = TVShow.objects.filter(is_active=True)
     for show in all_active:
+        print(f"refresh: {show}")
         TVMazeShow(show_id=show.remote_server_id).validate()
         sleep(SLEEP_INTERVAL)
 

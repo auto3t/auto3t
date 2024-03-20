@@ -13,7 +13,7 @@ from autot.src.client_tvmaze import TVMaze
 class TVMazeShow:
     """tvmaze remote implementation"""
 
-    def __init__(self, show_id: int):
+    def __init__(self, show_id: str):
         self.show_id = show_id
         self.timezone = pytz.timezone("UTC")
 
@@ -65,7 +65,7 @@ class TVMazeShow:
     def _parse_show(self, response: dict) -> dict:
         """parse API response to model"""
         show_data = {
-            "remote_server_id": response["id"],
+            "remote_server_id": str(response["id"]),
             "release_date": self._get_date_time(response.get("premiered")),
             "end_date": self._get_date_time(response.get("ended")),
             "description": response["summary"],
@@ -125,7 +125,7 @@ class TVMazeShow:
     def _parse_season(self, response: dict, show: TVShow) -> dict:
         """parse seasons"""
         season_data = {
-            "remote_server_id": response["id"],
+            "remote_server_id": str(response["id"]),
             "release_date": self._get_date_time(response.get("premiereDate")),
             "end_date": self._get_date_time(response.get("endDate")),
             "description": response["summary"],
@@ -171,7 +171,7 @@ class TVMazeShow:
     def _parse_episode(self, response: dict, season: TVSeason) -> dict:
         """parse episodes"""
         episode_data = {
-            "remote_server_id": response["id"],
+            "remote_server_id": str(response["id"]),
             "release_date": self._get_date_time(response.get("airstamp")),
             "description": response["summary"],
             "image_url": self._get_image_url(response),

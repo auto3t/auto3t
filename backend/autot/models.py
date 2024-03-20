@@ -27,8 +27,20 @@ class BaseModel(models.Model):
 class SearchWord(models.Model):
     """all available key words"""
 
+    CATEGORY_OPTIONS = [
+        ("r", "Resolution"),
+        ("c", "Codec"),
+        ("f", "Free"),
+    ]
+    DIRECTIONS = [
+        ("i", "Include"),
+        ("e", "Exclude"),
+    ]
+
     word = models.CharField(max_length=255, null=True, blank=True, unique=True)
     is_default = models.BooleanField(default=False)
+    category = models.CharField(max_length=1, default="f", choices=CATEGORY_OPTIONS)
+    direction = models.CharField(max_length=1, default="i", choices=DIRECTIONS)
 
     def save(self, *args, **kwargs):
         self.word = self.word.lower()

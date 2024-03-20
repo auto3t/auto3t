@@ -6,4 +6,4 @@ __pycache__
 # local env
 config.py
 volume
-autot/db.sqlite3
+db.sqlite3

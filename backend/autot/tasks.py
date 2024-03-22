@@ -3,6 +3,7 @@
 from time import sleep
 
 from autot.models import TVShow
+from autot.src.download import Transmission
 from autot.src.episode import EpisodeStatus
 from autot.src.show import TVMazeShow
 
@@ -19,3 +20,4 @@ def refresh_all_shows():
         sleep(SLEEP_INTERVAL)
 
     EpisodeStatus().refresh()
+    Transmission().add_all()

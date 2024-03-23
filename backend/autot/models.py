@@ -8,6 +8,8 @@ import pytz
 import requests
 
 from django.core.files.base import ContentFile
+from django.dispatch import receiver
+from django.db.models.signals import pre_save, post_delete
 from django.db import models
 
 
@@ -35,7 +37,7 @@ class BaseModel(models.Model):
         try:
             response = requests.get(self.image_url, timeout=30)
             if response.status_code == 200:
-                folder = self.id_hash[0].lower()
+                folder = self.id_hash[-1].lower()
                 self.image.save(f"{folder}/{self.id_hash}.jpg", ContentFile(response.content), save=True)  # pylint: disable=no-member
                 return True
 
@@ -243,3 +245,29 @@ class TVEpisode(BaseModel):
             path = path.with_suffix(suffix)
 
         return path
+
+
+@receiver(pre_save, sender=TVShow)
+@receiver(pre_save, sender=TVSeason)
+@receiver(pre_save, sender=TVEpisode)
+def delete_existing_image(sender, instance, **kwargs):
+    """replace image on update"""
+    if instance.pk:
+        try:
+            old_instance = sender.objects.get(pk=instance.pk)
+        except sender.DoesNotExist:
+            return
+
+        if old_instance.image:
+            if old_instance.image != instance.image:
+                old_instance.image.delete(save=False)
+
+
+@receiver(post_delete, sender=TVShow)
+@receiver(post_delete, sender=TVSeason)
+@receiver(post_delete, sender=TVEpisode)
+def delete_image_file(sender, instance, **kwargs):  # pylint: disable=unused-argument
+    """delete the image when object gets deleted"""
+    print(instance)
+    if instance.image:
+        instance.image.delete(False)

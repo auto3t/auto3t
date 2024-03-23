@@ -1,10 +1,13 @@
 """all core models"""
 
+from hashlib import md5
 from pathlib import Path
 from urllib.parse import parse_qs
 
 import pytz
+import requests
 
+from django.core.files.base import ContentFile
 from django.db import models
 
 
@@ -18,10 +21,34 @@ class BaseModel(models.Model):
     end_date = models.DateTimeField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     image_url = models.URLField(null=True, blank=True)
+    image = models.ImageField(upload_to="images/", null=True, blank=True)
 
     class Meta:
         """set abstract to not create db relations"""
         abstract = True
+
+    def download_image(self) -> bool:
+        """download image to media root"""
+        if not self.image_url:
+            return False
+
+        try:
+            response = requests.get(self.image_url, timeout=30)
+            if response.status_code == 200:
+                self.image.save(f"{self.id_hash[0]}/{self.id_hash}.jpg", ContentFile(response.content), save=True)  # pylint: disable=no-member
+                return True
+
+            print(f"Failed to download image: {response.status_code}")
+            return False
+
+        except Exception as e:  # pylint: disable=broad-exception-caught
+            print(f"An error occurred while downloading image: {str(e)}")
+            return False
+
+    @property
+    def id_hash(self) -> str:
+        """hash of remote_server_id"""
+        return md5(self.remote_server_id.encode()).hexdigest()  # pylint: disable=no-member
 
 
 class SearchWord(models.Model):

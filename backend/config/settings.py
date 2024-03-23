@@ -134,6 +134,8 @@ REST_FRAMEWORK = {
 
 AUTOT_CONFIG = get_config()
 
+MEDIA_ROOT = AUTOT_CONFIG["MEDIA_ROOT"]
+
 RQ_QUEUES = {
     "default": {
         "HOST": AUTOT_CONFIG["REDIS_HOST"],
@@ -146,13 +148,11 @@ RQ_QUEUES = {
         "PORT": AUTOT_CONFIG["REDIS_PORT"],
         "DB": AUTOT_CONFIG["REDIS_DB"],
         "DEFAULT_TIMEOUT": 30,
-        "RATE_LIMIT": "12/m"
     },
     "show": {
         "HOST": AUTOT_CONFIG["REDIS_HOST"],
         "PORT": AUTOT_CONFIG["REDIS_PORT"],
         "DB": AUTOT_CONFIG["REDIS_DB"],
         "DEFAULT_TIMEOUT": 360,
-        "RATE_LIMIT": "2/m"
     }
 }

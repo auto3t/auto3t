@@ -35,7 +35,8 @@ class BaseModel(models.Model):
         try:
             response = requests.get(self.image_url, timeout=30)
             if response.status_code == 200:
-                self.image.save(f"{self.id_hash[0]}/{self.id_hash}.jpg", ContentFile(response.content), save=True)  # pylint: disable=no-member
+                folder = self.id_hash[0].lower()
+                self.image.save(f"{folder}/{self.id_hash}.jpg", ContentFile(response.content), save=True)  # pylint: disable=no-member
                 return True
 
             print(f"Failed to download image: {response.status_code}")

@@ -1,23 +1,10 @@
 """all reoccuring tasks"""
 
-from time import sleep
-
-from autot.models import TVShow
-from autot.src.download import Transmission
-from autot.src.episode import EpisodeStatus
+from django_rq import job
 from autot.src.show import TVMazeShow
 
 
-SLEEP_INTERVAL = 5
-
-
-def refresh_all_shows():
-    """refresh all shows"""
-    all_active = TVShow.objects.filter(is_active=True)
-    for show in all_active:
-        print(f"refresh: {show}")
-        TVMazeShow(show_id=show.remote_server_id).validate()
-        sleep(SLEEP_INTERVAL)
-
-    EpisodeStatus().refresh()
-    Transmission().add_all()
+@job("show")
+def refresh_show(remote_server_id: str) -> None:
+    """job to refresh a single show"""
+    TVMazeShow(show_id=remote_server_id).validate()

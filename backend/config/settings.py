@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+from autot.src.config import get_config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,6 +41,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "config",
     "autot",
+    "django_rq",
 ]
 
 MIDDLEWARE = [
@@ -128,4 +130,29 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 10,
+}
+
+AUTOT_CONFIG = get_config()
+
+RQ_QUEUES = {
+    "default": {
+        "HOST": AUTOT_CONFIG["REDIS_HOST"],
+        "PORT": AUTOT_CONFIG["REDIS_PORT"],
+        "DB": AUTOT_CONFIG["REDIS_DB"],
+        "DEFAULT_TIMEOUT": 360,
+    },
+    "thumbnails": {
+        "HOST": AUTOT_CONFIG["REDIS_HOST"],
+        "PORT": AUTOT_CONFIG["REDIS_PORT"],
+        "DB": AUTOT_CONFIG["REDIS_DB"],
+        "DEFAULT_TIMEOUT": 30,
+        "RATE_LIMIT": "12/m"
+    },
+    "show": {
+        "HOST": AUTOT_CONFIG["REDIS_HOST"],
+        "PORT": AUTOT_CONFIG["REDIS_PORT"],
+        "DB": AUTOT_CONFIG["REDIS_DB"],
+        "DEFAULT_TIMEOUT": 360,
+        "RATE_LIMIT": "2/m"
+    }
 }

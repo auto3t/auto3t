@@ -15,3 +15,9 @@ services:
       - ./volume/jackett/downloads:/downloads
     ports:
       - 127.0.0.1:9117:9117
+  redis:
+    image: redis
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - 127.0.0.1:6379:6379

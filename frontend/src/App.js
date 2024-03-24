@@ -14,6 +14,7 @@ import TVShows from './pages/media/TVShows';
 // layouts
 import RootLayout from './layouts/RootLayout';
 import MediaRootLayout from './layouts/MediaLayout';
+import NotFound from './pages/404';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -24,6 +25,7 @@ const router = createBrowserRouter(
         <Route path='tv' element={<TVShows />} />
       </Route>
       <Route path='settings' element={<Settings />}/>
+      <Route path='*' element={<NotFound />} />
     </Route>
   )
 )

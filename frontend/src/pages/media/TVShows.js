@@ -1,4 +1,4 @@
-import { useLoaderData } from "react-router-dom"
+import { Link, useLoaderData } from "react-router-dom"
 
 export default function TVShows() {
 
@@ -10,6 +10,7 @@ export default function TVShows() {
       {shows.results.map(show => (
         <div key={show.id}>
           <h3>{show.name}</h3>
+          <Link to={`${show.id}`}>Details</Link>
         </div>
       ))}
     </div>

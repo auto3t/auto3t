@@ -6,8 +6,8 @@ from urllib import parse
 import pytz
 from django.db.models import QuerySet
 from django.utils import timezone
+from autot import tasks
 from autot.models import TVEpisode, TVShow, TVSeason
-from autot.tasks import download_thumbnail
 from autot.src.client_tvmaze import TVMaze
 
 
@@ -32,7 +32,7 @@ class TVMazeShow:
 
         show, created = TVShow.objects.get_or_create(remote_server_id=self.show_id, defaults=show_data)
         if created:
-            download_thumbnail.delay(show.remote_server_id, "show")
+            tasks.download_thumbnail.delay(show.remote_server_id, "show")
             print(f"created new show: {show.name}")
         else:
             fields_changed = False
@@ -42,7 +42,7 @@ class TVMazeShow:
                     print(f"{show.name}: update [{key}] to [{value}]")
                     fields_changed = True
                     if key == "image_url" and value:
-                        download_thumbnail.delay(show.remote_server_id, "show")
+                        tasks.download_thumbnail.delay(show.remote_server_id, "show")
 
             if fields_changed:
                 show.save()
@@ -100,7 +100,7 @@ class TVMazeShow:
                 number=season_data["number"], show=show, defaults=season_data
             )
             if created:
-                download_thumbnail.delay(season.remote_server_id, "season")
+                tasks.download_thumbnail.delay(season.remote_server_id, "season")
                 print(f"created new season: {season}")
             else:
                 fields_changed = False
@@ -110,7 +110,7 @@ class TVMazeShow:
                         print(f"{season}: update [{key}] to [{value}]")
                         fields_changed = True
                         if key == "image_url" and value:
-                            download_thumbnail.delay(season.remote_server_id, "season")
+                            tasks.download_thumbnail.delay(season.remote_server_id, "season")
 
                 if fields_changed:
                     season.save()
@@ -153,7 +153,7 @@ class TVMazeShow:
                 number=episode_data["number"], season=season, defaults=episode_data
             )
             if created:
-                download_thumbnail.delay(episode.remote_server_id, "episode")
+                tasks.download_thumbnail.delay(episode.remote_server_id, "episode")
                 print(f"created new episode: {episode}")
             else:
                 fields_changed = False
@@ -163,7 +163,7 @@ class TVMazeShow:
                         print(f"{episode}: update [{key}] to [{value}]")
                         fields_changed = True
                         if key == "image_url" and value:
-                            download_thumbnail.delay(episode.remote_server_id, "episode")
+                            tasks.download_thumbnail.delay(episode.remote_server_id, "episode")
 
                 if fields_changed:
                     episode.save()

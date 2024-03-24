@@ -1,8 +1,25 @@
+import {
+  Route,
+  RouterProvider,
+  createBrowserRouter,
+  createRoutesFromElements,
+} from 'react-router-dom';
+
+import Home from './pages/Home';
+import Settings from './pages/Settings';
+
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route>
+      <Route index  element={<Home />}/>
+      <Route path='settings' element={<Settings />}/>
+    </Route>
+  )
+)
+
 function App() {
   return (
-    <div className="App">
-      <h1>Hello World</h1>
-    </div>
+    <RouterProvider router={router} />
   );
 }
 

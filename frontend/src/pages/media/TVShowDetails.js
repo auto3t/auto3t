@@ -16,5 +16,10 @@ export default function TVShowDetail() {
 export const showDetailsLoader = async ({params}) => {
   const { id } = params
   const res = await fetch(`http://localhost:8000/api/show/${id}/`)
+
+  if (!res.ok) {
+    throw Error('could not fetch show')
+  }
+
   return res.json()
 }

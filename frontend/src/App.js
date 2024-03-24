@@ -11,6 +11,7 @@ import Settings from './pages/Settings';
 import Movies from './pages/media/Movies';
 import TVShows, { showsLoader } from './pages/media/TVShows';
 import TVShowDetail, { showDetailsLoader } from './pages/media/TVShowDetails';
+import TVShowError from './pages/media/TVShowError';
 
 // layouts
 import RootLayout from './layouts/RootLayout';
@@ -24,7 +25,12 @@ const router = createBrowserRouter(
       <Route path='media' element={<MediaRootLayout />}>
         <Route path='movie' element={<Movies />} />
         <Route path='tv' element={<TVShows />} loader={showsLoader} />
-        <Route path={'tv/:id'} element={<TVShowDetail />} loader={showDetailsLoader}/>
+        <Route 
+          path={'tv/:id'}
+          element={<TVShowDetail />}
+          loader={showDetailsLoader}
+          errorElement={<TVShowError />}
+        />
       </Route>
       <Route path='settings' element={<Settings />}/>
       <Route path='*' element={<NotFound />} />

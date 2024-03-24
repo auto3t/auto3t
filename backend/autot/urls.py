@@ -2,14 +2,17 @@
 
 from django.urls import path
 
+from rest_framework.routers import DefaultRouter
 from autot import views
 
 
-urlpatterns = [
-    path("", views.APIRootView.as_view(), name="api-root"),
-    path("torrent/", views.TorrentView.as_view(), name="torrent-list"),
-    path("show/", views.TVShowView.as_view(), name="show-list"),
-    path("season/", views.TVSeasonView.as_view(), name="season-list"),
-    path("episode/", views.TVEpisodeView.as_view(), name="episode-list"),
+router = DefaultRouter()
+router.register(r"show", views.ShowViewSet, basename="show")
+router.register(r"season", views.SeasonViewSet, basename="season")
+router.register(r"episode", views.EpisodeViewSet, basename="episode")
+router.register(r"torrent", views.TorrentViewSet, basename="torrent")
+urlpatterns = router.urls
+
+urlpatterns.append(
     path("images/<str:folder>/<str:filename>", views.get_image, name="image-view"),
-]
+)

@@ -2,10 +2,7 @@
 
 from django.conf import settings
 from django.http import Http404, FileResponse
-from rest_framework.generics import ListAPIView
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.reverse import reverse
+from rest_framework import viewsets
 
 from autot.models import TVShow, TVSeason, TVEpisode, Torrent
 from autot.serializers import (
@@ -16,46 +13,33 @@ from autot.serializers import (
 )
 
 
-class APIRootView(APIView):
-    """root api view list all endpoints"""
+class TorrentViewSet(viewsets.ReadOnlyModelViewSet):
+    """get torrent/s"""
 
-    def get(self, request, format=None):
-        """get request"""
-        data = {
-            "torrent-list": reverse("torrent-list", request=request, format=format),
-            "show-list": reverse("show-list", request=request, format=format),
-            "season-list": reverse("season-list", request=request, format=format),
-            "episode-list": reverse("episode-list", request=request, format=format),
-        }
-        return Response(data)
-
-
-class TorrentView(ListAPIView):
-    """torrent api view"""
-
-    queryset = Torrent.objects.all()
     serializer_class = TorrentSerializer
+    queryset = Torrent.objects.all()
 
 
-class TVShowView(ListAPIView):
-    """tv show api view"""
+class ShowViewSet(viewsets.ReadOnlyModelViewSet):
+    """get tv show/s"""
 
-    queryset = TVShow.objects.all()
     serializer_class = TVShowSerializer
+    queryset = TVShow.objects.all()
 
 
-class TVSeasonView(ListAPIView):
-    """tv season api view"""
+class SeasonViewSet(viewsets.ReadOnlyModelViewSet):
+    """get tv seasons/s"""
 
-    queryset = TVSeason.objects.all()
     serializer_class = TVSeasonSerializer
+    queryset = TVSeason.objects.all()
+    allowed_methods = ["GET"]
 
 
-class TVEpisodeView(ListAPIView):
-    """tv episode api view"""
+class EpisodeViewSet(viewsets.ReadOnlyModelViewSet):
+    """get tv episode/s"""
 
-    queryset = TVEpisode.objects.all()
     serializer_class = TVEpisodeSerializer
+    queryset = TVEpisode.objects.all()
 
 
 def get_image(request, folder, filename):

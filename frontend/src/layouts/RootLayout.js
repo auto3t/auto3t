@@ -7,6 +7,7 @@ export default function RootLayout() {
         <nav>
           <h1>AutoT</h1>
           <NavLink to="/">Home</NavLink>
+          <NavLink to="media">Media</NavLink>
           <NavLink to="settings">Settings</NavLink>
         </nav>
       </header>

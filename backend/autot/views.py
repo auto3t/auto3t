@@ -1,5 +1,7 @@
 """all api views"""
 
+from django.conf import settings
+from django.http import Http404, FileResponse
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -54,3 +56,12 @@ class TVEpisodeView(ListAPIView):
 
     queryset = TVEpisode.objects.all()
     serializer_class = TVEpisodeSerializer
+
+
+def get_image(request, folder, filename):
+    """temporary solution, get image from filesystem"""
+    path = settings.MEDIA_ROOT / "images" / folder / filename
+    if not path.exists():
+        raise Http404("Image not found")
+
+    return FileResponse(open(path, "rb"), content_type="image/jpeg")

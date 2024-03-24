@@ -11,4 +11,5 @@ urlpatterns = [
     path("show/", views.TVShowView.as_view(), name="show-list"),
     path("season/", views.TVSeasonView.as_view(), name="season-list"),
     path("episode/", views.TVEpisodeView.as_view(), name="episode-list"),
+    path("images/<str:folder>/<str:filename>", views.get_image, name="image-view"),
 ]

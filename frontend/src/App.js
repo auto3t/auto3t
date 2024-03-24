@@ -9,7 +9,7 @@ import {
 import Home from './pages/Home';
 import Settings from './pages/Settings';
 import Movies from './pages/media/Movies';
-import TVShows from './pages/media/TVShows';
+import TVShows, { showsLoader } from './pages/media/TVShows';
 
 // layouts
 import RootLayout from './layouts/RootLayout';
@@ -22,7 +22,7 @@ const router = createBrowserRouter(
       <Route index  element={<Home />}/>
       <Route path='media' element={<MediaRootLayout />}>
         <Route path='movie' element={<Movies />} />
-        <Route path='tv' element={<TVShows />} />
+        <Route path='tv' element={<TVShows />} loader={showsLoader} />
       </Route>
       <Route path='settings' element={<Settings />}/>
       <Route path='*' element={<NotFound />} />

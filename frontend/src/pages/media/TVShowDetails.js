@@ -1,4 +1,4 @@
-import { Link, useLoaderData, useParams } from "react-router-dom"
+import { useLoaderData, useParams } from "react-router-dom"
 
 export default function TVShowDetail() {
 
@@ -8,6 +8,7 @@ export default function TVShowDetail() {
   return (
     <div className="tvshow-detail">
       <h2>{ show.name }</h2>
+      <p>Show ID: {id}</p>
       <div dangerouslySetInnerHTML={{ __html: show.description }} />
     </div>
   )

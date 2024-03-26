@@ -31,8 +31,15 @@ class SeasonViewSet(viewsets.ReadOnlyModelViewSet):
     """get tv seasons/s"""
 
     serializer_class = TVSeasonSerializer
-    queryset = TVSeason.objects.all()
-    allowed_methods = ["GET"]
+    queryset = TVSeason.objects.all().order_by("-number")
+
+    def get_queryset(self):
+        """implement filter"""
+        show_id = self.request.GET.get("show")
+        if show_id:
+            return self.queryset.filter(show_id=show_id)
+
+        return self.queryset
 
 
 class EpisodeViewSet(viewsets.ReadOnlyModelViewSet):

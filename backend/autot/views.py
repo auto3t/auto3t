@@ -46,7 +46,19 @@ class EpisodeViewSet(viewsets.ReadOnlyModelViewSet):
     """get tv episode/s"""
 
     serializer_class = TVEpisodeSerializer
-    queryset = TVEpisode.objects.all()
+
+    def get_queryset(self):
+        """implement filters"""
+        queryset = TVEpisode.objects.all()
+        show_id = self.request.GET.get("show")
+        if show_id:
+            queryset = queryset.filter(season__show=show_id)
+
+        season_id = self.request.GET.get("season")
+        if season_id:
+            queryset = queryset.filter(season=season_id)
+
+        return queryset
 
 
 def get_image(request, folder, filename):

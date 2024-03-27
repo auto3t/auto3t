@@ -3,19 +3,21 @@ import Breadcrumbs from "../components/Breadcrumbs";
 
 export default function RootLayout() {
   return (
-    <div className="root-layout">
-      <header>
+    <>
+      <header className="boxed-content">
         <nav>
           <h1>AutoT</h1>
-          <NavLink to="/">Home</NavLink>
-          <NavLink to="media">Media</NavLink>
-          <NavLink to="settings">Settings</NavLink>
+          <div className="nav-items">
+            <NavLink className='nav-item' to="/">Home</NavLink>
+            <NavLink className='nav-item' to="media">Media</NavLink>
+            <NavLink className='nav-item' to="settings">Settings</NavLink>
+          </div>
         </nav>
         <Breadcrumbs />
       </header>
-      <main>
+      <main className="boxed-content">
         <Outlet />
       </main>
-    </div>
+    </>
   )
 }

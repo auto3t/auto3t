@@ -5,8 +5,10 @@ export default function MediaRootLayout() {
         <div>
             <h2>Layout</h2>
             <nav>
-                <NavLink to="movie">Movies</NavLink>
-                <NavLink to="tv">TV</NavLink>
+                <div className="nav-items">
+                    <NavLink className='nav-item' to="movie">Movies</NavLink>
+                    <NavLink className='nav-item' to="tv">TV</NavLink>
+                </div>
             </nav>
             <Outlet />
         </div>

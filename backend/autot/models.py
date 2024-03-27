@@ -1,7 +1,9 @@
 """all core models"""
 
 from hashlib import md5
+from io import BytesIO
 from pathlib import Path
+from PIL import Image
 from urllib.parse import parse_qs
 
 import pytz
@@ -15,6 +17,8 @@ from django.db import models
 
 class BaseModel(models.Model):
     """base model to enherit from"""
+
+    IMAGE_SIZE: None | tuple[int, int] = None
 
     remote_server_id = models.CharField(max_length=255, unique=True)
     date_added = models.DateTimeField(auto_now_add=True)
@@ -38,7 +42,9 @@ class BaseModel(models.Model):
             response = requests.get(self.image_url, timeout=30)
             if response.status_code == 200:
                 folder = self.id_hash[-1].lower()
-                self.image.save(f"{folder}/{self.id_hash}.jpg", ContentFile(response.content), save=True)  # pylint: disable=no-member
+                image_io = BytesIO(response.content)
+                image = self.crop_image(image_io)
+                self.image.save(f"{folder}/{self.id_hash}.jpg", ContentFile(image), save=True)  # pylint: disable=no-member
                 return True
 
             print(f"Failed to download image: {response.status_code}")
@@ -47,6 +53,33 @@ class BaseModel(models.Model):
         except Exception as e:  # pylint: disable=broad-exception-caught
             print(f"An error occurred while downloading image: {str(e)}")
             return False
+
+    def crop_image(self, image_io: BytesIO):
+        """crop image to target resolution"""
+        if not self.IMAGE_SIZE:
+            return image_io.getvalue()
+
+        img = Image.open(image_io)
+        target_aspect = self.IMAGE_SIZE[0] / self.IMAGE_SIZE[1]
+        current_aspect = img.width / img.height
+        if target_aspect == current_aspect:
+            return image_io.getvalue()
+
+        if target_aspect > current_aspect:
+            # crop on top and bottom
+            to_crop = (img.height - (img.width / target_aspect)) / 2
+            borders = (0, to_crop, img.width, img.height - to_crop)
+        else:
+            # crop left and right
+            to_crop = (img.width - img.height * target_aspect) / 2
+            borders = (to_crop, 0, img.width - to_crop, img.height)
+
+        img = img.crop(borders)
+        buffer = BytesIO()
+        img.save(buffer, format="JPEG")
+        buffer.seek(0)
+
+        return buffer.getvalue()
 
     @property
     def id_hash(self) -> str:
@@ -117,6 +150,7 @@ class TVShow(BaseModel):
         ("d", "In Development"),
         ("t", "To Be Determined"),
     ]
+    IMAGE_SIZE = (2160, 2880)
 
     name = models.CharField(max_length=255)
     search_name = models.CharField(max_length=255, null=True, blank=True)

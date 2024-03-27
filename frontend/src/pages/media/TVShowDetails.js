@@ -2,6 +2,8 @@ import { useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import useTVSeasonsStore from "../../stores/SeasonsStore";
 import useTVEpisodeStore from "../../stores/EpisodesStore";
+import Episode from "../../components/Episode";
+import Season from "../../components/Season";
 
 export default function TVShowDetail() {
   const { id } = useParams();
@@ -50,16 +52,14 @@ export default function TVShowDetail() {
       <div>
         <h3>Seasons</h3>
         {seasons.map((season) => (
-          <div key={season.id} onClick={() => handleSeasonClick(season.id)}>
-            <p>Season: {season.number}</p>
-          </div>
+          <Season key={season.id} season={season} onClick={handleSeasonClick} />
         ))}
       </div>
       <div>
         <h3>Episodes</h3>
         {episodes.map((episode) => (
           <div key={episode.id}>
-            <p>Episode: {episode.title}</p>
+            <Episode key={episode.id} episode={episode} />
           </div>
         ))}
       </div>

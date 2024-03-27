@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import useTVShowsStore from "../../stores/shows";
+import useTVShowsStore from "../../stores/ShowsStore";
 
 export default function TVShows() {
 

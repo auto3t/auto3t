@@ -10,6 +10,7 @@ import Home from './pages/Home';
 import Settings from './pages/Settings';
 import Movies from './pages/media/Movies';
 import TVShows from './pages/media/TVShows';
+import TVShowDetail from './pages/media/TVShowDetails';
 
 // layouts
 import RootLayout from './layouts/RootLayout';
@@ -23,6 +24,7 @@ const router = createBrowserRouter(
       <Route path='media' element={<MediaRootLayout />}>
         <Route path='movie' element={<Movies />} />
         <Route path='tv' element={<TVShows />} />
+        <Route path='tv/:id' element={<TVShowDetail />} />
       </Route>
       <Route path='settings' element={<Settings />}/>
       <Route path='*' element={<NotFound />} />

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
 import useTVShowsStore from "../../stores/ShowsStore";
+import Show from "../../components/Show";
 
 export default function TVShows() {
 
@@ -23,12 +23,11 @@ export default function TVShows() {
   return (
     <div className="tvshows">
       <h2>TV Shows</h2>
-      {shows.map((show) => (
-        <div key={show.id}>
-          <h3>{show.name}</h3>
-          <Link to={`${show.id}`}>Details</Link>
-        </div>
-      ))}
+      <div className="show-items">
+        {shows.map((show) => (
+          <Show key={show.id} show={show} />
+        ))}
+      </div>
     </div>
   )
 }

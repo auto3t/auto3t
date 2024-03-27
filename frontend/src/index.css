@@ -58,3 +58,17 @@ a {
 .crumb::after {
   content: '>';
 }
+
+.show-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(20%, 1fr));
+  gap: 1rem;
+}
+
+.show-item img {
+  width: 100%;
+}
+
+.show-item:hover {
+  padding: 5px;
+}

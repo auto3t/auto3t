@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import useTVSeasonsStore from "../../stores/SeasonsStore";
 import useTVEpisodeStore from "../../stores/EpisodesStore";
@@ -8,7 +8,7 @@ export default function TVShowDetail() {
   const { seasons, setSeasons } = useTVSeasonsStore();
   const { episodes, setEpisodes } = useTVEpisodeStore();
 
-  const fetchEpisodes = async (seasonId) => {
+  const fetchEpisodes = useCallback(async (seasonId) => {
     try {
       const res = await fetch(`http://localhost:8000/api/episode/?show=${id}&season=${seasonId}`);
       const data = await res.json();
@@ -16,7 +16,7 @@ export default function TVShowDetail() {
     } catch (error) {
       console.error("error fetching episodes: ", error);
     }
-  };
+  }, [id, setEpisodes]);
 
   useEffect(() => {
     const fetchSeasons = async () => {
@@ -33,13 +33,11 @@ export default function TVShowDetail() {
 
   useEffect(() => {
     if (seasons.length > 0) {
-      // Fetch episodes for the first season initially
       fetchEpisodes(seasons[0].id);
     }
-  }, [id, seasons]);
+  }, [id, seasons, fetchEpisodes]);
 
   const handleSeasonClick = (seasonId) => {
-    // Fetch episodes for the clicked season
     fetchEpisodes(seasonId);
   };
 

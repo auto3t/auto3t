@@ -1,11 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import useTVSeasonsStore from "../../stores/SeasonsStore";
+import useTVEpisodeStore from "../../stores/EpisodesStore";
 
 export default function TVShowDetail() {
   const { id } = useParams();
   const { seasons, setSeasons } = useTVSeasonsStore();
-  const [episodes, setEpisodes] = useState([]);
+  const { episodes, setEpisodes } = useTVEpisodeStore();
 
   const fetchEpisodes = async (seasonId) => {
     try {

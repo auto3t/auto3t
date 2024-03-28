@@ -10,6 +10,7 @@ export default function RootLayout() {
           <div className="nav-items">
             <NavLink className='nav-item' to="/">Home</NavLink>
             <NavLink className='nav-item' to="media">Media</NavLink>
+            <NavLink className='nav-item' to="search">Search</NavLink>
             <NavLink className='nav-item' to="settings">Settings</NavLink>
           </div>
         </nav>

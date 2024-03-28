@@ -3,8 +3,11 @@
 from django.conf import settings
 from django.http import Http404, FileResponse
 from rest_framework import viewsets
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from autot.models import TVShow, TVSeason, TVEpisode, Torrent
+from autot.src.show_search import ShowId
 from autot.serializers import (
     TorrentSerializer,
     TVEpisodeSerializer,
@@ -59,6 +62,17 @@ class EpisodeViewSet(viewsets.ReadOnlyModelViewSet):
             queryset = queryset.filter(season=season_id)
 
         return queryset
+
+
+class ShowRemoteSearch(APIView):
+    """search for show"""
+
+    def get(self, request):
+        """get request"""
+        query = request.GET.get("q")
+        response = ShowId().search(query)
+
+        return Response(response)
 
 
 def get_image(request, folder, filename):

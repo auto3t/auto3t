@@ -13,6 +13,9 @@ router.register(r"episode", views.EpisodeViewSet, basename="episode")
 router.register(r"torrent", views.TorrentViewSet, basename="torrent")
 urlpatterns = router.urls
 
-urlpatterns.append(
-    path("images/<str:folder>/<str:filename>", views.get_image, name="image-view"),
+urlpatterns.extend(
+    [
+        path("images/<str:folder>/<str:filename>", views.get_image, name="image-view"),
+        path("remote-search", views.ShowRemoteSearch.as_view(), name="remote-search"),
+    ]
 )

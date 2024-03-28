@@ -1,6 +1,6 @@
 """all show related functionality"""
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from urllib import parse
 
 import pytz
@@ -153,6 +153,7 @@ class TVMazeShow:
                 number=episode_data["number"], season=season, defaults=episode_data
             )
             if created:
+                self._set_episode_status(episode)
                 tasks.download_thumbnail.delay(episode.remote_server_id, "episode")
                 print(f"created new episode: {episode}")
             else:
@@ -189,12 +190,15 @@ class TVMazeShow:
             "title": response["name"],
             "season": season,
         }
-        cutoff = timezone.now()
-        cutoff.year = cutoff.year + 1
-        if season.end_date and cutoff > season.end_date:
-            episode_data.update({"status": "i"})
 
         return episode_data
+
+    def _set_episode_status(self, episode: TVEpisode) -> None:
+        """set status for new episodes"""
+        cutoff = timezone.now() + timedelta(days=365)
+        if episode.season.end_date and cutoff > episode.season.end_date:
+            episode.status = "i"
+            episode.save()
 
     def _get_image_url(self, response) -> str | None:
         """extract image url from response, if available"""

@@ -183,7 +183,7 @@ class TVShow(BaseModel):
 class TVSeason(BaseModel):
     """describes a Season of a Show"""
 
-    IMAGE_SIZE = (2160, 2880)
+    IMAGE_SIZE = (1000, 1500)
 
     number = models.IntegerField()
     show = models.ForeignKey(TVShow, on_delete=models.CASCADE)

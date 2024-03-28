@@ -86,3 +86,19 @@ a {
   grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
   gap: 1rem;
 }
+
+.search-result {
+  display: flex;
+  padding: 1rem;
+  margin: 1rem 0;
+  border: var(--highlight-light) solid 1px;
+  align-items: center;
+}
+
+.search-poster img {
+  max-width: 150px;
+}
+
+.search-description {
+  margin: 1rem;
+}

@@ -37,16 +37,22 @@ const Search = () => {
 
   return (
     <div>
-      <h2>Search</h2>
+      <h1>Search</h1>
       <input type="text" value={query} onChange={handleInputChange} placeholder="Search..." />
       {isLoading && <p>Loading...</p>}
-      <ul>
+      <div>
         {results.map((result) => (
-          <li key={result.id}>
-            <a href={result.url}>{result.name}</a>
-          </li>
+          <div key={result.id} className='search-result'>
+            <div className='search-poster'>
+              <img src={result.image} alt='image-poster' />
+            </div>
+            <div className='search-description'>
+              <h2>{result.name}</h2>
+              <p dangerouslySetInnerHTML={{__html: result.summary}} />
+            </div>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };

@@ -43,4 +43,7 @@ class ShowId:
         if "ended" in result:
             show_data.update({"ended": result["ended"]})
 
+        if "image" in result and result["image"]:
+            show_data.update({"image": result["image"].get("medium")})
+
         return show_data

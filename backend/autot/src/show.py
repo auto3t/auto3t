@@ -136,7 +136,7 @@ class TVMazeShow:
             "release_date": self._get_date_time(response.get("premiereDate")),
             "end_date": self._get_date_time(response.get("endDate")),
             "description": response["summary"],
-            "image_url": self._get_image_url(response),
+            "image_url": self._get_image_url(response) or show.image_url,
             "number": response["number"],
             "show": show,
         }

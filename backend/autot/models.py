@@ -183,6 +183,8 @@ class TVShow(BaseModel):
 class TVSeason(BaseModel):
     """describes a Season of a Show"""
 
+    IMAGE_SIZE = (2160, 2880)
+
     number = models.IntegerField()
     show = models.ForeignKey(TVShow, on_delete=models.CASCADE)
     search_keywords = models.ManyToManyField(SearchWord)

@@ -189,7 +189,9 @@ class TVMazeShow:
             "title": response["name"],
             "season": season,
         }
-        if season.end_date and timezone.now() > season.end_date:
+        cutoff = timezone.now()
+        cutoff.year = cutoff.year + 1
+        if season.end_date and cutoff > season.end_date:
             episode_data.update({"status": "i"})
 
         return episode_data

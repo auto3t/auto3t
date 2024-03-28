@@ -35,10 +35,16 @@ const Search = () => {
     }
   };
 
+  const handleClear = () => {
+    setQuery('');
+    setResults([]);
+  };
+
   return (
     <div>
       <h1>Search</h1>
       <input type="text" value={query} onChange={handleInputChange} placeholder="Search..." />
+      <button onClick={handleClear}>Clear</button>
       {isLoading && <p>Loading...</p>}
       <div>
         {results.map((result) => (

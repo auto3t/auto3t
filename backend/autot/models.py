@@ -211,6 +211,7 @@ class TVSeason(BaseModel):
 class TVEpisode(BaseModel):
     """describes an Episode of a Season of a Show"""
 
+    IMAGE_SIZE = (1920, 1080)
     EPISODE_STATUS = [
         ("u", "Upcoming"),
         ("s", "Searching"),

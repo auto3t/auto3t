@@ -2,6 +2,8 @@
 
 from django_rq import job
 from autot.models import TVShow, TVSeason, TVEpisode
+from autot.src.download import Transmission
+from autot.src.episode import EpisodeStatus
 from autot.src.show import TVMazeShow
 
 
@@ -9,6 +11,14 @@ from autot.src.show import TVMazeShow
 def refresh_show(remote_server_id: str) -> None:
     """job to refresh a single show"""
     TVMazeShow(show_id=remote_server_id).validate()
+
+
+@job("show")
+def refresh_status() -> None:
+    """refresh status of all"""
+    found_magnets = EpisodeStatus().refresh()
+    if found_magnets:
+        Transmission().add_all()
 
 
 @job("thumbnails")

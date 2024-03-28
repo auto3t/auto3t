@@ -9,11 +9,13 @@ from autot.src.search import Jackett
 class EpisodeStatus:
     """find episode status"""
 
-    def refresh(self):
+    def refresh(self) -> bool:
         """refresh all episode status"""
         self.set_upcoming()
         self.set_searching()
-        self.find_magnets()
+        found_magnets = self.find_magnets()
+
+        return found_magnets
 
     def set_upcoming(self):
         """set upcoming state if has release date"""
@@ -29,19 +31,23 @@ class EpisodeStatus:
             print(f"set {to_update.count()} episodes as searching")
             to_update.update(status="s")
 
-    def find_magnets(self):
+    def find_magnets(self) -> bool:
         """find magnet links for searching episodes"""
+        found_magnets = False
         to_search = TVEpisode.objects.filter(status="s").exclude(torrent__isnull=False)
         if not to_search:
-            return
+            return found_magnets
 
         print(f"searching for {to_search.count()} magnets")
         for episode in to_search:
             magnet = Jackett().get_magnet(episode)
             if not magnet:
-                return
+                return found_magnets
 
             torrent = Torrent.objects.create(magnet=magnet, torrent_type="t")
             episode.torrent = torrent
             episode.save()
+            found_magnets = True
             print(f"{episode}: added magnet {torrent.magnet_hash}")
+
+        return found_magnets

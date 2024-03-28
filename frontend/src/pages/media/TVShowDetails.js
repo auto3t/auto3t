@@ -59,9 +59,11 @@ export default function TVShowDetail() {
       </div>
       <div>
         <h3>Episodes</h3>
-        {episodes.map((episode) => (
-          <Episode key={episode.id} episode={episode} />
-        ))}
+        <div className="episode-items">
+          {episodes.map((episode) => (
+            <Episode key={episode.id} episode={episode} />
+          ))}
+        </div>
       </div>
     </>
   );

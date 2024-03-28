@@ -65,7 +65,9 @@ a {
   gap: 1rem;
 }
 
-.show-item img {
+.show-item img,
+.season-item img,
+.episode-item img {
   width: 100%;
 }
 
@@ -79,6 +81,8 @@ a {
   gap: 1rem;
 }
 
-.season-item img {
-  width: 100%;
+.episode-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
+  gap: 1rem;
 }

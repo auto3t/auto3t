@@ -72,3 +72,13 @@ a {
 .show-item:hover {
   padding: 5px;
 }
+
+.season-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15%, 1fr));
+  gap: 1rem;
+}
+
+.season-item img {
+  width: 100%;
+}

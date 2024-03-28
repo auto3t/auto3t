@@ -51,16 +51,16 @@ export default function TVShowDetail() {
       </div>
       <div>
         <h3>Seasons</h3>
-        {seasons.map((season) => (
-          <Season key={season.id} season={season} onClick={handleSeasonClick} />
-        ))}
+        <div className="season-items">
+          {seasons.map((season) => (
+            <Season key={season.id} season={season} onClick={handleSeasonClick} />
+          ))}
+        </div>
       </div>
       <div>
         <h3>Episodes</h3>
         {episodes.map((episode) => (
-          <div key={episode.id}>
-            <Episode key={episode.id} episode={episode} />
-          </div>
+          <Episode key={episode.id} episode={episode} />
         ))}
       </div>
     </>

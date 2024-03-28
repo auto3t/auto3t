@@ -43,6 +43,10 @@ a {
   margin: auto;
 }
 
+.smaller {
+  font-size: 0.9rem;
+}
+
 .nav-items {
   margin: 1rem 0;
 }
@@ -101,4 +105,16 @@ a {
 
 .search-description {
   margin: 1rem;
+}
+
+.tag-group {
+  display: flex;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.tag-group * {
+  background: var(--highlight-light);
+  color: var(--highlight-dark);
+  padding: 5px;
 }

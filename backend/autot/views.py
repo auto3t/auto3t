@@ -28,7 +28,7 @@ class ShowViewSet(viewsets.ReadOnlyModelViewSet):
     """get tv show/s"""
 
     serializer_class = TVShowSerializer
-    queryset = TVShow.objects.all()
+    queryset = TVShow.objects.all().order_by("name")
 
     def create(self, request, *args, **kwargs):
         """import show"""

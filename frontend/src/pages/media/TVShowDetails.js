@@ -52,17 +52,25 @@ export default function TVShowDetail() {
       <div>
         <h3>Seasons</h3>
         <div className="season-items">
-          {seasons.map((season) => (
-            <Season key={season.id} season={season} onClick={handleSeasonClick} />
-          ))}
+          {seasons.length > 0 ? (
+            seasons.map((season) => (
+              <Season key={season.id} season={season} onClick={handleSeasonClick} />
+            ))
+          ) : (
+            <p>Show doesn't have any seasons.</p>
+          )}
         </div>
       </div>
       <div>
         <h3>Episodes</h3>
         <div className="episode-items">
-          {episodes.map((episode) => (
-            <Episode key={episode.id} episode={episode} />
-          ))}
+          {episodes.length > 0 ? (
+            episodes.map((episode) => (
+              <Episode key={episode.id} episode={episode} />
+            ))
+          ) : (
+            <p>No episodes in season.</p>
+          )}
         </div>
       </div>
     </>

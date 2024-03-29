@@ -67,11 +67,11 @@ const Search = () => {
       {isLoading && <p>Loading...</p>}
       <div>
         {results.map((result) => (
-          <div key={result.id} className='search-result'>
-            <div className='search-poster'>
+          <div key={result.id} className='show-detail'>
+            <div className='show-poster'>
               {result.image && <img src={result.image} alt='show-poster' />}
             </div>
-            <div className='search-description'>
+            <div className='show-description'>
               <h2>{result.name}</h2>
               <span className='smaller'>ID: {result.id}</span>
               <p dangerouslySetInnerHTML={{__html: result.summary}} />

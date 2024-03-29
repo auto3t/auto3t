@@ -2,11 +2,13 @@ import { useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import useTVSeasonsStore from "../../stores/SeasonsStore";
 import useTVEpisodeStore from "../../stores/EpisodesStore";
+import useShowDetailStore from "../../stores/ShowDetailStore";
 import Episode from "../../components/Episode";
 import Season from "../../components/Season";
 
 export default function TVShowDetail() {
   const { id } = useParams();
+  const { showDetail, setShowDetail } = useShowDetailStore();
   const { seasons, setSeasons } = useTVSeasonsStore();
   const { episodes, setEpisodes } = useTVEpisodeStore();
 
@@ -25,6 +27,7 @@ export default function TVShowDetail() {
       try {
         const res = await fetch(`http://localhost:8000/api/season/?show=${id}`);
         const data = await res.json();
+        setShowDetail(data.results.length > 0 ? data.results[0].show : null);
         setSeasons(data.results);
       } catch (error) {
         console.error("error fetching seasons: ", error);
@@ -45,10 +48,18 @@ export default function TVShowDetail() {
 
   return (
     <>
-      <div className="tvshow-detail">
-        <h2>Show Details</h2>
-        <p>Show ID: {id}</p>
-      </div>
+      {showDetail && (
+        <div className="show-detail">
+          <div className="show-poster">
+            <img src={showDetail.image} alt="show-poster" />
+          </div>
+          <div className="show-description">
+            <h1>{showDetail.name}</h1>
+            <span className='smaller'>ID: {showDetail.remote_server_id}</span>
+            <p dangerouslySetInnerHTML={{__html: showDetail.description}} />
+          </div>
+        </div>
+      )}
       <div>
         <h3>Seasons</h3>
         <div className="season-items">

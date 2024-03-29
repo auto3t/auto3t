@@ -91,7 +91,7 @@ a {
   gap: 1rem;
 }
 
-.search-result {
+.show-detail {
   display: flex;
   padding: 1rem;
   margin: 1rem 0;
@@ -99,11 +99,11 @@ a {
   align-items: center;
 }
 
-.search-poster img {
+.show-poster img {
   max-width: 150px;
 }
 
-.search-description {
+.show-description {
   margin: 1rem;
 }
 

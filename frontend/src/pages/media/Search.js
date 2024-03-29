@@ -40,6 +40,25 @@ const Search = () => {
     setResults([]);
   };
 
+  const handleAddShow = (remoteServerId) => {
+    fetch('http://localhost:8000/api/show/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ remote_server_id: remoteServerId })
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to add show');
+        }
+        console.log('Show added successfully');
+      })
+      .catch(error => {
+        console.error('Error adding show:', error);
+      });
+  };
+
   return (
     <div>
       <h1>Search</h1>
@@ -61,6 +80,7 @@ const Search = () => {
                 <span>Status: {result.status}</span>
                 {result.premiered && <span>Premiered: {result.premiered}</span>}
                 {result.ended && <span>Ended: {result.ended}</span>}
+                <button onClick={() => handleAddShow(result.id)}>Add</button>
               </div>
               {result.genres.length > 0 && <p>Genres: {result.genres.join(', ')}</p>}
             </div>

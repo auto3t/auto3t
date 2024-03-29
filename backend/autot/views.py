@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from autot.models import TVShow, TVSeason, TVEpisode, Torrent
+from autot.tasks import refresh_show
 from autot.src.show_search import ShowId
 from autot.serializers import (
     TorrentSerializer,
@@ -28,6 +29,25 @@ class ShowViewSet(viewsets.ReadOnlyModelViewSet):
 
     serializer_class = TVShowSerializer
     queryset = TVShow.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        """import show"""
+        data = request.data
+        if not data:
+            return Response({"message": "missing request body"}, status=400)
+
+        remote_server_id = data.get("remote_server_id")
+        if not remote_server_id:
+            return Response({"message": "missing remote_server_id key"}, status=400)
+
+        job = refresh_show.delay(remote_server_id)
+        message = {
+            "id": job.id,
+            "message": f"show refresh task started: {remote_server_id}",
+            "time": job.enqueued_at.isoformat()
+        }
+
+        return Response(message)
 
 
 class SeasonViewSet(viewsets.ReadOnlyModelViewSet):

@@ -117,4 +117,5 @@ a {
   background: var(--highlight-light);
   color: var(--highlight-dark);
   padding: 5px;
+  border: none;
 }

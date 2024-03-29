@@ -1,6 +1,7 @@
 import { useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import useTVSeasonsStore from "../../stores/SeasonsStore";
+import useSelectedSeasonStore from "../../stores/SeasonSelectedStore";
 import useTVEpisodeStore from "../../stores/EpisodesStore";
 import useShowDetailStore from "../../stores/ShowDetailStore";
 import Episode from "../../components/Episode";
@@ -8,6 +9,7 @@ import Season from "../../components/Season";
 
 export default function TVShowDetail() {
   const { id } = useParams();
+  const { selectedSeason, setSelectedSeason } = useSelectedSeasonStore();
   const { showDetail, setShowDetail } = useShowDetailStore();
   const { seasons, setSeasons } = useTVSeasonsStore();
   const { episodes, setEpisodes } = useTVEpisodeStore();
@@ -17,10 +19,11 @@ export default function TVShowDetail() {
       const res = await fetch(`http://localhost:8000/api/episode/?show=${id}&season=${seasonId}`);
       const data = await res.json();
       setEpisodes(data.results);
+      setSelectedSeason(data.results.length > 0 ? data.results[0].season : null);
     } catch (error) {
       console.error("error fetching episodes: ", error);
     }
-  }, [id, setEpisodes]);
+  }, [id, setEpisodes, setSelectedSeason]);
 
   useEffect(() => {
     const fetchSeasons = async () => {
@@ -73,7 +76,7 @@ export default function TVShowDetail() {
         </div>
       </div>
       <div>
-        <h3>Episodes</h3>
+        <h3>Episodes Season {selectedSeason && (selectedSeason.number)}</h3>
         <div className="episode-items">
           {episodes.length > 0 ? (
             episodes.map((episode) => (

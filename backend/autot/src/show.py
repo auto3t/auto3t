@@ -194,7 +194,7 @@ class TVMazeShow:
 
     def _set_episode_status(self, episode: TVEpisode) -> None:
         """set status for new episodes"""
-        cutoff = timezone.now() + timedelta(days=365)
+        cutoff = timezone.now() - timedelta(days=365)
         if episode.season.end_date and cutoff > episode.season.end_date:
             episode.status = "i"
             episode.save()

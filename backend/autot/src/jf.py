@@ -34,7 +34,7 @@ class JF:
         return response.json()
 
 
-class Episode(JF):
+class MediaServerEpisode(JF):
     """interact with episode in JF"""
 
     def get_unidentified(self) -> QuerySet[TVEpisode]:

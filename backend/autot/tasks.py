@@ -8,6 +8,7 @@ from autot.models import TVShow, TVSeason, TVEpisode
 from autot.src.archive import Archiver
 from autot.src.download import Transmission
 from autot.src.episode import EpisodeStatus
+from autot.src.jf import MediaServerEpisode
 from autot.src.show import TVMazeShow
 
 
@@ -43,6 +44,12 @@ def refresh_status() -> None:
         Transmission().add_all()
         queue = get_queue("show")
         queue.enqueue_in(timedelta(seconds=60), download_watcher)
+
+
+@job("show")
+def media_server_identify() -> None:
+    """identify in media server"""
+    MediaServerEpisode().identify()
 
 
 @job("thumbnails")

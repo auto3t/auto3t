@@ -42,10 +42,11 @@ class EpisodeStatus:
         for episode in to_search:
             magnet = Jackett().get_magnet(episode)
             if not magnet:
-                return found_magnets
+                continue
 
             torrent = Torrent.objects.create(magnet=magnet, torrent_type="t")
             episode.torrent = torrent
+            episode.status = "d"
             episode.save()
             found_magnets = True
             print(f"{episode}: added magnet {torrent.magnet_hash}")

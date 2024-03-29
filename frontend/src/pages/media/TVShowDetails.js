@@ -34,7 +34,7 @@ export default function TVShowDetail() {
       }
     };
     fetchSeasons();
-  }, [id, setSeasons]);
+  }, [id, setSeasons, setShowDetail]);
 
   useEffect(() => {
     if (seasons.length > 0) {

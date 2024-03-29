@@ -80,7 +80,7 @@ const Search = () => {
                 <span>Status: {result.status}</span>
                 {result.premiered && <span>Premiered: {result.premiered}</span>}
                 {result.ended && <span>Ended: {result.ended}</span>}
-                <button onClick={() => handleAddShow(result.id)}>Add</button>
+                <button className='pointer' onClick={() => handleAddShow(result.id)}>Add</button>
               </div>
               {result.genres.length > 0 && <p>Genres: {result.genres.join(', ')}</p>}
             </div>

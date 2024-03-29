@@ -47,6 +47,10 @@ a {
   font-size: 0.9rem;
 }
 
+.pointer {
+  cursor: pointer;
+}
+
 .nav-items {
   margin: 1rem 0;
 }

@@ -12,6 +12,7 @@ from autot.src.show_search import ShowId
 from autot.serializers import (
     TorrentSerializer,
     TVEpisodeSerializer,
+    TVEpisodeBulkUpdateSerializer,
     TVSeasonSerializer,
     TVShowSerializer,
 )
@@ -65,10 +66,15 @@ class SeasonViewSet(viewsets.ReadOnlyModelViewSet):
         return self.queryset
 
 
-class EpisodeViewSet(viewsets.ReadOnlyModelViewSet):
+class EpisodeViewSet(viewsets.ModelViewSet):
     """get tv episode/s"""
 
-    serializer_class = TVEpisodeSerializer
+    def get_serializer_class(self):
+        """overwrite serializer for create"""
+        if self.action == "create":
+            return TVEpisodeBulkUpdateSerializer
+
+        return TVEpisodeSerializer
 
     def get_queryset(self):
         """implement filters"""
@@ -82,6 +88,17 @@ class EpisodeViewSet(viewsets.ReadOnlyModelViewSet):
             queryset = queryset.filter(season=season_id)
 
         return queryset
+
+    def create(self, request, *args, **kwargs):
+        """Bulk update status of episodes"""
+        serializer_class = self.get_serializer_class()
+        serializer = serializer_class(data=request.data)
+        if serializer.is_valid():
+            status = serializer.validated_data.get("status")
+            self.get_queryset().update(status=status)
+            return Response({"message": "Episodes status updated successfully"})
+
+        return Response(serializer.errors, status=400)
 
 
 class ShowRemoteSearch(APIView):

@@ -87,6 +87,10 @@ class EpisodeViewSet(viewsets.ModelViewSet):
         if season_id:
             queryset = queryset.filter(season=season_id)
 
+        episode_status = self.request.GET.get("status")
+        if episode_status:
+            queryset = queryset.filter(status__in=episode_status.split(","))
+
         return queryset
 
     def create(self, request, *args, **kwargs):

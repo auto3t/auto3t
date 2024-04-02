@@ -5,6 +5,7 @@ import useSelectedSeasonStore from "../../stores/SeasonSelectedStore";
 import useTVEpisodeStore from "../../stores/EpisodesStore";
 import useShowDetailStore from "../../stores/ShowDetailStore";
 import Episode from "../../components/Episode";
+import BulkUpdateEpisodes from "../../components/EpisodeBulkUpdate";
 import Season from "../../components/Season";
 
 export default function TVShowDetail() {
@@ -75,18 +76,21 @@ export default function TVShowDetail() {
           )}
         </div>
       </div>
-      <div>
-        <h3>Episodes Season {selectedSeason && (selectedSeason.number)}</h3>
-        <div className="episode-items">
-          {episodes.length > 0 ? (
-            episodes.map((episode) => (
-              <Episode key={episode.id} episode={episode} />
-            ))
-          ) : (
-            <p>No episodes in season.</p>
-          )}
+      {selectedSeason && (
+        <div>
+          <h3>Episodes Season {selectedSeason.number}</h3>
+          <BulkUpdateEpisodes seasonId={selectedSeason.id} fetchEpisodes={fetchEpisodes}/>
+          <div className="episode-items">
+            {episodes.length > 0 ? (
+              episodes.map((episode) => (
+                <Episode key={episode.id} episode={episode} />
+              ))
+            ) : (
+              <p>No episodes in season.</p>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </>
   );
 }

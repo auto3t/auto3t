@@ -22,6 +22,7 @@ def refresh_show(remote_server_id: str) -> None:
 def run_archiver() -> None:
     """archive torrents"""
     Archiver().archive()
+    media_server_identify.delay()
 
 
 @job("show")
@@ -49,7 +50,12 @@ def refresh_status() -> None:
 @job("show")
 def media_server_identify() -> None:
     """identify in media server"""
-    MediaServerEpisode().identify()
+    handler = MediaServerEpisode()
+    handler.identify()
+
+    if handler.needs_matching():
+        queue = get_queue("show")
+        queue.enqueue_in(timedelta(seconds=60), media_server_identify)
 
 
 @job("thumbnails")

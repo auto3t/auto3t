@@ -37,6 +37,12 @@ class JF:
 class MediaServerEpisode(JF):
     """interact with episode in JF"""
 
+    def needs_matching(self) -> bool:
+        """get archived but not identified"""
+        return TVEpisode.objects.filter(
+            torrent__torrent_state="f", media_server_id__isnull=True
+        ).exists()
+
     def get_unidentified(self) -> QuerySet[TVEpisode]:
         """get tv episodes not identified"""
         return TVEpisode.objects.filter(media_server_id__isnull=True)

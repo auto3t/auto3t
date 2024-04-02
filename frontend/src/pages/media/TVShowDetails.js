@@ -10,7 +10,7 @@ import Season from "../../components/Season";
 
 export default function TVShowDetail() {
   const { id } = useParams();
-  const { selectedSeason, setSelectedSeason } = useSelectedSeasonStore();
+  const { selectedSeason, setSelectedSeason, showAllSeasons, setShowAllSeasons } = useSelectedSeasonStore();
   const { showDetail, setShowDetail } = useShowDetailStore();
   const { seasons, setSeasons } = useTVSeasonsStore();
   const { episodes, setEpisodes } = useTVEpisodeStore();
@@ -50,6 +50,10 @@ export default function TVShowDetail() {
     fetchEpisodes(seasonId);
   };
 
+  const toggleShowAllSeasons = () => {
+    setShowAllSeasons(!showAllSeasons);
+  };
+
   return (
     <>
       {showDetail && (
@@ -67,14 +71,21 @@ export default function TVShowDetail() {
       <div>
         <h3>Seasons</h3>
         <div className="season-items">
-          {seasons.length > 0 ? (
+          {showAllSeasons ? (
             seasons.map((season) => (
               <Season key={season.id} season={season} onClick={handleSeasonClick} />
             ))
           ) : (
-            <p>Show doesn't have any seasons.</p>
+            seasons.slice(0, 6).map((season) => (
+              <Season key={season.id} season={season} onClick={handleSeasonClick} />
+            ))
           )}
         </div>
+        {seasons.length > 6 && (
+          <button onClick={toggleShowAllSeasons}>
+            {showAllSeasons ? "Show Less" : "Show More"}
+          </button>
+        )}
       </div>
       {selectedSeason && (
         <div>

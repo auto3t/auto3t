@@ -17,7 +17,7 @@ const BulkUpdateEpisodes = ({ seasonId, fetchEpisodes }) => {
             body: JSON.stringify({ status: status }),
         })
         .then(response => response.json())
-        .then(data => {
+        .then(() => {
             fetchEpisodes(seasonId);
         })
         .catch(error => console.error('Error:', error));
@@ -25,7 +25,7 @@ const BulkUpdateEpisodes = ({ seasonId, fetchEpisodes }) => {
 
     return (
         <div>
-            <h2>Bulk Update Episodes of season {seasonId}</h2>
+            <h3>Bulk Update Episodes</h3>
             <div>
                 <label htmlFor="statusSelect">Update Status:</label>
                 <select id="statusSelect" value={status} onChange={handleStatusChange}>

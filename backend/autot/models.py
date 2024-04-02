@@ -202,7 +202,7 @@ class TVSeason(BaseModel):
         # pylint: disable=E1101
         if self.search_keywords.exists():
             return self.search_keywords.all()
-        if self.show.search_keywords.exists:
+        if self.show.search_keywords.exists():
             return self.show.search_keywords.all()
 
         return SearchWord.objects.filter(is_default=True)

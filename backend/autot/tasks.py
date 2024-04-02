@@ -12,6 +12,20 @@ from autot.src.jf import MediaServerEpisode
 from autot.src.show import TVMazeShow
 
 
+@job
+def refresh_all_shows() -> None:
+    """refresh all active shows"""
+    to_refresh = TVShow.objects.filter(is_active=True)
+    jobs = []
+    queue = get_queue("show")
+    for show in to_refresh:
+        refresh_job = queue.enqueue(refresh_show, args=(show.remote_server_id,))
+        jobs.append(refresh_job)
+
+    if jobs:
+        queue.enqueue(refresh_status, depends_on=jobs)
+
+
 @job("show")
 def refresh_show(remote_server_id: str) -> None:
     """job to refresh a single show"""

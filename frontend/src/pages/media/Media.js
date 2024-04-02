@@ -29,7 +29,7 @@ const Media = () => {
             <Episode key={episode.id} episode={episode} />
           ))
         ) : (
-          <p>No episodes in season.</p>
+          <p>No episodes are processing.</p>
         )}
       </div>
     </div>

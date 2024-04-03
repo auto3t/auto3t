@@ -40,7 +40,7 @@ class MediaServerEpisode(JF):
     def needs_matching(self) -> bool:
         """get archived but not identified"""
         return TVEpisode.objects.filter(
-            torrent__torrent_state="f", media_server_id__isnull=True
+            torrent__torrent_state="a", media_server_id__isnull=True
         ).exists()
 
     def get_unidentified(self) -> QuerySet[TVEpisode]:

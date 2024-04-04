@@ -4,7 +4,7 @@ from urllib.parse import quote
 
 import requests
 from django.db.models import QuerySet
-from autot.models import TVEpisode
+from autot.models import TVEpisode, TVSeason
 from autot.src.config import get_config, ConfigType
 
 
@@ -13,12 +13,8 @@ class BaseIndexer:
 
     TIMEOUT: int = 300
 
-    def get_magnet(self, episode: TVEpisode) -> str | None:
+    def get_magnet(self, to_search: TVEpisode | TVSeason) -> str | None:
         """get magnet link"""
-        raise NotImplementedError
-
-    def build_tv_url(self, episode: TVEpisode) -> str:
-        """build api url to search"""
         raise NotImplementedError
 
     def make_request(self, url: str) -> list[dict]:
@@ -39,20 +35,20 @@ class Jackett(BaseIndexer):
 
     CONFIG: ConfigType = get_config()
 
-    def get_magnet(self, episode: TVEpisode) -> str | None:
-        """get magnet link"""
-        url = self.build_tv_url(episode)
+    def get_magnet(self, to_search: TVEpisode | TVSeason) -> str | None:
+        """get episode magnet link"""
+        url = self.build_url(to_search)
         results = self.make_request(url)
         magnet = self.select_link(results)
 
         return magnet
 
-    def build_tv_url(self, episode: TVEpisode) -> str:
+    def build_url(self, to_search: TVEpisode | TVSeason) -> str:
         """build jacket search url"""
         base = self.CONFIG["JK_URL"]
         key = self.CONFIG["JK_API_KEY"]
-        key_words = self.parse_keywords(episode.get_keywords)
-        query = quote(f"{episode.search_query} {key_words}")
+        key_words = self.parse_keywords(to_search.get_keywords)
+        query = quote(f"{to_search.search_query} {key_words}")
         url = f"{base}/api/v2.0/indexers/all/results?apikey={key}&Query={query}&Category[]=5000"
 
         return url

@@ -117,7 +117,8 @@ class Torrent(models.Model):
     """torrent representation"""
 
     TORRENT_TYPE = [
-        ("t", "tv"),
+        ("e", "Episode"),
+        ("s", "Season"),
     ]
     TORRENT_STATE = [
         ("u", "undefined"),
@@ -206,6 +207,13 @@ class TVSeason(BaseModel):
             return self.show.search_keywords.all()
 
         return SearchWord.objects.filter(is_default=True)
+
+    @property
+    def search_query(self) -> str:
+        """search for season"""
+        show_name = self.show.search_name or self.show.name
+
+        return f"{show_name} S{str(self.number).zfill(2)} COMPLETE"
 
 
 class TVEpisode(BaseModel):

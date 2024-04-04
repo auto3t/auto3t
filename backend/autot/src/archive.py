@@ -32,9 +32,9 @@ class Archiver:
         if not tm_torrent or not tm_torrent.is_finished:
             return
 
-        if torrent.torrent_type == "t":
+        if torrent.torrent_type == "e":
             episode = TVEpisode.objects.get(torrent=torrent)
-            self._archive_tv(tm_torrent, episode)
+            self._archive_episode(tm_torrent, episode)
         else:
             raise NotImplementedError
 
@@ -42,7 +42,7 @@ class Archiver:
         torrent.torrent_state = "a"
         torrent.save()
 
-    def _archive_tv(self, tm_torrent: TransmissionTorrent, episode: TVEpisode) -> None:
+    def _archive_episode(self, tm_torrent: TransmissionTorrent, episode: TVEpisode) -> None:
         """archive tvfile"""
         filename = self._get_valid_media_file(tm_torrent)
         download_path = self.CONFIG["TM_BASE_FOLDER"] / filename

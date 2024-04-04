@@ -2,7 +2,9 @@
 
 from datetime import datetime
 
-from autot.models import TVEpisode, Torrent
+from django.db.models import Count, F, Q
+from django.utils import timezone
+from autot.models import TVEpisode, TVSeason, Torrent
 from autot.src.search import Jackett
 
 
@@ -13,9 +15,10 @@ class EpisodeStatus:
         """refresh all episode status"""
         self.set_upcoming()
         self.set_searching()
-        found_magnets = self.find_magnets()
+        found_episode_magnets = self.find_episode_magnets()
+        found_season_magnets = self.find_seasons_magnets()
 
-        return found_magnets
+        return any([found_episode_magnets, found_season_magnets])
 
     def set_upcoming(self):
         """set upcoming state if has release date"""
@@ -31,7 +34,33 @@ class EpisodeStatus:
             print(f"set {to_update.count()} episodes as searching")
             to_update.update(status="s")
 
-    def find_magnets(self) -> bool:
+    def find_seasons_magnets(self) -> bool:
+        """find complete season magnets"""
+        found_magnets = False
+        finished_seasons = TVSeason.objects.filter(end_date__lt=timezone.now())
+        searching_seasons = finished_seasons.annotate(
+            total_episodes=Count("tvepisode"),
+            searching_episodes=Count("tvepisode", filter=Q(tvepisode__status="s"))
+        ).filter(
+            total_episodes=F("searching_episodes")
+        )
+
+        if not searching_seasons:
+            return found_magnets
+
+        for season in searching_seasons:
+            magnet = Jackett().get_magnet(season)
+            if not magnet:
+                continue
+
+            torrent = Torrent.objects.create(magnet=magnet, torrent_type="s")
+            TVEpisode.objects.filter(season=season).update(torrent=torrent, status="d")
+            found_magnets = True
+            print(f"{season}: added magnet {torrent.magnet_hash}")
+
+        return found_magnets
+
+    def find_episode_magnets(self) -> bool:
         """find magnet links for searching episodes"""
         found_magnets = False
         to_search = TVEpisode.objects.filter(status="s").exclude(torrent__isnull=False)
@@ -44,7 +73,7 @@ class EpisodeStatus:
             if not magnet:
                 continue
 
-            torrent = Torrent.objects.create(magnet=magnet, torrent_type="t")
+            torrent = Torrent.objects.create(magnet=magnet, torrent_type="e")
             episode.torrent = torrent
             episode.status = "d"
             episode.save()

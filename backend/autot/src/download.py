@@ -1,5 +1,6 @@
 """download item"""
 
+from django.utils import timezone
 from transmission_rpc import Client
 from transmission_rpc.torrent import Torrent as TransmissionTorrent
 from autot.models import Torrent
@@ -26,6 +27,7 @@ class Transmission(DownloaderBase):
     """implement transmission downloader"""
 
     CONFIG: ConfigType = get_config()
+    ACTIVITY_THRESH = 3600
 
     def __init__(self):
         self.transission_client = Client(
@@ -65,7 +67,7 @@ class Transmission(DownloaderBase):
 
     def update_state(self) -> tuple[bool, bool]:
         """loop through torrents update model state"""
-        in_queue = {i.hashString: i.status.value for i in self.transission_client.get_torrents()}
+        in_queue = {i.hashString: i for i in self.transission_client.get_torrents()}
         to_check = Torrent.objects.filter(torrent_state="q") | Torrent.objects.filter(torrent_state="d")
 
         needs_checking: bool = bool(to_check)
@@ -75,10 +77,11 @@ class Transmission(DownloaderBase):
             return needs_checking, needs_archiving
 
         for local_torrent in to_check:
-            state = in_queue.get(local_torrent.magnet_hash)
-            if not state:
+            remote_torrent = in_queue.get(local_torrent.magnet_hash)
+            if not remote_torrent:
                 continue
 
+            state = remote_torrent.status.value
             if state == "downloading":
                 local_torrent.torrent_state = "d"
             elif state == "download pending":
@@ -90,3 +93,21 @@ class Transmission(DownloaderBase):
             local_torrent.save()
 
         return needs_checking, needs_archiving
+
+    def needs_refresh(self, remote_torrent: TransmissionTorrent) -> bool:
+        """return True if torrent is not working"""
+        if remote_torrent.status.value != "downloading":
+            return False
+
+        is_new = remote_torrent.seconds_downloading < self.ACTIVITY_THRESH
+        if is_new:
+            return False
+
+        last_activity = remote_torrent.activity_date
+        has_activity = bool(last_activity.timestamp())
+        has_recent_activity = timezone.now().utcnow().timestamp() - last_activity.timestamp() < self.ACTIVITY_THRESH
+
+        if has_activity and has_recent_activity:
+            return False
+
+        return True

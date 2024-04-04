@@ -15,8 +15,8 @@ class EpisodeStatus:
         """refresh all episode status"""
         self.set_upcoming()
         self.set_searching()
-        found_episode_magnets = self.find_episode_magnets()
         found_season_magnets = self.find_seasons_magnets()
+        found_episode_magnets = self.find_episode_magnets()
 
         return any([found_episode_magnets, found_season_magnets])
 

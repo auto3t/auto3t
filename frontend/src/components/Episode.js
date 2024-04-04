@@ -7,6 +7,7 @@ const Episode = ({ episode }) => {
         <span>E{String(episode.number).padStart(2, '0')}</span>
         <span> - {episode.title}</span>
         <span> [{episode.status || '-'}]</span>
+        { episode.torrent?.progress && (<span>[{episode.torrent.progress}%]</span>)}
       </p>
     </div>
   );

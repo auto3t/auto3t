@@ -1,10 +1,11 @@
 """all core models"""
 
+import re
 from hashlib import md5
 from io import BytesIO
 from pathlib import Path
-from PIL import Image
 from urllib.parse import parse_qs
+from PIL import Image
 
 import pytz
 import requests
@@ -272,12 +273,17 @@ class TVEpisode(BaseModel):
         return f"S{str(self.season.number).zfill(2)}E{str(self.number).zfill(2)}"
 
     @property
+    def identifyer_date(self) -> str:
+        """date yyyy.mm.dd identifyer"""
+        time_zone = pytz.timezone(self.season.show.show_time_zone)
+        return self.release_date.astimezone(time_zone).strftime("%Y.%m.%d")  # pylint: disable=no-member
+
+    @property
     def search_query(self) -> str:
         """build search query"""
         show_search = self.season.show.search_name or self.season.show.name
         if self.season.show.is_daily:
-            time_zone = pytz.timezone(self.season.show.show_time_zone)
-            seach_identifyer = self.release_date.astimezone(time_zone).strftime("%Y.%m.%d")  # pylint: disable=no-member
+            seach_identifyer = self.identifyer_date
         else:
             seach_identifyer = self.identifyer
 
@@ -295,6 +301,24 @@ class TVEpisode(BaseModel):
             path = path.with_suffix(suffix)
 
         return path
+
+    def is_valid_path(self, path: str) -> bool:
+        """check if path is valid"""
+        season_number = self.season.number
+        episode_number = self.number
+
+        if self.identifyer_date in path:
+            return True
+
+        pattern_s = re.compile(fr"s0?{season_number}e0?{episode_number}")
+        if pattern_s.search(path):
+            return True
+
+        pattern_x = re.compile(fr"0?{season_number}x0?{episode_number}")
+        if pattern_x.search(path):
+            return True
+
+        return False
 
 
 @receiver(pre_save, sender=TVShow)

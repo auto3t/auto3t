@@ -32,9 +32,10 @@ class Archiver:
         if not tm_torrent or not tm_torrent.is_finished:
             return
 
-        if torrent.torrent_type == "e":
-            episode = TVEpisode.objects.get(torrent=torrent)
-            self._archive_episode(tm_torrent, episode)
+        if torrent.torrent_type in ["e", "s"]:
+            episodes = TVEpisode.objects.filter(torrent=torrent).exclude(status="f")
+            for episode in episodes:
+                self._archive_episode(tm_torrent, episode)
         else:
             raise NotImplementedError
 
@@ -44,7 +45,7 @@ class Archiver:
 
     def _archive_episode(self, tm_torrent: TransmissionTorrent, episode: TVEpisode) -> None:
         """archive tvfile"""
-        filename = self._get_valid_media_file(tm_torrent)
+        filename = self._get_valid_media_file(tm_torrent, episode)
         download_path = self.CONFIG["TM_BASE_FOLDER"] / filename
         if not download_path.exists():
             raise FileNotFoundError(f"didn't find expected {str(download_path)}")
@@ -52,23 +53,21 @@ class Archiver:
         print(f"archive {episode.file_name}")
         episode_path = episode.get_archive_path(suffix=download_path.suffix)
         archive_path = self.CONFIG["TV_BASE_FOLDER"] / episode_path
+        archive_path.parent.mkdir(parents=True, exist_ok=True)
         download_path.rename(archive_path)
         episode.status = "f"
         episode.save()
 
-    def _get_valid_media_file(self, tm_torrent: TransmissionTorrent) -> str:
+    def _get_valid_media_file(self, tm_torrent: TransmissionTorrent, episode: TVEpisode) -> str:
         """get valid media file"""
-        file_name = None
         for torrent_file in tm_torrent.get_files():
             if torrent_file.size < self.CONFIG["MEDIA_MIN_SIZE"]:
                 continue
             if torrent_file.name.split(".")[-1] not in self.CONFIG["MEDIA_EXT"]:
                 continue
 
-            file_name = torrent_file.name
-            # do some fancy fuzzy expected name matching here
+            is_valid_path = episode.is_valid_path(torrent_file.name.lower())
+            if is_valid_path:
+                return torrent_file.name
 
-        if not file_name:
-            raise FileNotFoundError(f"didn't find expected media file in {tm_torrent}")
-
-        return file_name
+        raise FileNotFoundError(f"didn't find expected media file in {tm_torrent}")

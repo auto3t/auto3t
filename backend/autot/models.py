@@ -131,6 +131,7 @@ class Torrent(models.Model):
     magnet = models.TextField(unique=True)
     torrent_type = models.CharField(choices=TORRENT_TYPE, max_length=1)
     torrent_state = models.CharField(choices=TORRENT_STATE, max_length=1, default="u")
+    progress = models.IntegerField(null=True, blank=True)
 
     @property
     def magnet_hash(self):
@@ -139,7 +140,11 @@ class Torrent(models.Model):
 
     def __str__(self):
         """describe torrent"""
-        return f"{self.magnet_hash} [{self.torrent_state}]"
+        torrent_string = f"{self.magnet_hash} [{self.torrent_state}]"
+        if self.progress:
+            torrent_string = f"{torrent_string}[{self.progress}%]"
+
+        return torrent_string
 
 
 class TVShow(BaseModel):

@@ -1,5 +1,7 @@
 """download item"""
 
+from math import ceil
+
 from django.utils import timezone
 from transmission_rpc import Client
 from transmission_rpc.torrent import Torrent as TransmissionTorrent
@@ -84,10 +86,12 @@ class Transmission(DownloaderBase):
             state = remote_torrent.status.value
             if state == "downloading":
                 local_torrent.torrent_state = "d"
+                local_torrent.progress = ceil(remote_torrent.progress)
             elif state == "download pending":
                 local_torrent.torrent_state = "q"
             elif state == "stopped":
                 local_torrent.torrent_state = "f"
+                local_torrent.progress = 100
                 needs_archiving = True
 
             local_torrent.save()

@@ -69,9 +69,21 @@ class Jackett(BaseIndexer):
 
     def select_link(self, results: list[dict]) -> str | None:
         """filter for best link"""
-        valid = [i for i in results if i.get("MagnetUri") and i["Seeders"] > 2]
-        if not valid:
+        sorted_magnets = sorted(results, key=self._sort_magnets, reverse=True)
+        if not sorted_magnets:
             print("no valid magnet option found")
             return None
 
-        return valid[0]["MagnetUri"]
+        return sorted_magnets[0]["MagnetUri"]
+
+    @staticmethod
+    def _sort_magnets(result) -> float:
+        """sort for best result"""
+        has_magnet = result.get("MagnetUri")
+        has_seeders = result.get("Seeders", 0) > 2
+        has_gain = result.get("Gain", 0) > 1
+
+        if all([has_magnet, has_seeders, has_gain]):
+            return result["Gain"]
+
+        return float("-inf")

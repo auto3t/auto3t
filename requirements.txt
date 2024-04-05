@@ -1,3 +1,4 @@
+bencode.py==4.0.0
 Django==5.0.3
 django-cors-headers==4.3.1
 djangorestframework==3.15.0

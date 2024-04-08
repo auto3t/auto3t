@@ -310,11 +310,11 @@ class TVEpisode(BaseModel):
         if self.identifyer_date in path:
             return True
 
-        pattern_s = re.compile(fr"s0?{season_number}e0?{episode_number}")
+        pattern_s = re.compile(fr"s0?{season_number}e0?{episode_number}", re.IGNORECASE)
         if pattern_s.search(path):
             return True
 
-        pattern_x = re.compile(fr"0?{season_number}x0?{episode_number}")
+        pattern_x = re.compile(fr"0?{season_number}x0?{episode_number}", re.IGNORECASE)
         if pattern_x.search(path):
             return True
 

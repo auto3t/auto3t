@@ -1,10 +1,48 @@
+import { useEffect } from "react";
+import useSearchKeyWordStore from "../stores/SearchKeyWordsStore"
+
 export default function Settings() {
+
+  const { keywords, categories, setKeywords, setCategories } = useSearchKeyWordStore();
+
+  useEffect(() => {
+    const fetchKeywords = async () => {
+      const res = await fetch('http://localhost:8000/api/keyword/');
+      const data = await res.json();
+      setKeywords(data.results);
+    };
+    fetchKeywords();
+  }, [setKeywords]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const res = await fetch('http://localhost:8000/api/keyword-category/');
+      const data = await res.json();
+      setCategories(data.results);
+    };
+    fetchCategories();
+  }, [setCategories]);
+
   return (
     <div className="settings">
-      <h2>Settings</h2>
-      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum dolor assumenda, itaque nesciunt alias voluptatum nobis blanditiis eos officiis aperiam earum eum vel quas odio optio, distinctio ab sunt unde incidunt ipsum omnis amet magnam accusantium aut! Excepturi, cupiditate iusto!</p>
-      <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Necessitatibus veniam ducimus eligendi nihil, cumque ab eveniet modi architecto quidem, non odit saepe facere voluptas esse mollitia illo fuga exercitationem id dicta iusto eaque numquam quaerat ad! Fugit velit beatae laudantium.</p>
-      <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Necessitatibus veniam ducimus eligendi nihil, cumque ab eveniet modi architecto quidem, non odit saepe facere voluptas esse mollitia illo fuga exercitationem id dicta iusto eaque numquam quaerat ad! Fugit velit beatae laudantium.</p>
+      <h1>Settings</h1>
+      <h2>Categories</h2>
+      {categories.map((category) => (
+        <div key={category.name}>
+          <p>{category.name}</p>
+        </div>
+      ))}
+      <h2>Search Key Words</h2>
+      {keywords.map((keyword) => (
+        <div key={keyword.id}>
+          <p>
+            <span>{keyword.category_name}: </span>
+            <span>{keyword.word} </span>
+            <span>[{keyword.direction}] </span>
+            <span>default: {keyword.is_default}</span>
+          </p>
+        </div>
+      ))}
     </div>
   )
 }

@@ -38,7 +38,7 @@ class SearchWordView(viewsets.ModelViewSet):
     """search words"""
 
     serializer_class = SearchWordSerializer
-    queryset = SearchWord.objects.all()
+    queryset = SearchWord.objects.all().order_by("word")
 
 
 class TorrentViewSet(viewsets.ReadOnlyModelViewSet):

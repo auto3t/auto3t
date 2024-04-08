@@ -1,11 +1,17 @@
-import { useState, useEffect, useCallback } from "react";
+import { useEffect, useCallback } from "react";
 import useSearchKeyWordStore from "../stores/SearchKeyWordsStore";
+import useCategoryFormStore from "../stores/CategoryFormStore";
 
 export default function Settings() {
   const { keywords, categories, setKeywords, setCategories } = useSearchKeyWordStore();
-  const [newCategoryName, setNewCategoryName] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const {
+    newCategoryName,
+    selectedCategory,
+    showDeleteConfirmation,
+    setNewCategoryName,
+    setSelectedCategory,
+    setShowDeleteConfirmation,
+  } = useCategoryFormStore();
 
   useEffect(() => {
     const fetchKeywords = async () => {
@@ -30,7 +36,6 @@ export default function Settings() {
     event.preventDefault();
     try {
       if (!selectedCategory) {
-        // Creating a new category
         const res = await fetch('http://localhost:8000/api/keyword-category/', {
           method: 'POST',
           headers: {
@@ -39,13 +44,12 @@ export default function Settings() {
           body: JSON.stringify({ name: newCategoryName }),
         });
         if (res.ok) {
-          setNewCategoryName(""); // Clear the input field after successful submission
+          setNewCategoryName("");
           fetchCategories();
         } else {
           console.error('Failed to create category');
         }
       } else {
-        // Updating an existing category
         const res = await fetch(`http://localhost:8000/api/keyword-category/${selectedCategory.id}/`, {
           method: 'PUT',
           headers: {
@@ -54,8 +58,8 @@ export default function Settings() {
           body: JSON.stringify({ name: newCategoryName }),
         });
         if (res.ok) {
-          setNewCategoryName(""); // Clear the input field after successful submission
-          setSelectedCategory(null); // Clear selected category
+          setNewCategoryName("");
+          setSelectedCategory(null);
           fetchCategories();
         } else {
           console.error('Failed to update category');
@@ -78,8 +82,8 @@ export default function Settings() {
       });
       if (res.ok) {
         fetchCategories();
-        setSelectedCategory(null); // Clear selected category
-        setShowDeleteConfirmation(false); // Close delete confirmation dialog
+        setSelectedCategory(null);
+        setShowDeleteConfirmation(false);
       } else {
         console.error('Failed to delete category');
       }

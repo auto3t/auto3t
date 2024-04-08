@@ -14,6 +14,7 @@ from django.core.files.base import ContentFile
 from django.dispatch import receiver
 from django.db.models.signals import pre_save, post_delete
 from django.db import models
+from autot.src.helper import sanitize_file_name
 
 
 class BaseModel(models.Model):
@@ -182,6 +183,10 @@ class TVShow(BaseModel):
 
         return SearchWord.objects.filter(is_default=True)
 
+    def get_archive_path(self) -> Path:
+        """sanitize name"""
+        return Path(sanitize_file_name(self.name))
+
     def get_all_episodes(self):
         """get all episodes of show reverse lookup"""
         return TVEpisode.objects.filter(season__show=self)
@@ -202,6 +207,10 @@ class TVSeason(BaseModel):
     def __str__(self):
         """set string representation"""
         return f"{self.show.name} S{str(self.number).zfill(2)}"
+
+    def get_archive_path(self) -> str:
+        """get archive path of season"""
+        return self.show.get_archive_path() / f"Season {self.number}"
 
     @property
     def get_keywords(self):
@@ -263,11 +272,6 @@ class TVEpisode(BaseModel):
         return SearchWord.objects.filter(is_default=True)
 
     @property
-    def archive_folder(self) -> Path:
-        """build archive folder"""
-        return Path(self.season.show.name, f"Season {self.season.number}")
-
-    @property
     def identifyer(self) -> str:
         """build S00E00 identifyer"""
         return f"S{str(self.season.number).zfill(2)}E{str(self.number).zfill(2)}"
@@ -291,12 +295,14 @@ class TVEpisode(BaseModel):
 
     @property
     def file_name(self) -> str:
-        """build filename"""
-        return f"{self.season.show.name} - {self.identifyer} - {self.title}"
+        """build clean filename"""
+        show_name = sanitize_file_name(self.season.show.name)
+        title = sanitize_file_name(self.title)
+        return f"{show_name} - {self.identifyer} - {title}"
 
     def get_archive_path(self, suffix: str | None = None) -> Path:
         """build archive path"""
-        path = self.archive_folder / self.file_name
+        path = self.season.get_archive_path() / self.file_name
         if suffix:
             path = path.with_suffix(suffix)
 

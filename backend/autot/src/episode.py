@@ -73,7 +73,7 @@ class EpisodeStatus:
             if not magnet:
                 continue
 
-            torrent = Torrent.objects.create(magnet=magnet, torrent_type="e")
+            torrent, _ = Torrent.objects.get_or_create(magnet=magnet, torrent_type="e")
             episode.torrent = torrent
             episode.status = "d"
             episode.save()

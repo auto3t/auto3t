@@ -11,6 +11,8 @@ router.register(r"show", views.ShowViewSet, basename="show")
 router.register(r"season", views.SeasonViewSet, basename="season")
 router.register(r"episode", views.EpisodeViewSet, basename="episode")
 router.register(r"torrent", views.TorrentViewSet, basename="torrent")
+router.register(r"keyword-category", views.SearchWordCategoryView, basename="keyword-category")
+router.register(r"keyword", views.SearchWordView, basename="keyword")
 urlpatterns = router.urls
 
 urlpatterns.extend(

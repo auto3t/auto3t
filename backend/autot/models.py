@@ -89,23 +89,31 @@ class BaseModel(models.Model):
         return md5(self.remote_server_id.encode()).hexdigest()  # pylint: disable=no-member
 
 
+class SearchWordCategory(models.Model):
+    """represent a category to group search words by"""
+
+    name = models.CharField(max_length=255, unique=True)
+
+    def save(self, *args, **kwargs):
+        self.name = self.name.lower()
+        super().save(*args, **kwargs)
+
+
 class SearchWord(models.Model):
     """all available key words"""
 
-    CATEGORY_OPTIONS = [
-        ("r", "Resolution"),
-        ("c", "Codec"),
-        ("f", "Free"),
-    ]
     DIRECTIONS = [
         ("i", "Include"),
         ("e", "Exclude"),
     ]
 
-    word = models.CharField(max_length=255, null=True, blank=True, unique=True)
+    word = models.CharField(max_length=255)
     is_default = models.BooleanField(default=False)
-    category = models.CharField(max_length=1, default="f", choices=CATEGORY_OPTIONS)
+    category = models.ForeignKey(SearchWordCategory, on_delete=models.PROTECT)
     direction = models.CharField(max_length=1, default="i", choices=DIRECTIONS)
+
+    class Meta:
+        unique_together = ("direction", "category", "word")
 
     def save(self, *args, **kwargs):
         self.word = self.word.lower()

@@ -6,16 +6,39 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from autot.models import TVShow, TVSeason, TVEpisode, Torrent
+from autot.models import (
+    SearchWord,
+    SearchWordCategory,
+    TVShow,
+    TVSeason,
+    TVEpisode,
+    Torrent,
+)
 from autot.tasks import refresh_show
 from autot.src.show_search import ShowId
 from autot.serializers import (
+    SearchWordSerializer,
+    SearchWordCategorySerializer,
     TorrentSerializer,
     TVEpisodeSerializer,
     TVEpisodeBulkUpdateSerializer,
     TVSeasonSerializer,
     TVShowSerializer,
 )
+
+
+class SearchWordCategoryView(viewsets.ModelViewSet):
+    """search word categories"""
+
+    serializer_class = SearchWordCategorySerializer
+    queryset = SearchWordCategory.objects.all()
+
+
+class SearchWordView(viewsets.ModelViewSet):
+    """search words"""
+
+    serializer_class = SearchWordSerializer
+    queryset = SearchWord.objects.all()
 
 
 class TorrentViewSet(viewsets.ReadOnlyModelViewSet):

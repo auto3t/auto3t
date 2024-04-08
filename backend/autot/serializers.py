@@ -1,7 +1,39 @@
 """serialize backend models"""
 
 from rest_framework import serializers
-from autot.models import TVShow, TVSeason, TVEpisode, Torrent
+from autot.models import (
+    SearchWord,
+    SearchWordCategory,
+    TVShow,
+    TVSeason,
+    TVEpisode,
+    Torrent,
+)
+
+
+class SearchWordCategorySerializer(serializers.ModelSerializer):
+    """serialize search word category"""
+
+    class Meta:
+        model = SearchWordCategory
+        fields = "__all__"
+
+
+class SearchWordSerializer(serializers.ModelSerializer):
+    """serialize search word """
+
+    category = serializers.PrimaryKeyRelatedField(
+        queryset=SearchWordCategory.objects.all(), write_only=True
+    )
+    category_name = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = SearchWord
+        fields = "__all__"
+
+    def get_category_name(self, obj):
+        """category for get request"""
+        return obj.category.name if obj.category else None
 
 
 class TorrentSerializer(serializers.ModelSerializer):

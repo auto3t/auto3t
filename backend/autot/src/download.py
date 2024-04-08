@@ -89,9 +89,12 @@ class Transmission(DownloaderBase):
                 local_torrent.progress = ceil(remote_torrent.progress)
             elif state == "download pending":
                 local_torrent.torrent_state = "q"
-            elif state == "stopped":
+                if remote_torrent.progress:
+                    local_torrent.progress = ceil(remote_torrent.progress)
+
+            elif state == "stopped" and remote_torrent.is_finished:
                 local_torrent.torrent_state = "f"
-                local_torrent.progress = 100
+                local_torrent.progress = None
                 needs_archiving = True
 
             local_torrent.save()

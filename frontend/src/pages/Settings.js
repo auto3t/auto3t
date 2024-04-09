@@ -1,18 +1,26 @@
-import { useState, useEffect, useCallback } from "react";
+import { useEffect, useCallback } from "react";
 import useSearchKeyWordStore from "../stores/SearchKeyWordsStore";
+import useCategoryFormStore from "../stores/CategoryFormStore";
 
 export default function Settings() {
+
+  const {
+    categories,
+    setCategories,
+    newCategoryName,
+    setNewCategoryName,
+    deletingCategory,
+    setDeletingCategory,
+    editingCategory,
+    setEditingCategory,
+    editedCategoryName,
+    setEditedCategoryName
+  } = useCategoryFormStore()
+
   const {
     keywords,
-    categories,
-    newCategoryName,
-    deletingCategory,
     setKeywords,
-    setCategories,
-    setNewCategoryName,
-    setDeletingCategory
   } = useSearchKeyWordStore();
-  const [editingCategory, setEditingCategory] = useState(null);
 
   useEffect(() => {
     const fetchKeywords = async () => {
@@ -55,9 +63,8 @@ export default function Settings() {
   };
 
   const handleEditCategory = (category) => {
-    console.log(category)
     setEditingCategory(category);
-    // setNewCategoryName(category.name);
+    setEditedCategoryName(category.name);
   };
 
   const handleUpdateCategory = async () => {
@@ -67,7 +74,7 @@ export default function Settings() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name: newCategoryName }),
+        body: JSON.stringify({ name: editedCategoryName }),
       });
       if (res.ok) {
         setEditingCategory(null);
@@ -82,7 +89,7 @@ export default function Settings() {
 
   const handleCancelEdit = () => {
     setEditingCategory(null);
-    // setNewCategoryName("");
+    setEditedCategoryName("");
   };
 
   const handleDeleteConfirm = async () => {
@@ -129,8 +136,8 @@ export default function Settings() {
             <div>
               <input
                 type="text"
-                value={editingCategory.name}
-                onChange={(e) => setNewCategoryName(e.target.value)}
+                value={editedCategoryName}
+                onChange={(e) => setEditedCategoryName(e.target.value)}
               />
               <button onClick={handleUpdateCategory}>Update</button>
               <button onClick={handleCancelEdit}>Cancel</button>

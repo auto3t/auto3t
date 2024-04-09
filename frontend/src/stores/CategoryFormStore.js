@@ -1,12 +1,16 @@
 import { create } from "zustand";
 
 const useCategoryFormStore = create((set) => ({
+    categories: [],
+    setCategories: (categories) => set({categories}),
     newCategoryName: "",
-    selectedCategory: null,
-    showDeleteConfirmation: false,
     setNewCategoryName: (newName) => set({ newCategoryName: newName }),
-    setSelectedCategory: (selectedCategory) => set({ selectedCategory }),
-    setShowDeleteConfirmation: (toShow) => set({ showDeleteConfirmation: toShow }),
-}));
+    deletingCategory: null,
+    setDeletingCategory: (deletingCategory) => set({deletingCategory}),
+    editingCategory: null,
+    setEditingCategory: (editingCategory) => set({editingCategory}),
+    editedCategoryName: "",
+    setEditedCategoryName: (editingName) => set({editedCategoryName: editingName}),
+}))
 
 export default useCategoryFormStore;

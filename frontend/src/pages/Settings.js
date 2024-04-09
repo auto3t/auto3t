@@ -2,11 +2,17 @@ import { useState, useEffect, useCallback } from "react";
 import useSearchKeyWordStore from "../stores/SearchKeyWordsStore";
 
 export default function Settings() {
-  const { keywords, categories, setKeywords, setCategories } = useSearchKeyWordStore();
-  const [newCategoryName, setNewCategoryName] = useState("");
+  const {
+    keywords,
+    categories,
+    newCategoryName,
+    deletingCategory,
+    setKeywords,
+    setCategories,
+    setNewCategoryName,
+    setDeletingCategory
+  } = useSearchKeyWordStore();
   const [editingCategory, setEditingCategory] = useState(null);
-  const [deletingCategory, setDeletingCategory] = useState(null);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
     const fetchKeywords = async () => {
@@ -49,8 +55,9 @@ export default function Settings() {
   };
 
   const handleEditCategory = (category) => {
+    console.log(category)
     setEditingCategory(category);
-    setNewCategoryName(category.name);
+    // setNewCategoryName(category.name);
   };
 
   const handleUpdateCategory = async () => {
@@ -75,7 +82,7 @@ export default function Settings() {
 
   const handleCancelEdit = () => {
     setEditingCategory(null);
-    setNewCategoryName("");
+    // setNewCategoryName("");
   };
 
   const handleDeleteConfirm = async () => {
@@ -85,7 +92,6 @@ export default function Settings() {
       });
       if (res.ok) {
         setDeletingCategory(null);
-        setShowDeleteConfirm(false);
         fetchCategories();
       } else {
         console.error('Failed to delete category');
@@ -97,12 +103,10 @@ export default function Settings() {
 
   const handleCancelDelete = () => {
     setDeletingCategory(null);
-    setShowDeleteConfirm(false);
   };
 
   const handleDeleteCategory = (category) => {
     setDeletingCategory(category);
-    setShowDeleteConfirm(true);
   };
 
   return (
@@ -125,7 +129,7 @@ export default function Settings() {
             <div>
               <input
                 type="text"
-                value={newCategoryName}
+                value={editingCategory.name}
                 onChange={(e) => setNewCategoryName(e.target.value)}
               />
               <button onClick={handleUpdateCategory}>Update</button>
@@ -133,20 +137,20 @@ export default function Settings() {
             </div>
           ) : (
             <div>
-              <p>{category.name}</p>
+              <span>{category.name}</span>
               <button onClick={() => handleEditCategory(category)}>Edit</button>
               <button onClick={() => handleDeleteCategory(category)}>Delete</button>
+              {deletingCategory === category && (
+                <>
+                  <span>Are you sure you want to delete {deletingCategory && deletingCategory.name}?</span>
+                  <button onClick={handleDeleteConfirm}>Confirm</button>
+                  <button onClick={handleCancelDelete}>Cancel</button>
+                </>
+              )}
             </div>
           )}
         </div>
       ))}
-      {showDeleteConfirm && (
-        <div>
-          <p>Are you sure you want to delete {deletingCategory && deletingCategory.name}?</p>
-          <button onClick={handleDeleteConfirm}>Confirm</button>
-          <button onClick={handleCancelDelete}>Cancel</button>
-        </div>
-      )}
       <h2>Search Key Words</h2>
       {keywords.map((keyword) => (
         <div key={keyword.id}>

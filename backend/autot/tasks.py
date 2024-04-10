@@ -35,8 +35,10 @@ def refresh_show(remote_server_id: str) -> None:
 @job("show")
 def run_archiver() -> None:
     """archive torrents"""
-    Archiver().archive()
-    media_server_identify.delay()
+    archived = Archiver().archive()
+    if archived:
+        queue = get_queue("show")
+        queue.enqueue_in(timedelta(seconds=60), media_server_identify)
 
 
 @job("show")

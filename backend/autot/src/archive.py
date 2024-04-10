@@ -12,14 +12,16 @@ class Archiver:
 
     CONFIG = get_config()
 
-    def archive(self) -> None:
+    def archive(self) -> bool:
         """archive all"""
         to_archive = self._get_to_archive()
         if not to_archive:
-            return
+            return False
 
         for torrent in to_archive:
             self.archive_single_torrent(torrent)
+
+        return True
 
     def _get_to_archive(self) -> QuerySet:
         """get finished torrents"""

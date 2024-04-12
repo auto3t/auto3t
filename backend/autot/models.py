@@ -238,6 +238,12 @@ class TVSeason(BaseModel):
 
         return f"{show_name} S{str(self.number).zfill(2)} COMPLETE"
 
+    def is_valid_path(self, path) -> bool:
+        """check for valid season path"""
+        has_complete = "complete" in path.lower()
+
+        return has_complete
+
 
 class TVEpisode(BaseModel):
     """describes an Episode of a Season of a Show"""

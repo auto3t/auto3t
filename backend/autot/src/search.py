@@ -96,7 +96,7 @@ class Jackett(BaseIndexer):
 
     @staticmethod
     def _filter_magnets(result_item: dict, to_search: TVEpisode | TVSeason) -> bool:
-        """remove poor results"""
+        """filter function to remove poor results"""
         has_link = result_item.get("MagnetUri") or result_item.get("Link")
         has_seeders = result_item.get("Seeders", 0) > 2
         has_gain = result_item.get("Gain", 0) > 1

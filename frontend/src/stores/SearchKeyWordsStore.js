@@ -5,6 +5,8 @@ const useSearchKeyWordStore = create((set) => ({
     setKeywords: (keywords) => set({keywords}),
     deletingKeyword: null,
     setDeletingKeyword: (keyword) => set({deletingKeyword: keyword}),
+    editingKeyword: null,
+    setEditingKeyword: (newEditingKeyword) => set({editingKeyword: newEditingKeyword}),
     newKeyword: "",
     setNewKeyword: (newKeywordName) => set({ newKeyword: newKeywordName }),
     selectedCategory: "",

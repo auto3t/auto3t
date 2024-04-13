@@ -10,6 +10,8 @@ export default function Keywords() {
     setKeywords,
     deletingKeyword,
     setDeletingKeyword,
+    editingKeyword,
+    setEditingKeyword,
     newKeyword,
     setNewKeyword,
     selectedCategory,
@@ -20,7 +22,6 @@ export default function Keywords() {
     setIsDefault,
   } = useSearchKeyWordStore();
 
-  const [editingKeyword, setEditingKeyword] = useState(null);
   const [editedKeyword, setEditedKeyword] = useState({
     category: "",
     word: "",

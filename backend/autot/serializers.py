@@ -23,7 +23,7 @@ class SearchWordSerializer(serializers.ModelSerializer):
     """serialize search word """
 
     category = serializers.PrimaryKeyRelatedField(
-        queryset=SearchWordCategory.objects.all(), write_only=True
+        queryset=SearchWordCategory.objects.all()
     )
     category_name = serializers.SerializerMethodField(read_only=True)
 

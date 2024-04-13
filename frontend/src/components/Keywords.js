@@ -39,14 +39,14 @@ export default function Keywords() {
         body: JSON.stringify({
           category: selectedCategory,
           word: newKeyword,
-          direction: direction === "include" ? "i" : "e",
+          direction: direction,
           is_default: isDefault,
         }),
       });
       if (res.ok) {
         setNewKeyword("");
         setSelectedCategory("");
-        setDirection("include");
+        setDirection("i");
         setIsDefault(false);
         fetchKeywords();
       } else {
@@ -75,8 +75,8 @@ export default function Keywords() {
             placeholder="Enter keyword"
           />
           <select value={direction} onChange={(e) => setDirection(e.target.value)}>
-            <option value="include">Include</option>
-            <option value="exclude">Exclude</option>
+            <option value="i">Include</option>
+            <option value="e">Exclude</option>
           </select>
           <label>
             Default:

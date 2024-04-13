@@ -8,6 +8,8 @@ export default function Keywords() {
   const {
     keywords,
     setKeywords,
+    deletingKeyword,
+    setDeletingKeyword,
     newKeyword,
     setNewKeyword,
     selectedCategory,
@@ -57,6 +59,30 @@ export default function Keywords() {
     }
   };
 
+  const handleDeleteKeyword = (keyword) => {
+    setDeletingKeyword(keyword);
+  };
+
+  const handleDeleteConfirm = async () => {
+    try {
+      const res = await fetch(`http://localhost:8000/api/keyword/${deletingKeyword.id}/`, {
+        method: 'DELETE',
+      });
+      if (res.ok) {
+        setDeletingKeyword(null);
+        fetchKeywords();
+      } else {
+        console.error('Failed to delete keyword');
+      }
+    } catch (error) {
+      console.error('Error deleting keyword:', error);
+    }
+  }
+
+  const handleCancelDelete = () => {
+    setDeletingKeyword(null);
+  };
+
   return (
     <>
       <h1>Search Key Words</h1>
@@ -95,6 +121,14 @@ export default function Keywords() {
               <span>{keyword.word} </span>
               <span>[{keyword.direction}] </span>
               <span>default: {keyword.is_default}</span>
+              <button onClick={() => handleDeleteKeyword(keyword)}>Delete</button>
+              {deletingKeyword === keyword && (
+                <>
+                  <span>Are you sure you want to delete {deletingKeyword && deletingKeyword.word}?</span>
+                  <button onClick={handleDeleteConfirm}>Confirm</button>
+                  <button onClick={handleCancelDelete}>Cancel</button>
+                </>
+              )}
             </p>
           </div>
         ))}

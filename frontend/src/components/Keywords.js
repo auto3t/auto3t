@@ -120,7 +120,7 @@ export default function Keywords() {
               <span>{keyword.category_name}: </span>
               <span>{keyword.word} </span>
               <span>[{keyword.direction}] </span>
-              <span>default: {keyword.is_default}</span>
+              {keyword.is_default && (<span>default</span>)}
               <button onClick={() => handleDeleteKeyword(keyword)}>Delete</button>
               {deletingKeyword === keyword && (
                 <>

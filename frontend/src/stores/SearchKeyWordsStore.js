@@ -3,6 +3,8 @@ import { create } from "zustand";
 const useSearchKeyWordStore = create((set) => ({
     keywords: [],
     setKeywords: (keywords) => set({keywords}),
+    createKeyword: false,
+    setCreateKeyword: (isCreating) => set({ createKeyword: isCreating }),
     deletingKeyword: null,
     setDeletingKeyword: (keyword) => set({deletingKeyword: keyword}),
     editingKeyword: null,

@@ -8,6 +8,8 @@ export default function Keywords() {
   const {
     keywords,
     setKeywords,
+    createKeyword,
+    setCreateKeyword,
     deletingKeyword,
     setDeletingKeyword,
     editingKeyword,
@@ -39,6 +41,13 @@ export default function Keywords() {
     fetchKeywords();
   }, [fetchKeywords]);
 
+  const resetFormDefaults = () => {
+    setNewKeyword("");
+    setSelectedCategory("");
+    setDirection("i");
+    setIsDefault(false);
+  }
+
   const handleNewKeywordSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -55,10 +64,8 @@ export default function Keywords() {
         }),
       });
       if (res.ok) {
-        setNewKeyword("");
-        setSelectedCategory("");
-        setDirection("i");
-        setIsDefault(false);
+        resetFormDefaults();
+        setCreateKeyword(false);
         fetchKeywords();
       } else {
         console.error('Failed to create keyword');
@@ -135,98 +142,114 @@ export default function Keywords() {
     }));
   };
 
+  const handleShowAddForm = () => {
+    setCreateKeyword(true);
+  }
+
+  const handleCancelCreate = () => {
+    setCreateKeyword(false);
+    resetFormDefaults();
+  }
+
   return (
     <>
-      <h1>Search Key Words</h1>
-        <h2>Create New Keyword</h2>
-        <form onSubmit={handleNewKeywordSubmit}>
-          <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
-            <option value="">Select Category</option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>{category.name}</option>
-            ))}
-          </select>
-          <input
-            type="text"
-            value={newKeyword}
-            onChange={(e) => setNewKeyword(e.target.value)}
-            placeholder="Enter keyword"
-          />
-          <select value={direction} onChange={(e) => setDirection(e.target.value)}>
-            <option value="i">Include</option>
-            <option value="e">Exclude</option>
-          </select>
-          <label>
-            Default:
+      <h2>Search Key Words</h2>
+      {createKeyword === true ? (
+        <>
+          <h3>Create New Keyword</h3>
+          <form onSubmit={handleNewKeywordSubmit}>
+            <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
+              <option value="">Select Category</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>{category.name}</option>
+              ))}
+            </select>
             <input
-              type="checkbox"
-              checked={isDefault}
-              onChange={(e) => setIsDefault(e.target.checked)}
+              type="text"
+              value={newKeyword}
+              onChange={(e) => setNewKeyword(e.target.value)}
+              placeholder="Enter keyword"
             />
-          </label>
-          <button type="submit">Create Keyword</button>
-        </form>
-        {keywords.map((keyword) => (
-          <div key={keyword.id}>
-            {editingKeyword === keyword ? (
-              <form>
+            <select value={direction} onChange={(e) => setDirection(e.target.value)}>
+              <option value="i">Include</option>
+              <option value="e">Exclude</option>
+            </select>
+            <label>
+              Default:
+              <input
+                type="checkbox"
+                checked={isDefault}
+                onChange={(e) => setIsDefault(e.target.checked)}
+              />
+            </label>
+            <button type="submit">Create Keyword</button>
+            <button onClick={handleCancelCreate}>Cancel</button>
+          </form>
+        </>
+      ) : (
+        <button onClick={handleShowAddForm}>Add</button>
+      )}
+      {keywords.map((keyword) => (
+        <div key={keyword.id}>
+          {editingKeyword === keyword ? (
+            <form>
+              <input
+                type="text"
+                name="word"
+                value={editedKeyword.word}
+                onChange={handleInputChange}
+              />
+              <select
+                name="category"
+                value={editedKeyword.category}
+                onChange={handleInputChange}
+              >
+                <option value="">Select Category</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>{category.name}</option>
+                ))}
+              </select>
+              <select
+                name="direction"
+                value={editedKeyword.direction}
+                onChange={handleInputChange}
+              >
+                <option value="i">Include</option>
+                <option value="e">Exclude</option>
+              </select>
+              <label>
+                Default:
                 <input
-                  type="text"
-                  name="word"
-                  value={editedKeyword.word}
+                  type="checkbox"
+                  name="is_default"
+                  checked={editedKeyword.is_default}
                   onChange={handleInputChange}
                 />
-                <select
-                  name="category"
-                  value={editedKeyword.category}
-                  onChange={handleInputChange}
-                >
-                  <option value="">Select Category</option>
-                  {categories.map((category) => (
-                    <option key={category.id} value={category.id}>{category.name}</option>
-                  ))}
-                </select>
-                <select
-                  name="direction"
-                  value={editedKeyword.direction}
-                  onChange={handleInputChange}
-                >
-                  <option value="i">Include</option>
-                  <option value="e">Exclude</option>
-                </select>
-                <label>
-                  Default:
-                  <input
-                    type="checkbox"
-                    name="is_default"
-                    checked={editedKeyword.is_default}
-                    onChange={handleInputChange}
-                  />
-                </label>
-                <button type="button" onClick={handleEditSubmit}>Update</button>
-                <button type="button" onClick={handleEditCancel}>Cancel</button>
-              </form>
-            ) : (
-              <>
-                <p>
-                  <span>{keyword.category_name}: </span>
-                  <span>{keyword.word} </span>
-                  <span>[{keyword.direction}] </span>
-                  {keyword.is_default && (<span>default</span>)}
-                  <button onClick={() => handleEditKeyword(keyword)}>Edit</button>
-                  <button onClick={() => handleDeleteKeyword(keyword)}>Delete</button>
-                  {deletingKeyword === keyword && (
-                    <>
-                      <span>Are you sure you want to delete {deletingKeyword && deletingKeyword.word}?</span>
-                      <button onClick={handleDeleteConfirm}>Confirm</button>
-                      <button onClick={handleCancelDelete}>Cancel</button>
-                    </>
-                  )}
-                </p>
-              </>
-            )}
-          </div>
-        ))}
+              </label>
+              <button type="button" onClick={handleEditSubmit}>Update</button>
+              <button type="button" onClick={handleEditCancel}>Cancel</button>
+            </form>
+          ) : (
+            <>
+              <p>
+                <span>{keyword.category_name}: </span>
+                <span>{keyword.word} </span>
+                <span>[{keyword.direction}] </span>
+                {keyword.is_default && (<span>default</span>)}
+                <button onClick={() => handleEditKeyword(keyword)}>Edit</button>
+                <button onClick={() => handleDeleteKeyword(keyword)}>Delete</button>
+                {deletingKeyword === keyword && (
+                  <>
+                    <span>Are you sure you want to delete {deletingKeyword && deletingKeyword.word}?</span>
+                    <button onClick={handleDeleteConfirm}>Confirm</button>
+                    <button onClick={handleCancelDelete}>Cancel</button>
+                  </>
+                )}
+              </p>
+            </>
+          )}
+        </div>
+      ))}
     </>
   )
 }

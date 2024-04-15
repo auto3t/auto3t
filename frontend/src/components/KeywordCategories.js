@@ -6,6 +6,8 @@ export default function KeywordCategories() {
   const {
     categories,
     setCategories,
+    createCategory,
+    setCreateCategory,
     newCategoryName,
     setNewCategoryName,
     deletingCategory,
@@ -38,6 +40,7 @@ export default function KeywordCategories() {
       });
       if (res.ok) {
         setNewCategoryName("");
+        setCreateCategory(false);
         fetchCategories();
       } else {
         console.error('Failed to create category');
@@ -101,19 +104,35 @@ export default function KeywordCategories() {
     setDeletingCategory(null);
   };
 
+  const handleShowCreateForm = () => {
+    setCreateCategory(true);
+  }
+
+  const handleCancelCreate = () => {
+    setNewCategoryName('');
+    setCreateCategory(false);
+  };
+
   return (
     <>
-      <h2>Create New Category</h2>
-      <form onSubmit={handleNewCategorySubmit}>
-        <input
-          type="text"
-          value={newCategoryName}
-          onChange={(e) => setNewCategoryName(e.target.value)}
-          placeholder="Enter category name"
-        />
-        <button type="submit">Create Category</button>
-      </form>
       <h2>Categories</h2>
+      {createCategory === true ? (
+        <>
+          <h3>Create New Category</h3>
+          <form onSubmit={handleNewCategorySubmit}>
+            <input
+              type="text"
+              value={newCategoryName}
+              onChange={(e) => setNewCategoryName(e.target.value)}
+              placeholder="Enter category name"
+            />
+            <button type="submit">Create Category</button>
+            <button onClick={handleCancelCreate}>Cancel</button>
+          </form>
+        </>
+      ) : (
+        <button onClick={handleShowCreateForm}>Add</button>
+      )}
       {categories.map((category) => (
         <div key={category.id}>
         {editingCategory === category ? (

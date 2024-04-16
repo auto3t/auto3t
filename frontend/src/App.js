@@ -13,11 +13,15 @@ import TVShows from './pages/media/TVShows';
 import TVShowDetail from './pages/media/TVShowDetails';
 import Search from './pages/media/Search';
 import Media from './pages/media/Media';
+import Login from './pages/Login';
 
 // layouts
 import RootLayout from './layouts/RootLayout';
 import MediaRootLayout from './layouts/MediaLayout';
 import NotFound from './pages/404';
+
+// provider
+import { AuthProvider } from './providers/AuthProvider';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -31,6 +35,7 @@ const router = createBrowserRouter(
       </Route>
       <Route path='settings' element={<Settings />}/>
       <Route path='search' element={<Search />} />
+      <Route path='login' element={<Login />} />
       <Route path='*' element={<NotFound />} />
     </Route>
   )
@@ -38,7 +43,9 @@ const router = createBrowserRouter(
 
 function App() {
   return (
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   );
 }
 

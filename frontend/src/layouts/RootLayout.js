@@ -1,7 +1,18 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { useContext, useEffect } from "react";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import Breadcrumbs from "../components/Breadcrumbs";
+import { AuthContext } from "../providers/AuthProvider";
 
 export default function RootLayout() {
+  const { isAuthenticated } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login');
+    }
+  }, [isAuthenticated, navigate]);
+
   return (
     <>
       <header className="boxed-content">

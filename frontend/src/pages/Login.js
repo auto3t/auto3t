@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../providers/AuthProvider';
+import { login } from '../api';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -11,23 +12,11 @@ const Login = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch('http://localhost:8000/auth/token/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Login failed');
+      const data = await login(username, password);
+      if (data) {
+        setIsAuthenticated(true);
+        navigate('/');
       }
-
-      const data = await response.json();
-      localStorage.setItem('accessToken', data.access);
-
-      setIsAuthenticated(true);
-      navigate('/');
     } catch (error) {
       setError(error.message);
     }

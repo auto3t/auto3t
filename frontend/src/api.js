@@ -61,6 +61,26 @@ export const login = async (username, password) => {
   }
 };
 
+export const getImage = async (imagePath) => {
+  const requestOptions = {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+    },
+  };
+
+  try {
+    const response = await fetch(imagePath, requestOptions);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const blob = await response.blob();
+    const imageUrl = URL.createObjectURL(blob);
+    return imageUrl;
+  } catch (error) {
+    console.error('Error fetching image:', error);
+  }
+}
+
 export const get = async (url) => {
   return request(url, 'GET');
 };

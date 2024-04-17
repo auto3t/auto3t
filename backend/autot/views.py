@@ -139,10 +139,13 @@ class ShowRemoteSearch(APIView):
         return Response(response)
 
 
-def get_image(request, folder, filename):
-    """temporary solution, get image from filesystem"""
-    path = settings.MEDIA_ROOT / "images" / folder / filename
-    if not path.exists():
-        raise Http404("Image not found")
+class ImageView(APIView):
+    """handle artwork"""
 
-    return FileResponse(open(path, "rb"), content_type="image/jpeg")
+    def get(self, request, folder, filename):
+        """get image from filesystem"""
+        path = settings.MEDIA_ROOT / "images" / folder / filename
+        if not path.exists():
+            raise Http404("Image not found")
+
+        return FileResponse(open(path, "rb"), content_type="image/jpeg")

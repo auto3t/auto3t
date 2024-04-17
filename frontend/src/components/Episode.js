@@ -1,7 +1,13 @@
+import ImageComponent from "./ImageComponent";
+
 const Episode = ({ episode }) => {
   return (
     <div className="episode-item">
-      <img src={episode.image || '/episode-default.jpg'} alt={'episode-poster-' + episode.number} />
+      {episode.image ? (
+        <ImageComponent imagePath={episode.image} alt={'episode-poster-' + episode.number} />
+      ) : (
+        <img src="/episode-default.jpg" alt="episode image placeholder" />
+      )}
       <p>
         <span>S{String(episode.season.number).padStart(2, '0')}</span>
         <span>E{String(episode.number).padStart(2, '0')}</span>

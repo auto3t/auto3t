@@ -1,7 +1,9 @@
+import ImageComponent from "./ImageComponent";
+
 const Season = ({ season, onClick }) => {
   return (
     <div className="season-item pointer" key={season.id} onClick={() => onClick(season.id)}>
-      <img src={season.image} alt='season-poster' />
+      <ImageComponent imagePath={season.image} alt={'season-poster-' + season.number} />
       <p>Season {season.number}</p>
     </div>
   );

@@ -17,7 +17,7 @@ urlpatterns = router.urls
 
 urlpatterns.extend(
     [
-        path("images/<str:folder>/<str:filename>", views.get_image, name="image-view"),
+        path("images/<str:folder>/<str:filename>", views.ImageView.as_view(), name="image-view"),
         path("remote-search", views.ShowRemoteSearch.as_view(), name="remote-search"),
     ]
 )

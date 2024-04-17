@@ -8,6 +8,7 @@ import Episode from "../../components/Episode";
 import BulkUpdateEpisodes from "../../components/EpisodeBulkUpdate";
 import Season from "../../components/Season";
 import { get } from "../../api";
+import ImageComponent from "../../components/ImageComponent";
 
 export default function TVShowDetail() {
   const { id } = useParams();
@@ -58,7 +59,7 @@ export default function TVShowDetail() {
       {showDetail && (
         <div className="show-detail">
           <div className="show-poster">
-            <img src={showDetail.image} alt="show-poster" />
+            <ImageComponent imagePath={showDetail.image} alt='show-poster' />
           </div>
           <div className="show-description">
             <h1>{showDetail.name}</h1>

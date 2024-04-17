@@ -1,6 +1,7 @@
 import { useEffect, useCallback, useState } from "react";
 import useCategoryFormStore from "../stores/CategoryFormStore";
-import useSearchKeyWordStore from "../stores/SearchKeyWordsStore"; 
+import useSearchKeyWordStore from "../stores/SearchKeyWordsStore";
+import { del, get, post, put } from "../api";
 
 export default function Keywords() {
 
@@ -32,8 +33,7 @@ export default function Keywords() {
   });
 
   const fetchKeywords = useCallback(async () => {
-    const res = await fetch('http://localhost:8000/api/keyword/');
-    const data = await res.json();
+    const data = await get('keyword/');
     setKeywords(data.results);
   }, [setKeywords]);
 
@@ -51,19 +51,14 @@ export default function Keywords() {
   const handleNewKeywordSubmit = async (event) => {
     event.preventDefault();
     try {
-      const res = await fetch('http://localhost:8000/api/keyword/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          category: selectedCategory,
-          word: newKeyword,
-          direction: direction,
-          is_default: isDefault,
-        }),
-      });
-      if (res.ok) {
+      const body = {
+        category: selectedCategory,
+        word: newKeyword,
+        direction: direction,
+        is_default: isDefault,
+      }
+      const data = await post('keyword/', body);
+      if (data) {
         resetFormDefaults();
         setCreateKeyword(false);
         fetchKeywords();
@@ -81,10 +76,8 @@ export default function Keywords() {
 
   const handleDeleteConfirm = async () => {
     try {
-      const res = await fetch(`http://localhost:8000/api/keyword/${deletingKeyword.id}/`, {
-        method: 'DELETE',
-      });
-      if (res.ok) {
+      const data = await del(`keyword/${deletingKeyword.id}/`);
+      if (data) {
         setDeletingKeyword(null);
         fetchKeywords();
       } else {
@@ -115,14 +108,8 @@ export default function Keywords() {
 
   const handleEditSubmit = async () => {
     try {
-      const res = await fetch(`http://localhost:8000/api/keyword/${editingKeyword.id}/`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(editedKeyword),
-      });
-      if (res.ok) {
+      const data = await put(`keyword/${editingKeyword.id}/`, editedKeyword);
+      if (data) {
         setEditingKeyword(null);
         fetchKeywords();
       } else {

@@ -1,5 +1,6 @@
 import { useEffect, useCallback } from "react";
 import useCategoryFormStore from "../stores/CategoryFormStore";
+import { get, post, put, del } from "../api";
 
 export default function KeywordCategories() {
 
@@ -19,8 +20,7 @@ export default function KeywordCategories() {
   } = useCategoryFormStore()
 
   const fetchCategories = useCallback(async () => {
-    const res = await fetch('http://localhost:8000/api/keyword-category/');
-    const data = await res.json();
+    const data = await get('keyword-category/');
     setCategories(data.results);
   }, [setCategories]);
 
@@ -31,19 +31,11 @@ export default function KeywordCategories() {
   const handleNewCategorySubmit = async (event) => {
     event.preventDefault();
     try {
-      const res = await fetch('http://localhost:8000/api/keyword-category/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name: newCategoryName }),
-      });
-      if (res.ok) {
+      const data = await post('keyword-category/', { name: newCategoryName });
+      if (data) {
         setNewCategoryName("");
         setCreateCategory(false);
         fetchCategories();
-      } else {
-        console.error('Failed to create category');
       }
     } catch (error) {
       console.error('Error creating category:', error);
@@ -57,14 +49,8 @@ export default function KeywordCategories() {
 
   const handleUpdateCategory = async () => {
     try {
-      const res = await fetch(`http://localhost:8000/api/keyword-category/${editingCategory.id}/`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name: editedCategoryName }),
-      });
-      if (res.ok) {
+      const data = await put(`keyword-category/${editingCategory.id}/`, { name: editedCategoryName });
+      if (data) {
         setEditingCategory(null);
         fetchCategories();
       } else {
@@ -86,10 +72,8 @@ export default function KeywordCategories() {
 
   const handleDeleteConfirm = async () => {
     try {
-      const res = await fetch(`http://localhost:8000/api/keyword-category/${deletingCategory.id}/`, {
-        method: 'DELETE',
-      });
-      if (res.ok) {
+      const data = await del(`keyword-category/${deletingCategory.id}/`);
+      if (data) {
         setDeletingCategory(null);
         fetchCategories();
       } else {

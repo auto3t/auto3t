@@ -1,6 +1,7 @@
 import { useCallback, useEffect } from "react";
 import Episode from "../../components/Episode";
 import useTVEpisodeStore from "../../stores/EpisodesStore";
+import { get } from "../../api";
 
 const Media = () => {
 
@@ -8,8 +9,7 @@ const Media = () => {
 
   const fetchEpisodes = useCallback(async () => {
     try {
-      const res = await fetch('http://localhost:8000/api/episode/?status=d,s');
-      const data = await res.json();
+      const data = await get('episode/?status=d,s');
       setEpisodes(data.results);
     } catch (error) {
       console.error("error fetching episodes: ", error);

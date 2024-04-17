@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import useSearchStore from '../../stores/SearchStore';
+import { get, post } from '../../api';
 
 const Search = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -18,8 +19,7 @@ const Search = () => {
       setIsLoading(true);
       // Set a new timer for search
       const newTimer = setTimeout(() => {
-        fetch(`http://localhost:8000/api/remote-search?q=${encodeURIComponent(newQuery)}`)
-          .then((response) => response.json())
+        get(`remote-search?q=${encodeURIComponent(newQuery)}`)
           .then((data) => {
             setResults(data);
             setIsLoading(false);
@@ -41,18 +41,9 @@ const Search = () => {
   };
 
   const handleAddShow = (remoteServerId) => {
-    fetch('http://localhost:8000/api/show/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ remote_server_id: remoteServerId })
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Failed to add show');
-        }
-        console.log('Show added successfully');
+    post('show/', { remote_server_id: remoteServerId })
+      .then(data => {
+        console.log('Show added successfully: ', JSON.stringify(data));
       })
       .catch(error => {
         console.error('Error adding show:', error);

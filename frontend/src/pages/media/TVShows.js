@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import useTVShowsStore from "../../stores/ShowsStore";
 import Show from "../../components/Show";
+import { get } from "../../api";
 
 export default function TVShows() {
 
@@ -9,8 +10,7 @@ export default function TVShows() {
   useEffect(() => {
     const fetchShows = async () => {
       try {
-        const res = await fetch("http://localhost:8000/api/show/");
-        const data = await res.json();
+        const data = await get('show/');
         setShows(data.results);
       } catch (error) {
         console.error("Error fetching shows:", error);

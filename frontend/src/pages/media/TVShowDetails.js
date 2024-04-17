@@ -7,6 +7,7 @@ import useShowDetailStore from "../../stores/ShowDetailStore";
 import Episode from "../../components/Episode";
 import BulkUpdateEpisodes from "../../components/EpisodeBulkUpdate";
 import Season from "../../components/Season";
+import { get } from "../../api";
 
 export default function TVShowDetail() {
   const { id } = useParams();
@@ -17,8 +18,7 @@ export default function TVShowDetail() {
 
   const fetchEpisodes = useCallback(async (seasonId) => {
     try {
-      const res = await fetch(`http://localhost:8000/api/episode/?show=${id}&season=${seasonId}`);
-      const data = await res.json();
+      const data = await get(`episode/?show=${id}&season=${seasonId}`);
       setEpisodes(data.results);
       setSelectedSeason(data.results.length > 0 ? data.results[0].season : null);
     } catch (error) {
@@ -29,8 +29,7 @@ export default function TVShowDetail() {
   useEffect(() => {
     const fetchSeasons = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/api/season/?show=${id}`);
-        const data = await res.json();
+        const data = await get(`season/?show=${id}`);
         setShowDetail(data.results.length > 0 ? data.results[0].show : null);
         setSeasons(data.results);
       } catch (error) {

@@ -1,4 +1,5 @@
 import useBulkUpdateStore from "../stores/EpisodeBulkUpdateStore";
+import { post } from "../api";
 
 const BulkUpdateEpisodes = ({ seasonId, fetchEpisodes }) => {
 
@@ -9,14 +10,7 @@ const BulkUpdateEpisodes = ({ seasonId, fetchEpisodes }) => {
     };
 
     const handleBulkUpdate = () => {
-        fetch(`http://localhost:8000/api/episode/?season=${seasonId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ status: status }),
-        })
-        .then(response => response.json())
+        post(`episode/?season=${seasonId}`, { status: status })
         .then(() => {
             fetchEpisodes(seasonId);
         })

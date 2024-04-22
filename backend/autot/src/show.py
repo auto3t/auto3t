@@ -43,6 +43,11 @@ class TVMazeShow:
                     if key == "image_url" and value:
                         tasks.download_thumbnail.delay(show.remote_server_id, "show")
 
+                    continue
+
+                elif show.image_url and not show.image:
+                    tasks.download_thumbnail.delay(show.remote_server_id, "show")
+
             if fields_changed:
                 show.save()
 
@@ -111,6 +116,11 @@ class TVMazeShow:
                         if key == "image_url" and value:
                             tasks.download_thumbnail.delay(season.remote_server_id, "season")
 
+                            continue
+
+                    elif season.image_url and not season.image:
+                        tasks.download_thumbnail.delay(season.remote_server_id, "season")
+
                 if fields_changed:
                     season.save()
 
@@ -164,6 +174,11 @@ class TVMazeShow:
                         fields_changed = True
                         if key == "image_url" and value:
                             tasks.download_thumbnail.delay(episode.remote_server_id, "episode")
+
+                        continue
+
+                    elif episode.image_url and not episode.image:
+                        tasks.download_thumbnail.delay(episode.remote_server_id, "episode")
 
                 if fields_changed:
                     episode.save()

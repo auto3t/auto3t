@@ -1,6 +1,5 @@
 import { useContext, useEffect } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import Breadcrumbs from "../components/Breadcrumbs";
 import { AuthContext } from "../providers/AuthProvider";
 
 export default function RootLayout() {
@@ -32,7 +31,6 @@ export default function RootLayout() {
             {isAuthenticated && (<a onClick={handleLogout} className="nav-item pointer">Logout</a>)}
           </div>
         </nav>
-        <Breadcrumbs />
       </header>
       <main className="boxed-content">
         <Outlet />

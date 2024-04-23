@@ -3,12 +3,20 @@
 const API_BASE = 'http://localhost:8000/api/';
 const AUTH_BASE = 'http://localhost:8000/auth/';
 
+
+const clearLocalStorage = () => {
+  localStorage.removeItem('accessToken');
+  localStorage.removeItem('refreshToken');
+  localStorage.setItem('isAuthenticated', false);
+}
+
 const request = async (url, method, data) => {
+  const accessToken = localStorage.getItem('accessToken');
   const requestOptions = {
     method,
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+      Authorization: `Bearer ${accessToken}`,
     },
   };
 
@@ -20,8 +28,20 @@ const request = async (url, method, data) => {
     const response = await fetch(`${API_BASE}${url}`, requestOptions);
     if (!response.ok) {
       if (response.status === 401) {
-        window.location.href = '/login';
-        return;
+        try {
+          const newAccessToken = await refreshToken();
+          requestOptions.headers.Authorization = `Bearer ${newAccessToken}`;
+          const retryResponse = await fetch(`${API_BASE}${url}`, requestOptions);
+          if (!retryResponse.ok) {
+            throw new Error(`HTTP error! Status: ${retryResponse.status}`);
+          }
+          return await retryResponse.json();
+        } catch (refreshError) {
+          console.error('Error refreshing token:', refreshError);
+          clearLocalStorage();
+          window.location.href = '/login';
+          return;
+        }
       }
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
@@ -53,6 +73,7 @@ export const login = async (username, password) => {
     }
     const data = await response.json();
     localStorage.setItem('accessToken', data.access);
+    localStorage.setItem('refreshToken', data.refresh);
     return data
 
   } catch (error) {
@@ -60,6 +81,40 @@ export const login = async (username, password) => {
     throw error;
   }
 };
+
+export const refreshToken = async () => {
+  try {
+    const refreshToken = localStorage.getItem('refreshToken');
+
+    if (!refreshToken) {
+      clearLocalStorage();
+      throw new Error('Refresh token not found');
+    }
+
+    const response = await fetch(`${AUTH_BASE}token/refresh/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ refresh: refreshToken }),
+    });
+
+    if (!response.ok) {
+      clearLocalStorage();
+      throw new Error('Refresh failed');
+    }
+
+    const data = await response.json();
+    localStorage.setItem('accessToken', data.access);
+    return data.access;
+
+  } catch (error) {
+    clearLocalStorage();
+    console.error('Error refreshing token:', error);
+    throw error;
+  }
+};
+
 
 export const getImage = async (imagePath) => {
   const requestOptions = {

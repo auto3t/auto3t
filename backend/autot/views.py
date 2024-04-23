@@ -14,7 +14,7 @@ from autot.models import (
     TVEpisode,
     Torrent,
 )
-from autot.tasks import refresh_show
+from autot.tasks import import_show
 from autot.src.show_search import ShowId
 from autot.serializers import (
     SearchWordSerializer,
@@ -64,10 +64,10 @@ class ShowViewSet(viewsets.ReadOnlyModelViewSet):
         if not remote_server_id:
             return Response({"message": "missing remote_server_id key"}, status=400)
 
-        job = refresh_show.delay(remote_server_id)
+        job = import_show.delay(remote_server_id)
         message = {
             "id": job.id,
-            "message": f"show refresh task started: {remote_server_id}",
+            "message": f"show import task started: {remote_server_id}",
             "time": job.enqueued_at.isoformat()
         }
 

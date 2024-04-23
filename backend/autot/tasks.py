@@ -27,6 +27,14 @@ def refresh_all_shows() -> None:
 
 
 @job("show")
+def import_show(remote_server_id: str) -> None:
+    """import new show"""
+    queue = get_queue("show")
+    refresh_job = refresh_show.delay(remote_server_id)
+    queue.enqueue(media_server_identify, depends_on=refresh_job)
+
+
+@job("show")
 def refresh_show(remote_server_id: str) -> None:
     """job to refresh a single show"""
     TVMazeShow(show_id=remote_server_id).validate()

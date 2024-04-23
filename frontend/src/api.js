@@ -3,6 +3,8 @@
 const API_BASE = 'http://localhost:8000/api/';
 const AUTH_BASE = 'http://localhost:8000/auth/';
 
+let isRefreshing = false;
+let refreshPromise = null;
 
 const clearLocalStorage = () => {
   localStorage.removeItem('accessToken');
@@ -28,20 +30,19 @@ const request = async (url, method, data) => {
     const response = await fetch(`${API_BASE}${url}`, requestOptions);
     if (!response.ok) {
       if (response.status === 401) {
-        try {
-          const newAccessToken = await refreshToken();
-          requestOptions.headers.Authorization = `Bearer ${newAccessToken}`;
-          const retryResponse = await fetch(`${API_BASE}${url}`, requestOptions);
-          if (!retryResponse.ok) {
-            throw new Error(`HTTP error! Status: ${retryResponse.status}`);
-          }
-          return await retryResponse.json();
-        } catch (refreshError) {
-          console.error('Error refreshing token:', refreshError);
-          clearLocalStorage();
-          window.location.href = '/login';
-          return;
+        if (!isRefreshing) {
+          isRefreshing = true;
+          refreshPromise = refreshToken().then(newAccessToken => {
+            localStorage.setItem('accessToken', newAccessToken);
+            isRefreshing = false;
+            return request(url, method, data);
+          }).catch(error => {
+            isRefreshing = false;
+            console.error('Error refreshing token:', error);
+            throw error;
+          });
         }
+        return refreshPromise;
       }
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
@@ -117,15 +118,32 @@ export const refreshToken = async () => {
 
 
 export const getImage = async (imagePath) => {
+  const accessToken = localStorage.getItem('accessToken');
   const requestOptions = {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+      Authorization: `Bearer ${accessToken}`,
     },
   };
 
   try {
     const response = await fetch(imagePath, requestOptions);
     if (!response.ok) {
+      if (response.status === 401) {
+        if (!isRefreshing) {
+          isRefreshing = true;
+          refreshPromise = refreshToken().then(newAccessToken => {
+            localStorage.setItem('accessToken', newAccessToken);
+            isRefreshing = false;
+            return getImage(imagePath);
+          }).catch(error => {
+            isRefreshing = false;
+            console.error('Error refreshing token:', error);
+            throw error;
+          });
+        }
+        await refreshPromise;
+        return getImage(imagePath);
+      }
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
     const blob = await response.blob();
@@ -133,6 +151,7 @@ export const getImage = async (imagePath) => {
     return imageUrl;
   } catch (error) {
     console.error('Error fetching image:', error);
+    throw error;
   }
 }
 

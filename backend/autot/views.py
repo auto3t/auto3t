@@ -48,8 +48,10 @@ class TorrentViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Torrent.objects.all()
 
 
-class ShowViewSet(viewsets.ReadOnlyModelViewSet):
+class ShowViewSet(viewsets.ModelViewSet):
     """get tv show/s"""
+
+    UPDATABLE_FIELDS = {"search_name"}
 
     serializer_class = TVShowSerializer
     queryset = TVShow.objects.all().order_by("name")
@@ -72,6 +74,20 @@ class ShowViewSet(viewsets.ReadOnlyModelViewSet):
         }
 
         return Response(message)
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        data = request.data
+
+        if set(data.keys()) - self.UPDATABLE_FIELDS:
+            message = {"error": "One or more fields cannot be updated."}
+            return Response(message, status=400)
+
+        serializer = self.get_serializer(instance, data=data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return Response(serializer.data)
 
 
 class SeasonViewSet(viewsets.ReadOnlyModelViewSet):

@@ -7,8 +7,8 @@ import useShowDetailStore from "../../stores/ShowDetailStore";
 import Episode from "../../components/Episode";
 import BulkUpdateEpisodes from "../../components/EpisodeBulkUpdate";
 import Season from "../../components/Season";
+import ShowDetail from "../../components/ShowDetail";
 import { get } from "../../api";
-import ImageComponent from "../../components/ImageComponent";
 
 export default function TVShowDetail() {
   const { id } = useParams();
@@ -57,16 +57,7 @@ export default function TVShowDetail() {
   return (
     <>
       {showDetail && (
-        <div className="show-detail">
-          <div className="show-poster">
-            <ImageComponent imagePath={showDetail.image} alt='show-poster' />
-          </div>
-          <div className="show-description">
-            <h1>{showDetail.name}</h1>
-            <span className='smaller'>ID: {showDetail.remote_server_id}</span>
-            <p dangerouslySetInnerHTML={{__html: showDetail.description}} />
-          </div>
-        </div>
+        <ShowDetail showDetail={showDetail} />
       )}
       <div>
         <h3>Seasons</h3>

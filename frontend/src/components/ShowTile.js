@@ -1,7 +1,9 @@
+// show tile for show grid
+
 import { Link } from "react-router-dom";
 import ImageComponent from "./ImageComponent";
 
-const Show = ({ show }) => {
+const ShowTile = ({ show }) => {
     return (
         <Link to={`${show.id}`}>
             <div key={show.id} className="show-item">
@@ -12,4 +14,4 @@ const Show = ({ show }) => {
     )
 }
 
-export default Show;
+export default ShowTile;

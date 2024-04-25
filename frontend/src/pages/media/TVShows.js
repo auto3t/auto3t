@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import useTVShowsStore from "../../stores/ShowsStore";
-import Show from "../../components/Show";
+import ShowTile from "../../components/ShowTile";
 import { get } from "../../api";
 
 export default function TVShows() {
@@ -25,7 +25,7 @@ export default function TVShows() {
       <h2>TV Shows</h2>
       <div className="show-items">
         {shows.map((show) => (
-          <Show key={show.id} show={show} />
+          <ShowTile key={show.id} show={show} />
         ))}
       </div>
     </div>

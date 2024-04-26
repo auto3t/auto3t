@@ -57,7 +57,7 @@ export default function TVShowDetail() {
   return (
     <>
       {showDetail && (
-        <ShowDetail showDetail={showDetail} />
+        <ShowDetail showDetail={showDetail} setShowDetail={setShowDetail} />
       )}
       <div>
         <h3>Seasons</h3>

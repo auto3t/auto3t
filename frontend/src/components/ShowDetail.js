@@ -18,13 +18,13 @@ export default function ShowDetail({ showDetail, setShowDetail }) {
     setEditedSearchName(event.target.value);
   }
 
-  const handleSubmit = (event) => {
+  const handleSearchNameSubmit = (event) => {
     event.preventDefault();
 
     put(`show/${showDetail.id}/`, { search_name: editedSearchName })
     .then(response => {
       showDetail.search_name = response.search_name;
-      setShowDetail(showDetail.search_name = response.search_name);
+      setShowDetail(showDetail);
       setEditMode(false);
     })
     .catch(error => {
@@ -32,9 +32,17 @@ export default function ShowDetail({ showDetail, setShowDetail }) {
     });
   }
 
-  const handleCancel = () => {
+  const handleSearchNameCancel = () => {
     setEditedSearchName(showDetail.search_name || '');
     setEditMode(false);
+  }
+
+  const handleActiveToggle = () => {
+    setShowDetail({ ...showDetail, is_active: !showDetail.is_active });
+    put(`show/${showDetail.id}/`, { is_active: !showDetail.is_active })
+      .catch(error => {
+        console.error('Error:', error);
+      });
   }
 
   return (
@@ -55,18 +63,29 @@ export default function ShowDetail({ showDetail, setShowDetail }) {
       {showShowDetails && (
         <div>
           <h3>Configure Show</h3>
-          {editMode ? (
-            <form onSubmit={handleSubmit}>
-              <label>
-                New Search Name:
-                <input type="text" value={editedSearchName} onChange={handleSearchNameChange} />
-              </label>
-              <button type="submit">Submit</button>
-              <button type="button" onClick={handleCancel}>Cancel</button>
-            </form>
-          ) : (
-            <p>Search Name: {showDetail.search_name || "none"} <button onClick={() => setEditMode(true)}>Edit</button></p>
-          )}
+            <div>
+              <span>Overwrite Search Name: </span>
+              {editMode ? (
+                <>
+                  <input type="text" value={editedSearchName || ''} onChange={handleSearchNameChange} />
+                  <button onClick={handleSearchNameSubmit}>Submit</button>
+                  <button onClick={handleSearchNameCancel}>Cancel</button>
+                </>
+              ) : (
+                <>
+                  <span>{showDetail.search_name || "none"}{" "}</span>
+                  <button onClick={() => setEditMode(true)}>Edit</button>
+                </>
+              )}
+            </div>
+          <div>
+            <label>Active</label>
+            <input
+              type="checkbox"
+              checked={showDetail.is_active}
+              onChange={handleActiveToggle}
+            />
+          </div>
         </div>
       )}
     </div>

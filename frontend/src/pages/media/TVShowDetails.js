@@ -83,7 +83,7 @@ export default function TVShowDetail() {
           <h3>Episodes Season {selectedSeason.number}</h3>
           <BulkUpdateEpisodes seasonId={selectedSeason.id} fetchEpisodes={fetchEpisodes}/>
           <div className="episode-items">
-            {episodes.length > 0 ? (
+            {episodes?.length > 0 ? (
               episodes.map((episode) => (
                 <Episode key={episode.id} episode={episode} />
               ))

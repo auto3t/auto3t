@@ -5,10 +5,13 @@ import { put } from "../api";
 export default function ShowDetail({ showDetail, setShowDetail }) {
 
   const [showShowDetails, setShowDetails] = useState(false);
-  const [editedSearchName, setEditedSearchName] = useState(showDetail.search_name);
+  const [editedSearchName, setEditedSearchName] = useState('');
+  const [editMode, setEditMode] = useState(false);
 
   const toggleShowDetails = () => {
     setShowDetails(!showShowDetails);
+    setEditedSearchName(showDetail.search_name || '');
+    setEditMode(false);
   }
 
   const handleSearchNameChange = (event) => {
@@ -22,10 +25,16 @@ export default function ShowDetail({ showDetail, setShowDetail }) {
     .then(response => {
       showDetail.search_name = response.search_name;
       setShowDetail(showDetail.search_name = response.search_name);
+      setEditMode(false);
     })
     .catch(error => {
       console.error('Error:', error);
     });
+  }
+
+  const handleCancel = () => {
+    setEditedSearchName(showDetail.search_name || '');
+    setEditMode(false);
   }
 
   return (
@@ -45,14 +54,19 @@ export default function ShowDetail({ showDetail, setShowDetail }) {
       </button>
       {showShowDetails && (
         <div>
-          <p>Overwrite Search Name: {showDetail.search_name}</p>
-          <form onSubmit={handleSubmit}>
-            <label>
-              New Search Name:
-              <input type="text" value={editedSearchName} onChange={handleSearchNameChange} />
-            </label>
-            <button type="submit">Submit</button>
-          </form>
+          <h3>Configure Show</h3>
+          {editMode ? (
+            <form onSubmit={handleSubmit}>
+              <label>
+                New Search Name:
+                <input type="text" value={editedSearchName} onChange={handleSearchNameChange} />
+              </label>
+              <button type="submit">Submit</button>
+              <button type="button" onClick={handleCancel}>Cancel</button>
+            </form>
+          ) : (
+            <p>Search Name: {showDetail.search_name || "none"} <button onClick={() => setEditMode(true)}>Edit</button></p>
+          )}
         </div>
       )}
     </div>

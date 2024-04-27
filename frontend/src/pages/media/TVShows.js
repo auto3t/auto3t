@@ -24,9 +24,13 @@ export default function TVShows() {
     <div className="tvshows">
       <h2>TV Shows</h2>
       <div className="show-items">
-        {shows.map((show) => (
-          <ShowTile key={show.id} show={show} />
-        ))}
+        {shows?.length > 0 ? (
+          shows.map((show) => (
+            <ShowTile key={show.id} show={show} />
+          ))
+        ) : (
+          <p>No Shows found.</p>
+        )}
       </div>
     </div>
   )

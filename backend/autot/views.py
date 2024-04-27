@@ -117,7 +117,7 @@ class EpisodeViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """implement filters"""
-        queryset = TVEpisode.objects.all().order_by("-release_date")
+        queryset = TVEpisode.objects.all().order_by("-number")
         show_id = self.request.GET.get("show")
         if show_id:
             queryset = queryset.filter(season__show=show_id)

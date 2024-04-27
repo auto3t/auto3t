@@ -1,15 +1,20 @@
 // all backend API fetching
 
+import { useContext } from "react";
+import { AuthContext } from "./providers/AuthProvider";
+
 const API_BASE = 'http://localhost:8000/api/';
 const AUTH_BASE = 'http://localhost:8000/auth/';
 
 let isRefreshing = false;
 let refreshPromise = null;
 
-const clearLocalStorage = () => {
+const ClearLocalStorage = () => {
+  const { setIsAuthenticated } = useContext(AuthContext);
   localStorage.removeItem('accessToken');
   localStorage.removeItem('refreshToken');
   localStorage.setItem('isAuthenticated', false);
+  setIsAuthenticated(false);
 }
 
 const request = async (url, method, data) => {
@@ -88,7 +93,7 @@ export const refreshToken = async () => {
     const refreshToken = localStorage.getItem('refreshToken');
 
     if (!refreshToken) {
-      clearLocalStorage();
+      ClearLocalStorage();
       throw new Error('Refresh token not found');
     }
 
@@ -101,7 +106,7 @@ export const refreshToken = async () => {
     });
 
     if (!response.ok) {
-      clearLocalStorage();
+      ClearLocalStorage();
       throw new Error('Refresh failed');
     }
 
@@ -110,7 +115,7 @@ export const refreshToken = async () => {
     return data.access;
 
   } catch (error) {
-    clearLocalStorage();
+    ClearLocalStorage();
     console.error('Error refreshing token:', error);
     throw error;
   }

@@ -24,7 +24,7 @@ const Media = () => {
     <div className="movies">
       <h2>Processing Episodes</h2>
       <div className="episode-items">
-        {episodes.length > 0 ? (
+        {episodes?.length > 0 ? (
           episodes.map((episode) => (
             <Episode key={episode.id} episode={episode} />
           ))

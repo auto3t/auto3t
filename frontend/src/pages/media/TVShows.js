@@ -11,7 +11,7 @@ export default function TVShows() {
     const fetchShows = async () => {
       try {
         const data = await get('show/');
-        setShows(data.results);
+        setShows(data);
       } catch (error) {
         console.error("Error fetching shows:", error);
       }

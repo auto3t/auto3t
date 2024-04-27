@@ -21,7 +21,7 @@ export default function KeywordCategories() {
 
   const fetchCategories = useCallback(async () => {
     const data = await get('keyword-category/');
-    setCategories(data.results);
+    setCategories(data);
   }, [setCategories]);
 
   useEffect(() => {

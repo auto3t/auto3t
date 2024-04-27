@@ -10,7 +10,7 @@ const Media = () => {
   const fetchEpisodes = useCallback(async () => {
     try {
       const data = await get('episode/?status=d,s');
-      setEpisodes(data.results);
+      setEpisodes(data);
     } catch (error) {
       console.error("error fetching episodes: ", error);
     }

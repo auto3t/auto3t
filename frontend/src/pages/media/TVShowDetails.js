@@ -20,8 +20,8 @@ export default function TVShowDetail() {
   const fetchEpisodes = useCallback(async (seasonId) => {
     try {
       const data = await get(`episode/?show=${id}&season=${seasonId}`);
-      setEpisodes(data.results);
-      setSelectedSeason(data.results.length > 0 ? data.results[0].season : null);
+      setEpisodes(data);
+      setSelectedSeason(data.length > 0 ? data[0].season : null);
     } catch (error) {
       console.error("error fetching episodes: ", error);
     }
@@ -31,8 +31,8 @@ export default function TVShowDetail() {
     const fetchSeasons = async () => {
       try {
         const data = await get(`season/?show=${id}`);
-        setShowDetail(data.results.length > 0 ? data.results[0].show : null);
-        setSeasons(data.results);
+        setShowDetail(data.length > 0 ? data[0].show : null);
+        setSeasons(data);
       } catch (error) {
         console.error("error fetching seasons: ", error);
       }

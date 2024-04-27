@@ -34,7 +34,7 @@ export default function Keywords() {
 
   const fetchKeywords = useCallback(async () => {
     const data = await get('keyword/');
-    setKeywords(data.results);
+    setKeywords(data);
   }, [setKeywords]);
 
   useEffect(() => {

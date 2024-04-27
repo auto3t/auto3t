@@ -58,22 +58,24 @@ const Search = () => {
       {isLoading && <p>Loading...</p>}
       <div>
         {results.map((result) => (
-          <div key={result.id} className='show-detail'>
-            <div className='show-poster'>
-              {result.image && <img src={result.image} alt='show-poster' />}
-            </div>
-            <div className='show-description'>
-              <h2>{result.name}</h2>
-              <span className='smaller'>ID: {result.id}</span>
-              <p dangerouslySetInnerHTML={{__html: result.summary}} />
-              <div className='tag-group'>
-                <a href={result.url} target='_blank' rel='noreferrer'>Link</a>
-                <span>Status: {result.status}</span>
-                {result.premiered && <span>Premiered: {result.premiered}</span>}
-                {result.ended && <span>Ended: {result.ended}</span>}
-                <button className='pointer' onClick={() => handleAddShow(result.id)}>Add</button>
+          <div key={result.id} className="show-detail">
+            <div className='show-detail-header'>
+              <div className='show-poster'>
+                {result.image && <img src={result.image} alt='show-poster' />}
               </div>
-              {result.genres.length > 0 && <p>Genres: {result.genres.join(', ')}</p>}
+              <div className='show-description'>
+                <h2>{result.name}</h2>
+                <span className='smaller'>ID: {result.id}</span>
+                <p dangerouslySetInnerHTML={{__html: result.summary}} />
+                <div className='tag-group'>
+                  <a href={result.url} target='_blank' rel='noreferrer'>Link</a>
+                  <span>Status: {result.status}</span>
+                  {result.premiered && <span>Premiered: {result.premiered}</span>}
+                  {result.ended && <span>Ended: {result.ended}</span>}
+                  <button className='pointer' onClick={() => handleAddShow(result.id)}>Add</button>
+                </div>
+                {result.genres.length > 0 && <p>Genres: {result.genres.join(', ')}</p>}
+              </div>
             </div>
           </div>
         ))}

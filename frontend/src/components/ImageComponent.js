@@ -1,23 +1,32 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { getImage } from '../api';
 
 function ImageComponent({ imagePath, alt }) {
   const [imageUrl, setImageUrl] = useState(null);
+  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    async function fetchImage() {
+  const fetchImage = useCallback(async () => {
+    try {
+      setImageUrl(null);
       const newImageUrl = await getImage(imagePath);
       setImageUrl(newImageUrl);
+      setError(null);
+    } catch (error) {
+      setError("Failed to fetch image. Please try again later.");
     }
-
-    fetchImage();
-
-    return () => {
-      if (imageUrl) {
-        URL.revokeObjectURL(imageUrl);
-      }
-    };
   }, [imagePath]);
+
+  useEffect(() => {
+    fetchImage();
+    return () => {
+      console.log(`unload: ${imageUrl}`);
+      URL.revokeObjectURL(imageUrl);
+    };
+  }, [fetchImage]);
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div>

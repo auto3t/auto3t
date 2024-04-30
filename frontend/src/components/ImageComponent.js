@@ -19,7 +19,6 @@ function ImageComponent({ imagePath, alt }) {
   useEffect(() => {
     fetchImage();
     return () => {
-      console.log(`unload: ${imageUrl}`);
       URL.revokeObjectURL(imageUrl);
     };
   }, [fetchImage]);

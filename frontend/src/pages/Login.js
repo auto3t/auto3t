@@ -6,6 +6,7 @@ export default function Login({ setToken }) {
 
   const [username, setUserName] = useState();
   const [password, setPassword] = useState();
+  const [error, setError] = useState('');
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -13,13 +14,19 @@ export default function Login({ setToken }) {
       username,
       password
     });
-    setToken(tokenResponse);
+    if (tokenResponse.access) {
+      setToken(tokenResponse);
+      setError('');
+    } else {
+      setError(tokenResponse.detail || 'Failed to login');
+    }
   }
 
   return(
     <div className="login-wrapper">
       <h1>Please Log In</h1>
       <form onSubmit={handleSubmit}>
+        {error && <div>{error}</div>}
         <div>
           <input 
             type="text"

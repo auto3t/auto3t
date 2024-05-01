@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useState } from "react";
 import { useParams } from "react-router-dom";
 import useTVSeasonsStore from "../../stores/SeasonsStore";
 import useSelectedSeasonStore from "../../stores/SeasonSelectedStore";
@@ -16,6 +16,8 @@ export default function TVShowDetail() {
   const { showDetail, setShowDetail } = useShowDetailStore();
   const { seasons, setSeasons } = useTVSeasonsStore();
   const { episodes, setEpisodes } = useTVEpisodeStore();
+  const [isLoadingSeasons, setIsLoadingSeasons] = useState(true);
+  const [isLoadingEpisodes, setIsLoadingEpisodes] = useState(true);
 
   const fetchEpisodes = useCallback(async (seasonId) => {
     try {
@@ -25,6 +27,7 @@ export default function TVShowDetail() {
     } catch (error) {
       console.error("error fetching episodes: ", error);
     }
+    setIsLoadingEpisodes(false);
   }, [id, setEpisodes, setSelectedSeason]);
 
   useEffect(() => {
@@ -36,6 +39,7 @@ export default function TVShowDetail() {
       } catch (error) {
         console.error("error fetching seasons: ", error);
       }
+      setIsLoadingSeasons(false);
     };
     fetchSeasons();
   }, [id, setSeasons, setShowDetail]);
@@ -62,7 +66,9 @@ export default function TVShowDetail() {
       <div>
         <h3>Seasons</h3>
         <div className="season-items">
-          {showAllSeasons ? (
+          {isLoadingSeasons ? (
+            <p>Loading...</p>
+          ) : showAllSeasons ? (
             seasons.map((season) => (
               <Season key={season.id} season={season} onClick={handleSeasonClick} />
             ))
@@ -83,7 +89,9 @@ export default function TVShowDetail() {
           <h3>Episodes Season {selectedSeason.number}</h3>
           <BulkUpdateEpisodes seasonId={selectedSeason.id} fetchEpisodes={fetchEpisodes}/>
           <div className="episode-items">
-            {episodes?.length > 0 ? (
+            {isLoadingEpisodes ? (
+              <p>Loading...</p>
+            ) : episodes?.length > 0 ? (
               episodes.map((episode) => (
                 <Episode key={episode.id} episode={episode} />
               ))

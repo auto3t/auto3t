@@ -1,19 +1,22 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useTVShowsStore from "../../stores/ShowsStore";
 import ShowTile from "../../components/ShowTile";
 import { get } from "../../api";
 
 export default function TVShows() {
 
-  const { shows, setShows } = useTVShowsStore()
+  const { shows, setShows } = useTVShowsStore();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchShows = async () => {
       try {
         const data = await get('show/');
         setShows(data);
+        setIsLoading(false);
       } catch (error) {
         console.error("Error fetching shows:", error);
+        setIsLoading(false);
       }
     };
 
@@ -24,7 +27,9 @@ export default function TVShows() {
     <div className="tvshows">
       <h2>TV Shows</h2>
       <div className="show-items">
-        {shows && shows?.length > 0 ? (
+        {isLoading ? (
+          <p>Loading...</p>
+        ) : shows && shows.length > 0 ? (
           shows.map((show) => (
             <ShowTile key={show.id} show={show} />
           ))
@@ -33,5 +38,5 @@ export default function TVShows() {
         )}
       </div>
     </div>
-  )
+  );
 }

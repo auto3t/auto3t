@@ -21,6 +21,9 @@ import RootLayout from './layouts/RootLayout';
 import MediaRootLayout from './layouts/MediaLayout';
 import NotFound from './pages/404';
 
+// hooks
+import useToken from './hooks/useToken';
+
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/' element={<RootLayout />}>
@@ -38,24 +41,10 @@ const router = createBrowserRouter(
   )
 )
 
-function setToken(tokenResponse) {
-  localStorage.setItem('accessToken', tokenResponse.access);
-  localStorage.setItem('refreshToken', tokenResponse.refresh);
-}
-
-function getAccessToken() {
-  const accessToken = localStorage.getItem('accessToken');
-  return accessToken;
-}
-
-function getRefreshToken() {
-  const refreshToken = localStorage.getItem('refreshToken');
-  return refreshToken;
-}
-
 function App() {
-  const token = getAccessToken();
-  if (!token) {
+  const {setToken, accessToken} = useToken();
+  console.log(accessToken);
+  if (!accessToken) {
     return <Login setToken={setToken} />
   }
   return (

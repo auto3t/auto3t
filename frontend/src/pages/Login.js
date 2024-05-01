@@ -1,51 +1,59 @@
-import { useContext, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../providers/AuthProvider';
-import { login } from '../api';
+import PropTypes from 'prop-types'
+import { useState } from 'react'
 
-const Login = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState(null);
-  const navigate = useNavigate();
-  const { setIsAuthenticated } = useContext(AuthContext);
 
-  const handleLogin = async () => {
-    try {
-      const data = await login(username, password);
-      if (data) {
-        setIsAuthenticated(true);
-        navigate('/');
-      }
-    } catch (error) {
-      setError(error.message);
-    }
-  };
+async function loginUser(credentials) {
+  return fetch('http://localhost:8000/auth/token/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(credentials)
+  })
+    .then(data => data.json())
+}
 
-  return (
-    <div>
-      <h2>Login</h2>
-      {error && <p>{error}</p>}
-      <form onSubmit={(e) => {
-        e.preventDefault();
-        handleLogin();
-      }}>
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button type="submit">Login</button>
+
+export default function Login({ setToken }) {
+
+  const [username, setUserName] = useState();
+  const [password, setPassword] = useState();
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+    const token = await loginUser({
+      username,
+      password
+    });
+    setToken(token);
+  }
+
+  return(
+    <div className="login-wrapper">
+      <h1>Please Log In</h1>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <input 
+            type="text"
+            placeholder="username"
+            onChange={e => setUserName(e.target.value)}
+          />  
+        </div>
+        <div>
+          <input
+            type="password"
+            placeholder="password"
+            onChange={e => setPassword(e.target.value)}
+          />
+        </div>
+        <div>
+          <button type="submit">Submit</button>
+        </div>
       </form>
     </div>
-  );
-};
+  )
+}
 
-export default Login;
+Login.propTypes = {
+  setToken: PropTypes.func.isRequired
+}

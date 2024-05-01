@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   Route,
   RouterProvider,
@@ -20,9 +21,6 @@ import RootLayout from './layouts/RootLayout';
 import MediaRootLayout from './layouts/MediaLayout';
 import NotFound from './pages/404';
 
-// provider
-import { AuthProvider } from './providers/AuthProvider';
-
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/' element={<RootLayout />}>
@@ -35,17 +33,33 @@ const router = createBrowserRouter(
       </Route>
       <Route path='settings' element={<Settings />}/>
       <Route path='search' element={<Search />} />
-      <Route path='login' element={<Login />} />
       <Route path='*' element={<NotFound />} />
     </Route>
   )
 )
 
+function setToken(tokenResponse) {
+  localStorage.setItem('accessToken', tokenResponse.access);
+  localStorage.setItem('refreshToken', tokenResponse.refresh);
+}
+
+function getAccessToken() {
+  const accessToken = localStorage.getItem('accessToken');
+  return accessToken;
+}
+
+function getRefreshToken() {
+  const refreshToken = localStorage.getItem('refreshToken');
+  return refreshToken;
+}
+
 function App() {
+  const token = getAccessToken();
+  if (!token) {
+    return <Login setToken={setToken} />
+  }
   return (
-    <AuthProvider>
-      <RouterProvider router={router} />
-    </AuthProvider>
+    <RouterProvider router={router} />
   );
 }
 

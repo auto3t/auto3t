@@ -68,14 +68,18 @@ export default function TVShowDetail() {
         <div className="season-items">
           {isLoadingSeasons ? (
             <p>Loading...</p>
-          ) : showAllSeasons ? (
-            seasons.map((season) => (
-              <Season key={season.id} season={season} onClick={handleSeasonClick} />
-            ))
+          ) : Array.isArray(seasons) && seasons.length > 0 ? (
+            showAllSeasons ? (
+              seasons.map((season) => (
+                <Season key={season.id} season={season} onClick={handleSeasonClick} />
+              ))
+            ) : (
+              seasons.slice(0, 6).map((season) => (
+                <Season key={season.id} season={season} onClick={handleSeasonClick} />
+              ))
+            )
           ) : (
-            seasons.slice(0, 6).map((season) => (
-              <Season key={season.id} season={season} onClick={handleSeasonClick} />
-            ))
+            <p>No Seasons found.</p>
           )}
         </div>
         {seasons.length > 6 && (

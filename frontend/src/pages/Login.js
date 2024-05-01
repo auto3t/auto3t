@@ -1,18 +1,6 @@
 import PropTypes from 'prop-types'
 import { useState } from 'react'
-
-
-async function loginUser(credentials) {
-  return fetch('http://localhost:8000/auth/token/', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(credentials)
-  })
-    .then(data => data.json())
-}
-
+import { loginUser } from '../api';
 
 export default function Login({ setToken }) {
 
@@ -21,11 +9,11 @@ export default function Login({ setToken }) {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    const token = await loginUser({
+    const tokenResponse = await loginUser({
       username,
       password
     });
-    setToken(token);
+    setToken(tokenResponse);
   }
 
   return(

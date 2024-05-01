@@ -64,29 +64,16 @@ const request = async (url, method, data) => {
   }
 };
 
-export const login = async (username, password) => {
-  try {
-    const response = await fetch(`${AUTH_BASE}token/`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username, password }),
-    });
-
-    if (!response.ok) {
-      throw new Error('Login failed');
-    }
-    const data = await response.json();
-    localStorage.setItem('accessToken', data.access);
-    localStorage.setItem('refreshToken', data.refresh);
-    return data
-
-  } catch (error) {
-    console.error('Error logging in:', error);
-    throw error;
-  }
-};
+export const loginUser = async (credentials) => {
+  return fetch(`${AUTH_BASE}token/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(credentials)
+  })
+    .then(data => data.json())
+}
 
 export const refreshToken = async () => {
   try {

@@ -47,6 +47,8 @@ class TorrentSerializer(serializers.ModelSerializer):
 class TVShowSerializer(serializers.ModelSerializer):
     """serialize tv show"""
 
+    all_keywords = SearchWordSerializer(source="get_keywords", many=True)
+
     class Meta:
         model = TVShow
         fields = "__all__"

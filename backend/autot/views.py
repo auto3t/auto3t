@@ -51,7 +51,7 @@ class TorrentViewSet(viewsets.ReadOnlyModelViewSet):
 class ShowViewSet(viewsets.ModelViewSet):
     """get tv show/s"""
 
-    UPDATABLE_FIELDS = {"search_name", "is_active"}
+    UPDATABLE_FIELDS = {"search_name", "is_active", "search_keywords"}
 
     serializer_class = TVShowSerializer
     queryset = TVShow.objects.all().order_by("name")

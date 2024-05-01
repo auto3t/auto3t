@@ -86,6 +86,15 @@ export default function ShowDetail({ showDetail, setShowDetail }) {
               onChange={handleActiveToggle}
             />
           </div>
+          <div>
+            <label>Search Words</label>
+            {showDetail.all_keywords.map((keyword) => (
+              <p key={keyword.id}>
+                <span>{keyword.category_name}: {keyword.word} </span>
+                {!keyword.is_default && (<button>remove</button>)}
+              </p>
+            ))}
+          </div>
         </div>
       )}
     </div>

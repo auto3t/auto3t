@@ -3,6 +3,7 @@
 import re
 from hashlib import md5
 from io import BytesIO
+from typing import Self
 from pathlib import Path
 from urllib.parse import parse_qs
 from PIL import Image
@@ -183,13 +184,17 @@ class TVShow(BaseModel):
         return f"{self.name}"
 
     @property
-    def get_keywords(self):
-        """get search keywords, fallback to default"""
+    def get_keywords(self: Self):
+        """Get search keywords for the TV show, apply overwrites"""
         # pylint: disable=E1101
-        if self.search_keywords.exists():
-            return self.search_keywords.all()
+        keywords = SearchWord.objects.none()
+        for category in SearchWordCategory.objects.all():
+            if self.search_keywords.filter(category=category).exists():
+                keywords |= self.search_keywords.filter(category=category)
+            else:
+                keywords |= SearchWord.objects.filter(is_default=True, category=category)
 
-        return SearchWord.objects.filter(is_default=True)
+        return keywords.distinct()
 
     def get_archive_path(self) -> Path:
         """sanitize name"""

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   Route,
   RouterProvider,
@@ -43,7 +42,6 @@ const router = createBrowserRouter(
 
 function App() {
   const {setToken, accessToken} = useToken();
-  console.log(accessToken);
   if (!accessToken) {
     return <Login setToken={setToken} />
   }

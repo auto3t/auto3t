@@ -13,15 +13,11 @@ import TVShows from './pages/media/TVShows';
 import TVShowDetail from './pages/media/TVShowDetails';
 import Search from './pages/media/Search';
 import Media from './pages/media/Media';
-import Login from './pages/Login';
 
 // layouts
 import RootLayout from './layouts/RootLayout';
 import MediaRootLayout from './layouts/MediaLayout';
 import NotFound from './pages/404';
-
-// hooks
-import useToken from './hooks/useToken';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -41,10 +37,6 @@ const router = createBrowserRouter(
 )
 
 function App() {
-  const {setToken, accessToken} = useToken();
-  if (!accessToken) {
-    return <Login setToken={setToken} />
-  }
   return (
     <RouterProvider router={router} />
   );

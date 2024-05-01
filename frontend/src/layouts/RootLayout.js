@@ -1,6 +1,19 @@
 import { NavLink, Outlet } from "react-router-dom";
+import Login from '../pages/Login';
+import useToken from "../hooks/useToken";
 
 export default function RootLayout() {
+
+  const {setToken, resetTokens, accessToken} = useToken();
+
+  if (!accessToken) {
+    return <Login setToken={setToken} />
+  }
+
+  const handleLogout = () => {
+    resetTokens();
+  }
+
   return (
     <>
       <header className="boxed-content">
@@ -11,6 +24,7 @@ export default function RootLayout() {
             <NavLink className='nav-item' to="media">Media</NavLink>
             <NavLink className='nav-item' to="search">Search</NavLink>
             <NavLink className='nav-item' to="settings">Settings</NavLink>
+            {accessToken && (<button onClick={handleLogout}>Logout</button>)}
           </div>
         </nav>
       </header>

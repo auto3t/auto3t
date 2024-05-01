@@ -21,9 +21,17 @@ export default function useToken() {
     setRefreshToken(tokenResponse.refresh);
   }
 
+  const resetTokens = () => {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    setAccessToken(null);
+    setRefreshToken(null);
+  }
+
   return {
     setToken: saveToken,
     accessToken: accessToken,
     refreshToken: refreshToken,
+    resetTokens: resetTokens,
   }
 }

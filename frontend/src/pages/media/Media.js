@@ -1,11 +1,11 @@
 import { useCallback, useEffect } from "react";
 import Episode from "../../components/Episode";
-import useTVEpisodeStore from "../../stores/EpisodesStore";
+import useProcessingEpisodeStore from "../../stores/processingEpisodesStore";
 import { get } from "../../api";
 
 const Media = () => {
 
-  const { episodes, setEpisodes } = useTVEpisodeStore();
+  const { episodes, setEpisodes } = useProcessingEpisodeStore();
 
   const fetchEpisodes = useCallback(async () => {
     try {

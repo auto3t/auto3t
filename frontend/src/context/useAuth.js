@@ -4,9 +4,9 @@ import useAuthStore from "../stores/AuthStore";
 const AuthContext = createContext();
 
 export const AuthProvider = ({children}) => {
-  const {accessToken} = useAuthStore();
+  const {accessToken, setAccessToken, refreshToken} = useAuthStore();
   return (
-    <AuthContext.Provider value={{ accessToken }}>
+    <AuthContext.Provider value={{ accessToken, setAccessToken, refreshToken}}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,17 +1,17 @@
 import { NavLink, Outlet } from "react-router-dom";
 import Login from '../pages/Login';
-import useToken from "../hooks/useToken";
+import useAuthStore from "../stores/AuthStore";
 
 export default function RootLayout() {
 
-  const {setToken, resetTokens, accessToken} = useToken();
+  const {accessToken, setToken, logout} = useAuthStore();
 
   if (!accessToken) {
     return <Login setToken={setToken} />
   }
 
   const handleLogout = () => {
-    resetTokens();
+    logout();
   }
 
   return (

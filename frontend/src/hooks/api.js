@@ -37,7 +37,12 @@ const useApi = () => {
         throw new Error('Network response was not ok');
       }
 
-      return await response.json();
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        return await response.json();
+      } else {
+        return true;
+      }
     } catch (error) {
       setError(error.message);
       throw error;

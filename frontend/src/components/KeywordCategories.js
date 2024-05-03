@@ -1,8 +1,10 @@
 import { useEffect, useCallback } from "react";
 import useCategoryFormStore from "../stores/CategoryFormStore";
-import { get, post, put, del } from "../api";
+import useApi from "../hooks/api";
 
 export default function KeywordCategories() {
+
+  const { get, post, put, del } = useApi();
 
   const {
     categories,

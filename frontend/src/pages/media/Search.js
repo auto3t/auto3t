@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import useSearchStore from '../../stores/SearchStore';
-import { post } from '../../api';
 import useApi from '../../hooks/api';
 
 const Search = () => {
-  const { get } = useApi();
+  const { get, post } = useApi();
   const [isLoading, setIsLoading] = useState(false);
   const [timer, setTimer] = useState(null);
   const { query, results, setQuery, setResults } = useSearchStore();

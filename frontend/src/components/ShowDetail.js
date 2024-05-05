@@ -1,9 +1,10 @@
 import { useState } from "react";
 import ImageComponent from "./ImageComponent";
-import { put } from "../api";
+import useApi from "../hooks/api";
 
 export default function ShowDetail({ showDetail, setShowDetail }) {
 
+  const { put } = useApi();
   const [showShowDetails, setShowDetails] = useState(false);
   const [editedSearchName, setEditedSearchName] = useState('');
   const [editMode, setEditMode] = useState(false);

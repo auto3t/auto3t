@@ -4,10 +4,10 @@ import useAuthStore from "../stores/AuthStore";
 
 export default function RootLayout() {
 
-  const {accessToken, setToken, logout} = useAuthStore();
+  const {accessToken, logout} = useAuthStore();
 
   if (!accessToken) {
-    return <Login setToken={setToken} />
+    return <Login />
   }
 
   const handleLogout = () => {

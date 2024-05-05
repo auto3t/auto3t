@@ -1,25 +1,15 @@
-import PropTypes from 'prop-types'
 import { useState } from 'react'
-import { loginUser } from '../api';
+import useApi from '../hooks/api';
 
-export default function Login({ setToken }) {
+export default function Login() {
 
+  const { error, loginUser } = useApi();
   const [username, setUserName] = useState();
   const [password, setPassword] = useState();
-  const [error, setError] = useState('');
 
   const handleSubmit = async e => {
     e.preventDefault();
-    const tokenResponse = await loginUser({
-      username,
-      password
-    });
-    if (tokenResponse.access) {
-      setToken(tokenResponse);
-      setError('');
-    } else {
-      setError(tokenResponse.detail || 'Failed to login');
-    }
+    loginUser({username, password});
   }
 
   return(
@@ -47,8 +37,4 @@ export default function Login({ setToken }) {
       </form>
     </div>
   )
-}
-
-Login.propTypes = {
-  setToken: PropTypes.func.isRequired
 }

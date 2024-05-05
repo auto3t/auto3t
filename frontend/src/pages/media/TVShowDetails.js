@@ -8,9 +8,10 @@ import Episode from "../../components/Episode";
 import BulkUpdateEpisodes from "../../components/EpisodeBulkUpdate";
 import Season from "../../components/Season";
 import ShowDetail from "../../components/ShowDetail";
-import { get } from "../../api";
+import useApi from "../../hooks/api";
 
 export default function TVShowDetail() {
+  const { get } = useApi();
   const { id } = useParams();
   const { selectedSeason, setSelectedSeason, showAllSeasons, setShowAllSeasons } = useSelectedSeasonStore();
   const { showDetail, setShowDetail } = useShowDetailStore();

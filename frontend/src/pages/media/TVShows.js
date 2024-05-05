@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import useTVShowsStore from "../../stores/ShowsStore";
 import ShowTile from "../../components/ShowTile";
-import { get } from "../../api";
+import useApi from "../../hooks/api";
 
 export default function TVShows() {
 
+  const { get } = useApi();
   const { shows, setShows } = useTVShowsStore();
   const [isLoading, setIsLoading] = useState(true);
 

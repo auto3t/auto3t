@@ -2,7 +2,7 @@ import { useState } from "react";
 import ImageComponent from "./ImageComponent";
 import useApi from "../hooks/api";
 
-export default function ShowDetail({ showDetail, setShowDetail }) {
+export default function ShowDetail({ showDetail, fetchShow }) {
 
   const { get, put, patch } = useApi();
   const [showConfigure, setShowConfigure] = useState(false);
@@ -35,9 +35,8 @@ export default function ShowDetail({ showDetail, setShowDetail }) {
     event.preventDefault();
 
     put(`show/${showDetail.id}/`, { search_name: editedSearchName })
-    .then(response => {
-      showDetail.search_name = response.search_name;
-      setShowDetail(showDetail);
+    .then(() => {
+      fetchShow();
       setEditMode(false);
     })
     .catch(error => {
@@ -53,14 +52,14 @@ export default function ShowDetail({ showDetail, setShowDetail }) {
     if (selectedOption) {
       patch(`show/${showDetail.id}/?direction=add`, { search_keywords: [selectedOption]});
       setSelectedOption(null);
-      handleGetKeywords();
+      fetchShow();
     }
   };
 
   const handleKeywordRemove = async (event) => {
     const keywordId = event.target.id;
     await patch(`show/${showDetail.id}/?direction=remove`, { search_keywords: [keywordId]})
-    handleGetKeywords();
+    fetchShow();
   }
 
   const handleSearchNameCancel = () => {
@@ -69,11 +68,12 @@ export default function ShowDetail({ showDetail, setShowDetail }) {
   }
 
   const handleActiveToggle = () => {
-    setShowDetail({ ...showDetail, is_active: !showDetail.is_active });
+    // setShowDetail({ ...showDetail, is_active: !showDetail.is_active });
     put(`show/${showDetail.id}/`, { is_active: !showDetail.is_active })
       .catch(error => {
         console.error('Error:', error);
       });
+    fetchShow();
   }
 
   return (

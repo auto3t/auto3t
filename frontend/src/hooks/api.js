@@ -116,6 +116,7 @@ const useApi = () => {
       setAccessToken(data.access);
     } catch (error) {
       console.error('Error refreshing token:', error);
+      throw error;
     }
   };
 

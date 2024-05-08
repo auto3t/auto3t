@@ -1,4 +1,5 @@
 import ImageComponent from "./ImageComponent";
+import TimeComponent from "./TimeComponent";
 
 const Episode = ({ episode }) => {
   return (
@@ -14,6 +15,7 @@ const Episode = ({ episode }) => {
         <span> - {episode.title}</span>
         <span> [{episode.status || '-'}]</span>
         { episode.torrent?.progress > 0 && (<span>[{episode.torrent.progress}%]</span>)}
+        <br />{ episode.status === 'u' && (<TimeComponent timestamp={episode.release_date} />)}
       </p>
     </div>
   );

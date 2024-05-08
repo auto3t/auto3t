@@ -4,7 +4,7 @@ import useProcessingEpisodeStore from "../../stores/processingEpisodesStore";
 import useApi from "../../hooks/api";
 
 const Media = () => {
-  const { get } = useApi();
+  const { loading, get } = useApi();
   const { episodes, setEpisodes } = useProcessingEpisodeStore();
 
   const fetchEpisodesRef = useRef();
@@ -30,7 +30,9 @@ const Media = () => {
     <div className="movies">
       <h2>Processing Episodes</h2>
       <div className="episode-items">
-        {episodes?.length > 0 ? (
+        {loading ? (
+          <p>Loading...</p>
+        ) : episodes?.length > 0 ? (
           episodes.map((episode) => (
             <Episode key={episode.id} episode={episode} />
           ))

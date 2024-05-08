@@ -84,6 +84,18 @@ class BaseModel(models.Model):
 
         return buffer.getvalue()
 
+    def add_keyword(self, instance, to_add) -> None:
+        """add keyword or overwrite"""
+        existing = instance.search_keywords.all()
+        extend_by = SearchWord.objects.filter(id=to_add.id)
+        words = existing.exclude(category_id=to_add.category_id).union(extend_by)
+        instance.search_keywords.set(words)
+        instance.save()
+
+    def remove_keyword(self, instance, to_remove) -> None:
+        """remove keyword if existing"""
+        instance.search_keywords.remove(to_remove)
+
     @property
     def id_hash(self) -> str:
         """hash of remote_server_id"""

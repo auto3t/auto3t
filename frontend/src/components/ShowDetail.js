@@ -4,15 +4,27 @@ import useApi from "../hooks/api";
 
 export default function ShowDetail({ showDetail, setShowDetail }) {
 
-  const { put } = useApi();
-  const [showShowDetails, setShowDetails] = useState(false);
+  const { get, put, patch } = useApi();
+  const [showConfigure, setShowConfigure] = useState(false);
   const [editedSearchName, setEditedSearchName] = useState('');
+  const [allKeywords, setAllKeywords] = useState(null);
   const [editMode, setEditMode] = useState(false);
+  const [selectedOption, setSelectedOption] = useState();
+
+  const handleGetKeywords = async () => {
+    get('keyword/')
+    .then(response => {
+      setAllKeywords(response);
+    })
+  }
 
   const toggleShowDetails = () => {
-    setShowDetails(!showShowDetails);
+    setShowConfigure(!showConfigure);
     setEditedSearchName(showDetail.search_name || '');
     setEditMode(false);
+    if (!showConfigure) {
+      handleGetKeywords();
+    }
   }
 
   const handleSearchNameChange = (event) => {
@@ -31,6 +43,24 @@ export default function ShowDetail({ showDetail, setShowDetail }) {
     .catch(error => {
       console.error('Error:', error);
     });
+  }
+
+  const handleOptionSelect = (event) => {
+    setSelectedOption(event.target.value);
+  };
+
+  const handleOptionUpdate = () => {
+    if (selectedOption) {
+      patch(`show/${showDetail.id}/?direction=add`, { search_keywords: [selectedOption]});
+      setSelectedOption(null);
+      handleGetKeywords();
+    }
+  };
+
+  const handleKeywordRemove = async (event) => {
+    const keywordId = event.target.id;
+    await patch(`show/${showDetail.id}/?direction=remove`, { search_keywords: [keywordId]})
+    handleGetKeywords();
   }
 
   const handleSearchNameCancel = () => {
@@ -59,9 +89,9 @@ export default function ShowDetail({ showDetail, setShowDetail }) {
         </div>
       </div>
       <button onClick={toggleShowDetails}>
-        {showShowDetails ? "Hide" : "Configure"}
+        {showConfigure ? "Hide" : "Configure"}
       </button>
-      {showShowDetails && (
+      {showConfigure && (
         <div>
           <h3>Configure Show</h3>
             <div>
@@ -92,9 +122,28 @@ export default function ShowDetail({ showDetail, setShowDetail }) {
             {showDetail.all_keywords.map((keyword) => (
               <p key={keyword.id}>
                 <span>{keyword.category_name}: {keyword.word} </span>
-                {!keyword.is_default && (<button>remove</button>)}
+                {keyword.is_default ? (
+                  <span>default</span>
+                ) : (
+                  <button id={keyword.id} onClick={handleKeywordRemove}>remove</button>
+                )}
               </p>
             ))}
+            <label>Add Keyword</label>
+            {allKeywords && (
+              <div>
+                <label>Select an option:</label>
+                <select onChange={handleOptionSelect} defaultValue={''}>
+                  <option value="">---</option>
+                  {allKeywords.map(keyword => (
+                    <option key={keyword.id} value={keyword.id}>
+                      {keyword.category_name}: {keyword.word}
+                    </option>
+                  ))}
+                </select>
+                {selectedOption && <button onClick={handleOptionUpdate}>Set</button>}
+              </div>
+            )}
           </div>
         </div>
       )}

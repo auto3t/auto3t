@@ -34,7 +34,6 @@ const useApi = () => {
           await handleTokenRefresh();
           return await fetchData(url, method, body, false);
         }
-        throw new Error('Network response was not ok');
       }
 
       const contentType = response.headers.get('content-type');
@@ -90,6 +89,10 @@ const useApi = () => {
     return await fetchData(url, 'PUT', body);
   };
 
+  const patch = async (url, body) => {
+    return await fetchData(url, 'PATCH', body);
+  }
+
   const del = async (url) => {
     return await fetchData(url, 'DELETE');
   };
@@ -116,7 +119,7 @@ const useApi = () => {
     }
   };
 
-  return { loading, error, get, post, put, del, loginUser};
+  return { loading, error, get, post, patch, put, del, loginUser};
 };
 
 export default useApi;

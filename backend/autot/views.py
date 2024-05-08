@@ -85,9 +85,28 @@ class ShowViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(instance, data=data, partial=True)
         serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
+
+        if "search_keywords" in data.keys():
+            self._update_m2m(instance)
+        else:
+            self.perform_update(serializer)
 
         return Response(serializer.data)
+
+    def _update_m2m(self, instance: TVShow) -> None:
+        """handle search_keywords"""
+        data = self.request.data
+        direction = self.request.GET.get("direction")
+        ids = [int(i) for i in data["search_keywords"]]
+        to_process = SearchWord.objects.filter(id__in=ids)
+
+        if direction == "add":
+            for to_add in to_process:
+                instance.add_keyword(instance, to_add)
+
+        elif direction == "remove":
+            for to_remove in to_process:
+                instance.remove_keyword(instance, to_remove)
 
 
 class SeasonViewSet(viewsets.ReadOnlyModelViewSet):

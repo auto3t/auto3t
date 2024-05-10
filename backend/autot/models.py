@@ -70,11 +70,11 @@ class BaseModel(models.Model):
 
         if target_aspect > current_aspect:
             # crop on top and bottom
-            to_crop = (img.height - (img.width / target_aspect)) / 2
+            to_crop = int((img.height - (img.width / target_aspect)) / 2)
             borders = (0, to_crop, img.width, img.height - to_crop)
         else:
             # crop left and right
-            to_crop = (img.width - img.height * target_aspect) / 2
+            to_crop = int((img.width - img.height * target_aspect) / 2)
             borders = (to_crop, 0, img.width - to_crop, img.height)
 
         img = img.crop(borders)

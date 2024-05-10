@@ -121,7 +121,7 @@ button:hover {
 
 .nav-item {
   padding: 10px;
-  border-bottom: var(--accent-1) solid 1px;
+  border-bottom: var(--accent-1) solid 2px;
   color: var(--main-fg);
   min-width: 70px;
   text-align: center;
@@ -163,7 +163,7 @@ button:hover {
 .show-detail {
   padding: 1rem;
   margin: 1rem 0;
-  border: var(--accent-1) solid 1px;
+  border: var(--accent-1) solid 2px;
 }
 
 .show-detail-header {

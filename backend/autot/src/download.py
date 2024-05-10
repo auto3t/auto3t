@@ -5,7 +5,7 @@ from math import ceil
 from django.utils import timezone
 from transmission_rpc import Client
 from transmission_rpc.torrent import Torrent as TransmissionTorrent
-from autot.models import Torrent
+from autot.models import TVEpisode, Torrent
 from autot.src.config import get_config, ConfigType
 
 
@@ -62,6 +62,14 @@ class Transmission(DownloaderBase):
                 return torrent_item
 
         return None
+
+    def cancle(self, torrent: Torrent) -> None:
+        """cancle and reset torrent"""
+        TVEpisode.objects.filter(torrent=torrent).update(torrent=None, status=None)
+        to_delete = self.get_single(torrent)
+        if to_delete:
+            self.delete(to_delete)
+            torrent.delete()
 
     def delete(self, torrent: TransmissionTorrent) -> None:
         """delete torrent"""

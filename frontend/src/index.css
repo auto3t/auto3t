@@ -27,6 +27,10 @@ footer {
   text-align: center;
 }
 
+h1 {
+  margin: 1rem 0;
+}
+
 a {
   text-decoration: none;
   color: var(--accent-2);
@@ -60,6 +64,12 @@ a {
   width: 180px;
 }
 
+.secondary-nav {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0;
+}
+
 .nav-items {
   display: flex;
   gap: 1rem;
@@ -70,6 +80,8 @@ a {
   padding: 10px;
   border-bottom: var(--accent-1) solid 1px;
   color: var(--main-fg);
+  min-width: 70px;
+  text-align: center;
 }
 
 .nav-item:hover {

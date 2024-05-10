@@ -1,7 +1,7 @@
 export default function Movies() {
   return (
     <div className="movies">
-      <h2>Movies</h2>
+      <h1>Movies</h1>
       <p>Coming soon!</p>
     </div>
   )

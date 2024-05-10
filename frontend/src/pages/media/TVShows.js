@@ -26,7 +26,7 @@ export default function TVShows() {
 
   return (
     <div className="tvshows">
-      <h2>TV Shows</h2>
+      <h1>TV Shows</h1>
       <div className="show-items">
         {isLoading ? (
           <p>Loading...</p>

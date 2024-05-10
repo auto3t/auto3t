@@ -4,12 +4,11 @@
 }
 
 :root {
-  --main-bg: #333333;
-  --main-fg: #999999;
-  --highlight-dark: #1e1e1e;
-  --highlight-light: #4a90e2;
-  --highlight-light-2: #666666;
-  --signal: #ef4b46;
+  --main-bg: #00202f;
+  --main-fg: #f0d4ac;
+  --accent-1: #e33b26;
+  --accent-2: #e56936;
+  --accent-3: #018f9c;
 }
 
 body {
@@ -22,7 +21,7 @@ body {
 }
 
 footer {
-  background-color: var(--highlight-dark);
+  background-color: var(--accent-1);
   padding: 1rem 0;
   flex-shrink: 0;
   text-align: center;
@@ -30,7 +29,7 @@ footer {
 
 a {
   text-decoration: none;
-  color: var(--highlight-light);
+  color: var(--accent-2);
 }
 
 .main {
@@ -51,16 +50,31 @@ a {
   cursor: pointer;
 }
 
+.main-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.main-nav img {
+  width: 180px;
+}
+
 .nav-items {
-  margin: 1rem 0;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
 }
 
 .nav-item {
-  padding: 1rem;
+  padding: 10px;
+  border-bottom: var(--accent-1) solid 1px;
+  color: var(--main-fg);
 }
 
 .nav-item:hover {
-  background-color: var(--highlight-light-2);
+  color: var(--main-fg);
+  background-color: var(--accent-2);
 }
 
 .crumb::after {
@@ -94,7 +108,7 @@ a {
 .show-detail {
   padding: 1rem;
   margin: 1rem 0;
-  border: var(--highlight-light) solid 1px;
+  border: var(--accent-1) solid 1px;
 }
 
 .show-detail-header {
@@ -117,8 +131,8 @@ a {
 }
 
 .tag-group * {
-  background: var(--highlight-light);
-  color: var(--highlight-dark);
+  background: var(--accent-3);
+  color: var(--accent-2);
   padding: 5px;
   border: none;
 }

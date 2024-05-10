@@ -77,7 +77,7 @@ export default function TVShowDetail() {
         <ShowDetail showDetail={showDetail} fetchShow={fetchShow} />
       )}
       <div>
-        <h3>Seasons</h3>
+        <h2>Seasons</h2>
         <div className="season-items">
           {isLoadingSeasons ? (
             <p>Loading...</p>

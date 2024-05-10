@@ -3,6 +3,24 @@
   padding: 0;
 }
 
+@font-face {
+font-family: 'Righteous';
+  src:  url('../public/font/Righteous-Regular.ttf');
+  font-family: 'Righteous';
+}
+
+@font-face {
+font-family: 'Alef-Bold';
+  src:  url('../public/font/Alef-Bold.ttf');
+  font-family: 'Alef-Bold';
+}
+
+@font-face {
+font-family: 'Alef-Regular';
+  src:  url('../public/font/Alef-Regular.ttf');
+  font-family: 'Alef-Regular';
+}
+
 :root {
   --main-bg: #00202f;
   --main-fg: #f0d4ac;
@@ -14,7 +32,8 @@
 body {
   background-color: var(--main-bg);
   color: var(--main-fg);
-  font-family: sans-serif;
+  font-family: Alef-Regular;
+  font-size: 1.1rem;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -29,11 +48,35 @@ footer {
 
 h1 {
   margin: 1rem 0;
+  font-family: Righteous;
+  text-transform: uppercase;
+}
+
+h2 {
+  margin-bottom: 10px;
+  font-family: Righteous;
+}
+
+h3 {
+  font-family: Alef-Bold;
+  margin-bottom: 7px;
 }
 
 a {
   text-decoration: none;
   color: var(--accent-2);
+}
+
+button, select, input {
+  color: var(--main-fg);
+  background-color: var(--accent-1);
+  border: none;
+  padding: 5px 10px;
+  margin: 0 5px;
+}
+
+button:hover {
+  background-color: var(--accent-2);
 }
 
 .main {

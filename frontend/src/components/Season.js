@@ -4,7 +4,7 @@ const Season = ({ season, onClick }) => {
   return (
     <div className="season-item pointer" key={season.id} onClick={() => onClick(season.id)}>
       <ImageComponent imagePath={season.image} alt={'season-poster-' + season.number} />
-      <p>Season {season.number}</p>
+      <h3>Season {season.number}</h3>
     </div>
   );
 };

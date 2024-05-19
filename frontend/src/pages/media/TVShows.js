@@ -1,11 +1,12 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useTVShowsStore from "../../stores/ShowsStore";
 import ShowTile from "../../components/ShowTile";
 import useApi from "../../hooks/api";
 
 export default function TVShows() {
 
-  const { loading, error, get } = useApi();
+  const [isLoadingShows, setIsLoadingShows] = useState(true);
+  const { error, get } = useApi();
   const { shows, setShows } = useTVShowsStore();
 
   useEffect(() => {
@@ -16,6 +17,7 @@ export default function TVShows() {
       } catch (error) {
         console.error("Error fetching shows:", error);
       }
+      setIsLoadingShows(false);
     };
 
     fetchShows();
@@ -25,7 +27,7 @@ export default function TVShows() {
     <div className="tvshows">
       <h1>TV Shows</h1>
       <div className="show-items">
-        {loading ? (
+        {isLoadingShows ? (
           <p>Loading...</p>
         ) : error ? (
           <p>Error: {error}</p>

@@ -6,12 +6,11 @@ const API_BASE = 'http://localhost:8000/api/';
 const AUTH_BASE = 'http://localhost:8000/auth/';
 
 const useApi = () => {
-  const [loading, setLoading] = useState(false);
+
   const [error, setError] = useState(null);
   const { accessToken, setAccessToken, refreshToken, setToken } = useAuthStore();
 
   const fetchData = async (url, method = 'GET', body = null, retry = true) => {
-    setLoading(true);
     setError(null);
 
     const options = {
@@ -51,13 +50,10 @@ const useApi = () => {
     } catch (error) {
       setError(error.message);
       throw error;
-    } finally {
-      setLoading(false);
     }
   };
 
   const loginUser = async (credentials) => {
-    setLoading(true);
     setError(null);
     try {
       const response = await fetch (`${AUTH_BASE}token/`, {
@@ -69,7 +65,6 @@ const useApi = () => {
       })
       if (!response.ok) {
         setError(response.detail || 'Failed to login');
-        setLoading(false);
       } else {
         const tokenResponse = await response.json();
         setToken(tokenResponse);
@@ -78,8 +73,6 @@ const useApi = () => {
     } catch (error) {
       setError(error.message);
       throw error;
-    } finally {
-      setLoading(false);
     }
   }
 
@@ -126,7 +119,7 @@ const useApi = () => {
     }
   };
 
-  return { loading, error, get, post, patch, put, del, loginUser};
+  return { error, get, post, patch, put, del, loginUser};
 };
 
 export default useApi;

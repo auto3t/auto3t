@@ -1,10 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Episode from "../../components/Episode";
 import useProcessingEpisodeStore from "../../stores/processingEpisodesStore";
 import useApi from "../../hooks/api";
 
 const Media = () => {
-  const { loading, error, get } = useApi();
+  const { error, get } = useApi();
+  const [isLoadingEpisodes, setIsLoadingEpisodes] = useState(true);
   const { episodes, setEpisodes } = useProcessingEpisodeStore();
 
   useEffect(() => {
@@ -15,6 +16,7 @@ const Media = () => {
       } catch (error) {
         console.error("error fetching episodes: ", error);
       }
+      setIsLoadingEpisodes(false);
     };
 
     fetchEpisodes();
@@ -24,7 +26,7 @@ const Media = () => {
     <div className="movies">
       <h2>Processing Episodes</h2>
       <div className="episode-items">
-        {loading ? (
+        {isLoadingEpisodes ? (
           <p>Loading...</p>
         ) : error ? (
           <p>Error: {error}</p>

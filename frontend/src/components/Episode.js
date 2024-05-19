@@ -5,7 +5,7 @@ const Episode = ({ episode }) => {
   return (
     <div className="episode-item">
       {episode.image ? (
-        <ImageComponent imagePath={episode.image} alt={'episode-poster-' + episode.number} />
+        <ImageComponent imagePath={episode.image} imageBlur={episode.image_blur} alt={'episode-poster-' + episode.number} />
       ) : (
         <img src="/episode-default.jpg" alt="episode image placeholder" />
       )}

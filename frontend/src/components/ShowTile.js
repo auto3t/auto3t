@@ -7,7 +7,7 @@ const ShowTile = ({ show }) => {
   return (
     <Link to={`${show.id}`}>
       <div key={show.id} className="show-item">
-        <ImageComponent imagePath={show.image} alt={'show-poster-' + show.name} />
+        <ImageComponent imagePath={show.image} imageBlur={show.image_blur} alt={'show-poster-' + show.name} />
         <h2>{show.name}</h2>
       </div>
     </Link>

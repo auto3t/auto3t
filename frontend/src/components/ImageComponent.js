@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getImage } from '../api';
 
-function ImageComponent({ imagePath, alt }) {
+function ImageComponent({ imagePath, imageBlur, alt }) {
   const [imageUrl, setImageUrl] = useState(null);
   const [error, setError] = useState(null);
 
@@ -32,7 +32,7 @@ function ImageComponent({ imagePath, alt }) {
       {imageUrl ? (
         <img src={imageUrl} alt={alt} />
       ) : (
-        <div>Loading...</div>
+        <img id="loading-image" src={imageBlur} alt="Loading..." />
       )}
     </div>
   );

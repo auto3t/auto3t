@@ -1,12 +1,13 @@
 """all core models"""
 
+import base64
 import re
 from hashlib import md5
 from io import BytesIO
 from typing import Self
 from pathlib import Path
 from urllib.parse import parse_qs
-from PIL import Image
+from PIL import Image, ImageFilter
 
 import pytz
 import requests
@@ -30,6 +31,7 @@ class BaseModel(models.Model):
     end_date = models.DateTimeField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     image_url = models.URLField(null=True, blank=True)
+    image_blur = models.TextField(null=True, blank=True)
     image = models.ImageField(upload_to="images/", null=True, blank=True)
 
     class Meta:
@@ -48,6 +50,7 @@ class BaseModel(models.Model):
                 image_io = BytesIO(response.content)
                 image = self.crop_image(image_io)
                 self.image.save(f"{folder}/{self.id_hash}.jpg", ContentFile(image), save=True)  # pylint: disable=no-member
+                self.blur_image()
                 return True
 
             print(f"Failed to download image: {response.status_code}")
@@ -57,7 +60,7 @@ class BaseModel(models.Model):
             print(f"An error occurred while downloading image: {str(e)}")
             return False
 
-    def crop_image(self, image_io: BytesIO):
+    def crop_image(self, image_io: BytesIO) -> bytes:
         """crop image to target resolution"""
         if not self.IMAGE_SIZE:
             return image_io.getvalue()
@@ -83,6 +86,17 @@ class BaseModel(models.Model):
         buffer.seek(0)
 
         return buffer.getvalue()
+
+    def blur_image(self):
+        """create image blur"""
+        with Image.open(self.image) as image:
+            blurred_image = image.filter(ImageFilter.BLUR)
+            buffer = BytesIO()
+            blurred_image.save(buffer, format="JPEG")
+            img_base64 = base64.b64encode(buffer.getvalue()).decode()
+
+        self.image_blur = f"data:image/jpg;base64,{img_base64}"
+        self.save(update_fields=["image_blur"])
 
     def add_keyword(self, instance, to_add) -> None:
         """add keyword or overwrite"""

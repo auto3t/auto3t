@@ -1,6 +1,6 @@
 // api.js
 import { useState } from 'react';
-import { useAuth } from '../context/useAuth';
+import useAuthStore from '../stores/AuthStore';
 
 const API_BASE = 'http://localhost:8000/api/';
 const AUTH_BASE = 'http://localhost:8000/auth/';
@@ -8,7 +8,7 @@ const AUTH_BASE = 'http://localhost:8000/auth/';
 const useApi = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const {accessToken, setAccessToken, setToken, refreshToken} = useAuth();
+  const { accessToken, setAccessToken, refreshToken, setToken } = useAuthStore();
 
   const fetchData = async (url, method = 'GET', body = null, retry = true) => {
     setLoading(true);
@@ -27,12 +27,18 @@ const useApi = () => {
     }
 
     try {
-      const response = await fetch(`${API_BASE}${url}`, options);
+      let response = await fetch(`${API_BASE}${url}`, options);
 
       if (!response.ok) {
         if (response.status === 401 && retry) {
           await handleTokenRefresh();
-          return await fetchData(url, method, body, false);
+          const latestAccessToken = useAuthStore.getState().accessToken;
+          options.headers['Authorization'] = `Bearer ${latestAccessToken}`;
+          response = await fetch(`${API_BASE}${url}`, options);
+        }
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
       }
 

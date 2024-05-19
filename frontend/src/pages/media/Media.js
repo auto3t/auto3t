@@ -1,30 +1,24 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import Episode from "../../components/Episode";
 import useProcessingEpisodeStore from "../../stores/processingEpisodesStore";
 import useApi from "../../hooks/api";
 
 const Media = () => {
-  const { loading, get } = useApi();
+  const { loading, error, get } = useApi();
   const { episodes, setEpisodes } = useProcessingEpisodeStore();
-
-  const fetchEpisodesRef = useRef();
-
-  fetchEpisodesRef.current = async () => {
-    try {
-      const data = await get('episode/?status=d,s');
-      setEpisodes(data);
-    } catch (error) {
-      console.error("error fetching episodes: ", error);
-    }
-  };
 
   useEffect(() => {
     const fetchEpisodes = async () => {
-      await fetchEpisodesRef.current();
+      try {
+        const data = await get('episode/?status=d,s');
+        setEpisodes(data);
+      } catch (error) {
+        console.error("error fetching episodes: ", error);
+      }
     };
-    
+
     fetchEpisodes();
-  }, []);
+  }, [setEpisodes]);
 
   return (
     <div className="movies">
@@ -32,6 +26,8 @@ const Media = () => {
       <div className="episode-items">
         {loading ? (
           <p>Loading...</p>
+        ) : error ? (
+          <p>Error: {error}</p>
         ) : episodes?.length > 0 ? (
           episodes.map((episode) => (
             <Episode key={episode.id} episode={episode} />

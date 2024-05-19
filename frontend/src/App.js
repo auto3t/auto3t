@@ -18,7 +18,6 @@ import Media from './pages/media/Media';
 import RootLayout from './layouts/RootLayout';
 import MediaRootLayout from './layouts/MediaLayout';
 import NotFound from './pages/404';
-import { AuthProvider } from './context/useAuth';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -39,9 +38,7 @@ const router = createBrowserRouter(
 
 function App() {
   return (
-    <AuthProvider>
-      <RouterProvider router={router} />
-    </AuthProvider>
+    <RouterProvider router={router} />
   );
 }
 

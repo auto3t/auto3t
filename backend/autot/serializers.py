@@ -48,6 +48,7 @@ class TVShowSerializer(serializers.ModelSerializer):
     """serialize tv show"""
 
     all_keywords = SearchWordSerializer(source="get_keywords", many=True)
+    status_display = serializers.CharField(source="get_status_display", read_only=True)
 
     class Meta:
         model = TVShow

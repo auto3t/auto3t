@@ -1,6 +1,7 @@
 import { useState } from "react";
 import ImageComponent from "./ImageComponent";
 import useApi from "../hooks/api";
+import TimeComponent from "./TimeComponent";
 
 export default function ShowDetail({ showDetail, fetchShow }) {
 
@@ -68,7 +69,6 @@ export default function ShowDetail({ showDetail, fetchShow }) {
   }
 
   const handleActiveToggle = () => {
-    // setShowDetail({ ...showDetail, is_active: !showDetail.is_active });
     put(`show/${showDetail.id}/`, { is_active: !showDetail.is_active })
       .catch(error => {
         console.error('Error:', error);
@@ -86,6 +86,11 @@ export default function ShowDetail({ showDetail, fetchShow }) {
           <h1>{showDetail.name}</h1>
           <span className='smaller'>ID: {showDetail.remote_server_id}</span>
           <p dangerouslySetInnerHTML={{__html: showDetail.description}} />
+          <div className='tag-group'>
+            <span className="tag-item">Status: {showDetail.status_display}</span>
+            {showDetail.release_date && <span className="tag-item">Premiered: <TimeComponent timestamp={showDetail.release_date} /></span>}
+            {showDetail.end_date && <span className="tag-item">Ended: <TimeComponent timestamp={showDetail.end_date} /></span>}
+          </div>
         </div>
       </div>
       <button onClick={toggleShowDetails}>

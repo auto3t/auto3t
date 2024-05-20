@@ -1,7 +1,8 @@
+import { Link } from "react-router-dom";
 import ImageComponent from "./ImageComponent";
 import TimeComponent from "./TimeComponent";
 
-const Episode = ({ episode }) => {
+const Episode = ({ episode, showShow = false }) => {
   return (
     <div className="episode-item">
       {episode.image ? (
@@ -10,6 +11,7 @@ const Episode = ({ episode }) => {
         <img src="/episode-default.jpg" alt="episode image placeholder" />
       )}
       <p>
+        {showShow && (<Link to={`tv/${episode.season.show.id}`}>{episode.season.show.name} </Link>)}
         <span>S{String(episode.season.number).padStart(2, '0')}</span>
         <span>E{String(episode.number).padStart(2, '0')}</span>
         <span> - {episode.title}</span>

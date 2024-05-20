@@ -32,7 +32,7 @@ const Media = () => {
           <p>Error: {error}</p>
         ) : episodes?.length > 0 ? (
           episodes.map((episode) => (
-            <Episode key={episode.id} episode={episode} />
+            <Episode key={episode.id} episode={episode} showShow={true} />
           ))
         ) : (
           <p>No episodes are processing.</p>

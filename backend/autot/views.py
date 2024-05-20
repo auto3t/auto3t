@@ -160,8 +160,6 @@ class EpisodeViewSet(viewsets.ModelViewSet):
             if limit.isnumeric():
                 queryset = queryset[:int(limit)]
 
-        print(queryset)
-
         return queryset
 
     def create(self, request, *args, **kwargs):

@@ -11,7 +11,7 @@ const Episode = ({ episode, showShow = false }) => {
         <img src="/episode-default.jpg" alt="episode image placeholder" />
       )}
       <p>
-        {showShow && (<Link to={`tv/${episode.season.show.id}`}>{episode.season.show.name} </Link>)}
+        {showShow && (<><Link to={`tv/${episode.season.show.id}`}>{episode.season.show.name}</Link><span> - </span></>)}
         <span>S{String(episode.season.number).padStart(2, '0')}</span>
         <span>E{String(episode.number).padStart(2, '0')}</span>
         <span> - {episode.title}</span>

@@ -1,8 +1,8 @@
 import { create } from "zustand";
 
 const useProcessingEpisodeStore = create((set) => ({
-    episodes: [],
-    setEpisodes: (episodes) => set({ episodes }),
+    processingEpisodes: [],
+    setProcessingEpisodes: (processingEpisodes) => set({ processingEpisodes }),
 }));
 
 export default useProcessingEpisodeStore

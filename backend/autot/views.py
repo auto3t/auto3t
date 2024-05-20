@@ -136,7 +136,13 @@ class EpisodeViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """implement filters"""
-        queryset = TVEpisode.objects.all().order_by("-number")
+        queryset = TVEpisode.objects.all()
+        order_by = self.request.GET.get("order-by")
+        if order_by:
+            queryset = queryset.order_by(order_by)
+        else:
+            queryset = queryset.order_by("-number")
+
         show_id = self.request.GET.get("show")
         if show_id:
             queryset = queryset.filter(season__show=show_id)
@@ -148,6 +154,13 @@ class EpisodeViewSet(viewsets.ModelViewSet):
         episode_status = self.request.GET.get("status")
         if episode_status:
             queryset = queryset.filter(status__in=episode_status.split(","))
+
+        limit = self.request.GET.get("limit")
+        if limit:
+            if limit.isnumeric():
+                queryset = queryset[:int(limit)]
+
+        print(queryset)
 
         return queryset
 

@@ -1,0 +1,39 @@
+import { post } from "../api";
+import TimeComponent from "./TimeComponent";
+
+const ShowSearchResult = ({ result }) => {
+
+  const handleAddShow = (remoteServerId) => {
+    post('show/', { remote_server_id: remoteServerId })
+      .then(data => {
+        console.log('Show added successfully: ', JSON.stringify(data));
+      })
+      .catch(error => {
+        console.error('Error adding show:', error);
+      });
+  };
+
+  return (
+    <div className="show-detail">
+      <div className='show-detail-header'>
+        <div className='show-poster'>
+          {result.image && <img src={result.image} alt='show-poster' />}
+        </div>
+        <div className='show-description'>
+          <h2>{result.name}</h2>
+          <span className='smaller'>ID: <a href={result.url} target='_blank' rel='noreferrer'>{result.id}</a></span>
+          <p dangerouslySetInnerHTML={{__html: result.summary}} />
+          <div className='tag-group'>
+            <span className="tag-item">Status: {result.status}</span>
+            {result.premiered && <span className="tag-item">Premiered: <TimeComponent timestamp={result.premiered} /></span>}
+            {result.ended && <span className="tag-item">Ended: <TimeComponent timestamp={result.ended} /></span>}
+            <button className='pointer' onClick={() => handleAddShow(result.id)}>Add</button>
+          </div>
+          {result.genres.length > 0 && <p>Genres: {result.genres.join(', ')}</p>}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default ShowSearchResult;

@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import useSearchStore from '../../stores/SearchStore';
 import useApi from '../../hooks/api';
+import ShowSearchResult from '../../components/ShowSearchResult';
 
 const Search = () => {
-  const { get, post } = useApi();
+  const { get } = useApi();
   const [isLoading, setIsLoading] = useState(false);
   const [timer, setTimer] = useState(null);
   const { query, results, setQuery, setResults } = useSearchStore();
@@ -41,16 +42,6 @@ const Search = () => {
     setResults([]);
   };
 
-  const handleAddShow = (remoteServerId) => {
-    post('show/', { remote_server_id: remoteServerId })
-      .then(data => {
-        console.log('Show added successfully: ', JSON.stringify(data));
-      })
-      .catch(error => {
-        console.error('Error adding show:', error);
-      });
-  };
-
   return (
     <div>
       <h1>Search</h1>
@@ -59,26 +50,7 @@ const Search = () => {
       {isLoading && <p>Loading...</p>}
       <div>
         {results.map((result) => (
-          <div key={result.id} className="show-detail">
-            <div className='show-detail-header'>
-              <div className='show-poster'>
-                {result.image && <img src={result.image} alt='show-poster' />}
-              </div>
-              <div className='show-description'>
-                <h2>{result.name}</h2>
-                <span className='smaller'>ID: {result.id}</span>
-                <p dangerouslySetInnerHTML={{__html: result.summary}} />
-                <div className='tag-group'>
-                  <a href={result.url} target='_blank' rel='noreferrer'>Link</a>
-                  <span>Status: {result.status}</span>
-                  {result.premiered && <span>Premiered: {result.premiered}</span>}
-                  {result.ended && <span>Ended: {result.ended}</span>}
-                  <button className='pointer' onClick={() => handleAddShow(result.id)}>Add</button>
-                </div>
-                {result.genres.length > 0 && <p>Genres: {result.genres.join(', ')}</p>}
-              </div>
-            </div>
-          </div>
+          <ShowSearchResult key={result.id} result={result} />
         ))}
       </div>
     </div>

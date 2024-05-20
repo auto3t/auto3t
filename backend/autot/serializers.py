@@ -70,6 +70,7 @@ class TVEpisodeSerializer(serializers.ModelSerializer):
 
     season = TVSeasonSerializer()
     torrent = TorrentSerializer()
+    status_display = serializers.CharField(source="get_status_display", read_only=True)
 
     class Meta:
         model = TVEpisode

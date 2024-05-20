@@ -15,7 +15,7 @@ const Episode = ({ episode, showShow = false }) => {
         <span>S{String(episode.season.number).padStart(2, '0')}</span>
         <span>E{String(episode.number).padStart(2, '0')}</span>
         <span> - {episode.title}</span>
-        <span> [{episode.status || '-'}]</span>
+        <span className="tag-item" title={episode.status_display}>{episode.status || '-'}</span>
         { episode.torrent?.progress > 0 && (<span>[{episode.torrent.progress}%]</span>)}
         <br />{ episode.status === 'u' && (<TimeComponent timestamp={episode.release_date} />)}
       </p>

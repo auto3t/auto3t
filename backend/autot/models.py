@@ -19,6 +19,74 @@ from django.db import models
 from autot.src.helper import sanitize_file_name
 
 
+class SearchWordCategory(models.Model):
+    """represent a category to group search words by"""
+
+    name = models.CharField(max_length=255, unique=True)
+
+    def save(self, *args, **kwargs):
+        self.name = self.name.lower()
+        super().save(*args, **kwargs)
+
+
+class SearchWord(models.Model):
+    """all available key words"""
+
+    DIRECTIONS = [
+        ("i", "Include"),
+        ("e", "Exclude"),
+    ]
+
+    word = models.CharField(max_length=255)
+    is_default = models.BooleanField(default=False)
+    category = models.ForeignKey(SearchWordCategory, on_delete=models.PROTECT)
+    direction = models.CharField(max_length=1, default="i", choices=DIRECTIONS)
+
+    class Meta:
+        unique_together = ("direction", "category", "word")
+
+    def save(self, *args, **kwargs):
+        self.word = self.word.lower()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.word
+
+
+class Torrent(models.Model):
+    """torrent representation"""
+
+    TORRENT_TYPE = [
+        ("e", "Episode"),
+        ("s", "Season"),
+    ]
+    TORRENT_STATE = [
+        ("u", "undefined"),
+        ("q", "queued"),
+        ("d", "downloading"),
+        ("f", "finished"),
+        ("a", "archived"),
+    ]
+
+    magnet = models.TextField(unique=True)
+    torrent_type = models.CharField(choices=TORRENT_TYPE, max_length=1)
+    torrent_state = models.CharField(choices=TORRENT_STATE, max_length=1, default="u")
+    progress = models.IntegerField(null=True, blank=True)
+
+    @property
+    def magnet_hash(self):
+        """extract magnet hash"""
+        return parse_qs(self.magnet).get('magnet:?xt')[0].split(":")[-1].lower()
+
+    def __str__(self):
+        """describe torrent"""
+        torrent_string = f"{self.magnet_hash} [{self.torrent_state}]"
+        if self.progress:
+            torrent_string = f"{torrent_string}[{self.progress}%]"
+
+        return torrent_string
+
+
 class BaseModel(models.Model):
     """base model to enherit from"""
 
@@ -114,74 +182,6 @@ class BaseModel(models.Model):
     def id_hash(self) -> str:
         """hash of remote_server_id"""
         return md5(self.remote_server_id.encode()).hexdigest()  # pylint: disable=no-member
-
-
-class SearchWordCategory(models.Model):
-    """represent a category to group search words by"""
-
-    name = models.CharField(max_length=255, unique=True)
-
-    def save(self, *args, **kwargs):
-        self.name = self.name.lower()
-        super().save(*args, **kwargs)
-
-
-class SearchWord(models.Model):
-    """all available key words"""
-
-    DIRECTIONS = [
-        ("i", "Include"),
-        ("e", "Exclude"),
-    ]
-
-    word = models.CharField(max_length=255)
-    is_default = models.BooleanField(default=False)
-    category = models.ForeignKey(SearchWordCategory, on_delete=models.PROTECT)
-    direction = models.CharField(max_length=1, default="i", choices=DIRECTIONS)
-
-    class Meta:
-        unique_together = ("direction", "category", "word")
-
-    def save(self, *args, **kwargs):
-        self.word = self.word.lower()
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return self.word
-
-
-class Torrent(models.Model):
-    """torrent representation"""
-
-    TORRENT_TYPE = [
-        ("e", "Episode"),
-        ("s", "Season"),
-    ]
-    TORRENT_STATE = [
-        ("u", "undefined"),
-        ("q", "queued"),
-        ("d", "downloading"),
-        ("f", "finished"),
-        ("a", "archived"),
-    ]
-
-    magnet = models.TextField(unique=True)
-    torrent_type = models.CharField(choices=TORRENT_TYPE, max_length=1)
-    torrent_state = models.CharField(choices=TORRENT_STATE, max_length=1, default="u")
-    progress = models.IntegerField(null=True, blank=True)
-
-    @property
-    def magnet_hash(self):
-        """extract magnet hash"""
-        return parse_qs(self.magnet).get('magnet:?xt')[0].split(":")[-1].lower()
-
-    def __str__(self):
-        """describe torrent"""
-        torrent_string = f"{self.magnet_hash} [{self.torrent_state}]"
-        if self.progress:
-            torrent_string = f"{torrent_string}[{self.progress}%]"
-
-        return torrent_string
 
 
 class TVShow(BaseModel):

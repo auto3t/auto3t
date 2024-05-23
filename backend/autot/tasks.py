@@ -2,9 +2,10 @@
 
 from datetime import timedelta
 
+from artwork.models import Artwork
 from django_rq import job
 from django_rq.queues import get_queue
-from autot.models import TVShow, TVSeason, TVEpisode
+from autot.models import TVShow
 from autot.src.archive import Archiver
 from autot.src.download import Transmission
 from autot.src.episode import EpisodeStatus
@@ -83,17 +84,9 @@ def media_server_identify() -> None:
 
 
 @job("thumbnails")
-def download_thumbnail(remote_server_id: str, model_type: str) -> None:
-    """download thumbnail"""
-    handler = None
-    if model_type == "show":
-        handler = TVShow.objects.get(remote_server_id=remote_server_id)
-    elif model_type == "season":
-        handler = TVSeason.objects.get(remote_server_id=remote_server_id)
-    elif model_type == "episode":
-        handler = TVEpisode.objects.get(remote_server_id=remote_server_id)
-
-    if not handler:
-        raise ValueError
-
-    handler.download_image()
+def download_thumbnails() -> None:
+    """download thumbnails"""
+    to_download = Artwork.objects.filter(image="")
+    for art_work in to_download:
+        print(f"download: {art_work.image_url}")
+        art_work.download()

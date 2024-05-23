@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "config",
     "autot",
     "authentication",
+    "artwork",
     "django_rq",
 ]
 

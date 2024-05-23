@@ -7,6 +7,7 @@ function ImageComponent({ imagePath, imageBlur, alt }) {
 
   const fetchImage = useCallback(async () => {
     try {
+      await new Promise(resolve => setTimeout(resolve, 2000));
       setImageUrl(null);
       const newImageUrl = await getImage(imagePath);
       setImageUrl(newImageUrl);

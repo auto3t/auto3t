@@ -1,6 +1,7 @@
 """serialize backend models"""
 
 from rest_framework import serializers
+from artwork.serializers import ArtworkSerializer
 from autot.models import (
     SearchWord,
     SearchWordCategory,
@@ -49,6 +50,9 @@ class TVShowSerializer(serializers.ModelSerializer):
 
     all_keywords = SearchWordSerializer(source="get_keywords", many=True)
     status_display = serializers.CharField(source="get_status_display", read_only=True)
+    image_show = ArtworkSerializer(read_only=True)
+    episode_fallback = ArtworkSerializer(read_only=True)
+    season_fallback = ArtworkSerializer(read_only=True)
 
     class Meta:
         model = TVShow
@@ -59,6 +63,7 @@ class TVSeasonSerializer(serializers.ModelSerializer):
     """serialize tv season"""
 
     show = TVShowSerializer()
+    image_season = ArtworkSerializer(read_only=True)
 
     class Meta:
         model = TVSeason
@@ -71,6 +76,7 @@ class TVEpisodeSerializer(serializers.ModelSerializer):
     season = TVSeasonSerializer()
     torrent = TorrentSerializer()
     status_display = serializers.CharField(source="get_status_display", read_only=True)
+    image_episode = ArtworkSerializer(read_only=True)
 
     class Meta:
         model = TVEpisode

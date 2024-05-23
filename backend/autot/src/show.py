@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 import pytz
 from django.db.models import QuerySet
 from django.utils import timezone
-from autot import tasks
+from artwork.models import Artwork
 from autot.models import TVEpisode, TVShow, TVSeason
 from autot.src.client_tvmaze import TVMaze
 
@@ -29,33 +29,53 @@ class TVMazeShow:
         self._get_time_zone(response)
         show_data = self._parse_show(response)
 
-        show, created = TVShow.objects.get_or_create(remote_server_id=self.show_id, defaults=show_data)
-        if created:
-            tasks.download_thumbnail.delay(show.remote_server_id, "show")
+        try:
+            show = TVShow.objects.get(remote_server_id=self.show_id)
+        except TVShow.DoesNotExist:
+            show = TVShow.objects.create(**show_data)
+            show.image_show = Artwork(image_url=self._get_image_url(response))
+            show.image_show.save()
+            show.episode_fallback = Artwork(image_url=self._get_fallback(response, "background"))
+            show.episode_fallback.save()
+            show.season_fallback = Artwork(image_url=self._get_fallback(response, "poster"))
+            show.season_fallback.save()
+            show.save()
+
             print(f"created new show: {show.name}")
-        else:
-            fields_changed = False
-            for key, value in show_data.items():
-                if getattr(show, key) != value:
-                    setattr(show, key, value)
-                    print(f"{show.name}: update [{key}] to [{value}]")
-                    fields_changed = True
-                    if key == "image_url" and value:
-                        tasks.download_thumbnail.delay(show.remote_server_id, "show")
+            return show
 
-                    continue
+        fields_changed = False
+        for key, value in show_data.items():
+            if getattr(show, key) != value:
+                setattr(show, key, value)
+                print(f"{show.name}: update [{key}] to [{value}]")
+                fields_changed = True
 
-                elif show.image_url and not show.image:
-                    tasks.download_thumbnail.delay(show.remote_server_id, "show")
+        if fields_changed:
+            show.save()
 
-            if fields_changed:
-                show.save()
+        image_show = self._get_image_url(response)
+        if image_show != show.image_show.image_url:
+            print(f"update image_show artwork: {image_show}")
+            show.image_show.update(image_show)
+
+        episode_fallback = self._get_fallback(response, "background")
+        if episode_fallback != show.episode_fallback.image_url:
+            print(f"update episode_fallback artwork: {episode_fallback}")
+            show.episode_fallback.update(episode_fallback)
+
+        season_fallback = self._get_fallback(response, "poster")
+        if season_fallback != show.season_fallback.image_url:
+            print(f"update season_fallback artwork: {season_fallback}")
+            show.season_fallback.update(season_fallback)
+
+        show.refresh_from_db()
 
         return show
 
     def _get_remote_show(self) -> dict:
         """get show from tvmaze api"""
-        url = f"shows/{self.show_id}"
+        url = f"shows/{self.show_id}?embed=images"
 
         response = TVMaze().get(url)
         if not response:
@@ -79,7 +99,6 @@ class TVMazeShow:
             "description": response["summary"],
             "name": response["name"],
             "status": self._parse_show_status(response["status"]),
-            "image_url": self._get_image_url(response),
             "show_time_zone": self.timezone.zone,
         }
         if len(response["schedule"].get("days", [])) > 2:
@@ -95,34 +114,50 @@ class TVMazeShow:
 
         return matches[0][0]
 
+    def _get_fallback(self, response, art_type) -> str | None:
+        """episode fallback"""
+        images = response.get("_embedded", {}).get("images")
+        if not images:
+            return None
+
+        matches = [i for i in images if i["type"] == art_type]
+        if not matches:
+            return None
+
+        url = matches[0]["resolutions"]["original"]["url"]
+        return url
+
     def check_seasons(self, show: TVShow) -> QuerySet[TVSeason]:
         """import seasons as needed"""
         seasons_remote = self._get_remote_seasons()
         for season_response in seasons_remote:
             season_data = self._parse_season(season_response, show)
-            season, created = TVSeason.objects.get_or_create(
-                number=season_data["number"], show=show, defaults=season_data
-            )
-            if created:
-                tasks.download_thumbnail.delay(season.remote_server_id, "season")
+
+            try:
+                season = TVSeason.objects.get(remote_server_id=season_data["remote_server_id"])
+            except TVSeason.DoesNotExist:
+                season = TVSeason.objects.create(**season_data)
+                season.image_season = Artwork(image_url=self._get_image_url(season_response))
+                season.image_season.save()
+                season.save()
+
                 print(f"created new season: {season}")
-            else:
-                fields_changed = False
-                for key, value in season_data.items():
-                    if getattr(season, key) != value:
-                        setattr(season, key, value)
-                        print(f"{season}: update [{key}] to [{value}]")
-                        fields_changed = True
-                        if key == "image_url" and value:
-                            tasks.download_thumbnail.delay(season.remote_server_id, "season")
+                continue
 
-                            continue
+            fields_changed = False
+            for key, value in season_data.items():
+                if getattr(season, key) != value:
+                    setattr(season, key, value)
+                    print(f"{season}: update [{key}] to [{value}]")
+                    fields_changed = True
 
-                    elif season.image_url and not season.image:
-                        tasks.download_thumbnail.delay(season.remote_server_id, "season")
+            if fields_changed:
+                season.save()
 
-                if fields_changed:
-                    season.save()
+            image_season = self._get_image_url(season_response)
+            if image_season != season.image_season.image_url:
+                print(f"update image_season artwork: {image_season}")
+                season.image_season.update(image_season)
 
         seasons = TVSeason.objects.filter(show=show)
 
@@ -138,15 +173,14 @@ class TVMazeShow:
 
         return response
 
-    def _parse_season(self, response: dict, show: TVShow) -> dict:
+    def _parse_season(self, season_response: dict, show: TVShow) -> dict:
         """parse seasons"""
         season_data = {
-            "remote_server_id": str(response["id"]),
-            "release_date": self._get_date_time(response.get("premiereDate")),
-            "end_date": self._get_date_time(response.get("endDate")),
-            "description": response["summary"],
-            "image_url": self._get_image_url(response) or show.image_url,
-            "number": response["number"],
+            "remote_server_id": str(season_response["id"]),
+            "release_date": self._get_date_time(season_response.get("premiereDate")),
+            "end_date": self._get_date_time(season_response.get("endDate")),
+            "description": season_response["summary"],
+            "number": season_response["number"],
             "show": show,
         }
 
@@ -154,34 +188,35 @@ class TVMazeShow:
 
     def check_episodes(self, seasons: QuerySet[TVSeason]) -> None:
         """validate show episodes"""
-        episode_response = self._get_remote_episodes()
-        for episode in episode_response:
-            season = seasons.get(number=episode["season"])
-            episode_data = self._parse_episode(episode, season)
-            episode, created = TVEpisode.objects.get_or_create(
-                number=episode_data["number"], season=season, defaults=episode_data
-            )
-            if created:
+        episode_remote = self._get_remote_episodes()
+        for episode_response in episode_remote:
+            season = seasons.get(number=episode_response["season"])
+            episode_data = self._parse_episode(episode_response, season)
+
+            try:
+                episode = TVEpisode.objects.get(remote_server_id=episode_data["remote_server_id"])
+            except TVEpisode.DoesNotExist:
+                episode = TVEpisode.objects.create(**episode_data)
+                episode.image_episode = Artwork(image_url=self._get_image_url(episode_response))
+                episode.image_episode.save()
                 self._set_episode_status(episode)
-                tasks.download_thumbnail.delay(episode.remote_server_id, "episode")
-                print(f"created new episode: {episode}")
-            else:
-                fields_changed = False
-                for key, value in episode_data.items():
-                    if getattr(episode, key) != value:
-                        setattr(episode, key, value)
-                        print(f"{episode}: update [{key}] to [{value}]")
-                        fields_changed = True
-                        if key == "image_url" and value:
-                            tasks.download_thumbnail.delay(episode.remote_server_id, "episode")
+                episode.save()
+                continue
 
-                        continue
+            fields_changed = False
+            for key, value in episode_data.items():
+                if getattr(episode, key) != value:
+                    setattr(episode, key, value)
+                    print(f"{episode}: update [{key}] to [{value}]")
+                    fields_changed = True
 
-                    elif episode.image_url and not episode.image:
-                        tasks.download_thumbnail.delay(episode.remote_server_id, "episode")
+            if fields_changed:
+                episode.save()
 
-                if fields_changed:
-                    episode.save()
+            image_episode = self._get_image_url(episode_response)
+            if image_episode != episode.image_episode.image_url:
+                print(f"update image_episode artwork: {image_episode}")
+                episode.image_episode.update(image_episode)
 
     def _get_remote_episodes(self) -> dict:
         """get episodes of show"""
@@ -193,15 +228,14 @@ class TVMazeShow:
 
         return response
 
-    def _parse_episode(self, response: dict, season: TVSeason) -> dict:
+    def _parse_episode(self, episode_response: dict, season: TVSeason) -> dict:
         """parse episodes"""
         episode_data = {
-            "remote_server_id": str(response["id"]),
-            "release_date": self._get_date_time(response.get("airstamp")),
-            "description": response["summary"],
-            "image_url": self._get_image_url(response),
-            "number": response["number"],
-            "title": response["name"],
+            "remote_server_id": str(episode_response["id"]),
+            "release_date": self._get_date_time(episode_response.get("airstamp")),
+            "description": episode_response["summary"],
+            "number": episode_response["number"],
+            "title": episode_response["name"],
             "season": season,
         }
 
@@ -212,7 +246,6 @@ class TVMazeShow:
         cutoff = timezone.now() - timedelta(days=365)
         if episode.season.end_date and cutoff > episode.season.end_date:
             episode.status = "i"
-            episode.save()
 
     def _get_image_url(self, response) -> str | None:
         """extract image url from response, if available"""

@@ -2,7 +2,6 @@
 
 import base64
 import re
-from hashlib import md5
 from io import BytesIO
 from typing import Self
 from pathlib import Path
@@ -10,12 +9,9 @@ from urllib.parse import parse_qs
 from PIL import Image, ImageFilter
 
 import pytz
-import requests
 
-from django.core.files.base import ContentFile
-from django.dispatch import receiver
-from django.db.models.signals import pre_save, post_delete
 from django.db import models
+from artwork.models import Artwork
 from autot.src.helper import sanitize_file_name
 
 
@@ -98,35 +94,10 @@ class BaseModel(models.Model):
     release_date = models.DateTimeField(null=True, blank=True)
     end_date = models.DateTimeField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
-    image_url = models.URLField(null=True, blank=True)
-    image_blur = models.TextField(null=True, blank=True)
-    image = models.ImageField(upload_to="images/", null=True, blank=True)
 
     class Meta:
         """set abstract to not create db relations"""
         abstract = True
-
-    def download_image(self) -> bool:
-        """download image to media root"""
-        if not self.image_url:
-            return False
-
-        try:
-            response = requests.get(self.image_url, timeout=30)
-            if response.status_code == 200:
-                folder = self.id_hash[-1].lower()
-                image_io = BytesIO(response.content)
-                image = self.crop_image(image_io)
-                self.image.save(f"{folder}/{self.id_hash}.jpg", ContentFile(image), save=True)  # pylint: disable=no-member
-                self.blur_image()
-                return True
-
-            print(f"Failed to download image: {response.status_code}")
-            return False
-
-        except Exception as e:  # pylint: disable=broad-exception-caught
-            print(f"An error occurred while downloading image: {str(e)}")
-            return False
 
     def crop_image(self, image_io: BytesIO) -> bytes:
         """crop image to target resolution"""
@@ -155,16 +126,17 @@ class BaseModel(models.Model):
 
         return buffer.getvalue()
 
-    def blur_image(self):
+    def get_image_blur(self, to_blur: bytes) -> str:
         """create image blur"""
-        with Image.open(self.image) as image:
-            blurred_image = image.filter(ImageFilter.BLUR)
+        with Image.open(to_blur) as image:
+            blurred_image = image.filter(ImageFilter.GaussianBlur(10))
+            blurred_image.thumbnail((100, 100))
             buffer = BytesIO()
             blurred_image.save(buffer, format="JPEG")
             img_base64 = base64.b64encode(buffer.getvalue()).decode()
 
-        self.image_blur = f"data:image/jpg;base64,{img_base64}"
-        self.save(update_fields=["image_blur"])
+        image_blur = f"data:image/jpg;base64,{img_base64}"
+        return image_blur
 
     def add_keyword(self, instance, to_add) -> None:
         """add keyword or overwrite"""
@@ -177,11 +149,6 @@ class BaseModel(models.Model):
     def remove_keyword(self, instance, to_remove) -> None:
         """remove keyword if existing"""
         instance.search_keywords.remove(to_remove)
-
-    @property
-    def id_hash(self) -> str:
-        """hash of remote_server_id"""
-        return md5(self.remote_server_id.encode()).hexdigest()  # pylint: disable=no-member
 
 
 class TVShow(BaseModel):
@@ -204,10 +171,32 @@ class TVShow(BaseModel):
     show_time_zone = models.CharField(max_length=255, default="UTC")
     search_keywords = models.ManyToManyField(SearchWord)
     is_active = models.BooleanField(default=True)
+    image_show = models.ForeignKey(
+        Artwork, related_name="image_show", on_delete=models.CASCADE, null=True, blank=True
+    )
+    episode_fallback = models.ForeignKey(
+        Artwork, related_name="episode_fallback", on_delete=models.CASCADE, null=True, blank=True
+    )
+    season_fallback = models.ForeignKey(
+        Artwork, related_name="season_fallback", on_delete=models.CASCADE, null=True, blank=True
+    )
 
     def __str__(self):
         """set string representation"""
         return f"{self.name}"
+
+    def delete(self, *args, **kwargs):
+        """overwrite to delete image foreign keys"""
+        if self.image_show:
+            self.image_show.delete()
+
+        if self.episode_fallback:
+            self.episode_fallback.delete()
+
+        if self.season_fallback:
+            self.season_fallback.delete()
+
+        super().delete(*args, **kwargs)
 
     @property
     def get_keywords(self: Self):
@@ -239,6 +228,9 @@ class TVSeason(BaseModel):
     number = models.IntegerField()
     show = models.ForeignKey(TVShow, on_delete=models.CASCADE)
     search_keywords = models.ManyToManyField(SearchWord)
+    image_season = models.ForeignKey(
+        Artwork, related_name="image_season", on_delete=models.CASCADE, null=True, blank=True
+    )
 
     class Meta:
         unique_together = ("show", "number")
@@ -246,6 +238,13 @@ class TVSeason(BaseModel):
     def __str__(self):
         """set string representation"""
         return f"{self.show.name} S{str(self.number).zfill(2)}"
+
+    def delete(self, *args, **kwargs):
+        """overwrite to delete image foreign keys"""
+        if self.image_season:
+            self.image_season.delete()
+
+        super().delete(*args, **kwargs)
 
     def get_archive_path(self) -> str:
         """get archive path of season"""
@@ -295,6 +294,9 @@ class TVEpisode(BaseModel):
     status = models.CharField(choices=EPISODE_STATUS, max_length=1, null=True, blank=True)
     torrent = models.ForeignKey(Torrent, null=True, blank=True, on_delete=models.CASCADE)
     search_keywords = models.ManyToManyField(SearchWord)
+    image_episode = models.ForeignKey(
+        Artwork, related_name="image_episode", on_delete=models.CASCADE, null=True, blank=True
+    )
 
     class Meta:
         unique_together = ("season", "number")
@@ -302,6 +304,13 @@ class TVEpisode(BaseModel):
     def __str__(self):
         """set string representation"""
         return self.file_name
+
+    def delete(self, *args, **kwargs):
+        """overwrite to delete image foreign keys"""
+        if self.image_episode:
+            self.image_episode.delete()
+
+        super().delete(*args, **kwargs)
 
     @property
     def get_keywords(self):
@@ -370,29 +379,3 @@ class TVEpisode(BaseModel):
             return True
 
         return False
-
-
-@receiver(pre_save, sender=TVShow)
-@receiver(pre_save, sender=TVSeason)
-@receiver(pre_save, sender=TVEpisode)
-def delete_existing_image(sender, instance, **kwargs):
-    """replace image on update"""
-    if instance.pk:
-        try:
-            old_instance = sender.objects.get(pk=instance.pk)
-        except sender.DoesNotExist:
-            return
-
-        if old_instance.image:
-            if old_instance.image != instance.image:
-                old_instance.image.delete(save=False)
-
-
-@receiver(post_delete, sender=TVShow)
-@receiver(post_delete, sender=TVSeason)
-@receiver(post_delete, sender=TVEpisode)
-def delete_image_file(sender, instance, **kwargs):  # pylint: disable=unused-argument
-    """delete the image when object gets deleted"""
-    print(instance)
-    if instance.image:
-        instance.image.delete(False)

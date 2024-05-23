@@ -189,14 +189,23 @@ class TVShow(BaseModel):
 
     def delete(self, *args, **kwargs):
         """overwrite to delete image foreign keys"""
-        if self.image_show:
-            self.image_show.delete()
+        try:
+            if self.image_show:
+                self.image_show.delete()
+        except Artwork.DoesNotExist:
+            pass
 
-        if self.episode_fallback:
-            self.episode_fallback.delete()
+        try:
+            if self.episode_fallback:
+                self.episode_fallback.delete()
+        except Artwork.DoesNotExist:
+            pass
 
-        if self.season_fallback:
-            self.season_fallback.delete()
+        try:
+            if self.season_fallback:
+                self.season_fallback.delete()
+        except Artwork.DoesNotExist:
+            pass
 
         super().delete(*args, **kwargs)
 

@@ -33,12 +33,21 @@ class TVMazeShow:
             show = TVShow.objects.get(remote_server_id=self.show_id)
         except TVShow.DoesNotExist:
             show = TVShow.objects.create(**show_data)
-            show.image_show = Artwork(image_url=self._get_image_url(response))
-            show.image_show.save()
-            show.episode_fallback = Artwork(image_url=self._get_fallback(response, "background"))
-            show.episode_fallback.save()
-            show.season_fallback = Artwork(image_url=self._get_fallback(response, "poster"))
-            show.season_fallback.save()
+            image_show = self._get_image_url(response)
+            if image_show:
+                show.image_show = Artwork(image_url=image_show)
+                show.image_show.save()
+
+            episode_fallback = self._get_fallback(response, "background")
+            if episode_fallback:
+                show.episode_fallback = Artwork(image_url=episode_fallback)
+                show.episode_fallback.save()
+
+            season_fallback = self._get_fallback(response, "poster")
+            if season_fallback:
+                show.season_fallback = Artwork(image_url=season_fallback)
+                show.season_fallback.save()
+
             show.save()
 
             print(f"created new show: {show.name}")
@@ -137,8 +146,11 @@ class TVMazeShow:
                 season = TVSeason.objects.get(remote_server_id=season_data["remote_server_id"])
             except TVSeason.DoesNotExist:
                 season = TVSeason.objects.create(**season_data)
-                season.image_season = Artwork(image_url=self._get_image_url(season_response))
-                season.image_season.save()
+                image_season = self._get_image_url(season_response)
+                if image_season:
+                    season.image_season = Artwork(image_url=image_season)
+                    season.image_season.save()
+
                 season.save()
 
                 print(f"created new season: {season}")
@@ -197,10 +209,14 @@ class TVMazeShow:
                 episode = TVEpisode.objects.get(remote_server_id=episode_data["remote_server_id"])
             except TVEpisode.DoesNotExist:
                 episode = TVEpisode.objects.create(**episode_data)
-                episode.image_episode = Artwork(image_url=self._get_image_url(episode_response))
-                episode.image_episode.save()
+                image_episode = self._get_image_url(episode_response)
+                if image_episode:
+                    episode.image_episode = Artwork(image_url=image_episode)
+                    episode.image_episode.save()
+
                 self._set_episode_status(episode)
                 episode.save()
+                print(f"created new episode: {episode}")
                 continue
 
             fields_changed = False

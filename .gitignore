@@ -8,6 +8,7 @@ __pycache__
 config.py
 volume
 db.sqlite3
+db.sqlite3-journal
 
 # frontend
 node_modules

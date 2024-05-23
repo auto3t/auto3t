@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getImage } from '../api';
 
-function ImageComponent({ imagePath, imageBlur, alt }) {
+function ImageComponent({ image, alt }) {
   const [imageUrl, setImageUrl] = useState(null);
   const [error, setError] = useState(null);
 
@@ -9,13 +9,13 @@ function ImageComponent({ imagePath, imageBlur, alt }) {
     try {
       await new Promise(resolve => setTimeout(resolve, 2000));
       setImageUrl(null);
-      const newImageUrl = await getImage(imagePath);
+      const newImageUrl = await getImage(image.image);
       setImageUrl(newImageUrl);
       setError(null);
     } catch (error) {
       setError("Failed to fetch image. Please try again later.");
     }
-  }, [imagePath]);
+  }, [image.image]);
 
   useEffect(() => {
     fetchImage();
@@ -33,7 +33,7 @@ function ImageComponent({ imagePath, imageBlur, alt }) {
       {imageUrl ? (
         <img src={imageUrl} alt={alt} />
       ) : (
-        <img id="loading-image" src={imageBlur} alt="Loading..." />
+        <img id="loading-image" src={image.image_blur} alt="Loading..." />
       )}
     </div>
   );

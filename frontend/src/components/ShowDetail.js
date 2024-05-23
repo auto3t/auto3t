@@ -80,7 +80,7 @@ export default function ShowDetail({ showDetail, fetchShow }) {
     <div className="show-detail">
       <div className="show-detail-header">
         <div className="show-poster">
-          <ImageComponent imagePath={showDetail.image} imageBlur={showDetail.image_blur} alt='show-poster' />
+          <ImageComponent image={showDetail.image_show} alt='show-poster' />
         </div>
         <div className="show-description">
           <h1>{showDetail.name}</h1>

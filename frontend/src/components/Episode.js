@@ -5,11 +5,7 @@ import TimeComponent from "./TimeComponent";
 const Episode = ({ episode, showShow = false }) => {
   return (
     <div className="episode-item">
-      {episode.image ? (
-        <ImageComponent imagePath={episode.image} imageBlur={episode.image_blur} alt={'episode-poster-' + episode.number} />
-      ) : (
-        <img src="/episode-default.jpg" alt="episode image placeholder" />
-      )}
+      <ImageComponent image={episode?.image_episode || episode.season.show.episode_fallback} alt={'episode-poster-' + episode.number} />
       <p>
         {showShow && (<><Link to={`tv/${episode.season.show.id}`}>{episode.season.show.name}</Link><span> - </span></>)}
         <span>S{String(episode.season.number).padStart(2, '0')}</span>

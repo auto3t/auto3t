@@ -11,6 +11,8 @@ from PIL import Image, ImageFilter
 import pytz
 
 from django.db import models
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 from artwork.models import Artwork
 from autot.src.helper import sanitize_file_name
 
@@ -379,3 +381,29 @@ class TVEpisode(BaseModel):
             return True
 
         return False
+
+
+@receiver(post_delete, sender=TVShow)
+def delete_show_images(sender, instance, **kwargs):  # pylint: disable=unused-argument
+    """signal for deleting show images"""
+    print(f"{instance}, {instance.id}")
+    if instance.image_show:
+        instance.image_show.delete()
+    if instance.episode_fallback:
+        instance.episode_fallback.delete()
+    if instance.season_fallback:
+        instance.season_fallback.delete()
+
+
+@receiver(post_delete, sender=TVSeason)
+def delete_season_images(sender, instance, **kwargs):  # pylint: disable=unused-argument
+    """signal for deleting season images"""
+    if instance.image_season:
+        instance.image_season.delete()
+
+
+@receiver(post_delete, sender=TVEpisode)
+def delete_episode_images(sender, instance, **kwargs):  # pylint: disable=unused-argument
+    """signal for deleting episode images"""
+    if instance.image_episode:
+        instance.image_episode.delete()

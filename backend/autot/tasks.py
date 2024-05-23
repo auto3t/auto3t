@@ -25,6 +25,7 @@ def refresh_all_shows() -> None:
 
     if jobs:
         queue.enqueue(refresh_status, depends_on=jobs)
+        queue.enqueue(download_thumbnails, depends_on=jobs)
 
 
 @job("show")
@@ -33,6 +34,7 @@ def import_show(remote_server_id: str) -> None:
     queue = get_queue("show")
     refresh_job = refresh_show.delay(remote_server_id)
     queue.enqueue(media_server_identify, depends_on=refresh_job)
+    download_thumbnails.delay()
 
 
 @job("show")

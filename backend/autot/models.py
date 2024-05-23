@@ -209,6 +209,54 @@ class TVShow(BaseModel):
 
         super().delete(*args, **kwargs)
 
+    def update_image_show(self, image_url: str | None) -> None:
+        """handle update with or without existing"""
+        if not image_url:
+            return
+
+        if not self.image_show:
+            print(f"add image_show artwork: {image_url}")
+            self.image_show = Artwork(image_url=image_url)
+            self.image_show.save()
+            self.save()
+            return
+
+        if not self.image_show.image_url == image_url:
+            print(f"update image_show artwork: {image_url}")
+            self.image_show.update(image_url)
+
+    def update_episode_fallback(self, image_url: str | None) -> None:
+        """handle update with or without existing"""
+        if not image_url:
+            return
+
+        if not self.episode_fallback:
+            print(f"add episode_fallback artwork: {image_url}")
+            self.episode_fallback = Artwork(image_url=image_url)
+            self.episode_fallback.save()
+            self.save()
+            return
+
+        if not self.episode_fallback.image_url == image_url:
+            print(f"update episode_fallback artwork: {image_url}")
+            self.episode_fallback.update(image_url)
+
+    def update_season_fallback(self, image_url: str | None) -> None:
+        """handle update with or without existing"""
+        if not image_url:
+            return
+
+        if not self.season_fallback:
+            print(f"add season_fallback artwork: {image_url}")
+            self.season_fallback = Artwork(image_url=image_url)
+            self.season_fallback.save()
+            self.save()
+            return
+
+        if not self.season_fallback.image_url == image_url:
+            print(f"update season_fallback artwork: {image_url}")
+            self.season_fallback.update(image_url)
+
     @property
     def get_keywords(self: Self):
         """Get search keywords for the TV show, apply overwrites"""
@@ -256,6 +304,22 @@ class TVSeason(BaseModel):
             self.image_season.delete()
 
         super().delete(*args, **kwargs)
+
+    def update_image_season(self, image_url: str | None) -> None:
+        """handle update with or without existing"""
+        if not image_url:
+            return
+
+        if not self.image_season:
+            print(f"add image_season artwork: {image_url}")
+            self.image_season = Artwork(image_url=image_url)
+            self.image_season.save()
+            self.save()
+            return
+
+        if not self.image_season.image_url == image_url:
+            print(f"update image_season artwork: {image_url}")
+            self.image_season.update(image_url)
 
     def get_archive_path(self) -> str:
         """get archive path of season"""
@@ -322,6 +386,22 @@ class TVEpisode(BaseModel):
             self.image_episode.delete()
 
         super().delete(*args, **kwargs)
+
+    def update_image_episode(self, image_url: str | None) -> None:
+        """handle update with or without existing"""
+        if not image_url:
+            return
+
+        if not self.image_episode:
+            print(f"add image_episode artwork: {image_url}")
+            self.image_episode = Artwork(image_url=image_url)
+            self.image_episode.save()
+            self.save()
+            return
+
+        if not self.image_episode.image_url == image_url:
+            print(f"update image_episode artwork: {image_url}")
+            self.image_episode.update(image_url)
 
     @property
     def get_keywords(self):

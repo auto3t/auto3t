@@ -23,9 +23,6 @@ class Artwork(models.Model):
 
     def update(self, image_url: str) -> None:
         """update and replace"""
-        if image_url == self.image_url:
-            return
-
         self.image.delete(save=False)  # pylint: disable=no-member
         self.image_blur = None
         self.image_url = image_url

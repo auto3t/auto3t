@@ -64,19 +64,13 @@ class TVMazeShow:
             show.save()
 
         image_show = self._get_image_url(response)
-        if image_show != show.image_show.image_url:
-            print(f"update image_show artwork: {image_show}")
-            show.image_show.update(image_show)
+        show.update_image_show(image_show)
 
         episode_fallback = self._get_fallback(response, "background")
-        if episode_fallback != show.episode_fallback.image_url:
-            print(f"update episode_fallback artwork: {episode_fallback}")
-            show.episode_fallback.update(episode_fallback)
+        show.update_episode_fallback(episode_fallback)
 
         season_fallback = self._get_fallback(response, "poster")
-        if season_fallback != show.season_fallback.image_url:
-            print(f"update season_fallback artwork: {season_fallback}")
-            show.season_fallback.update(season_fallback)
+        show.update_season_fallback(season_fallback)
 
         show.refresh_from_db()
 
@@ -167,9 +161,7 @@ class TVMazeShow:
                 season.save()
 
             image_season = self._get_image_url(season_response)
-            if image_season != season.image_season.image_url:
-                print(f"update image_season artwork: {image_season}")
-                season.image_season.update(image_season)
+            season.update_image_season(image_season)
 
         seasons = TVSeason.objects.filter(show=show)
 
@@ -230,9 +222,7 @@ class TVMazeShow:
                 episode.save()
 
             image_episode = self._get_image_url(episode_response)
-            if image_episode != episode.image_episode.image_url:
-                print(f"update image_episode artwork: {image_episode}")
-                episode.image_episode.update(image_episode)
+            episode.update_image_episode(image_episode)
 
     def _get_remote_episodes(self) -> dict:
         """get episodes of show"""

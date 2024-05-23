@@ -8,13 +8,13 @@ function ImageComponent({ image, alt }) {
   const fetchImage = useCallback(async () => {
     try {
       setImageUrl(null);
-      const newImageUrl = await getImage(image.image);
+      const newImageUrl = await getImage(image?.image);
       setImageUrl(newImageUrl);
       setError(null);
     } catch (error) {
       setError("Failed to fetch image. Please try again later.");
     }
-  }, [image.image]);
+  }, [image?.image]);
 
   useEffect(() => {
     fetchImage();
@@ -32,7 +32,7 @@ function ImageComponent({ image, alt }) {
       {imageUrl ? (
         <img src={imageUrl} alt={alt} />
       ) : (
-        <img id="loading-image" src={image.image_blur} alt="Loading..." />
+        <img id="loading-image" src={image?.image_blur} alt="Loading..." />
       )}
     </div>
   );

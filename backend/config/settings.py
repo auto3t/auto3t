@@ -144,7 +144,7 @@ REST_FRAMEWORK = {
 AUTOT_CONFIG = get_config()
 
 MEDIA_ROOT = AUTOT_CONFIG["MEDIA_ROOT"]
-MEDIA_URL = "api/"
+MEDIA_URL = ""
 
 RQ_QUEUES = {
     "default": {

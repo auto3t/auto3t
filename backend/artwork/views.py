@@ -10,7 +10,7 @@ class ImageView(APIView):
 
     def get(self, request, folder, filename):
         """get image from filesystem"""
-        path = settings.MEDIA_ROOT / "images" / folder / filename
+        path = settings.MEDIA_ROOT / "artwork" / folder / filename
         if not path.exists():
             raise Http404("Image not found")
 

@@ -216,8 +216,8 @@ class TVShow(BaseModel):
 
         if not self.image_show:
             print(f"add image_show artwork: {image_url}")
-            self.image_show = Artwork(image_url=image_url)
-            self.image_show.save()
+            image_show, _ = Artwork.objects.get_or_create(image_url=image_url)
+            self.image_show = image_show
             self.save()
             return
 
@@ -232,8 +232,8 @@ class TVShow(BaseModel):
 
         if not self.episode_fallback:
             print(f"add episode_fallback artwork: {image_url}")
-            self.episode_fallback = Artwork(image_url=image_url)
-            self.episode_fallback.save()
+            episode_fallback, _ = Artwork.objects.get_or_create(image_url=image_url)
+            self.episode_fallback = episode_fallback
             self.save()
             return
 
@@ -248,8 +248,8 @@ class TVShow(BaseModel):
 
         if not self.season_fallback:
             print(f"add season_fallback artwork: {image_url}")
-            self.season_fallback = Artwork(image_url=image_url)
-            self.season_fallback.save()
+            season_fallback, _ = Artwork.objects.get_or_create(image_url=image_url)
+            self.season_fallback = season_fallback
             self.save()
             return
 

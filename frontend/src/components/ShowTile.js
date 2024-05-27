@@ -8,7 +8,9 @@ const ShowTile = ({ show }) => {
     <Link to={`${show.id}`}>
       <div key={show.id} className="show-item">
         <ImageComponent image={show.image_show} alt={'show-poster-' + show.name} />
-        <h2>{show.name}</h2>
+        <div className="tile-description">
+          <h2>{show.name}</h2>
+        </div>
       </div>
     </Link>
   )

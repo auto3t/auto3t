@@ -59,7 +59,10 @@ export default function TVShowDetail() {
 
   useEffect(() => {
     if (seasons.length > 0) {
-      fetchEpisodes(seasons[0].id);
+      const firstSeasonWithReleaseDate = seasons.find(season => season.release_date);
+      if (firstSeasonWithReleaseDate) {
+        fetchEpisodes(firstSeasonWithReleaseDate.id);
+      }
     }
   }, [id, seasons, fetchEpisodes]);
 

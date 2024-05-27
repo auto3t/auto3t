@@ -132,8 +132,12 @@ button:hover {
   background-color: var(--accent-2);
 }
 
-.crumb::after {
-  content: '>';
+.tile-description {
+  text-align: center;
+}
+
+.tile-description.active {
+  background-color: var(--accent-3);
 }
 
 .show-items {
@@ -188,4 +192,5 @@ button:hover {
 .tag-item {
   background-color: var(--accent-3);
   padding: 5px 10px;
+  margin: 5px;
 }

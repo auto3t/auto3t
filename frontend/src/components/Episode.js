@@ -16,7 +16,7 @@ const Episode = ({ episode, showShow = false }) => {
   return (
     <div className="episode-item">
       <ImageComponent image={getEpisodeImage(episode)} alt={'episode-poster-' + episode.number} />
-      <p>
+      <div className="tile-description">
         {showShow && (<><Link to={`tv/${episode.season.show.id}`}>{episode.season.show.name}</Link><span> - </span></>)}
         <span>S{String(episode.season.number).padStart(2, '0')}</span>
         <span>E{String(episode.number).padStart(2, '0')}</span>
@@ -24,7 +24,7 @@ const Episode = ({ episode, showShow = false }) => {
         <span className="tag-item" title={episode.status_display}>{episode.status || '-'}</span>
         { episode.torrent?.progress > 0 && (<span>[{episode.torrent.progress}%]</span>)}
         <br />{ episode.status === 'u' && (<TimeComponent timestamp={episode.release_date} />)}
-      </p>
+      </div>
     </div>
   );
 };

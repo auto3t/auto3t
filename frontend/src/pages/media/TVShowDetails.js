@@ -9,6 +9,7 @@ import BulkUpdateEpisodes from "../../components/EpisodeBulkUpdate";
 import Season from "../../components/Season";
 import ShowDetail from "../../components/ShowDetail";
 import useApi from "../../hooks/api";
+import SeasonMetaData from "../../components/SeasonMetaData";
 
 export default function TVShowDetail() {
   const { get } = useApi();
@@ -80,7 +81,6 @@ export default function TVShowDetail() {
         <ShowDetail showDetail={showDetail} fetchShow={fetchShow} />
       )}
       <div>
-        <h2>Seasons</h2>
         <div className="season-items">
           {isLoadingSeasons ? (
             <p>Loading...</p>
@@ -106,8 +106,8 @@ export default function TVShowDetail() {
       </div>
       {selectedSeason && (
         <div>
+          <SeasonMetaData season={selectedSeason} fetchEpisodes={fetchEpisodes} />
           <h3>Episodes Season {selectedSeason.number}</h3>
-          <BulkUpdateEpisodes seasonId={selectedSeason.id} fetchEpisodes={fetchEpisodes}/>
           <div className="episode-items">
             {isLoadingEpisodes ? (
               <p>Loading...</p>

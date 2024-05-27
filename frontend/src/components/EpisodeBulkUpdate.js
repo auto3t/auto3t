@@ -20,7 +20,7 @@ const BulkUpdateEpisodes = ({ seasonId, fetchEpisodes }) => {
 
   return (
     <div>
-      <h3>Bulk Update Episodes</h3>
+      <p>Bulk Update Episodes:</p>
       <div>
         <label htmlFor="statusSelect">Update Status:</label>
         <select id="statusSelect" value={status} onChange={handleStatusChange}>

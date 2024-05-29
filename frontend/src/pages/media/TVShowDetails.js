@@ -5,7 +5,6 @@ import useSelectedSeasonStore from "../../stores/SeasonSelectedStore";
 import useTVEpisodeStore from "../../stores/EpisodesStore";
 import useShowDetailStore from "../../stores/ShowDetailStore";
 import Episode from "../../components/Episode";
-import BulkUpdateEpisodes from "../../components/EpisodeBulkUpdate";
 import Season from "../../components/Season";
 import ShowDetail from "../../components/ShowDetail";
 import useApi from "../../hooks/api";
@@ -107,7 +106,6 @@ export default function TVShowDetail() {
       {selectedSeason && (
         <div>
           <SeasonMetaData season={selectedSeason} fetchEpisodes={fetchEpisodes} />
-          <h3>Episodes Season {selectedSeason.number}</h3>
           <div className="episode-items">
             {isLoadingEpisodes ? (
               <p>Loading...</p>

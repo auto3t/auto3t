@@ -250,3 +250,37 @@ button:hover {
 .episode-detail-header img {
   max-width: 500px;
 }
+
+.episode-nav-container {
+  position: relative;
+  width: 100%;
+}
+
+.episode-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  width: 100%;
+}
+
+.episode-nav > * {
+  flex: 1;
+}
+
+.first-nav {
+  text-align: right;
+  padding-right: 1rem;
+}
+
+.next-nav {
+  text-align: left;
+  padding-left: 1rem;
+}
+
+.separator {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+}

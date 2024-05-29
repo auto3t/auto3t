@@ -4,6 +4,7 @@ import useApi from "../../hooks/api";
 import ImageComponent from "../../components/ImageComponent";
 import TimeComponent from "../../components/TimeComponent";
 import useEpsiodeDetailStore from "../../stores/EpisodeDetailStore"
+import EpisodeNav from "../../components/EpisodeNav";
 
 export default function TVEpisode() {
 
@@ -22,14 +23,23 @@ export default function TVEpisode() {
 
   useEffect(() => {
     fetchEpisode();
-  }, []);
+  }, [id]);
+
+  const getEpisodeImage = (episode) => {
+    if (episode?.image_episode) {
+      if (episode.image_episode.image) {
+        return episode.image_episode;
+      }
+    }
+    return episode.season.show.episode_fallback;
+  };
 
   return (
     <div>
       {episodeDetail && (
         <>
           <div className="episode-detail-header">
-            <ImageComponent image={episodeDetail.image_episode} />
+            <ImageComponent image={getEpisodeImage(episodeDetail)} />
             <div className="episode-description">
               <h1>{episodeDetail.title}</h1>
               <Link to={`/media/tv/${episodeDetail.season.show.id}`}>
@@ -42,6 +52,7 @@ export default function TVEpisode() {
               </div>
             </div>
           </div>
+          <EpisodeNav currentEpisodeId={episodeDetail.id} />
         </>
       )}
     </div>

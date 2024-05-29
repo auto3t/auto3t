@@ -21,16 +21,18 @@ const Episode = ({ episode, showShow = false }) => {
 
   return (
     <div className="episode-item">
-      <div className='image-wrap'>
-        <ImageComponent image={getEpisodeImage(episode)} alt={'episode-poster-' + episode.number} />
-        { validatedProgress && (
-          <div className="progress-bar-background">
-            <div className="progress-bar" style={{ width: `${validatedProgress}%` }}>
-              <span className="smaller">{ validatedProgress }%</span>
+      <Link to={`/media/episode/${episode.id}`}>
+        <div className='image-wrap'>
+          <ImageComponent image={getEpisodeImage(episode)} alt={'episode-poster-' + episode.number} />
+          { validatedProgress && (
+            <div className="progress-bar-background">
+              <div className="progress-bar" style={{ width: `${validatedProgress}%` }}>
+                <span className="smaller">{ validatedProgress }%</span>
+              </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      </Link>
       <div className="tile-description">
         {showShow && (<><Link to={`tv/${episode.season.show.id}`}>{episode.season.show.name}</Link><br/></>)}
         <span>S{String(episode.season.number).padStart(2, '0')}</span>

@@ -67,6 +67,10 @@ a {
   color: var(--accent-2);
 }
 
+p {
+  margin-bottom: 5px;
+}
+
 button, select, input {
   color: var(--main-fg);
   background-color: var(--accent-1);
@@ -221,7 +225,8 @@ button:hover {
   max-width: 150px;
 }
 
-.show-description {
+.show-description,
+.episode-description {
   margin: 1rem;
 }
 
@@ -235,4 +240,13 @@ button:hover {
   background-color: var(--accent-3);
   padding: 5px 10px;
   margin: 5px;
+  border-radius: 5px;
+}
+
+.episode-detail-header {
+  display: flex;
+}
+
+.episode-detail-header img {
+  max-width: 500px;
 }

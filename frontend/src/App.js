@@ -13,6 +13,7 @@ import TVShows from './pages/media/TVShows';
 import TVShowDetail from './pages/media/TVShowDetails';
 import Search from './pages/media/Search';
 import Media from './pages/media/Media';
+import TVEpisode from './pages/media/Episode';
 
 // layouts
 import RootLayout from './layouts/RootLayout';
@@ -28,6 +29,7 @@ const router = createBrowserRouter(
         <Route path='movie' element={<Movies />} />
         <Route path='tv' element={<TVShows />} />
         <Route path='tv/:id' element={<TVShowDetail />} />
+        <Route path='episode/:id' element={<TVEpisode />} />
       </Route>
       <Route path='settings' element={<Settings />}/>
       <Route path='search' element={<Search />} />

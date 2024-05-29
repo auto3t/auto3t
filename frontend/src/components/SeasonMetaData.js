@@ -14,7 +14,7 @@ const SeasonMetaData = ({ season, fetchEpisodes }) => {
     <>
       <div className="season-detail">
         <h2>Season {season.number}</h2>
-        <span className='smaller'>ID: {season.remote_server_id}</span>
+        <span className='smaller'>ID: <a href={season.remote_server_url} target='_blank' rel='noreferrer'>{season.remote_server_id}</a></span>
         <p dangerouslySetInnerHTML={{__html: season.description}} />
         <div className="tag-group">
           {season.release_date && <span className="tag-item">Start: <TimeComponent timestamp={season.release_date} /></span>}

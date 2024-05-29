@@ -97,6 +97,7 @@ class TVMazeShow:
         """parse API response to model"""
         show_data = {
             "remote_server_id": str(response["id"]),
+            "remote_server_url": response["url"],
             "release_date": self._get_date_time(response.get("premiered")),
             "end_date": self._get_date_time(response.get("ended")),
             "description": response["summary"],
@@ -181,6 +182,7 @@ class TVMazeShow:
         """parse seasons"""
         season_data = {
             "remote_server_id": str(season_response["id"]),
+            "remote_server_url": season_response["url"],
             "release_date": self._get_date_time(season_response.get("premiereDate")),
             "end_date": self._get_date_time(season_response.get("endDate")),
             "description": season_response["summary"],
@@ -238,6 +240,7 @@ class TVMazeShow:
         """parse episodes"""
         episode_data = {
             "remote_server_id": str(episode_response["id"]),
+            "remote_server_url": episode_response["url"],
             "release_date": self._get_date_time(episode_response.get("airstamp")),
             "description": episode_response["summary"],
             "number": episode_response["number"],

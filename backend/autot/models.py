@@ -91,6 +91,7 @@ class BaseModel(models.Model):
     IMAGE_SIZE: None | tuple[int, int] = None
 
     remote_server_id = models.CharField(max_length=255, unique=True)
+    remote_server_url = models.URLField(null=True, blank=True)
     date_added = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     release_date = models.DateTimeField(null=True, blank=True)

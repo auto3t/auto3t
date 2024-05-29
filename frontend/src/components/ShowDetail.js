@@ -84,7 +84,7 @@ export default function ShowDetail({ showDetail, fetchShow }) {
         </div>
         <div className="show-description">
           <h1>{showDetail.name}</h1>
-          <span className='smaller'>ID: {showDetail.remote_server_id}</span>
+          <span className='smaller'>ID: <a href={showDetail.remote_server_url} target='_blank' rel='noreferrer'>{showDetail.remote_server_id}</a></span>
           <p dangerouslySetInnerHTML={{__html: showDetail.description}} />
           <div className='tag-group'>
             <span className="tag-item">Status: {showDetail.status_display}</span>

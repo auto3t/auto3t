@@ -97,6 +97,22 @@ button:hover {
   cursor: pointer;
 }
 
+.image-wrap {
+  position: relative;
+}
+
+.progress-bar-background {
+  position: absolute;
+  width: 100%;
+  background-color: var(--accent-1);
+  bottom: 0;
+}
+
+.progress-bar {
+  text-align: center;
+  background-color: var(--accent-2);
+}
+
 .main-nav {
   display: flex;
   justify-content: space-between;

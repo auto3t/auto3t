@@ -472,6 +472,34 @@ class TVEpisode(BaseModel):
 
         return False
 
+    def get_next(self) -> Self | None:
+        """get next episode for nav"""
+        next_episode = TVEpisode.objects.filter(season=self.season, number=self.number + 1).first()
+        if next_episode:
+            return next_episode
+
+        next_season = TVSeason.objects.filter(show=self.season.show, number=self.season.number + 1).first()
+        if next_season:
+            next_episode = TVEpisode.objects.filter(season=next_season, number=1).first()
+            if next_episode:
+                return next_episode
+
+        return None
+
+    def get_previous(self) -> Self | None:
+        """Get previous episode for navigation."""
+        previous_episode = TVEpisode.objects.filter(season=self.season, number=self.number - 1).first()
+        if previous_episode:
+            return previous_episode
+
+        previous_season = TVSeason.objects.filter(show=self.season.show, number=self.season.number - 1).first()
+        if previous_season:
+            previous_episode = TVEpisode.objects.filter(season=previous_season).order_by('-number').first()
+            if previous_episode:
+                return previous_episode
+
+        return None
+
 
 @receiver(post_delete, sender=TVShow)
 def delete_show_images(sender, instance, **kwargs):  # pylint: disable=unused-argument

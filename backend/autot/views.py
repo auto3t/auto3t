@@ -1,6 +1,7 @@
 """all api views"""
 
 from rest_framework import viewsets
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -170,6 +171,26 @@ class EpisodeViewSet(viewsets.ModelViewSet):
             return Response({"message": "Episodes status updated successfully"})
 
         return Response(serializer.errors, status=400)
+
+    @action(detail=True, methods=["get"])
+    def next(self, request, **kwargs):
+        """get next episode in nav"""
+        episode = self.get_object()
+        next_episode = episode.get_next()
+        if next_episode:
+            serializer = TVEpisodeSerializer(next_episode)
+            return Response(serializer.data)
+        return Response({})
+
+    @action(detail=True, methods=["get"])
+    def previous(self, request, **kwargs):
+        """get previous episode in nav"""
+        episode = self.get_object()
+        previous_episode = episode.get_previous()
+        if previous_episode:
+            serializer = TVEpisodeSerializer(previous_episode)
+            return Response(serializer.data)
+        return Response({})
 
 
 class ShowRemoteSearch(APIView):

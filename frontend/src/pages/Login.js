@@ -14,27 +14,29 @@ export default function Login() {
 
   return(
     <div className="login-wrapper">
-      <h1>Please Log In</h1>
-      <form onSubmit={handleSubmit}>
-        {error && <div>{error}</div>}
-        <div>
-          <input 
-            type="text"
-            placeholder="username"
-            onChange={e => setUserName(e.target.value)}
-          />  
-        </div>
-        <div>
-          <input
-            type="password"
-            placeholder="password"
-            onChange={e => setPassword(e.target.value)}
-          />
-        </div>
-        <div>
-          <button type="submit">Submit</button>
-        </div>
-      </form>
+      <div className='login-elements'>
+        <img src='logo.png' />
+        <form onSubmit={handleSubmit}>
+          {error && <div>{error}</div>}
+          <div>
+            <input 
+              type="text"
+              placeholder="username"
+              onChange={e => setUserName(e.target.value)}
+            />  
+          </div>
+          <div>
+            <input
+              type="password"
+              placeholder="password"
+              onChange={e => setPassword(e.target.value)}
+            />
+          </div>
+          <div>
+            <button type="submit">Login</button>
+          </div>
+        </form>
+      </div>
     </div>
   )
 }

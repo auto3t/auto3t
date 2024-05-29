@@ -4,7 +4,11 @@ import TimeComponent from "./TimeComponent";
 
 const Episode = ({ episode, showShow = false }) => {
 
-  const validatedProgress = episode.torrent?.progress != null ? Math.min(100, Math.max(0, episode.torrent?.progress)) : null;
+  const progress = episode.torrent?.progress;
+  let validatedProgress = null;
+  if (progress !== null && progress !== undefined) {
+    validatedProgress = Math.min(100, Math.max(0, progress));
+  }
 
   const getEpisodeImage = (episode) => {
     if (episode?.image_episode) {

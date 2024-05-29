@@ -145,6 +145,10 @@ button:hover {
 
 .nav-item:hover {
   color: var(--main-fg);
+  background-color: var(--accent-3);
+}
+
+.nav-item.active {
   background-color: var(--accent-2);
 }
 

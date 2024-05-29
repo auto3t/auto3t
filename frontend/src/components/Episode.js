@@ -17,7 +17,7 @@ const Episode = ({ episode, showShow = false }) => {
     <div className="episode-item">
       <ImageComponent image={getEpisodeImage(episode)} alt={'episode-poster-' + episode.number} />
       <div className="tile-description">
-        {showShow && (<><Link to={`tv/${episode.season.show.id}`}>{episode.season.show.name}</Link><span> - </span></>)}
+        {showShow && (<><Link to={`tv/${episode.season.show.id}`}>{episode.season.show.name}</Link><br/></>)}
         <span>S{String(episode.season.number).padStart(2, '0')}</span>
         <span>E{String(episode.number).padStart(2, '0')}</span>
         <span> - {episode.title}</span>

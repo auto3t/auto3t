@@ -17,8 +17,8 @@ const SeasonMetaData = ({ season, fetchEpisodes }) => {
         <span className='smaller'>ID: {season.remote_server_id}</span>
         <p dangerouslySetInnerHTML={{__html: season.description}} />
         <div className="tag-group">
-          {season.release_date && <span className="tag-item">Premiered: <TimeComponent timestamp={season.release_date} /></span>}
-          {season.end_date && <span className="tag-item">Ended: <TimeComponent timestamp={season.end_date} /></span>}
+          {season.release_date && <span className="tag-item">Start: <TimeComponent timestamp={season.release_date} /></span>}
+          {season.end_date && <span className="tag-item">End: <TimeComponent timestamp={season.end_date} /></span>}
         </div>
         <button onClick={toggleSeasonConfigure}>
           {seasonConfigure ? "Hide" : "Configure"}

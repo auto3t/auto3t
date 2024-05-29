@@ -88,8 +88,8 @@ export default function ShowDetail({ showDetail, fetchShow }) {
           <p dangerouslySetInnerHTML={{__html: showDetail.description}} />
           <div className='tag-group'>
             <span className="tag-item">Status: {showDetail.status_display}</span>
-            {showDetail.release_date && <span className="tag-item">Premiered: <TimeComponent timestamp={showDetail.release_date} /></span>}
-            {showDetail.end_date && <span className="tag-item">Ended: <TimeComponent timestamp={showDetail.end_date} /></span>}
+            {showDetail.release_date && <span className="tag-item">Start: <TimeComponent timestamp={showDetail.release_date} /></span>}
+            {showDetail.end_date && <span className="tag-item">End: <TimeComponent timestamp={showDetail.end_date} /></span>}
           </div>
         </div>
       </div>

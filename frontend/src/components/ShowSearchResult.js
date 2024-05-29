@@ -25,8 +25,8 @@ const ShowSearchResult = ({ result }) => {
           <p dangerouslySetInnerHTML={{__html: result.summary}} />
           <div className='tag-group'>
             <span className="tag-item">Status: {result.status}</span>
-            {result.premiered && <span className="tag-item">Premiered: <TimeComponent timestamp={result.premiered} /></span>}
-            {result.ended && <span className="tag-item">Ended: <TimeComponent timestamp={result.ended} /></span>}
+            {result.premiered && <span className="tag-item">Start: <TimeComponent timestamp={result.premiered} /></span>}
+            {result.ended && <span className="tag-item">End: <TimeComponent timestamp={result.ended} /></span>}
             <button className='pointer' onClick={() => handleAddShow(result.id)}>Add</button>
           </div>
           {result.genres.length > 0 && <p>Genres: {result.genres.join(', ')}</p>}

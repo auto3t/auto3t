@@ -53,7 +53,7 @@ const EpisodeNav = ({ currentEpisodeId }) => {
             <span> - {previousEpisode.title}</span>
           </Link>
         ) : (
-          <span className='first-nav'>Previous</span>
+          <span className='first-nav'>First Episode</span>
         )}
         <span className='separator'> | </span>
         {nextEpisode ? (
@@ -64,7 +64,7 @@ const EpisodeNav = ({ currentEpisodeId }) => {
             <span> &#65310;</span>
           </Link>
         ) : (
-          <span className='next-nav'>Next</span>
+          <span className='next-nav'>Last Episode</span>
         )}
       </div>
     </div>

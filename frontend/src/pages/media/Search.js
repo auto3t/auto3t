@@ -47,12 +47,15 @@ const Search = () => {
       <h1>Search</h1>
       <input type="text" value={query} onChange={handleInputChange} placeholder="Search..." />
       <button onClick={handleClear}>Clear</button>
-      {isLoading && <p>Loading...</p>}
-      <div>
-        {results.map((result) => (
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : results?.length > 0 ? (
+        results.map((result) => (
           <ShowSearchResult key={result.id} result={result} />
-        ))}
-      </div>
+        ))
+      ) : (
+        <p>Search query did not return any results.</p>
+      )}
     </div>
   );
 };

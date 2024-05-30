@@ -14,7 +14,7 @@ function ImageComponent({ image, alt }) {
     } catch (error) {
       setError("Failed to fetch image. Please try again later.");
     }
-  }, [image?.image]);
+  }, [image?.image_url]);
 
   useEffect(() => {
     fetchImage();

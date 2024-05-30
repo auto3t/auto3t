@@ -195,6 +195,9 @@ class TVMazeShow:
     def check_episodes(self, seasons: QuerySet[TVSeason]) -> None:
         """validate show episodes"""
         episode_remote = self._get_remote_episodes()
+        if not episode_remote:
+            return
+
         for episode_response in episode_remote:
             season = seasons.get(number=episode_response["season"])
             episode_data = self._parse_episode(episode_response, season)
@@ -226,13 +229,13 @@ class TVMazeShow:
             image_episode = self._get_image_url(episode_response)
             episode.update_image_episode(image_episode)
 
-    def _get_remote_episodes(self) -> dict:
+    def _get_remote_episodes(self) -> dict | None:
         """get episodes of show"""
         url = f"shows/{self.show_id}/episodes"
         response = TVMaze().get(url)
 
         if not response:
-            raise ValueError
+            return None
 
         return response
 

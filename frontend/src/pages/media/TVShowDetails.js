@@ -42,7 +42,7 @@ export default function TVShowDetail() {
 
   useEffect(() => {
     fetchShow();
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     const fetchSeasons = async () => {

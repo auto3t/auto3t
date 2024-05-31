@@ -80,6 +80,7 @@ class TVEpisodeSerializer(serializers.ModelSerializer):
     torrent = TorrentSerializer()
     status_display = serializers.CharField(source="get_status_display", read_only=True)
     image_episode = ArtworkSerializer(read_only=True)
+    search_query = serializers.ReadOnlyField()
 
     class Meta:
         model = TVEpisode

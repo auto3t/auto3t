@@ -46,8 +46,7 @@ const TorrentSearch = ({ searchDefault = '' }) => {
         onChange={(e) => setSearchTerm(e.target.value)}
       />
       <button onClick={handleSearch}>Search</button>
-      <button onClick={handleClear}>Clear</button>
-  
+      {searchResults && (<button onClick={handleClear}>Clear</button>)}
       {isSearching ? (
         <span>Searching...</span>
       ) : searchResults && searchResults.length > 0 ? (

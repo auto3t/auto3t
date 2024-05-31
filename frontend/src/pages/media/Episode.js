@@ -58,7 +58,7 @@ export default function TVEpisode() {
           {episodeDetail?.torrent && (
             <Torrent torrent={episodeDetail.torrent} />
           )}
-          <TorrentSearch searchDefault={episodeDetail.season.show.name} />
+          <TorrentSearch searchDefault={episodeDetail.search_query} />
         </>
       )}
     </div>

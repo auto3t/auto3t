@@ -1,11 +1,11 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import useApi from "../hooks/api";
 import TimeComponent from "./TimeComponent";
 
 const TorrentSearch = ({ searchDefault = '' }) => {
 
   const { post } = useApi();
-  const [searchTerm, setSearchTerm] = useState(searchDefault);
+  const [searchTerm, setSearchTerm] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState(null);
 
@@ -31,6 +31,10 @@ const TorrentSearch = ({ searchDefault = '' }) => {
   const handleClear = () => {
     setSearchResults(null);
   }
+
+  useEffect(() => {
+    setSearchTerm(searchDefault);
+  }, [searchDefault]);
 
   return (
     <div className="manual-search">

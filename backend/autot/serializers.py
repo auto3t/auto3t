@@ -40,6 +40,9 @@ class SearchWordSerializer(serializers.ModelSerializer):
 class TorrentSerializer(serializers.ModelSerializer):
     """serialize torrent"""
 
+    torrent_type_display = serializers.CharField(source="get_torrent_type_display", read_only=True)
+    torrent_state_display = serializers.CharField(source="get_torrent_state_display", read_only=True)
+
     class Meta:
         model = Torrent
         fields = "__all__"

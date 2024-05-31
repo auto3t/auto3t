@@ -5,6 +5,7 @@ import ImageComponent from "../../components/ImageComponent";
 import TimeComponent from "../../components/TimeComponent";
 import useEpsiodeDetailStore from "../../stores/EpisodeDetailStore"
 import EpisodeNav from "../../components/EpisodeNav";
+import Torrent from "../../components/Torrent";
 
 export default function TVEpisode() {
 
@@ -53,6 +54,9 @@ export default function TVEpisode() {
             </div>
           </div>
           <EpisodeNav currentEpisodeId={episodeDetail.id} />
+          {episodeDetail?.torrent && (
+            <Torrent torrent={episodeDetail.torrent} />
+          )}
         </>
       )}
     </div>

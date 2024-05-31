@@ -109,12 +109,13 @@ button:hover {
   position: absolute;
   width: 100%;
   background-color: var(--accent-1);
-  bottom: 0;
+  bottom: 6px;
 }
 
 .progress-bar {
   text-align: center;
   background-color: var(--accent-2);
+  color: var(--main-fg);
 }
 
 .main-nav {

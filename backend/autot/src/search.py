@@ -37,6 +37,16 @@ class Jackett(BaseIndexer):
 
     CONFIG: ConfigType = get_config()
 
+    def free_search(self, search_term: str, category=5000) -> list[dict]:
+        """free form search"""
+        base = self.CONFIG["JK_URL"]
+        key = self.CONFIG["JK_API_KEY"]
+        query = quote(search_term)
+        url = f"{base}/api/v2.0/indexers/all/results?apikey={key}&Query={query}&Category[]={category}"
+        results = self.make_request(url)
+
+        return results
+
     def get_magnet(self, to_search: TVEpisode | TVSeason) -> str | bytes | None:
         """get episode magnet link"""
         url = self.build_url(to_search)

@@ -284,3 +284,14 @@ button:hover {
   transform: translateX(-50%);
   pointer-events: none;
 }
+
+.manual-search-results {
+  max-height: 50vh;
+  overflow: scroll;
+}
+
+.manual-search-item {
+  border: var(--accent-1) solid 2px;
+  margin-bottom: 1rem;
+  padding: 1rem;
+}

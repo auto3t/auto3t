@@ -6,6 +6,7 @@ import TimeComponent from "../../components/TimeComponent";
 import useEpsiodeDetailStore from "../../stores/EpisodeDetailStore"
 import EpisodeNav from "../../components/EpisodeNav";
 import Torrent from "../../components/Torrent";
+import TorrentSearch from "../../components/TorrentSearch";
 
 export default function TVEpisode() {
 
@@ -57,6 +58,7 @@ export default function TVEpisode() {
           {episodeDetail?.torrent && (
             <Torrent torrent={episodeDetail.torrent} />
           )}
+          <TorrentSearch searchDefault={episodeDetail.season.show.name} />
         </>
       )}
     </div>

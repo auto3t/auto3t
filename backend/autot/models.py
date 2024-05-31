@@ -472,6 +472,12 @@ class TVEpisode(BaseModel):
 
         return False
 
+    def reset_download(self) -> None:
+        """reset torrent and state"""
+        self.torrent = None
+        self.status = None
+        self.save()
+
     def get_next(self) -> Self | None:
         """get next episode for nav"""
         next_episode = TVEpisode.objects.filter(season=self.season, number=self.number + 1).first()

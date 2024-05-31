@@ -31,12 +31,6 @@ const TorrentSearch = ({ searchDefault = '' }) => {
     setSearchResults(null);
   }
 
-  const buildDownloadButton = (result) => {
-    const linkType = result.MagnetUri  !== null ? 'Magnet' : 'Link';
-    const url = result.MagnetUri !== null ? result.MagnetUri : result.Link
-    return (<button data-url={url}>Download {linkType}</button>)
-  }
-
   return (
     <div>
       <h2>Manual Search</h2>
@@ -63,7 +57,7 @@ const TorrentSearch = ({ searchDefault = '' }) => {
                     {result.Seeders} / {result.Peers} / {result.Gain.toFixed(2)}
                   </span>
                 </div>
-                {buildDownloadButton(result)}
+                <button data-id={result.Id}>Download</button>
               </div>
             ))}
           </div>

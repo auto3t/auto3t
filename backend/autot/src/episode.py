@@ -17,8 +17,9 @@ class EpisodeStatus:
         self.set_searching()
         found_season_magnets = self.find_seasons_magnets()
         found_episode_magnets = self.find_episode_magnets()
+        plain_torrents = Torrent.objects.filter(torrent_state="u").exists()
 
-        return any([found_episode_magnets, found_season_magnets])
+        return any([found_episode_magnets, found_season_magnets, plain_torrents])
 
     def set_upcoming(self):
         """set upcoming state if has release date"""
@@ -73,11 +74,8 @@ class EpisodeStatus:
             if not magnet:
                 continue
 
-            torrent, _ = Torrent.objects.get_or_create(magnet=magnet, torrent_type="e")
-            episode.torrent = torrent
-            episode.status = "d"
-            episode.save()
+            episode.add_magnet(magnet)
             found_magnets = True
-            print(f"{episode}: added magnet {torrent.magnet_hash}")
+            print(f"{episode}: added magnet {episode.torrent.magnet_hash}")
 
         return found_magnets

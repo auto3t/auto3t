@@ -478,6 +478,13 @@ class TVEpisode(BaseModel):
         self.status = None
         self.save()
 
+    def add_magnet(self, magnet) -> None:
+        """add magnet to episode"""
+        torrent, _ = Torrent.objects.get_or_create(magnet=magnet, torrent_type="e")
+        self.torrent = torrent
+        self.status = "d"
+        self.save()
+
     def get_next(self) -> Self | None:
         """get next episode for nav"""
         next_episode = TVEpisode.objects.filter(season=self.season, number=self.number + 1).first()

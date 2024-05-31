@@ -1,5 +1,7 @@
 """all api views"""
 
+import json
+
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -13,7 +15,8 @@ from autot.models import (
     TVEpisode,
     Torrent,
 )
-from autot.tasks import import_show
+from autot.tasks import import_show, refresh_status
+from autot.src.redis_con import AutotRedis
 from autot.src.search import Jackett
 from autot.src.show_search import ShowId
 from autot.serializers import (
@@ -206,6 +209,32 @@ class EpisodeViewSet(viewsets.ModelViewSet):
             serializer = TVEpisodeSerializer(previous_episode)
             return Response(serializer.data)
         return Response({})
+
+    @action(detail=True, methods=["post"])
+    def torrent(self, request, **kwargs):
+        """overwrite torrent on episode"""
+        episode = self.get_object()
+        data = request.data
+        if not data:
+            return Response({"message": "missing request body"}, status=400)
+
+        search_id = data.get("search_id")
+        if not data:
+            return Response({"message": "missing search_id"}, status=400)
+
+        search_result = AutotRedis().get_message(f"search:{search_id}")
+        if not search_result:
+            return Response({"message": "did not find search result"}, status=404)
+
+        result = json.loads(search_result)
+        magnet = Jackett().extract_magnet([result])
+        if not magnet:
+            return Response({"message": "failed to extract magnet url"}, status=400)
+
+        episode.add_magnet(magnet)
+        refresh_status.delay()
+
+        return Response(result)
 
 
 class ShowRemoteSearch(APIView):

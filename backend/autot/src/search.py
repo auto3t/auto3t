@@ -1,6 +1,7 @@
 """search for magnet links in index"""
 
-from hashlib import sha1
+import json
+from hashlib import md5, sha1
 from urllib.parse import quote
 
 import bencodepy
@@ -8,6 +9,7 @@ import requests
 from django.db.models import QuerySet
 from autot.models import TVEpisode, TVSeason
 from autot.src.config import get_config, ConfigType
+from autot.src.redis_con import AutotRedis
 
 
 class BaseIndexer:
@@ -21,10 +23,6 @@ class BaseIndexer:
 
     def make_request(self, url: str) -> list[dict]:
         """make request against indexed, return list of results"""
-        raise NotImplementedError
-
-    def select_link(self, results: list[dict], to_search: TVEpisode | TVSeason) -> str | bytes | None:
-        """select most desired magnet link"""
         raise NotImplementedError
 
     def parse_keywords(self, keywords: QuerySet) -> str | None:
@@ -44,14 +42,25 @@ class Jackett(BaseIndexer):
         query = quote(search_term)
         url = f"{base}/api/v2.0/indexers/all/results?apikey={key}&Query={query}&Category[]={category}"
         results = self.make_request(url)
+        self._cache_free_search(results)
 
         return results
+
+    def _cache_free_search(self, results):
+        """cache in redis for ID lookup"""
+        messages = {"search:" + i["Id"]: json.dumps(i) for i in results}
+        AutotRedis().set_messages(messages, expire=3600)
 
     def get_magnet(self, to_search: TVEpisode | TVSeason) -> str | bytes | None:
         """get episode magnet link"""
         url = self.build_url(to_search)
         results = self.make_request(url)
-        magnet = self.select_link(results, to_search)
+        valid_results = self.validate_links(results, to_search)
+        if not valid_results:
+            print("no valid magnet option found")
+            return None
+
+        magnet = self.extract_magnet(valid_results)
 
         return magnet
 
@@ -71,23 +80,21 @@ class Jackett(BaseIndexer):
         if not response.ok:
             raise ValueError
 
-        results = response.json()
+        results_json = response.json()
+        results = results_json["Results"]
+        for result in results:
+            hex_hash = md5(json.dumps(result).encode()).digest().hex()
+            result["Id"] = hex_hash
 
-        return results["Results"]
+        return results
 
-    def select_link(self, results: list[dict], to_search: TVEpisode | TVSeason) -> str | bytes | None:
-        """filter for best link"""
-        valid_magnets = list(filter(lambda result: self._filter_magnets(result, to_search), results))
-        if not valid_magnets:
-            print("no valid magnet option found")
-            return None
-
-        sorted_magnets = sorted(valid_magnets, key=lambda x: x["Gain"], reverse=True)
-        magnet_link = sorted_magnets[0].get("MagnetUri")
+    def extract_magnet(self, results: list[dict]) -> str | None:
+        """extract magnet from list or results"""
+        magnet_link = results[0].get("MagnetUri")
         if magnet_link:
             return magnet_link
 
-        torrent_link = sorted_magnets[0].get("Link")
+        torrent_link = results[0].get("Link")
         if not torrent_link:
             raise ValueError("faild to extract magnet")
 
@@ -103,6 +110,16 @@ class Jackett(BaseIndexer):
             return location
 
         raise ValueError("faild to extract magnet")
+
+    def validate_links(self, results: list[dict], to_search: TVEpisode | TVSeason) -> list[dict] | None:
+        """validate for auto tasks"""
+        valid_magnets = list(filter(lambda result: self._filter_magnets(result, to_search), results))
+        if not valid_magnets:
+            return None
+
+        sorted_magnets = sorted(valid_magnets, key=lambda x: x["Gain"], reverse=True)
+
+        return sorted_magnets
 
     @staticmethod
     def _filter_magnets(result_item: dict, to_search: TVEpisode | TVSeason) -> bool:

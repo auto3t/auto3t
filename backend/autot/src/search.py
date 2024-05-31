@@ -42,7 +42,8 @@ class Jackett(BaseIndexer):
         query = quote(search_term)
         url = f"{base}/api/v2.0/indexers/all/results?apikey={key}&Query={query}&Category[]={category}"
         results = self.make_request(url)
-        self._cache_free_search(results)
+        if results:
+            self._cache_free_search(results)
 
         return results
 

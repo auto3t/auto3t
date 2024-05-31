@@ -55,6 +55,7 @@ h1 {
 h2 {
   margin: 10px 0;
   font-family: Righteous;
+  text-transform: uppercase;
 }
 
 h3 {
@@ -99,6 +100,12 @@ button:hover {
 
 .pointer {
   cursor: pointer;
+}
+
+.text-blob {
+  background-color: var(--accent-3);
+  padding: 1rem;
+  word-break: break-all;
 }
 
 .image-wrap {
@@ -240,7 +247,6 @@ button:hover {
 .tag-item {
   background-color: var(--accent-3);
   padding: 5px 10px;
-  margin: 5px;
   border-radius: 5px;
 }
 
@@ -284,6 +290,10 @@ button:hover {
   left: 50%;
   transform: translateX(-50%);
   pointer-events: none;
+}
+
+.manual-search input {
+  width: 400px;
 }
 
 .manual-search-results {

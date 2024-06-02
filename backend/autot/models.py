@@ -50,7 +50,7 @@ class SearchWord(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.word
+        return f"{self.category}: {self.word} [{self.direction}]"
 
 
 class Torrent(models.Model):
@@ -260,16 +260,15 @@ class TVShow(BaseModel):
             print(f"update season_fallback artwork: {image_url}")
             self.season_fallback.update(image_url)
 
-    @property
     def get_keywords(self: Self):
-        """Get search keywords for the TV show, apply overwrites"""
+        """build keywords of show"""
         # pylint: disable=E1101
         keywords = SearchWord.objects.none()
         for category in SearchWordCategory.objects.all():
-            if self.search_keywords.filter(category=category).exists():
+            if self.search_keywords.filter(category=category, applies_to_tv=True).exists():
                 keywords |= self.search_keywords.filter(category=category)
             else:
-                keywords |= SearchWord.objects.filter(is_default=True, category=category)
+                keywords |= SearchWord.objects.filter(is_default=True, category=category, applies_to_tv=True)
 
         return keywords.distinct()
 
@@ -328,16 +327,19 @@ class TVSeason(BaseModel):
         """get archive path of season"""
         return self.show.get_archive_path() / f"Season {self.number}"
 
-    @property
-    def get_keywords(self):
-        """get search keywords, fallback to default"""
+    def get_keywords(self: Self):
+        """build keywords of show"""
         # pylint: disable=E1101
-        if self.search_keywords.exists():
-            return self.search_keywords.all()
-        if self.show.search_keywords.exists():
-            return self.show.search_keywords.all()
+        keywords = SearchWord.objects.none()
+        for category in SearchWordCategory.objects.all():
+            if self.search_keywords.filter(category=category, applies_to_tv=True).exists():
+                keywords |= self.search_keywords.filter(category=category)
+            elif self.show.search_keywords.filter(category=category, applies_to_tv=True).exists():
+                keywords |= self.show.search_keywords.filter(category=category, applies_to_tv=True)
+            else:
+                keywords |= SearchWord.objects.filter(is_default=True, category=category, applies_to_tv=True)
 
-        return SearchWord.objects.filter(is_default=True)
+        return keywords.distinct()
 
     @property
     def search_query(self) -> str:
@@ -406,18 +408,21 @@ class TVEpisode(BaseModel):
             print(f"update image_episode artwork: {image_url}")
             self.image_episode.update(image_url)
 
-    @property
-    def get_keywords(self):
-        """get search keywords, fallback to default"""
+    def get_keywords(self: Self):
+        """build keywords of show"""
         # pylint: disable=E1101
-        if self.search_keywords.exists():
-            return self.search_keywords.all()
-        if self.season.search_keywords.exists():
-            return self.season.search_keywords.all()
-        if self.season.show.search_keywords.exists():
-            return self.season.show.search_keywords.all()
+        keywords = SearchWord.objects.none()
+        for category in SearchWordCategory.objects.all():
+            if self.search_keywords.filter(category=category, applies_to_tv=True).exists():
+                keywords |= self.search_keywords.filter(category=category)
+            elif self.season.search_keywords.filter(category=category, applies_to_tv=True).exists():
+                keywords |= self.season.search_keywords.filter(category=category, applies_to_tv=True)
+            elif self.season.show.search_keywords.filter(category=category, applies_to_tv=True).exists():
+                keywords |= self.season.show.search_keywords.filter(category=category, applies_to_tv=True)
+            else:
+                keywords |= SearchWord.objects.filter(is_default=True, category=category, applies_to_tv=True)
 
-        return SearchWord.objects.filter(is_default=True)
+        return keywords.distinct()
 
     @property
     def identifyer(self) -> str:

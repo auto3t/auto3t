@@ -139,7 +139,6 @@ export default function Keywords() {
       ...prevState,
       [name]: val
     }));
-    console.log(editedKeyword);
   };
 
   const handleShowAddForm = () => {

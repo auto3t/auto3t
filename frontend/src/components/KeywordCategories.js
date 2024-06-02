@@ -102,51 +102,72 @@ export default function KeywordCategories() {
   return (
     <>
       <h2>Categories</h2>
-      {createCategory === true ? (
-        <>
-          <h3>Create New Category</h3>
-          <form onSubmit={handleNewCategorySubmit}>
-            <input
-              type="text"
-              value={newCategoryName}
-              onChange={(e) => setNewCategoryName(e.target.value)}
-              placeholder="Enter category name"
-            />
-            <button type="submit">Create Category</button>
-            <button onClick={handleCancelCreate}>Cancel</button>
-          </form>
-        </>
-      ) : (
-        <button onClick={handleShowCreateForm}>Add</button>
-      )}
-      {categories.map((category) => (
-        <div key={category.id}>
-        {editingCategory === category ? (
-          <div>
-            <input
-              type="text"
-              value={editedCategoryName}
-              onChange={(e) => setEditedCategoryName(e.target.value)}
-            />
-            <button onClick={handleUpdateCategory}>Update</button>
-            <button onClick={handleCancelEdit}>Cancel</button>
-          </div>
-        ) : (
-          <div>
-            <span>{category.name}</span>
-            <button onClick={() => handleEditCategory(category)}>Edit</button>
-            <button onClick={() => handleDeleteCategory(category)}>Delete</button>
-            {deletingCategory === category && (
-              <>
-                <span>Are you sure you want to delete {deletingCategory && deletingCategory.name}?</span>
-                <button onClick={handleDeleteConfirm}>Confirm</button>
-                <button onClick={handleCancelDelete}>Cancel</button>
-              </>
-            )}
-          </div>
-        )}
-        </div>
-      ))}
+      <table className="keyword-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>
+              {createCategory === false && (
+                <button onClick={handleShowCreateForm}>Add</button>
+              )}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {createCategory === true && (
+            <tr>
+              <td>
+                <input
+                  type="text"
+                  value={newCategoryName}
+                  onChange={(e) => setNewCategoryName(e.target.value)}
+                  placeholder="Enter category name"
+                />
+              </td>
+              <td>
+                <button onClick={handleNewCategorySubmit}>Create Category</button>
+                <button onClick={handleCancelCreate}>Cancel</button>
+              </td>
+            </tr>
+          )}
+          {categories.map((category) => (
+            <tr key={category.id}>
+              {editingCategory === category ? (
+                <>
+                  <td>
+                    <input
+                      type="text"
+                      value={editedCategoryName}
+                      onChange={(e) => setEditedCategoryName(e.target.value)}
+                    />
+                  </td>
+                  <td>
+                    <button onClick={handleUpdateCategory}>Update</button>
+                    <button onClick={handleCancelEdit}>Cancel</button>
+                  </td>
+                </>
+              ) : (
+                <>
+                  <td>{category.name}</td>
+                  <td>
+                    {deletingCategory === category ? (
+                      <>
+                        <button onClick={handleDeleteConfirm}>Confirm</button>
+                        <button onClick={handleCancelDelete}>Cancel</button>
+                      </>
+                    ) : (
+                      <>
+                        <button onClick={() => handleEditCategory(category)}>Edit</button>
+                        <button onClick={() => handleDeleteCategory(category)}>Delete</button>
+                      </>
+                    )}
+                  </td>
+                </>
+              )}
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </>
   )
 }

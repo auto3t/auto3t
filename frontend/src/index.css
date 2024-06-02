@@ -316,3 +316,8 @@ button:hover {
 .keyword-table tr {
   padding: 10px 0;
 }
+
+.keyword-table td:nth-child(1),
+.keyword-table td:nth-child(2) {
+  min-width: 150px;
+}

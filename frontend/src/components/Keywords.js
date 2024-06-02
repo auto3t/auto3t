@@ -143,41 +143,6 @@ export default function Keywords() {
   return (
     <>
       <h2>Search Key Words</h2>
-      {createKeyword === true ? (
-        <>
-          <h3>Create New Keyword</h3>
-          <form onSubmit={handleNewKeywordSubmit}>
-            <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
-              <option value="">Select Category</option>
-              {categories.map((category) => (
-                <option key={category.id} value={category.id}>{category.name}</option>
-              ))}
-            </select>
-            <input
-              type="text"
-              value={newKeyword}
-              onChange={(e) => setNewKeyword(e.target.value)}
-              placeholder="Enter keyword"
-            />
-            <select value={direction} onChange={(e) => setDirection(e.target.value)}>
-              <option value="i">Include</option>
-              <option value="e">Exclude</option>
-            </select>
-            <label>
-              Default:
-              <input
-                type="checkbox"
-                checked={isDefault}
-                onChange={(e) => setIsDefault(e.target.checked)}
-              />
-            </label>
-            <button type="submit">Create Keyword</button>
-            <button onClick={handleCancelCreate}>Cancel</button>
-          </form>
-        </>
-      ) : (
-        <button onClick={handleShowAddForm}>Add</button>
-      )}
       <table className="keyword-table">
         <thead>
           <tr>
@@ -185,10 +150,51 @@ export default function Keywords() {
             <th>Keyword</th>
             <th>Direction</th>
             <th>Default</th>
-            <th></th>
+            <th>
+              {createKeyword == false && (
+                <button onClick={handleShowAddForm}>Add</button>
+              )}
+            </th>
           </tr>
         </thead>
         <tbody>
+          {createKeyword === true && (
+            <tr>
+              <td>
+                <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
+                  <option value="">Select Category</option>
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.id}>{category.name}</option>
+                  ))}
+                </select>
+              </td>
+              <td>
+                <input
+                  type="text"
+                  value={newKeyword}
+                  onChange={(e) => setNewKeyword(e.target.value)}
+                  placeholder="Enter keyword"
+                />
+              </td>
+              <td>
+                <select value={direction} onChange={(e) => setDirection(e.target.value)}>
+                  <option value="i">Include</option>
+                  <option value="e">Exclude</option>
+                </select>
+              </td>
+              <td>
+                <input
+                  type="checkbox"
+                  checked={isDefault}
+                  onChange={(e) => setIsDefault(e.target.checked)}
+                />
+              </td>
+              <td>
+                <button type="submit">Create Keyword</button>
+                <button onClick={handleCancelCreate}>Cancel</button>
+              </td>
+            </tr>
+          )}
           {keywords.map((keyword) => (
             <tr key={keyword.id}>
               {editingKeyword === keyword ? (

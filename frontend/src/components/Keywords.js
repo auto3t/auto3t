@@ -25,6 +25,10 @@ export default function Keywords() {
     setDirection,
     isDefault,
     setIsDefault,
+    appliesToMovie,
+    setAppliesToMovie,
+    appliesToTv,
+    setAppliesToTv,
   } = useSearchKeyWordStore();
 
   const [editedKeyword, setEditedKeyword] = useState({
@@ -48,6 +52,8 @@ export default function Keywords() {
     setSelectedCategory("");
     setDirection("i");
     setIsDefault(false);
+    setAppliesToMovie(false);
+    setAppliesToTv(false);
   }
 
   const handleNewKeywordSubmit = async (event) => {
@@ -58,6 +64,8 @@ export default function Keywords() {
         word: newKeyword,
         direction: direction,
         is_default: isDefault,
+        applies_to_movie: appliesToMovie,
+        applies_to_tv: appliesToTv,
       }
       const data = await post('keyword/', body);
       if (data) {
@@ -101,6 +109,8 @@ export default function Keywords() {
       word: keyword.word,
       direction: keyword.direction,
       is_default: keyword.is_default,
+      applies_to_movie: keyword.applies_to_movie,
+      applies_to_tv: keyword.applies_to_tv,
     });
   };
 
@@ -129,6 +139,7 @@ export default function Keywords() {
       ...prevState,
       [name]: val
     }));
+    console.log(editedKeyword);
   };
 
   const handleShowAddForm = () => {
@@ -150,6 +161,8 @@ export default function Keywords() {
             <th>Keyword</th>
             <th>Direction</th>
             <th>Default</th>
+            <th>TV</th>
+            <th>Movie</th>
             <th>
               {createKeyword == false && (
                 <button onClick={handleShowAddForm}>Add</button>
@@ -187,6 +200,20 @@ export default function Keywords() {
                   type="checkbox"
                   checked={isDefault}
                   onChange={(e) => setIsDefault(e.target.checked)}
+                />
+              </td>
+              <td>
+                <input
+                  type="checkbox"
+                  checked={appliesToTv}
+                  onChange={(e) => setAppliesToTv(e.target.checked)}
+                />
+              </td>
+              <td>
+                <input
+                  type="checkbox"
+                  checked={appliesToMovie}
+                  onChange={(e) => setAppliesToMovie(e.target.checked)}
                 />
               </td>
               <td>
@@ -238,6 +265,22 @@ export default function Keywords() {
                     />
                   </td>
                   <td>
+                    <input
+                      type="checkbox"
+                      name="applies_to_tv"
+                      checked={editedKeyword.applies_to_tv}
+                      onChange={handleInputChange}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="checkbox"
+                      name="applies_to_movie"
+                      checked={editedKeyword.applies_to_movie}
+                      onChange={handleInputChange}
+                    />
+                  </td>
+                  <td>
                     <button type="button" onClick={handleEditSubmit}>Update</button>
                     <button type="button" onClick={handleEditCancel}>Cancel</button>
                   </td>
@@ -247,7 +290,9 @@ export default function Keywords() {
                   <td>{keyword.category_name}</td>
                   <td>{keyword.word} </td>
                   <td>{keyword.direction_display}</td>
-                  {keyword.is_default ? (<td>✅</td>) : (<td></td>)}
+                  <td>{keyword.is_default ? ('✅') : ('-')}</td>
+                  <td>{keyword.applies_to_tv ? ('✅') : ('-')}</td>
+                  <td>{keyword.applies_to_movie ? ('✅') : ('-')}</td>
                   <td>
                     {deletingKeyword === keyword ? (
                       <>

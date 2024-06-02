@@ -39,6 +39,8 @@ class SearchWord(models.Model):
     is_default = models.BooleanField(default=False)
     category = models.ForeignKey(SearchWordCategory, on_delete=models.PROTECT)
     direction = models.CharField(max_length=1, default="i", choices=DIRECTIONS)
+    applies_to_movie = models.BooleanField(default=False)
+    applies_to_tv = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ("direction", "category", "word")

@@ -178,67 +178,87 @@ export default function Keywords() {
       ) : (
         <button onClick={handleShowAddForm}>Add</button>
       )}
-      {keywords.map((keyword) => (
-        <div key={keyword.id}>
-          {editingKeyword === keyword ? (
-            <form>
-              <input
-                type="text"
-                name="word"
-                value={editedKeyword.word}
-                onChange={handleInputChange}
-              />
-              <select
-                name="category"
-                value={editedKeyword.category}
-                onChange={handleInputChange}
-              >
-                <option value="">Select Category</option>
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>{category.name}</option>
-                ))}
-              </select>
-              <select
-                name="direction"
-                value={editedKeyword.direction}
-                onChange={handleInputChange}
-              >
-                <option value="i">Include</option>
-                <option value="e">Exclude</option>
-              </select>
-              <label>
-                Default:
-                <input
-                  type="checkbox"
-                  name="is_default"
-                  checked={editedKeyword.is_default}
-                  onChange={handleInputChange}
-                />
-              </label>
-              <button type="button" onClick={handleEditSubmit}>Update</button>
-              <button type="button" onClick={handleEditCancel}>Cancel</button>
-            </form>
-          ) : (
-            <>
-              <p>
-                <span>{keyword.category_name}: </span>
-                <span>{keyword.word} </span>
-                <span>[{keyword.direction}] </span>
-                {keyword.is_default && (<span>default</span>)}
-                <button onClick={() => handleEditKeyword(keyword)}>Edit</button>
-                <button onClick={() => handleDeleteKeyword(keyword)}>Delete</button>
-                {deletingKeyword === keyword && (
-                  <>
-                    <span>Are you sure you want to delete {deletingKeyword && deletingKeyword.word}?</span>
-                    <button onClick={handleDeleteConfirm}>Confirm</button>
-                    <button onClick={handleCancelDelete}>Cancel</button>
-                  </>
-                )}
-              </p>
-            </>
-          )}
-        </div>
-      ))}
+      <table className="keyword-table">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Keyword</th>
+            <th>Direction</th>
+            <th>Default</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {keywords.map((keyword) => (
+            <tr key={keyword.id}>
+              {editingKeyword === keyword ? (
+                <>
+                  <td>
+                    <select
+                      name="category"
+                      value={editedKeyword.category}
+                      onChange={handleInputChange}
+                    >
+                      <option value="">Select Category</option>
+                      {categories.map((category) => (
+                        <option key={category.id} value={category.id}>{category.name}</option>
+                      ))}
+                    </select>
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      name="word"
+                      value={editedKeyword.word}
+                      onChange={handleInputChange}
+                    />
+                  </td>
+                  <td>
+                    <select
+                      name="direction"
+                      value={editedKeyword.direction}
+                      onChange={handleInputChange}
+                    >
+                      <option value="i">Include</option>
+                      <option value="e">Exclude</option>
+                    </select>
+                  </td>
+                  <td>
+                    <input
+                      type="checkbox"
+                      name="is_default"
+                      checked={editedKeyword.is_default}
+                      onChange={handleInputChange}
+                    />
+                  </td>
+                  <td>
+                    <button type="button" onClick={handleEditSubmit}>Update</button>
+                    <button type="button" onClick={handleEditCancel}>Cancel</button>
+                  </td>
+                </>
+              ) : (
+                <>
+                  <td>{keyword.category_name}</td>
+                  <td>{keyword.word} </td>
+                  <td>{keyword.direction_display}</td>
+                  {keyword.is_default ? (<td>✅</td>) : (<td></td>)}
+                  <td>
+                    <button onClick={() => handleEditKeyword(keyword)}>Edit</button>
+                    <button onClick={() => handleDeleteKeyword(keyword)}>Delete</button>
+                    {deletingKeyword === keyword && (
+                      <>
+                        <span>Are you sure you want to delete {deletingKeyword && deletingKeyword.word}?</span>
+                        <button onClick={handleDeleteConfirm}>Confirm</button>
+                        <button onClick={handleCancelDelete}>Cancel</button>
+                      </>
+                    )}
+                  </td>
+                </>
+              )}
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </>
   )
 }

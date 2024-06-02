@@ -306,3 +306,13 @@ button:hover {
   margin-bottom: 1rem;
   padding: 1rem;
 }
+
+.keyword-table th {
+  background-color: var(--accent-3);
+  padding: 5px 1rem;
+  text-align: left;
+}
+
+.keyword-table tr {
+  padding: 10px 0;
+}

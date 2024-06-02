@@ -190,7 +190,7 @@ export default function Keywords() {
                 />
               </td>
               <td>
-                <button type="submit">Create Keyword</button>
+                <button onClick={handleNewKeywordSubmit}>Create Keyword</button>
                 <button onClick={handleCancelCreate}>Cancel</button>
               </td>
             </tr>
@@ -249,13 +249,15 @@ export default function Keywords() {
                   <td>{keyword.direction_display}</td>
                   {keyword.is_default ? (<td>✅</td>) : (<td></td>)}
                   <td>
-                    <button onClick={() => handleEditKeyword(keyword)}>Edit</button>
-                    <button onClick={() => handleDeleteKeyword(keyword)}>Delete</button>
-                    {deletingKeyword === keyword && (
+                    {deletingKeyword === keyword ? (
                       <>
-                        <span>Are you sure you want to delete {deletingKeyword && deletingKeyword.word}?</span>
                         <button onClick={handleDeleteConfirm}>Confirm</button>
                         <button onClick={handleCancelDelete}>Cancel</button>
+                      </>
+                    ) : (
+                      <>
+                        <button onClick={() => handleEditKeyword(keyword)}>Edit</button>
+                        <button onClick={() => handleDeleteKeyword(keyword)}>Delete</button>
                       </>
                     )}
                   </td>

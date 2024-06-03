@@ -36,11 +36,10 @@ class SearchWord(models.Model):
     ]
 
     word = models.CharField(max_length=255)
-    is_default = models.BooleanField(default=False)
     category = models.ForeignKey(SearchWordCategory, on_delete=models.PROTECT)
     direction = models.CharField(max_length=1, default="i", choices=DIRECTIONS)
-    applies_to_movie = models.BooleanField(default=False)
-    applies_to_tv = models.BooleanField(default=False)
+    movie_default = models.BooleanField(default=False)
+    tv_default = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ("direction", "category", "word")
@@ -265,10 +264,10 @@ class TVShow(BaseModel):
         # pylint: disable=E1101
         keywords = SearchWord.objects.none()
         for category in SearchWordCategory.objects.all():
-            if self.search_keywords.filter(category=category, applies_to_tv=True).exists():
+            if self.search_keywords.filter(category=category).exists():
                 keywords |= self.search_keywords.filter(category=category)
             else:
-                keywords |= SearchWord.objects.filter(is_default=True, category=category, applies_to_tv=True)
+                keywords |= SearchWord.objects.filter(category=category, tv_default=True)
 
         return keywords.distinct()
 
@@ -332,12 +331,12 @@ class TVSeason(BaseModel):
         # pylint: disable=E1101
         keywords = SearchWord.objects.none()
         for category in SearchWordCategory.objects.all():
-            if self.search_keywords.filter(category=category, applies_to_tv=True).exists():
+            if self.search_keywords.filter(category=category).exists():
                 keywords |= self.search_keywords.filter(category=category)
-            elif self.show.search_keywords.filter(category=category, applies_to_tv=True).exists():
-                keywords |= self.show.search_keywords.filter(category=category, applies_to_tv=True)
+            elif self.show.search_keywords.filter(category=category).exists():
+                keywords |= self.show.search_keywords.filter(category=category)
             else:
-                keywords |= SearchWord.objects.filter(is_default=True, category=category, applies_to_tv=True)
+                keywords |= SearchWord.objects.filter(category=category, tv_default=True)
 
         return keywords.distinct()
 
@@ -413,14 +412,14 @@ class TVEpisode(BaseModel):
         # pylint: disable=E1101
         keywords = SearchWord.objects.none()
         for category in SearchWordCategory.objects.all():
-            if self.search_keywords.filter(category=category, applies_to_tv=True).exists():
+            if self.search_keywords.filter(category=category).exists():
                 keywords |= self.search_keywords.filter(category=category)
-            elif self.season.search_keywords.filter(category=category, applies_to_tv=True).exists():
-                keywords |= self.season.search_keywords.filter(category=category, applies_to_tv=True)
-            elif self.season.show.search_keywords.filter(category=category, applies_to_tv=True).exists():
-                keywords |= self.season.show.search_keywords.filter(category=category, applies_to_tv=True)
+            elif self.season.search_keywords.filter(category=category).exists():
+                keywords |= self.season.search_keywords.filter(category=category)
+            elif self.season.show.search_keywords.filter(category=category).exists():
+                keywords |= self.season.show.search_keywords.filter(category=category)
             else:
-                keywords |= SearchWord.objects.filter(is_default=True, category=category, applies_to_tv=True)
+                keywords |= SearchWord.objects.filter(category=category, tv_default=True)
 
         return keywords.distinct()
 

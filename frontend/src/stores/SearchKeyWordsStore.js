@@ -15,12 +15,10 @@ const useSearchKeyWordStore = create((set) => ({
     setSelectedCategory: (newSelectedCategory) => set({ selectedCategory: newSelectedCategory }),
     direction: "i",
     setDirection: (newDirection) => set({ direction: newDirection }),
-    isDefault: false,
-    setIsDefault: (newDefault) => set({ isDefault: newDefault }),
-    appliesToMovie: false,
-    setAppliesToMovie: (newAppliesToMovie => set({ appliesToMovie: newAppliesToMovie })),
-    appliesToTv: false,
-    setAppliesToTv: (newAppliesToTV => set({ appliesToTv: newAppliesToTV })),
+    isDefaultTV: false,
+    setIsDefaultTV: (newDefaultTV) => set({isDefaultTV: newDefaultTV}),
+    isDefaultMovie: false,
+    setIsDefaultMovie: (newDefaultMovie) => set({isDefaultMovie: newDefaultMovie}),
 }));
 
 export default useSearchKeyWordStore;

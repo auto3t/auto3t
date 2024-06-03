@@ -108,8 +108,13 @@ button:hover {
   word-break: break-all;
 }
 
-.image-wrap {
+.image-wrap,
+.progress-wrap {
   position: relative;
+}
+
+.progress-wrap {
+  height: 20px;
 }
 
 .progress-bar-background {

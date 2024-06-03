@@ -8,6 +8,12 @@ const Torrent = ({ torrent }) => {
     setIsExpanded(!isExpanded);
   };
 
+  const progress = torrent?.progress;
+  let validatedProgress = null;
+  if (progress !== null && progress !== undefined) {
+    validatedProgress = Math.min(100, Math.max(0, progress));
+  }
+
   const displayMagnet = isExpanded ? torrent.magnet : torrent.magnet.slice(0, 60);
 
   return (
@@ -17,6 +23,15 @@ const Torrent = ({ torrent }) => {
         <span className="tag-item">Type: {torrent.torrent_type_display}</span>
         <span className="tag-item">State: {torrent.torrent_state_display}</span>
       </div>
+      { validatedProgress && (
+        <div className="progress-wrap">
+          <div className="progress-bar-background">
+            <div className="progress-bar" style={{ width: `${validatedProgress}%` }}>
+              <span className="smaller">{ validatedProgress }%</span>
+            </div>
+          </div>
+        </div>
+      )}
       <div>
         <p className="text-blob">{displayMagnet}{!isExpanded && '...'}</p>
         <button onClick={toggleExpansion}>

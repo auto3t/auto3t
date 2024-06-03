@@ -22,7 +22,7 @@ export default function TVShowDetail() {
 
   const fetchEpisodes = useCallback(async (seasonId) => {
     try {
-      const data = await get(`episode/?show=${id}&season=${seasonId}`);
+      const data = await get(`tv/episode/?show=${id}&season=${seasonId}`);
       setEpisodes(data);
       setSelectedSeason(data.length > 0 ? data[0].season : null);
     } catch (error) {
@@ -33,7 +33,7 @@ export default function TVShowDetail() {
 
   const fetchShow = useCallback(async () => {
     try {
-      const data = await get(`show/${id}`);
+      const data = await get(`tv/show/${id}`);
       setShowDetail(data);
     } catch (error) {
       console.error("error fetching show: ", id);
@@ -47,7 +47,7 @@ export default function TVShowDetail() {
   useEffect(() => {
     const fetchSeasons = async () => {
       try {
-        const data = await get(`season/?show=${id}`);
+        const data = await get(`tv/season/?show=${id}`);
         setSeasons(data);
       } catch (error) {
         console.error("error fetching seasons: ", error);

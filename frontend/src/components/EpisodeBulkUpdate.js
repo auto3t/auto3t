@@ -11,7 +11,7 @@ const BulkUpdateEpisodes = ({ seasonId, fetchEpisodes }) => {
   };
 
   const handleBulkUpdate = () => {
-    post(`episode/?season=${seasonId}`, { status: status })
+    post(`tv/episode/?season=${seasonId}`, { status: status })
     .then(() => {
       fetchEpisodes(seasonId);
     })

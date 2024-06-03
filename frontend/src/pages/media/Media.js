@@ -14,7 +14,7 @@ const Media = () => {
   useEffect(() => {
     const fetchEpisodes = async () => {
       try {
-        const data = await get('episode/?status=d,s');
+        const data = await get('tv/episode/?status=d,s');
         setProcessingEpisodes(data);
       } catch (error) {
         console.error("error fetching episodes: ", error);
@@ -28,7 +28,7 @@ const Media = () => {
   useEffect(() => {
     const fetchEpisodes = async () => {
       try {
-        const data = await get('episode/?limit=12&status=u&order-by=release_date');
+        const data = await get('tv/episode/?limit=12&status=u&order-by=release_date');
         setUpcomingEpisodes(data);
       } catch (error) {
         console.error("error fetching episodes: ", error);

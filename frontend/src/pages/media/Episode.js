@@ -16,7 +16,7 @@ export default function TVEpisode() {
 
   const fetchEpisode = useCallback(async () => {
     try {
-      const data = await get(`episode/${id}/`);
+      const data = await get(`tv/episode/${id}/`);
       setEpisodeDetail(data);
     } catch (error) {
       console.error("error fetching episode: ", error);

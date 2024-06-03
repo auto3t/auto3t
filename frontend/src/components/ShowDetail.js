@@ -35,7 +35,7 @@ export default function ShowDetail({ showDetail, fetchShow }) {
   const handleSearchNameSubmit = (event) => {
     event.preventDefault();
 
-    put(`show/${showDetail.id}/`, { search_name: editedSearchName })
+    put(`tv/show/${showDetail.id}/`, { search_name: editedSearchName })
     .then(() => {
       fetchShow();
       setEditMode(false);
@@ -51,7 +51,7 @@ export default function ShowDetail({ showDetail, fetchShow }) {
 
   const handleOptionUpdate = async () => {
     if (selectedOption) {
-      await patch(`show/${showDetail.id}/?direction=add`, { search_keywords: [selectedOption]});
+      await patch(`tv/show/${showDetail.id}/?direction=add`, { search_keywords: [selectedOption]});
       setSelectedOption('');
       fetchShow();
     }
@@ -59,7 +59,7 @@ export default function ShowDetail({ showDetail, fetchShow }) {
 
   const handleKeywordRemove = async (event) => {
     const keywordId = event.target.id;
-    await patch(`show/${showDetail.id}/?direction=remove`, { search_keywords: [keywordId]})
+    await patch(`tv/show/${showDetail.id}/?direction=remove`, { search_keywords: [keywordId]})
     fetchShow();
   }
 
@@ -69,7 +69,7 @@ export default function ShowDetail({ showDetail, fetchShow }) {
   }
 
   const handleActiveToggle = () => {
-    put(`show/${showDetail.id}/`, { is_active: !showDetail.is_active })
+    put(`tv/show/${showDetail.id}/`, { is_active: !showDetail.is_active })
       .catch(error => {
         console.error('Error:', error);
       });

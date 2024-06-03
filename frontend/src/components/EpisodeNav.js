@@ -11,7 +11,7 @@ const EpisodeNav = ({ currentEpisodeId }) => {
   useEffect(() => {
     const fetchPreviousEpisode = async () => {
       try {
-        const data = await get(`episode/${currentEpisodeId}/previous/`);
+        const data = await get(`tv/episode/${currentEpisodeId}/previous/`);
         if (Object.keys(data).length === 0 && data.constructor === Object) {
           setPreviousEpisode(null);
         } else {
@@ -26,7 +26,7 @@ const EpisodeNav = ({ currentEpisodeId }) => {
 
     const fetchNextEpisode = async () => {
       try {
-        const data = await get(`episode/${currentEpisodeId}/next/`);
+        const data = await get(`tv/episode/${currentEpisodeId}/next/`);
         if (Object.keys(data).length === 0 && data.constructor === Object) {
           setNextEpisode(null);
         } else {

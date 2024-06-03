@@ -12,7 +12,7 @@ export default function TVShows() {
   useEffect(() => {
     const fetchShows = async () => {
       try {
-        const data = await get('show/');
+        const data = await get('tv/show/');
         setShows(data);
       } catch (error) {
         console.error("Error fetching shows:", error);

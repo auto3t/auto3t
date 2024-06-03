@@ -4,7 +4,7 @@ import TimeComponent from "./TimeComponent";
 const ShowSearchResult = ({ result }) => {
 
   const handleAddShow = (remoteServerId) => {
-    post('show/', { remote_server_id: remoteServerId })
+    post('tv/show/', { remote_server_id: remoteServerId })
       .then(data => {
         console.log('Show added successfully: ', JSON.stringify(data));
       })

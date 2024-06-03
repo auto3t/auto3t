@@ -21,7 +21,7 @@ const Search = () => {
       setIsLoading(true);
       // Set a new timer for search
       const newTimer = setTimeout(() => {
-        get(`remote-search?q=${encodeURIComponent(newQuery)}`)
+        get(`tv/remote-search?q=${encodeURIComponent(newQuery)}`)
           .then((data) => {
             setResults(data);
             setIsLoading(false);

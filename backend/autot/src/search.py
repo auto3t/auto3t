@@ -27,7 +27,7 @@ class BaseIndexer:
 
     def parse_keywords(self, keywords: QuerySet) -> str | None:
         """join keywords from query set"""
-        return " ".join([i.word for i in keywords])
+        return " ".join([i.word for i in keywords if i.direction == "i"])
 
 
 class Jackett(BaseIndexer):
@@ -135,7 +135,10 @@ class Jackett(BaseIndexer):
         has_gain = result_item.get("Gain", 0) > 1
         is_valid_path = to_search.is_valid_path(result_item["Title"])
 
-        return all([has_link, has_seeders, has_gain, is_valid_path])
+        to_exclude = [i.word for i in to_search.get_keywords().filter(direction="e")]
+        is_not_excluded = not any(i for i in to_exclude if i in result_item["Title"])
+
+        return all([has_link, has_seeders, has_gain, is_valid_path, is_not_excluded])
 
 
 class Magnator:

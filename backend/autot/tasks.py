@@ -88,7 +88,18 @@ def media_server_identify() -> None:
 @job("thumbnails")
 def download_thumbnails() -> None:
     """download thumbnails"""
+    batch_size = 10
     to_download = Artwork.objects.filter(image="")
-    for art_work in to_download:
-        print(f"download: {art_work.image_url}")
-        art_work.download()
+    total_count = to_download.count()
+
+    for start in range(0, total_count, batch_size):
+        end = min(start + batch_size, total_count)
+        batch_ids = [i.id for i in to_download[start:end]]
+        download_thumbnails_batch.delay(batch_ids)
+
+
+@job("thumbnails")
+def download_thumbnails_batch(batch_ids: list[int]) -> None:
+    """download thumbs in batch"""
+    for artwork_id in batch_ids:
+        Artwork.objects.get(id=artwork_id).download()

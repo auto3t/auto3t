@@ -2,6 +2,8 @@
 
 import json
 
+from django.db.models import F, Value
+from django.db.models.functions import Replace
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -71,7 +73,9 @@ class ShowViewSet(viewsets.ModelViewSet):
     UPDATABLE_FIELDS = {"search_name", "is_active", "search_keywords"}
 
     serializer_class = TVShowSerializer
-    queryset = TVShow.objects.all().order_by("name")
+    queryset = TVShow.objects.annotate(
+        name_sort=Replace(F("name"), Value("The "), Value(""))
+    ).order_by("name_sort")
 
     def create(self, request, *args, **kwargs):
         """import show"""

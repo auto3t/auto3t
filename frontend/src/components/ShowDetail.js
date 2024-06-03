@@ -49,10 +49,10 @@ export default function ShowDetail({ showDetail, fetchShow }) {
     setSelectedOption(event.target.value);
   };
 
-  const handleOptionUpdate = () => {
+  const handleOptionUpdate = async () => {
     if (selectedOption) {
-      patch(`show/${showDetail.id}/?direction=add`, { search_keywords: [selectedOption]});
-      setSelectedOption(null);
+      await patch(`show/${showDetail.id}/?direction=add`, { search_keywords: [selectedOption]});
+      setSelectedOption('');
       fetchShow();
     }
   };
@@ -94,63 +94,86 @@ export default function ShowDetail({ showDetail, fetchShow }) {
         </div>
       </div>
       <button onClick={toggleShowDetails}>
-        {showConfigure ? "Hide" : "Configure"}
+        {showConfigure ? "Hide" : "Configure Show"}
       </button>
       {showConfigure && (
-        <div>
-          <h3>Configure Show</h3>
-            <div>
-              <span>Overwrite Search Name: </span>
-              {editMode ? (
-                <>
-                  <input type="text" value={editedSearchName || ''} onChange={handleSearchNameChange} />
-                  <button onClick={handleSearchNameSubmit}>Submit</button>
-                  <button onClick={handleSearchNameCancel}>Cancel</button>
-                </>
-              ) : (
-                <>
-                  <span>{showDetail.search_name || "none"}{" "}</span>
-                  <button onClick={() => setEditMode(true)}>Edit</button>
-                </>
-              )}
-            </div>
-          <div>
-            <label>Active</label>
-            <input
-              type="checkbox"
-              checked={showDetail.is_active}
-              onChange={handleActiveToggle}
-            />
-          </div>
-          <div>
-            <label>Search Words</label>
-            {showDetail.all_keywords.map((keyword) => (
-              <p key={keyword.id}>
-                <span>{keyword.category_name}: {keyword.word} </span>
-                {keyword.is_default ? (
-                  <span>default</span>
-                ) : (
-                  <button id={keyword.id} onClick={handleKeywordRemove}>remove</button>
+        <>
+          <table className="keyword-table">
+            <tbody>
+              <tr>
+                <td>Active</td>
+                <td>
+                  <input
+                    type="checkbox"
+                    checked={showDetail.is_active}
+                    onChange={handleActiveToggle}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>Search Name</td>
+                <td>
+                  {editMode ? (
+                    <>
+                      <input type="text" value={editedSearchName || ''} onChange={handleSearchNameChange} />
+                      <button onClick={handleSearchNameSubmit}>Submit</button>
+                      <button onClick={handleSearchNameCancel}>Cancel</button>
+                    </>
+                  ) : (
+                    <>
+                      <span>{showDetail.search_name || ""}{" "}</span>
+                      <button onClick={() => setEditMode(true)}>Edit</button>
+                    </>
+                  )}
+                </td>
+              </tr>
+              <tr>
+                <td>Add Keyword</td>
+                <td>
+                {allKeywords && (
+                  <div>
+                    <select onChange={handleOptionSelect} defaultValue={''}>
+                      <option value="">---</option>
+                      {allKeywords.map(keyword => (
+                        <option key={keyword.id} value={keyword.id}>
+                          {keyword.category_name}: {keyword.word}
+                        </option>
+                      ))}
+                    </select>
+                    {selectedOption && <button onClick={handleOptionUpdate}>Add</button>}
+                  </div>
                 )}
-              </p>
-            ))}
-            <label>Add Keyword</label>
-            {allKeywords && (
-              <div>
-                <label>Select an option:</label>
-                <select onChange={handleOptionSelect} defaultValue={''}>
-                  <option value="">---</option>
-                  {allKeywords.map(keyword => (
-                    <option key={keyword.id} value={keyword.id}>
-                      {keyword.category_name}: {keyword.word}
-                    </option>
-                  ))}
-                </select>
-                {selectedOption && <button onClick={handleOptionUpdate}>Set</button>}
-              </div>
-            )}
-          </div>
-        </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <table className="keyword-table">
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th>Keyword</th>
+                <th>Direction</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {showDetail.all_keywords.map((keyword) => (
+                <tr key={keyword.id}>
+                  <td>{keyword.category_name}</td>
+                  <td>{keyword.word}</td>
+                  <td>{keyword.direction_display}</td>
+                  <td>
+                    {keyword.tv_default ? (
+                      'default'
+                    ) : (
+                      <button id={keyword.id} onClick={handleKeywordRemove}>remove</button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
       )}
     </div>
   )

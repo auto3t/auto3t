@@ -49,7 +49,7 @@ class SearchWord(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.category}: {self.word} [{self.direction}]"
+        return f"{self.category.name}: {self.word} [{self.direction}]"
 
 
 class Torrent(models.Model):

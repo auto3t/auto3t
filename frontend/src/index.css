@@ -312,6 +312,10 @@ button:hover {
   padding: 1rem;
 }
 
+.keyword-table {
+  padding: 5px 0 10px 0;
+}
+
 .keyword-table th {
   background-color: var(--accent-3);
   padding: 5px 1rem;

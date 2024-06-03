@@ -61,7 +61,12 @@ class Jackett(BaseIndexer):
             print("no valid magnet option found")
             return None
 
-        magnet = self.extract_magnet(valid_results)
+        for result in valid_results:
+            try:
+                magnet = self.extract_magnet(result)
+                return magnet
+            except ValueError:
+                continue
 
         return magnet
 
@@ -69,7 +74,7 @@ class Jackett(BaseIndexer):
         """build jacket search url"""
         base = self.CONFIG["JK_URL"]
         key = self.CONFIG["JK_API_KEY"]
-        key_words = self.parse_keywords(to_search.get_keywords)
+        key_words = self.parse_keywords(to_search.get_keywords())
         query = quote(f"{to_search.search_query} {key_words}")
         url = f"{base}/api/v2.0/indexers/all/results?apikey={key}&Query={query}&Category[]=5000"
 
@@ -89,13 +94,13 @@ class Jackett(BaseIndexer):
 
         return results
 
-    def extract_magnet(self, results: list[dict]) -> str | None:
+    def extract_magnet(self, result: dict) -> str | None:
         """extract magnet from list or results"""
-        magnet_link = results[0].get("MagnetUri")
+        magnet_link = result.get("MagnetUri")
         if magnet_link:
             return magnet_link
 
-        torrent_link = results[0].get("Link")
+        torrent_link = result.get("Link")
         if not torrent_link:
             raise ValueError("faild to extract magnet")
 

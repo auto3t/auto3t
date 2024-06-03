@@ -76,11 +76,16 @@ export default function ShowDetail({ showDetail, fetchShow }) {
     fetchShow();
   }
 
+  const getShowPoster = (showDetail) => {
+    if (showDetail.image_show?.image) return showDetail.image_show
+    return {image: '/poster-default.jpg'}
+  }
+
   return (
     <div className="show-detail">
       <div className="show-detail-header">
         <div className="show-poster">
-          <ImageComponent image={showDetail.image_show} alt='show-poster' />
+          <ImageComponent image={getShowPoster(showDetail)} alt='show-poster' />
         </div>
         <div className="show-description">
           <h1>{showDetail.name}</h1>

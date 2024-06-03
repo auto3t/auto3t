@@ -16,7 +16,10 @@ const Episode = ({ episode, showShow = false }) => {
         return episode.image_episode;
       }
     }
-    return episode.season.show.episode_fallback;
+    if (episode.season.show?.episode_fallback?.image) {
+      return episode.season.show?.episode_fallback
+    }
+    return {image: '/episode-default.jpg'};
   };
 
   return (

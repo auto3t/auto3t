@@ -136,7 +136,7 @@ export default function ShowDetail({ showDetail, fetchShow }) {
                       <option value="">---</option>
                       {allKeywords.map(keyword => (
                         <option key={keyword.id} value={keyword.id}>
-                          {keyword.category_name}: {keyword.word}
+                          {keyword.category_name} [{keyword.direction}] {keyword.word}
                         </option>
                       ))}
                     </select>

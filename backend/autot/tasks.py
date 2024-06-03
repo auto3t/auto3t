@@ -95,4 +95,4 @@ def download_thumbnails() -> None:
 
     if Artwork.objects.filter(image="").exists():
         queue = get_queue("thumbnails")
-        queue.enqueue(download_thumbnails)
+        queue.enqueue_in(timedelta(seconds=10), download_thumbnails)

@@ -51,6 +51,7 @@ export default function TVEpisode() {
               <p dangerouslySetInnerHTML={{__html: episodeDetail.description}} />
               <div className="tag-group">
                 {episodeDetail.release_date && <span className="tag-item">Release: <TimeComponent timestamp={episodeDetail.release_date} /></span>}
+                <span className="tag-item">Status: {episodeDetail.status_display}</span>
               </div>
             </div>
           </div>

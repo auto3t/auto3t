@@ -7,7 +7,7 @@ from urllib.parse import quote
 import bencodepy
 import requests
 from django.db.models import QuerySet
-from autot.models import TVEpisode, TVSeason
+from tv.models import TVEpisode, TVSeason
 from autot.src.config import get_config, ConfigType
 from autot.src.redis_con import AutotRedis
 

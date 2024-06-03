@@ -2,7 +2,7 @@
 
 from urllib import parse
 
-from autot.src.client_tvmaze import TVMaze
+from tv.src.tv_maze_client import TVMaze
 
 
 class ShowId:

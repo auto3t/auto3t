@@ -2,9 +2,10 @@
 
 from django.db.models import QuerySet
 from transmission_rpc.torrent import Torrent as TransmissionTorrent
+from tv.models import TVEpisode
 from autot.src.config import get_config
 from autot.src.download import Transmission
-from autot.models import Torrent, TVEpisode
+from autot.models import Torrent
 
 
 class Archiver:

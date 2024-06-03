@@ -4,7 +4,8 @@ from datetime import datetime
 
 from django.db.models import Count, F, Q
 from django.utils import timezone
-from autot.models import TVEpisode, TVSeason, Torrent
+from tv.models import TVEpisode, TVSeason
+from autot.models import Torrent
 from autot.src.search import Jackett
 
 

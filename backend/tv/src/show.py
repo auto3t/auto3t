@@ -6,8 +6,8 @@ import pytz
 from django.db.models import QuerySet
 from django.utils import timezone
 from artwork.models import Artwork
-from autot.models import TVEpisode, TVShow, TVSeason
-from autot.src.client_tvmaze import TVMaze
+from tv.models import TVEpisode, TVShow, TVSeason
+from tv.src.tv_maze_client import TVMaze
 
 
 class TVMazeShow:

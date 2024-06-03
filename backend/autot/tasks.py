@@ -5,12 +5,12 @@ from datetime import timedelta
 from artwork.models import Artwork
 from django_rq import job
 from django_rq.queues import get_queue
-from autot.models import TVShow
+from tv.models import TVShow
+from tv.src.episode import EpisodeStatus
+from tv.src.media_server import MediaServerEpisode
+from tv.src.show import TVMazeShow
 from autot.src.archive import Archiver
 from autot.src.download import Transmission
-from autot.src.episode import EpisodeStatus
-from autot.src.jf import MediaServerEpisode
-from autot.src.show import TVMazeShow
 
 
 @job

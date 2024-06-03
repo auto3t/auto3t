@@ -5,7 +5,7 @@ from math import ceil
 from django.utils import timezone
 from transmission_rpc import Client
 from transmission_rpc.torrent import Torrent as TransmissionTorrent
-from autot.models import TVEpisode, Torrent
+from tv.models import TVEpisode, Torrent
 from autot.src.config import get_config, ConfigType
 
 

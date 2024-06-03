@@ -3,39 +3,17 @@
 import requests
 
 from django.db.models.query import QuerySet
-from autot.models import TVEpisode
+from tv.models import TVEpisode
 from autot.src.config import get_config, ConfigType
 
 
-class JF:
-    """base class"""
+class MediaServerEpisode:
+    """interact with episode in JF"""
 
     CONFIG: ConfigType = get_config()
     TIMEOUT: int = 60
     HEADERS: dict[str, str] = {"Authorization": f"MediaBrowser Token={CONFIG['JF_API_KEY']}"}
     PROVIDER_NAME: str = "TvMaze"
-
-    def make_request(self, url, method, data=False):
-        """make API request"""
-
-        request_url = f"{self.CONFIG['JF_URL']}/{url}"
-
-        if method == "GET":
-            response = requests.get(request_url, headers=self.HEADERS, timeout=self.TIMEOUT)
-        elif method == "POST":
-            response = requests.post(request_url, data=data, headers=self.HEADERS, timeout=self.TIMEOUT)
-        else:
-            raise ValueError("invalid jf request method")
-
-        if not response.ok:
-            message = f"jf request failed: {response.json()}"
-            raise ValueError(message)
-
-        return response.json()
-
-
-class MediaServerEpisode(JF):
-    """interact with episode in JF"""
 
     def needs_matching(self) -> bool:
         """get archived but not identified"""
@@ -75,3 +53,21 @@ class MediaServerEpisode(JF):
 
         ided = TVEpisode.objects.bulk_update(episode_to_update, ["media_server_id", "status"])
         print(f"found jf ids for {ided} episodes")
+
+    def make_request(self, url, method, data=False):
+        """make API request"""
+
+        request_url = f"{self.CONFIG['JF_URL']}/{url}"
+
+        if method == "GET":
+            response = requests.get(request_url, headers=self.HEADERS, timeout=self.TIMEOUT)
+        elif method == "POST":
+            response = requests.post(request_url, data=data, headers=self.HEADERS, timeout=self.TIMEOUT)
+        else:
+            raise ValueError("invalid jf request method")
+
+        if not response.ok:
+            message = f"jf request failed: {response.json()}"
+            raise ValueError(message)
+
+        return response.json()

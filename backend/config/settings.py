@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "config",
     "autot",
+    "tv",
     "authentication",
     "artwork",
     "django_rq",

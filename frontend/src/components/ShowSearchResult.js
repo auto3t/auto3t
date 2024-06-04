@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { post } from "../api";
 import TimeComponent from "./TimeComponent";
 
@@ -27,7 +28,11 @@ const ShowSearchResult = ({ result }) => {
             <span className="tag-item">Status: {result.status}</span>
             {result.premiered && <span className="tag-item">Start: <TimeComponent timestamp={result.premiered} /></span>}
             {result.ended && <span className="tag-item">End: <TimeComponent timestamp={result.ended} /></span>}
-            <button className='pointer' onClick={() => handleAddShow(result.id)}>Add</button>
+            {result.local_id ? (
+              <Link to={`/tv/show/${result.local_id}/`}>Open</Link>
+            ) : (
+              <button className='pointer' onClick={() => handleAddShow(result.id)}>Add</button>
+            )}
           </div>
           {result.genres.length > 0 && <p>Genres: {result.genres.join(', ')}</p>}
         </div>

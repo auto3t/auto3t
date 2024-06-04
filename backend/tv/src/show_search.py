@@ -2,6 +2,7 @@
 
 from urllib import parse
 
+from tv.models import TVShow
 from tv.src.tv_maze_client import TVMaze
 
 
@@ -22,15 +23,17 @@ class ShowId:
         if not response:
             return None
 
-        options = [self.parse_result(i) for i in response]
+        local_ids = {i.remote_server_id: i.id for i in TVShow.objects.all()}
+        options = [self.parse_result(result, local_ids) for result in response]
 
         return options
 
-    def parse_result(self, result: dict) -> dict:
+    def parse_result(self, result: dict, local_ids: dict[str, int]) -> dict:
         """parse single result"""
         result = result["show"]
         show_data = {
             "id": result["id"],
+            "local_id": local_ids.get(str(result["id"])),
             "name": result["name"],
             "url": result["url"],
             "genres": result["genres"],

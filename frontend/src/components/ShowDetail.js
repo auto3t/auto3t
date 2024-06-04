@@ -2,30 +2,19 @@ import { useState } from "react";
 import ImageComponent from "./ImageComponent";
 import useApi from "../hooks/api";
 import TimeComponent from "./TimeComponent";
+import AddKeywordComponent from "./AddKeywordComponent";
 
 export default function ShowDetail({ showDetail, fetchShow }) {
 
-  const { get, put, patch } = useApi();
+  const { put, patch } = useApi();
   const [showConfigure, setShowConfigure] = useState(false);
   const [editedSearchName, setEditedSearchName] = useState('');
-  const [allKeywords, setAllKeywords] = useState(null);
   const [editMode, setEditMode] = useState(false);
-  const [selectedOption, setSelectedOption] = useState();
-
-  const handleGetKeywords = async () => {
-    get('keyword/')
-    .then(response => {
-      setAllKeywords(response);
-    })
-  }
 
   const toggleShowDetails = () => {
     setShowConfigure(!showConfigure);
     setEditedSearchName(showDetail.search_name || '');
     setEditMode(false);
-    if (!showConfigure) {
-      handleGetKeywords();
-    }
   }
 
   const handleSearchNameChange = (event) => {
@@ -44,18 +33,6 @@ export default function ShowDetail({ showDetail, fetchShow }) {
       console.error('Error:', error);
     });
   }
-
-  const handleOptionSelect = (event) => {
-    setSelectedOption(event.target.value);
-  };
-
-  const handleOptionUpdate = async () => {
-    if (selectedOption) {
-      await patch(`tv/show/${showDetail.id}/?direction=add`, { search_keywords: [selectedOption]});
-      setSelectedOption('');
-      fetchShow();
-    }
-  };
 
   const handleKeywordRemove = async (event) => {
     const keywordId = event.target.id;
@@ -135,19 +112,10 @@ export default function ShowDetail({ showDetail, fetchShow }) {
               <tr>
                 <td>Add Keyword</td>
                 <td>
-                {allKeywords && (
-                  <div>
-                    <select onChange={handleOptionSelect} defaultValue={''}>
-                      <option value="">---</option>
-                      {allKeywords.map(keyword => (
-                        <option key={keyword.id} value={keyword.id}>
-                          {keyword.category_name} [{keyword.direction}] {keyword.word}
-                        </option>
-                      ))}
-                    </select>
-                    {selectedOption && <button onClick={handleOptionUpdate}>Add</button>}
-                  </div>
-                )}
+                  <AddKeywordComponent
+                    patchURL={`tv/show/${showDetail.id}/?direction=add`}
+                    refreshCallback={fetchShow}
+                  />
                 </td>
               </tr>
             </tbody>

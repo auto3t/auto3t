@@ -26,6 +26,7 @@ class TVSeasonSerializer(serializers.ModelSerializer):
 
     show = TVShowSerializer()
     image_season = ArtworkSerializer(read_only=True)
+    all_keywords = SearchWordSerializer(source="get_keywords", many=True)
 
     class Meta:
         model = TVSeason

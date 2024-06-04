@@ -1,7 +1,8 @@
 import { useState } from "react";
+import useApi from "../hooks/api";
 import TimeComponent from "./TimeComponent";
 import useBulkUpdateStore from "../stores/EpisodeBulkUpdateStore";
-import useApi from "../hooks/api";
+import AddKeywordComponent from "./AddKeywordComponent";
 
 const SeasonMetaData = ({ season, fetchEpisodes }) => {
 
@@ -52,6 +53,15 @@ const SeasonMetaData = ({ season, fetchEpisodes }) => {
                       <option value="i">Ignored</option>
                     </select>
                     {status && <button onClick={handleBulkUpdate}>Update</button>}
+                  </td>
+                </tr>
+                <tr>
+                  <td>Add Keyword</td>
+                  <td>
+                    <AddKeywordComponent
+                      patchURL={`tv/season/${season.id}/?direction=add`}
+                      refreshCallback={() => fetchEpisodes(season.id)}
+                    />
                   </td>
                 </tr>
               </tbody>

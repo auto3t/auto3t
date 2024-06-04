@@ -86,9 +86,10 @@ class ShowViewSet(viewsets.ModelViewSet):
                 instance.remove_keyword(instance, to_remove)
 
 
-class SeasonViewSet(viewsets.ReadOnlyModelViewSet):
+class SeasonViewSet(viewsets.ModelViewSet):
     """get tv seasons/s"""
 
+    UPDATABLE_FIELDS = {"search_keywords"}
     serializer_class = TVSeasonSerializer
     queryset = TVSeason.objects.all().order_by("-number")
 
@@ -99,6 +100,39 @@ class SeasonViewSet(viewsets.ReadOnlyModelViewSet):
             return self.queryset.filter(show_id=show_id)
 
         return self.queryset
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        data = request.data
+
+        if set(data.keys()) - self.UPDATABLE_FIELDS:
+            message = {"error": "One or more fields cannot be updated."}
+            return Response(message, status=400)
+
+        serializer = self.get_serializer(instance, data=data, partial=True)
+        serializer.is_valid(raise_exception=True)
+
+        if "search_keywords" in data.keys():
+            self._update_m2m(instance)
+        else:
+            self.perform_update(serializer)
+
+        return Response(serializer.data)
+
+    def _update_m2m(self, instance: TVShow) -> None:
+        """handle search_keywords"""
+        data = self.request.data
+        direction = self.request.GET.get("direction")
+        ids = [int(i) for i in data["search_keywords"]]
+        to_process = SearchWord.objects.filter(id__in=ids)
+
+        if direction == "add":
+            for to_add in to_process:
+                instance.add_keyword(instance, to_add)
+
+        elif direction == "remove":
+            for to_remove in to_process:
+                instance.remove_keyword(instance, to_remove)
 
 
 class EpisodeViewSet(viewsets.ModelViewSet):

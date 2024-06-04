@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 const useBulkUpdateStore = create((set) => ({
-    status: '',
+    status: null,
     setStatus: (newStatus) => set({ status: newStatus }),
 }));
 

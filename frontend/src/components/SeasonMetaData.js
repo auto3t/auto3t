@@ -1,14 +1,29 @@
 import { useState } from "react";
-import BulkUpdateEpisodes from "./EpisodeBulkUpdate";
 import TimeComponent from "./TimeComponent";
+import useBulkUpdateStore from "../stores/EpisodeBulkUpdateStore";
+import useApi from "../hooks/api";
 
 const SeasonMetaData = ({ season, fetchEpisodes }) => {
 
+  const { post } = useApi();
   const [seasonConfigure, setSeasonConfigure] = useState(false);
+  const { status, setStatus } = useBulkUpdateStore();
 
   const toggleSeasonConfigure = () => {
     setSeasonConfigure(!seasonConfigure);
   }
+
+  const handleStatusChange = (event) => {
+    setStatus(event.target.value);
+  };
+
+  const handleBulkUpdate = () => {
+    post(`tv/episode/?season=${season.id}`, { status: status })
+    .then(() => {
+      fetchEpisodes(season.id);
+    })
+    .catch(error => console.error('Error:', error));
+  };
 
   return (
     <>
@@ -21,12 +36,26 @@ const SeasonMetaData = ({ season, fetchEpisodes }) => {
           {season.end_date && <span className="tag-item">End: <TimeComponent timestamp={season.end_date} /></span>}
         </div>
         <button onClick={toggleSeasonConfigure}>
-          {seasonConfigure ? "Hide" : "Configure"}
+          {seasonConfigure ? "Hide" : "Configure Season"}
         </button>
         {seasonConfigure && (
           <>
-            <h3>Configure Season</h3>
-            <BulkUpdateEpisodes seasonId={season.id} fetchEpisodes={fetchEpisodes}/>
+            <table className="keyword-table">
+              <tbody>
+                <tr>
+                  <td>Update Status</td>
+                  <td>
+                    <select defaultValue={''} onChange={handleStatusChange}>
+                      <option value="">---</option>
+                      <option value="u">Upcoming</option>
+                      <option value="s">Searching</option>
+                      <option value="i">Ignored</option>
+                    </select>
+                    {status && <button onClick={handleBulkUpdate}>Update</button>}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </>
         )}
       </div>

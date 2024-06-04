@@ -37,7 +37,7 @@ const Episode = ({ episode, showShow = false }) => {
         </div>
       </Link>
       <div className="tile-description">
-        {showShow && (<><Link to={`tv/${episode.season.show.id}`}>{episode.season.show.name}</Link><br/></>)}
+        {showShow && (<><Link to={`tv/show/${episode.season.show.id}`}>{episode.season.show.name}</Link><br/></>)}
         <span>S{String(episode.season.number).padStart(2, '0')}</span>
         <span>E{String(episode.number).padStart(2, '0')}</span>
         <span> - {episode.title}</span>

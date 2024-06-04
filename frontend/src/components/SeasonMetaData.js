@@ -3,6 +3,7 @@ import useApi from "../hooks/api";
 import TimeComponent from "./TimeComponent";
 import useBulkUpdateStore from "../stores/EpisodeBulkUpdateStore";
 import AddKeywordComponent from "./AddKeywordComponent";
+import KeywordTableCompnent from "./KeywordTableComponent";
 
 const SeasonMetaData = ({ season, fetchEpisodes }) => {
 
@@ -66,6 +67,11 @@ const SeasonMetaData = ({ season, fetchEpisodes }) => {
                 </tr>
               </tbody>
             </table>
+            <KeywordTableCompnent
+              all_keywords={season.all_keywords}
+              patchURL={`tv/season/${season.id}/?direction=remove`}
+              refreshCallback={() => fetchEpisodes(season.id)}
+            />
           </>
         )}
       </div>

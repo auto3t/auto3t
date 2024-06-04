@@ -3,10 +3,11 @@ import ImageComponent from "./ImageComponent";
 import useApi from "../hooks/api";
 import TimeComponent from "./TimeComponent";
 import AddKeywordComponent from "./AddKeywordComponent";
+import KeywordTableCompnent from "./KeywordTableComponent";
 
 export default function ShowDetail({ showDetail, fetchShow }) {
 
-  const { put, patch } = useApi();
+  const { put } = useApi();
   const [showConfigure, setShowConfigure] = useState(false);
   const [editedSearchName, setEditedSearchName] = useState('');
   const [editMode, setEditMode] = useState(false);
@@ -32,12 +33,6 @@ export default function ShowDetail({ showDetail, fetchShow }) {
     .catch(error => {
       console.error('Error:', error);
     });
-  }
-
-  const handleKeywordRemove = async (event) => {
-    const keywordId = event.target.id;
-    await patch(`tv/show/${showDetail.id}/?direction=remove`, { search_keywords: [keywordId]})
-    fetchShow();
   }
 
   const handleSearchNameCancel = () => {
@@ -120,32 +115,11 @@ export default function ShowDetail({ showDetail, fetchShow }) {
               </tr>
             </tbody>
           </table>
-          <table className="keyword-table">
-            <thead>
-              <tr>
-                <th>Category</th>
-                <th>Keyword</th>
-                <th>Direction</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {showDetail.all_keywords.map((keyword) => (
-                <tr key={keyword.id}>
-                  <td>{keyword.category_name}</td>
-                  <td>{keyword.word}</td>
-                  <td>{keyword.direction_display}</td>
-                  <td>
-                    {keyword.tv_default ? (
-                      'default'
-                    ) : (
-                      <button id={keyword.id} onClick={handleKeywordRemove}>remove</button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <KeywordTableCompnent
+            all_keywords={showDetail.all_keywords}
+            patchURL={`tv/show/${showDetail.id}/?direction=remove`}
+            refreshCallback={fetchShow}
+          />
         </>
       )}
     </div>

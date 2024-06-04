@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import useTVShowsStore from "../../stores/ShowsStore";
 import ShowTile from "../../components/ShowTile";
 import useApi from "../../hooks/api";
+import { Link } from "react-router-dom";
 
 export default function TVShows() {
 
@@ -26,6 +27,7 @@ export default function TVShows() {
   return (
     <div className="tvshows">
       <h1>TV Shows</h1>
+      <Link to={'search'}>Add</Link>
       <div className="show-items">
         {isLoadingShows ? (
           <p>Loading...</p>

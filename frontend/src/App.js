@@ -8,32 +8,31 @@ import {
 // pages
 import Home from './pages/Home';
 import Settings from './pages/Settings';
-import Movies from './pages/media/Movies';
-import TVShows from './pages/media/TVShows';
-import TVShowDetail from './pages/media/TVShowDetails';
-import Search from './pages/media/Search';
-import Media from './pages/media/Media';
-import TVEpisode from './pages/media/Episode';
+import Movies from './pages/movie/Movies';
+import TVShows from './pages/tv/TVShows';
+import TVShowDetail from './pages/tv/TVShowDetails';
+import Search from './pages/tv/Search';
+import TVEpisode from './pages/tv/Episode';
 
 // layouts
 import RootLayout from './layouts/RootLayout';
-import MediaRootLayout from './layouts/MediaLayout';
 import NotFound from './pages/404';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/' element={<RootLayout />}>
-      <Route index  element={<Home />}/>
-      <Route path='media' element={<MediaRootLayout />}>
-        <Route index element={<Media />} />
-        <Route path='movie' element={<Movies />} />
-        <Route path='tv' element={<TVShows />} />
-        <Route path='tv/:id' element={<TVShowDetail />} />
+      <Route index element={<Home />}/>
+      <Route path='tv'>
+        <Route index element={<TVShows />} />
+        <Route path='show/:id' element={<TVShowDetail />} />
         <Route path='episode/:id' element={<TVEpisode />} />
+        <Route path='search' element={<Search />} />
+      </Route>
+      <Route path='movie'>
+        <Route index element={<Movies />} />
       </Route>
       <Route path='settings' element={<Settings />}/>
-      <Route path='search' element={<Search />} />
-      <Route path='*' element={<NotFound />} />
+      <Route path='*' element={<NotFound />} /> 
     </Route>
   )
 )

@@ -11,7 +11,7 @@ const ShowTile = ({ show }) => {
   }
 
   return (
-    <Link to={`${show.id}`}>
+    <Link to={`show/${show.id}`}>
       <div className="show-item">
         <ImageComponent image={getShowPoster(show)} alt={'show-poster-' + show.name} />
         <div className="tile-description">

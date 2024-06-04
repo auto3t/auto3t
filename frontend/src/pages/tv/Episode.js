@@ -44,7 +44,7 @@ export default function TVEpisode() {
             <ImageComponent image={getEpisodeImage(episodeDetail)} />
             <div className="episode-description">
               <h1>{episodeDetail.title}</h1>
-              <Link to={`/media/tv/${episodeDetail.season.show.id}`}>
+              <Link to={`/tv/show/${episodeDetail.season.show.id}`}>
                 <h2>{episodeDetail.season.show.name}</h2>
               </Link>
               <p>S{String(episodeDetail.season.number).padStart(2, '0')}E{String(episodeDetail.number).padStart(2, '0')}</p>

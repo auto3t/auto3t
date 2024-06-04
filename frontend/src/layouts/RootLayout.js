@@ -21,8 +21,8 @@ export default function RootLayout() {
           <div className="nav-items">
             <img src="/logo.png" />
             <NavLink className='nav-item' to="/">Home</NavLink>
-            <NavLink className='nav-item' to="media">Media</NavLink>
-            <NavLink className='nav-item' to="search">Search</NavLink>
+            <NavLink className='nav-item' to="tv">TV</NavLink>
+            <NavLink className='nav-item' to="movie">Movie</NavLink>
             <NavLink className='nav-item' to="settings">Settings</NavLink>
           </div>
           {accessToken && (<button onClick={handleLogout}>Logout</button>)}

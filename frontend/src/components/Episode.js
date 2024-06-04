@@ -24,7 +24,7 @@ const Episode = ({ episode, showShow = false }) => {
 
   return (
     <div className="episode-item">
-      <Link to={`/media/episode/${episode.id}`}>
+      <Link to={`/tv/episode/${episode.id}`}>
         <div className='image-wrap'>
           <ImageComponent image={getEpisodeImage(episode)} alt={'episode-poster-' + episode.number} />
           { validatedProgress && (

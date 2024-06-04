@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import useApi from "../../hooks/api";
 import ImageComponent from "../../components/ImageComponent";
@@ -12,36 +12,37 @@ export default function TVEpisode() {
 
   const { get } = useApi();
   const { id } = useParams();
-  const { episodeDetail, setEpisodeDetail } = useEpsiodeDetailStore();
-
-  const fetchEpisode = useCallback(async () => {
-    try {
-      const data = await get(`tv/episode/${id}/`);
-      setEpisodeDetail(data);
-    } catch (error) {
-      console.error("error fetching episode: ", error);
-    }
-  })
+  const {
+    episodeDetail,
+    setEpisodeDetail,
+    episodeImage,
+    setEpisodeImage,
+  } = useEpsiodeDetailStore();
 
   useEffect(() => {
-    fetchEpisode();
-  }, [id]);
-
-  const getEpisodeImage = (episode) => {
-    if (episode?.image_episode) {
-      if (episode.image_episode.image) {
-        return episode.image_episode;
+    const getEpisodeImage = (data) => {
+      if (data.image_episode?.image) return data.image_episode;
+      if (data.season.show.episode_fallback?.image) return data.season.show.episode_fallback;
+      return {image: '/episode-default.jpg'}
+    }
+    const fetchEpisode = async () => {
+      try {
+        const data = await get(`tv/episode/${id}/`);
+        setEpisodeDetail(data);
+        setEpisodeImage(getEpisodeImage(data));
+      } catch (error) {
+        console.error("error fetching episode: ", error);
       }
     }
-    return episode.season.show.episode_fallback;
-  };
+    fetchEpisode();
+  }, [id]);
 
   return (
     <div>
       {episodeDetail && (
         <>
           <div className="episode-detail-header">
-            <ImageComponent image={getEpisodeImage(episodeDetail)} />
+            {episodeImage && (<ImageComponent image={episodeImage} alt='episode-poster' />)}
             <div className="episode-description">
               <h1>{episodeDetail.title}</h1>
               <Link to={`/tv/show/${episodeDetail.season.show.id}`}>

@@ -23,7 +23,7 @@ const Torrent = ({ torrent }) => {
         <span className="tag-item">Type: {torrent.torrent_type_display}</span>
         <span className="tag-item">State: {torrent.torrent_state_display}</span>
       </div>
-      { validatedProgress && (
+      { validatedProgress > 0 && (
         <div className="progress-wrap">
           <div className="progress-bar-background">
             <div className="progress-bar" style={{ width: `${validatedProgress}%` }}>

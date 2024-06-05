@@ -27,7 +27,7 @@ const Episode = ({ episode, showShow = false }) => {
       <Link to={`/tv/episode/${episode.id}`}>
         <div className='image-wrap'>
           <ImageComponent image={getEpisodeImage(episode)} alt={'episode-poster-' + episode.number} />
-          { validatedProgress && (
+          { validatedProgress > 0 && (
             <div className="progress-bar-background">
               <div className="progress-bar" style={{ width: `${validatedProgress}%` }}>
                 <span className="smaller">{ validatedProgress }%</span>

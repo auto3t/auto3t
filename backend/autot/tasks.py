@@ -13,6 +13,18 @@ from autot.src.archive import Archiver
 from autot.src.download import Transmission
 
 
+def is_pending(queue_name: str, func_name: str) -> bool:
+    """check if a job is already scheduled"""
+    queue = get_queue(queue_name)
+    all_job_ids = queue.scheduled_job_registry.get_job_ids()
+    for job_id in all_job_ids:
+        job_queued = queue.fetch_job(job_id)
+        if job_queued.func_name == f"autot.tasks.{func_name}" and job_queued.is_scheduled:
+            return True
+
+    return False
+
+
 @job
 def refresh_all_shows() -> None:
     """refresh all active shows"""
@@ -55,6 +67,10 @@ def run_archiver() -> None:
 @job("show")
 def download_watcher() -> None:
     """watch download queue"""
+    if is_pending("show", "download_watcher"):
+        print("job is already scheduled, exiting...")
+        return
+
     needs_checking, needs_archiving = Transmission().update_state()
     if needs_checking:
         queue = get_queue("show")

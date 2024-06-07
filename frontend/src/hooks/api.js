@@ -122,7 +122,6 @@ const useApi = () => {
     } catch (error) {
       console.error('Error refreshing token:', error);
       logout();
-      // throw error;
     }
   };
 

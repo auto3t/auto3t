@@ -8,7 +8,13 @@ const AUTH_BASE = 'http://localhost:8000/auth/';
 const useApi = () => {
 
   const [error, setError] = useState(null);
-  const { accessToken, setAccessToken, refreshToken, setToken } = useAuthStore();
+  const {
+    accessToken,
+    logout,
+    refreshToken,
+    setAccessToken,
+    setToken,
+  } = useAuthStore();
 
   const fetchData = async (url, method = 'GET', body = null, retry = true) => {
     setError(null);
@@ -115,7 +121,8 @@ const useApi = () => {
       setAccessToken(data.access);
     } catch (error) {
       console.error('Error refreshing token:', error);
-      throw error;
+      logout();
+      // throw error;
     }
   };
 

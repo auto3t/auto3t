@@ -40,7 +40,7 @@ body {
 }
 
 footer {
-  background-color: var(--accent-1);
+  background-color: var(--accent-3);
   padding: 1rem 0;
   flex-shrink: 0;
   text-align: center;

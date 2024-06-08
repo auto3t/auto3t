@@ -8,12 +8,12 @@ import KeywordTableCompnent from "./KeywordTableComponent";
 export default function ShowDetail({ showDetail, fetchShow }) {
 
   const { put } = useApi();
-  const [showConfigure, setShowConfigure] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
   const [editedSearchName, setEditedSearchName] = useState('');
   const [editMode, setEditMode] = useState(false);
 
   const toggleShowDetails = () => {
-    setShowConfigure(!showConfigure);
+    setShowDetails(!showDetails);
     setEditedSearchName(showDetail.search_name || '');
     setEditMode(false);
   }
@@ -71,9 +71,9 @@ export default function ShowDetail({ showDetail, fetchShow }) {
         </div>
       </div>
       <button onClick={toggleShowDetails}>
-        {showConfigure ? "Hide" : "Configure Show"}
+        {showDetails ? "Hide Details" : "Show Details"}
       </button>
-      {showConfigure && (
+      {showDetails && (
         <>
           <table className="keyword-table">
             <tbody>

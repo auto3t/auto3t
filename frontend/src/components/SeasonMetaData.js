@@ -8,11 +8,11 @@ import KeywordTableCompnent from "./KeywordTableComponent";
 const SeasonMetaData = ({ season, fetchEpisodes }) => {
 
   const { post } = useApi();
-  const [seasonConfigure, setSeasonConfigure] = useState(false);
+  const [showSeasonDetails, setShowSeasonDetails] = useState(false);
   const { status, setStatus } = useBulkUpdateStore();
 
-  const toggleSeasonConfigure = () => {
-    setSeasonConfigure(!seasonConfigure);
+  const toggleShowSeasonDetails = () => {
+    setShowSeasonDetails(!showSeasonDetails);
   }
 
   const handleStatusChange = (event) => {
@@ -37,10 +37,10 @@ const SeasonMetaData = ({ season, fetchEpisodes }) => {
           {season.release_date && <span className="tag-item">Start: <TimeComponent timestamp={season.release_date} /></span>}
           {season.end_date && <span className="tag-item">End: <TimeComponent timestamp={season.end_date} /></span>}
         </div>
-        <button onClick={toggleSeasonConfigure}>
-          {seasonConfigure ? "Hide" : "Configure Season"}
+        <button onClick={toggleShowSeasonDetails}>
+          {showSeasonDetails ? "Hide Details" : "Season Details"}
         </button>
-        {seasonConfigure && (
+        {showSeasonDetails && (
           <>
             <table className="keyword-table">
               <tbody>

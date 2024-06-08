@@ -48,11 +48,11 @@ class Torrent(models.Model):
         ("s", "Season"),
     ]
     TORRENT_STATE = [
-        ("u", "undefined"),
-        ("q", "queued"),
-        ("d", "downloading"),
-        ("f", "finished"),
-        ("a", "archived"),
+        ("u", "Undefined"),
+        ("q", "Queued"),
+        ("d", "Downloading"),
+        ("f", "Finished"),
+        ("a", "Archived"),
     ]
 
     magnet = models.TextField(unique=True)

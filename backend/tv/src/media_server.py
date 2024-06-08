@@ -1,10 +1,24 @@
 """jellyfin integration"""
 
+from typing import TypedDict, NotRequired
 import requests
 
 from django.db.models.query import QuerySet
 from tv.models import TVEpisode
 from autot.src.config import get_config, ConfigType
+
+
+class MediaServerItem(TypedDict):
+    """describes metadata from mediaserver"""
+
+    media_server_id: NotRequired[str]
+    width: int
+    height: int
+    codec: str
+    fps: float
+    size: int
+    duration: int
+    bitrate: int
 
 
 class MediaServerEpisode:
@@ -25,33 +39,67 @@ class MediaServerEpisode:
         """get tv episodes not identified"""
         return TVEpisode.objects.filter(media_server_id__isnull=True)
 
-    def get_jf_ids(self):
+    def get_jf_data(self) -> dict[str, MediaServerItem]:
         """get all jf episodes"""
-        url = "Items?Recursive=true&IncludeItemTypes=Episode&fields=ProviderIds"
+        url = "Items?Recursive=true&IncludeItemTypes=Episode&fields=ProviderIds,MediaSources"
         response = self.make_request(url, "GET")
+        jf_items = {}
+        for item in response["Items"]:
+            sources = item.get("MediaSources")
+            if not sources:
+                continue
 
-        jf_ids = {i["ProviderIds"]["TvMaze"]: i["Id"] for i in response["Items"] if "TvMaze" in i["ProviderIds"]}
+            media_source = sources[0]
+            bitrate = media_source.get("Bitrate")
+            file_size = media_source.get("Size")
+            duration = media_source.get("RunTimeTicks", 0) // 10000000
 
-        return jf_ids
+            media_streams = sources[0].get("MediaStreams")
+            if not media_streams:
+                continue           
 
-    def identify(self):
+            video_streams = [i for i in media_streams if i["Type"] == "Video"]
+            if not video_streams:
+                continue
+
+            video_stream = video_streams[0]
+            stream_meta: MediaServerItem = {
+                "media_server_id": item["Id"],
+                "width": video_stream.get("Width"),
+                "height": video_stream.get("Height"),
+                "codec": video_stream.get("Codec"),
+                "fps": video_stream.get("AverageFrameRate"),
+                "size": file_size,
+                "duration": duration,
+                "bitrate": bitrate,
+            }
+            tv_maze_id = item["ProviderIds"].get("TvMaze")
+            if not tv_maze_id:
+                continue
+
+            jf_items.update({tv_maze_id: stream_meta})
+
+        return jf_items
+
+    def identify(self) -> None:
         """identify episodes in JF"""
-        jf_ids = self.get_jf_ids()
+        jf_items = self.get_jf_data()
         to_id = self.get_unidentified()
         episode_to_update = []
         for episode in to_id:
-            jf_id = jf_ids.get(episode.remote_server_id)
-            if not jf_id:
+            jf_data = jf_items.get(episode.remote_server_id)
+            if not jf_data:
                 continue
 
-            episode.media_server_id = jf_id
+            episode.media_server_id = jf_data.pop("media_server_id")
+            episode.media_server_meta = jf_data
             episode.status = "f"
             episode_to_update.append(episode)
 
         if not episode_to_update:
             return
 
-        ided = TVEpisode.objects.bulk_update(episode_to_update, ["media_server_id", "status"])
+        ided = TVEpisode.objects.bulk_update(episode_to_update, ["media_server_id", "media_server_meta", "status"])
         print(f"found jf ids for {ided} episodes")
 
     def make_request(self, url, method, data=False):

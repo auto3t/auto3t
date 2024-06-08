@@ -13,12 +13,14 @@ from django.db.models.signals import post_delete
 from django.dispatch import receiver
 from artwork.models import Artwork
 from autot.models import SearchWord, SearchWordCategory, Torrent
+from autot.src.config import ConfigType, get_config
 from autot.src.helper import sanitize_file_name
 
 
 class BaseModel(models.Model):
     """base model to enherit from"""
 
+    CONFIG: ConfigType = get_config()
     IMAGE_SIZE: None | tuple[int, int] = None
 
     remote_server_id = models.CharField(max_length=255, unique=True)
@@ -300,6 +302,7 @@ class TVEpisode(BaseModel):
     title = models.CharField(max_length=255)
     season = models.ForeignKey(TVSeason, on_delete=models.CASCADE)
     media_server_id = models.CharField(max_length=255, null=True, blank=True)
+    media_server_meta = models.JSONField(null=True, blank=True)
     status = models.CharField(choices=EPISODE_STATUS, max_length=1, null=True, blank=True)
     torrent = models.ForeignKey(Torrent, null=True, blank=True, on_delete=models.CASCADE)
     search_keywords = models.ManyToManyField(SearchWord)
@@ -381,6 +384,15 @@ class TVEpisode(BaseModel):
         show_name = sanitize_file_name(self.season.show.name)
         title = sanitize_file_name(self.title)
         return f"{show_name} - {self.identifyer} - {title}"
+
+    @property
+    def media_server_url(self) -> str | None:
+        """url in media server"""
+        if not self.media_server_id:
+            return None
+
+        base_url = self.CONFIG["JF_URL"]
+        return f"{base_url}/web/#/details?id={self.media_server_id}"
 
     def get_archive_path(self, suffix: str | None = None) -> Path:
         """build archive path"""

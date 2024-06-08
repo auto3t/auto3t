@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import useApi from "../hooks/api";
 import TimeComponent from "./TimeComponent";
+import { formatBytes } from "../utils";
 
 const TorrentSearch = ({ searchDefault = '' }) => {
 
@@ -8,14 +9,6 @@ const TorrentSearch = ({ searchDefault = '' }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState(null);
-
-  function formatBytes(bytes) {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  }
 
   const handleSearch = async () => {
     setIsSearching(true);

@@ -7,6 +7,7 @@ import useEpsiodeDetailStore from "../../stores/EpisodeDetailStore"
 import EpisodeNav from "../../components/EpisodeNav";
 import Torrent from "../../components/Torrent";
 import TorrentSearch from "../../components/TorrentSearch";
+import { formatBitrate, formatBytes, formatDuration } from "../../utils";
 
 export default function TVEpisode() {
 
@@ -59,6 +60,44 @@ export default function TVEpisode() {
           <EpisodeNav currentEpisodeId={episodeDetail.id} />
           {episodeDetail?.torrent && (
             <Torrent torrent={episodeDetail.torrent} />
+          )}
+          {episodeDetail?.media_server_id && (
+            <>
+              <h2>File Meta Data</h2>
+              <table>
+                <tbody>
+                  <tr>
+                    <td>Codec</td>
+                    <td>{episodeDetail.media_server_meta.codec}</td>
+                  </tr>
+                  <tr>
+                    <td>Width</td>
+                    <td>{episodeDetail.media_server_meta.width}</td>
+                  </tr>
+                  <tr>
+                    <td>Height</td>
+                    <td>{episodeDetail.media_server_meta.height}</td>
+                  </tr>
+                  <tr>
+                    <td>Duration</td>
+                    <td>{formatDuration(episodeDetail.media_server_meta.duration)}</td>
+                  </tr>
+                  <tr>
+                    <td>Size</td>
+                    <td>{formatBytes(episodeDetail.media_server_meta.size)}</td>
+                  </tr>
+                  <tr>
+                    <td>Bitrate</td>
+                    <td>{formatBitrate(episodeDetail.media_server_meta.bitrate)}</td>
+                  </tr>
+                  <tr>
+                    <td>FPS</td>
+                    <td>{episodeDetail.media_server_meta.fps.toFixed(2)}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <Link to={episodeDetail.media_server_url} target="_blank">Open</Link>
+            </>
           )}
           <TorrentSearch searchDefault={episodeDetail.search_query} />
         </>

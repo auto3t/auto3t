@@ -3,9 +3,9 @@ import useApi from "../hooks/api";
 import TimeComponent from "./TimeComponent";
 import { formatBytes } from "../utils";
 
-const TorrentSearch = ({ searchDefault = '' }) => {
+const TorrentSearch = ({ searchType, searchTypeId, searchDefault = '' }) => {
 
-  const { post } = useApi();
+  const { post, error } = useApi();
   const [searchTerm, setSearchTerm] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState(null);
@@ -23,6 +23,16 @@ const TorrentSearch = ({ searchDefault = '' }) => {
 
   const handleClear = () => {
     setSearchResults(null);
+  }
+
+  const handleDownload = async (resultId) => {
+    console.log(resultId)
+    try {
+      const data = await post(`tv/${searchType}/${searchTypeId}/torrent/`, {search_id: resultId});
+      console.log(data);
+    } catch (error) {
+      console.error('failed to add torrent', error);
+    }
   }
 
   useEffect(() => {
@@ -57,7 +67,8 @@ const TorrentSearch = ({ searchDefault = '' }) => {
                       {result.Seeders} / {result.Peers} / {result.Gain.toFixed(2)}
                     </span>
                   </div>
-                  <button data-id={result.Id}>Download</button>
+                  <button onClick={() => handleDownload(result.Id)}>Download</button>
+                  {error && <span>Failed to add: {error}</span>}
                 </div>
               ))}
             </div>

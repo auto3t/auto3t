@@ -205,7 +205,7 @@ class EpisodeViewSet(viewsets.ModelViewSet):
         return Response({})
 
     @action(detail=True, methods=["post"])
-    def torrent(self, request, **kwargs):
+    def torrent(self, request, **kwargs) -> Response:
         """overwrite torrent on episode"""
         episode = self.get_object()
         data = request.data
@@ -221,7 +221,7 @@ class EpisodeViewSet(viewsets.ModelViewSet):
             return Response({"message": "did not find search result"}, status=404)
 
         result = json.loads(search_result)
-        magnet = Jackett().extract_magnet([result])
+        magnet = Jackett().extract_magnet(result)
         if not magnet:
             return Response({"message": "failed to extract magnet url"}, status=400)
 

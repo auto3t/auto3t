@@ -99,7 +99,11 @@ export default function TVEpisode() {
               <Link to={episodeDetail.media_server_url} target="_blank">Open</Link>
             </>
           )}
-          <TorrentSearch searchDefault={episodeDetail.search_query} />
+          <TorrentSearch
+            searchType='episode'
+            searchTypeId={episodeDetail.id}
+            searchDefault={episodeDetail.search_query}
+          />
         </>
       )}
     </div>

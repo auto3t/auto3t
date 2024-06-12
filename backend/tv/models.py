@@ -424,6 +424,8 @@ class TVEpisode(BaseModel):
         """reset torrent and state"""
         self.torrent = None
         self.status = None
+        self.media_server_id = None
+        self.media_server_meta = None
         self.save()
 
     def add_magnet(self, magnet) -> None:

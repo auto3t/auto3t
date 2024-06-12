@@ -1,9 +1,11 @@
 """archive completed torrents"""
 
+from pathlib import Path
+
 from django.db.models import QuerySet
 from transmission_rpc.torrent import Torrent as TransmissionTorrent
 from tv.models import TVEpisode
-from autot.src.config import get_config
+from autot.src.config import get_config, ConfigType
 from autot.src.download import Transmission
 from autot.models import Torrent
 
@@ -11,7 +13,7 @@ from autot.models import Torrent
 class Archiver:
     """archive media file"""
 
-    CONFIG = get_config()
+    CONFIG: ConfigType = get_config()
 
     def archive(self) -> bool:
         """archive all"""
@@ -49,7 +51,7 @@ class Archiver:
     def _archive_episode(self, tm_torrent: TransmissionTorrent, episode: TVEpisode) -> None:
         """archive tvfile"""
         filename = self._get_valid_media_file(tm_torrent, episode)
-        download_path = self.CONFIG["TM_BASE_FOLDER"] / filename
+        download_path: Path = self.CONFIG["TM_BASE_FOLDER"] / filename
         if not download_path.exists():
             raise FileNotFoundError(f"didn't find expected {str(download_path)}")
 

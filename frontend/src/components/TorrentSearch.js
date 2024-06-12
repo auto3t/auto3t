@@ -12,6 +12,7 @@ const TorrentSearch = ({ searchType, searchTypeId, searchDefault = '' }) => {
 
   const handleSearch = async () => {
     setIsSearching(true);
+    setSearchResults(null);
     const data = await post('torrent/search/', {search_term: searchTerm});
     if (data) {
       setSearchResults(data);

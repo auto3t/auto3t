@@ -279,6 +279,13 @@ class TVSeason(BaseModel):
 
         return f"{show_name} S{str(self.number).zfill(2)} COMPLETE"
 
+    def add_magnet(self, magnet: str) -> None:
+        """add magnet to all episodes in season"""
+        torrent, _ = Torrent.objects.get_or_create(magnet=magnet, torrent_type="s")
+        TVEpisode.objects.filter(season=self).update(
+            torrent=torrent, status="d", media_server_id=None, media_server_meta=None
+        )
+
     def is_valid_path(self, path) -> bool:
         """check for valid season path"""
         has_complete = "complete" in path.lower()
@@ -433,6 +440,8 @@ class TVEpisode(BaseModel):
         torrent, _ = Torrent.objects.get_or_create(magnet=magnet, torrent_type="e")
         self.torrent = torrent
         self.status = "d"
+        self.media_server_id = None
+        self.media_server_meta = None
         self.save()
 
     def get_next(self) -> Self | None:

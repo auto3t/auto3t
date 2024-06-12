@@ -4,6 +4,7 @@ import TimeComponent from "./TimeComponent";
 import useBulkUpdateStore from "../stores/EpisodeBulkUpdateStore";
 import AddKeywordComponent from "./AddKeywordComponent";
 import KeywordTableCompnent from "./KeywordTableComponent";
+import TorrentSearch from "./TorrentSearch";
 
 const SeasonMetaData = ({ season, fetchEpisodes }) => {
 
@@ -72,6 +73,7 @@ const SeasonMetaData = ({ season, fetchEpisodes }) => {
               patchURL={`tv/season/${season.id}/?direction=remove`}
               refreshCallback={() => fetchEpisodes(season.id)}
             />
+            <TorrentSearch searchType='season' searchTypeId={season.id} searchDefault={season.search_query} />
           </>
         )}
       </div>

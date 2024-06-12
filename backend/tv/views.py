@@ -134,6 +134,32 @@ class SeasonViewSet(viewsets.ModelViewSet):
             for to_remove in to_process:
                 instance.remove_keyword(instance, to_remove)
 
+    @action(detail=True, methods=["post"])
+    def torrent(self, request, **kwargs) -> Response:
+        """overwrite torrent on season"""
+        season = self.get_object()
+        data = request.data
+        if not data:
+            return Response({"message": "missing request body"}, status=400)
+
+        search_id = data.get("search_id")
+        if not data:
+            return Response({"message": "missing search_id"}, status=400)
+
+        search_result = AutotRedis().get_message(f"search:{search_id}")
+        if not search_result:
+            return Response({"message": "did not find search result"}, status=404)
+
+        result = json.loads(search_result)
+        magnet = Jackett().extract_magnet(result)
+        if not magnet:
+            return Response({"message": "failed to extract magnet url"}, status=400)
+
+        season.add_magnet(magnet)
+        refresh_status.delay()
+
+        return Response(result)
+
 
 class EpisodeViewSet(viewsets.ModelViewSet):
     """get tv episode/s"""

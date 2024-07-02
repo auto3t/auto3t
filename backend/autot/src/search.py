@@ -144,6 +144,8 @@ class Jackett(BaseIndexer):
 class Magnator:
     """convert torrent bytes object into magnet link"""
 
+    TRACKER_FALLBACK_URL = "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_best.txt"
+
     def __init__(self, torrent_bytes: bytes):
         self.metadata = bencodepy.bdecode(torrent_bytes)
 
@@ -171,10 +173,22 @@ class Magnator:
     def _parse_trackers(self) -> str:
         """build encoded tracker list"""
         tracker_list = []
-        for item in self.metadata[b"announce-list"]:
+        for item in self.metadata.get(b"announce-list", []):
             for tracker in item:
                 tracker_list.append(tracker.decode())
+
+        if not tracker_list:
+            tracker_list = self._get_fallback()
 
         encoded_trackers = "&tr=".join(quote(tracker) for tracker in tracker_list)
 
         return encoded_trackers
+
+    def _get_fallback(self) -> list[str]:
+        """get fallback trackers"""
+        response = requests.get(self.TRACKER_FALLBACK_URL, timeout=300)
+        if not response.ok:
+            print("failed to get tracker fallback")
+            return []
+
+        return response.text.split()

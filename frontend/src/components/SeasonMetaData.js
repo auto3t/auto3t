@@ -6,6 +6,7 @@ import useSelectedSeasonStore from "../stores/SeasonSelectedStore";
 import AddKeywordComponent from "./AddKeywordComponent";
 import KeywordTableCompnent from "./KeywordTableComponent";
 import TorrentSearch from "./TorrentSearch";
+import SeasonEpisodeSummary from "./SeasonEpisodeSummary";
 
 const SeasonMetaData = ({ fetchEpisodes }) => {
 
@@ -75,6 +76,7 @@ const SeasonMetaData = ({ fetchEpisodes }) => {
               patchURL={`tv/season/${selectedSeason.id}/?direction=remove`}
               refreshCallback={() => fetchEpisodes(selectedSeason.id)}
             />
+            <SeasonEpisodeSummary />
             <TorrentSearch searchType='season' searchTypeId={selectedSeason.id} searchDefault={selectedSeason.search_query} />
           </>
         )}

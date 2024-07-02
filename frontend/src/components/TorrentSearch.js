@@ -42,7 +42,7 @@ const TorrentSearch = ({ searchType, searchTypeId, searchDefault = '' }) => {
 
   return (
     <div className="manual-search">
-      <h2>Manual Search</h2>
+      <h3>Manual Search</h3>
       <input
         type="text"
         value={searchTerm}

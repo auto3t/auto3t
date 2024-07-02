@@ -2,13 +2,15 @@ import { useState } from "react";
 import useApi from "../hooks/api";
 import TimeComponent from "./TimeComponent";
 import useBulkUpdateStore from "../stores/EpisodeBulkUpdateStore";
+import useSelectedSeasonStore from "../stores/SeasonSelectedStore";
 import AddKeywordComponent from "./AddKeywordComponent";
 import KeywordTableCompnent from "./KeywordTableComponent";
 import TorrentSearch from "./TorrentSearch";
 
-const SeasonMetaData = ({ season, fetchEpisodes }) => {
+const SeasonMetaData = ({ fetchEpisodes }) => {
 
   const { post } = useApi();
+  const { selectedSeason } = useSelectedSeasonStore();
   const [showSeasonDetails, setShowSeasonDetails] = useState(false);
   const { status, setStatus } = useBulkUpdateStore();
 
@@ -21,9 +23,9 @@ const SeasonMetaData = ({ season, fetchEpisodes }) => {
   };
 
   const handleBulkUpdate = () => {
-    post(`tv/episode/?season=${season.id}`, { status: status })
+    post(`tv/episode/?season=${selectedSeason.id}`, { status: status })
     .then(() => {
-      fetchEpisodes(season.id);
+      fetchEpisodes(selectedSeason.id);
     })
     .catch(error => console.error('Error:', error));
   };
@@ -31,12 +33,12 @@ const SeasonMetaData = ({ season, fetchEpisodes }) => {
   return (
     <>
       <div className="season-detail">
-        <h2>Season {season.number}</h2>
-        <span className='smaller'>ID: <a href={season.remote_server_url} target='_blank' rel='noreferrer'>{season.remote_server_id}</a></span>
-        <p dangerouslySetInnerHTML={{__html: season.description}} />
+        <h2>Season {selectedSeason.number}</h2>
+        <span className='smaller'>ID: <a href={selectedSeason.remote_server_url} target='_blank' rel='noreferrer'>{selectedSeason.remote_server_id}</a></span>
+        <p dangerouslySetInnerHTML={{__html: selectedSeason.description}} />
         <div className="tag-group">
-          {season.release_date && <span className="tag-item">Start: <TimeComponent timestamp={season.release_date} /></span>}
-          {season.end_date && <span className="tag-item">End: <TimeComponent timestamp={season.end_date} /></span>}
+          {selectedSeason.release_date && <span className="tag-item">Start: <TimeComponent timestamp={selectedSeason.release_date} /></span>}
+          {selectedSeason.end_date && <span className="tag-item">End: <TimeComponent timestamp={selectedSeason.end_date} /></span>}
         </div>
         <button onClick={toggleShowSeasonDetails}>
           {showSeasonDetails ? "Hide Details" : "Season Details"}
@@ -61,19 +63,19 @@ const SeasonMetaData = ({ season, fetchEpisodes }) => {
                   <td>Add Keyword</td>
                   <td>
                     <AddKeywordComponent
-                      patchURL={`tv/season/${season.id}/?direction=add`}
-                      refreshCallback={() => fetchEpisodes(season.id)}
+                      patchURL={`tv/season/${selectedSeason.id}/?direction=add`}
+                      refreshCallback={() => fetchEpisodes(selectedSeason.id)}
                     />
                   </td>
                 </tr>
               </tbody>
             </table>
             <KeywordTableCompnent
-              all_keywords={season.all_keywords}
-              patchURL={`tv/season/${season.id}/?direction=remove`}
-              refreshCallback={() => fetchEpisodes(season.id)}
+              all_keywords={selectedSeason.all_keywords}
+              patchURL={`tv/season/${selectedSeason.id}/?direction=remove`}
+              refreshCallback={() => fetchEpisodes(selectedSeason.id)}
             />
-            <TorrentSearch searchType='season' searchTypeId={season.id} searchDefault={season.search_query} />
+            <TorrentSearch searchType='season' searchTypeId={selectedSeason.id} searchDefault={selectedSeason.search_query} />
           </>
         )}
       </div>

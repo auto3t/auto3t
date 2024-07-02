@@ -105,7 +105,7 @@ export default function TVShowDetail() {
       </div>
       {selectedSeason && (
         <div>
-          <SeasonMetaData season={selectedSeason} fetchEpisodes={fetchEpisodes} />
+          <SeasonMetaData fetchEpisodes={fetchEpisodes} />
           <div className="episode-items">
             {isLoadingEpisodes ? (
               <p>Loading...</p>

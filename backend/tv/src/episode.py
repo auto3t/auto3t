@@ -55,7 +55,7 @@ class EpisodeStatus:
             if not magnet:
                 continue
 
-            torrent = Torrent.objects.create(magnet=magnet, torrent_type="s")
+            torrent, _ = Torrent.objects.get_or_create(magnet=magnet, torrent_type="s")
             TVEpisode.objects.filter(season=season).update(torrent=torrent, status="d")
             found_magnets = True
             print(f"{season}: added magnet {torrent.magnet_hash}")

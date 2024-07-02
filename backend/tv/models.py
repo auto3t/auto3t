@@ -476,7 +476,6 @@ class TVEpisode(BaseModel):
 @receiver(post_delete, sender=TVShow)
 def delete_show_images(sender, instance, **kwargs):  # pylint: disable=unused-argument
     """signal for deleting show images"""
-    print(f"{instance}, {instance.id}")
     if instance.image_show:
         instance.image_show.delete()
     if instance.episode_fallback:
@@ -490,6 +489,18 @@ def delete_season_images(sender, instance, **kwargs):  # pylint: disable=unused-
     """signal for deleting season images"""
     if instance.image_season:
         instance.image_season.delete()
+
+
+@receiver(post_delete, sender=TVEpisode)
+def delete_torrent(sender, instance, **kwargs):  # pylint: disable=unused-argument
+    """delete torrent if not used else where"""
+    if not instance.torrent:
+        return
+
+    if TVEpisode.objects.filter(torrent=instance.torrent).count() > 1:
+        return
+
+    instance.torrent.delete()
 
 
 @receiver(post_delete, sender=TVEpisode)

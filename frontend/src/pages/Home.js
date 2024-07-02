@@ -8,6 +8,8 @@ const Home = () => {
   const { error, get } = useApi();
   const [isLoadingProcessingEpisodes, setIsLoadingProcessingEpisodes] = useState(true);
   const [isLoadingUpcomingEpisodes, setIsLoadingUpcomingEpisodes] = useState(true);
+  const [upcomingItemCount, setUpcomingItemCount] = useState(12);
+  const [hasMoreUpcoming, setHasMoreUpcoming] = useState(false);
   const { processingEpisodes, setProcessingEpisodes } = useProcessingEpisodeStore();
   const { upcomingEpisodes, setUpcomingEpisodes } = useUpcomingEpisodeStore();
 
@@ -28,8 +30,9 @@ const Home = () => {
   useEffect(() => {
     const fetchEpisodes = async () => {
       try {
-        const data = await get('tv/episode/?limit=12&status=u&order-by=release_date');
+        const data = await get(`tv/episode/?limit=${upcomingItemCount}&status=u&order-by=release_date`);
         setUpcomingEpisodes(data);
+        setHasMoreUpcoming(data.length === upcomingItemCount);
       } catch (error) {
         console.error("error fetching episodes: ", error);
       }
@@ -37,7 +40,11 @@ const Home = () => {
     };
 
     fetchEpisodes();
-  }, [setProcessingEpisodes]);
+  }, [setProcessingEpisodes, upcomingItemCount]);
+
+  const handleLoadMoreUpcomingEpisodes = () => {
+    setUpcomingItemCount(upcomingItemCount + 12);
+  };
 
   return (
     <div className="movies">
@@ -62,13 +69,18 @@ const Home = () => {
         ) : error ? (
           <p>Error: {error}</p>
         ) : upcomingEpisodes?.length > 0 ? (
-          upcomingEpisodes.map((episode) => (
-            <Episode key={episode.id} episode={episode} showShow={true} />
-          ))
+          <>
+            {upcomingEpisodes.map((episode) => (
+              <Episode key={episode.id} episode={episode} showShow={true} />
+            ))}
+          </>
         ) : (
           <p>No upcoming episodes found.</p>
         )}
       </div>
+      {hasMoreUpcoming && (
+        <button onClick={handleLoadMoreUpcomingEpisodes}>Load More</button>
+      )}
     </div>
   );
 };

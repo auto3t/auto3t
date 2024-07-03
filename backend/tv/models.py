@@ -279,10 +279,16 @@ class TVSeason(BaseModel):
 
         return f"{show_name} S{str(self.number).zfill(2)} COMPLETE"
 
-    def add_magnet(self, magnet: str) -> None:
+    def add_magnet(self, magnet: str, tm_instance) -> None:
         """add magnet to all episodes in season"""
+        episodes = TVEpisode.objects.filter(season=self)
+        related = Torrent.objects.filter(torrent_episode__in=episodes).distinct()
+        if related:
+            for torrent in related:
+                tm_instance.cancle(torrent)
+
         torrent, _ = Torrent.objects.get_or_create(magnet=magnet, torrent_type="s")
-        TVEpisode.objects.filter(season=self).update(
+        episodes.update(
             torrent=torrent, status="d", media_server_id=None, media_server_meta=None
         )
 
@@ -311,7 +317,9 @@ class TVEpisode(BaseModel):
     media_server_id = models.CharField(max_length=255, null=True, blank=True)
     media_server_meta = models.JSONField(null=True, blank=True)
     status = models.CharField(choices=EPISODE_STATUS, max_length=1, null=True, blank=True)
-    torrent = models.ForeignKey(Torrent, null=True, blank=True, on_delete=models.CASCADE)
+    torrent = models.ForeignKey(
+        Torrent, related_name="torrent_episode", null=True, blank=True, on_delete=models.PROTECT
+    )
     search_keywords = models.ManyToManyField(SearchWord)
     image_episode = models.ForeignKey(
         Artwork, related_name="image_episode", on_delete=models.CASCADE, null=True, blank=True
@@ -405,7 +413,7 @@ class TVEpisode(BaseModel):
         """build archive path"""
         path = self.season.get_archive_path() / self.file_name
         if suffix:
-            path = path.with_suffix(suffix)
+            path = Path(f"{path}{suffix}")
 
         return path
 

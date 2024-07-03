@@ -19,6 +19,7 @@ from tv.serializers import (
 from tv.src.show_search import ShowId
 from autot.tasks import import_show, refresh_status
 from autot.models import SearchWord
+from autot.src.download import Transmission
 from autot.src.redis_con import AutotRedis
 from autot.src.search import Jackett
 
@@ -155,7 +156,8 @@ class SeasonViewSet(viewsets.ModelViewSet):
         if not magnet:
             return Response({"message": "failed to extract magnet url"}, status=400)
 
-        season.add_magnet(magnet)
+        tm_instance = Transmission()
+        season.add_magnet(magnet, tm_instance)
         refresh_status.delay()
 
         return Response(result)

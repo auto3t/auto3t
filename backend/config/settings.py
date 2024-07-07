@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "config",
     "autot",
     "tv",
+    "movie",
     "authentication",
     "artwork",
     "django_rq",

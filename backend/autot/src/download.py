@@ -65,7 +65,11 @@ class Transmission(DownloaderBase):
 
     def cancle(self, torrent: Torrent) -> None:
         """cancle and reset torrent"""
-        TVEpisode.objects.filter(torrent=torrent).update(torrent=None, status=None)
+        TVEpisode.objects.filter(torrent=torrent).update(
+            torrent=None,
+            status=None,
+            media_server_id=None,
+        )
         to_delete = self.get_single(torrent)
         if to_delete:
             self.delete(to_delete)

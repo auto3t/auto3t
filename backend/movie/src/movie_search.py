@@ -34,10 +34,10 @@ class MovieId:
             "local_id": local_ids.get(str(result["id"])),
             "name": result["original_title"],
             "url": f"https://www.themoviedb.org/movie/{result['id']}",
-            "genres": result["genre_ids"],
-            "status": result["status"],
-            "summary": result["overview"],
-            "tagline": result["tagline"],
+            "genres": result.get("genre_ids"),
+            "status": result.get("status"),
+            "summary": result.get("overview"),
+            "tagline": result.get("tagline"),
         }
 
         if "poster_path" in result:

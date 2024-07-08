@@ -17,7 +17,7 @@ from tv.serializers import (
     TVEpisodeSerializer
 )
 from tv.src.show_search import ShowId
-from autot.tasks import import_show, refresh_status
+from tv.tasks import import_show, refresh_status
 from autot.models import SearchWord
 from autot.src.download import Transmission
 from autot.src.redis_con import AutotRedis

@@ -1,6 +1,8 @@
 """all move models"""
 
 from artwork.models import Artwork
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 from django.db import models
 
 
@@ -20,4 +22,11 @@ class Movie(models.Model):
 
     def __str__(self):
         """movie string representation"""
-        return f"{self.name} ({self.release_date.year})"
+        return f"{self.name} ({self.release_date.year})"  # pylint: disable=no-member
+
+
+@receiver(post_delete, sender=Movie)
+def delete_movie_image(sender, instance, **kwargs):  # pylint: disable=unused-argument
+    """signal for deleting movie image"""
+    if instance.image_movie:
+        instance.image_movie.delete()

@@ -11,8 +11,9 @@ import Settings from './pages/Settings';
 import Movies from './pages/movie/Movies';
 import TVShows from './pages/tv/TVShows';
 import TVShowDetail from './pages/tv/TVShowDetails';
-import Search from './pages/tv/Search';
+import TVSearch from './pages/tv/Search';
 import TVEpisode from './pages/tv/Episode';
+import MovieSearch from './pages/movie/Search';
 
 // layouts
 import RootLayout from './layouts/RootLayout';
@@ -26,10 +27,11 @@ const router = createBrowserRouter(
         <Route index element={<TVShows />} />
         <Route path='show/:id' element={<TVShowDetail />} />
         <Route path='episode/:id' element={<TVEpisode />} />
-        <Route path='search' element={<Search />} />
+        <Route path='search' element={<TVSearch />} />
       </Route>
       <Route path='movie'>
         <Route index element={<Movies />} />
+        <Route path='search' element={<MovieSearch />} />
       </Route>
       <Route path='settings' element={<Settings />}/>
       <Route path='*' element={<NotFound />} /> 

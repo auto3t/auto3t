@@ -223,23 +223,28 @@ button:hover {
   gap: 1rem;
 }
 
-.show-detail, .season-detail {
+.show-detail,
+.season-detail,
+.movie-detail {
   padding: 1rem;
   margin: 1rem 0;
   border: var(--accent-1) solid 2px;
 }
 
-.show-detail-header {
+.show-detail-header,
+.movie-detail-header {
   display: flex;
   align-items: center;
 }
 
-.show-poster img {
+.show-poster img,
+.movie-poster img {
   max-width: 150px;
 }
 
 .show-description,
-.episode-description {
+.episode-description,
+.movie-description {
   margin: 1rem;
 }
 

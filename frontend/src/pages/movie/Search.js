@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import useTVSearchStore from '../../stores/TVSearchStore';
-import useApi from '../../hooks/api';
-import ShowSearchResult from '../../components/ShowSearchResult';
+import useApi from "../../hooks/api"
+import useMovieSearchStore from "../../stores/MovieSearchStore";
+import MovieSearchResult from '../../components/MovieSearchResult';
 
-const TVSearch = () => {
+const MovieSearch = () => {
   const { get } = useApi();
   const [isLoading, setIsLoading] = useState(false);
   const [timer, setTimer] = useState(null);
-  const { query, results, setQuery, setResults } = useTVSearchStore();
+  const { query, results, setQuery, setResults } = useMovieSearchStore();
 
   const handleInputChange = (e) => {
     const newQuery = e.target.value;
@@ -21,7 +21,7 @@ const TVSearch = () => {
       setIsLoading(true);
       // Set a new timer for search
       const newTimer = setTimeout(() => {
-        get(`tv/remote-search?q=${encodeURIComponent(newQuery)}`)
+        get(`movie/remote-search?q=${encodeURIComponent(newQuery)}`)
           .then((data) => {
             setResults(data);
             setIsLoading(false);
@@ -44,20 +44,20 @@ const TVSearch = () => {
 
   return (
     <div>
-      <h1>Search TV Shows</h1>
+      <h1>Search Movies</h1>
       <input type="text" value={query} onChange={handleInputChange} placeholder="Search..." />
       <button onClick={handleClear}>Clear</button>
       {isLoading ? (
         <p>Loading...</p>
       ) : results?.length > 0 ? (
         results.map((result) => (
-          <ShowSearchResult key={result.id} result={result} />
+          <MovieSearchResult key={result.id} result={result} />
         ))
       ) : (
         <p>Search query did not return any results.</p>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default TVSearch;
+export default MovieSearch

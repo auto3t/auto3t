@@ -35,12 +35,10 @@ class MovieId:
             "name": result["original_title"],
             "url": f"https://www.themoviedb.org/movie/{result['id']}",
             "genres": result.get("genre_ids"),
-            "status": result.get("status"),
             "summary": result.get("overview"),
-            "tagline": result.get("tagline"),
         }
 
-        if "poster_path" in result:
+        if result.get("poster_path"):
             image_url = f"http://image.tmdb.org/t/p/original{result['poster_path']}"
             movide_data.update({"image": image_url})
 

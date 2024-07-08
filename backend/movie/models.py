@@ -6,6 +6,17 @@ from django.dispatch import receiver
 from django.db import models
 
 
+class Collection(models.Model):
+    """describes a movie collection"""
+
+    remote_server_id = models.CharField(max_length=255, unique=True)
+    name = models.CharField(max_length=255)
+    description = models.TextField(null=True, blank=True)
+    image_collection = models.ForeignKey(
+        Artwork, related_name="image_collection", on_delete=models.PROTECT, null=True, blank=True
+    )
+
+
 class Movie(models.Model):
     """describes a movie"""
 
@@ -19,6 +30,7 @@ class Movie(models.Model):
     image_movie = models.ForeignKey(
         Artwork, related_name="image_movie", on_delete=models.PROTECT, null=True, blank=True
     )
+    collection = models.ForeignKey(Collection, on_delete=models.PROTECT, null=True, blank=True)
 
     def __str__(self):
         """movie string representation"""
@@ -30,3 +42,10 @@ def delete_movie_image(sender, instance, **kwargs):  # pylint: disable=unused-ar
     """signal for deleting movie image"""
     if instance.image_movie:
         instance.image_movie.delete()
+
+
+@receiver(post_delete, sender=Collection)
+def delete_collection_image(sender, instance, **kwargs):  # pylint: disable=unused-argument
+    """signal for deleting collection image"""
+    if instance.image_collection:
+        instance.image_collection.delete()

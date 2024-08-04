@@ -16,6 +16,26 @@ class Collection(models.Model):
         Artwork, related_name="image_collection", on_delete=models.PROTECT, null=True, blank=True
     )
 
+    def __str__(self):
+        """collection string representation"""
+        return str(self.name)
+
+    def update_image_collection(self, image_url: str | None) -> None:
+        """handle update with or without existing"""
+        if not image_url:
+            return
+
+        if not self.image_collection:
+            print(f"add image_collection artwork: {image_url}")
+            image_collection, _ = Artwork.objects.get_or_create(image_url=image_url)
+            self.image_collection = image_collection
+            self.save()
+            return
+
+        if not self.image_collection.image_url == image_url:
+            print(f"update image_collection artwork: {image_url}")
+            self.image_collection.update(image_url)
+
 
 class Movie(models.Model):
     """describes a movie"""
@@ -24,7 +44,7 @@ class Movie(models.Model):
     name = models.CharField(max_length=255)
     date_added = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
-    release_date = models.DateTimeField(null=True, blank=True)
+    release_date = models.DateField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     tagline = models.TextField(null=True, blank=True)
     image_movie = models.ForeignKey(
@@ -34,7 +54,23 @@ class Movie(models.Model):
 
     def __str__(self):
         """movie string representation"""
-        return f"{self.name} ({self.release_date.year})"  # pylint: disable=no-member
+        return f"{self.name} ({self.release_date})"  # pylint: disable=no-member
+
+    def update_image_movie(self, image_url: str | None) -> None:
+        """handle update with or without existing"""
+        if not image_url:
+            return
+
+        if not self.image_movie:
+            print(f"add image_movie artwork: {image_url}")
+            image_movie, _ = Artwork.objects.get_or_create(image_url=image_url)
+            self.image_movie = image_movie
+            self.save()
+            return
+
+        if not self.image_movie.image_url == image_url:
+            print(f"update image_movie artwork: {image_url}")
+            self.image_movie.update(image_url)
 
 
 @receiver(post_delete, sender=Movie)

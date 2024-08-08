@@ -207,7 +207,8 @@ button:hover {
 
 .show-item img,
 .season-item img,
-.episode-item img {
+.episode-item img,
+.movie-item img {
   width: 100%;
 }
 
@@ -217,7 +218,8 @@ button:hover {
   gap: 1rem;
 }
 
-.episode-items {
+.episode-items,
+.movie-items {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
   gap: 1rem;

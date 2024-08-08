@@ -233,6 +233,11 @@ button:hover {
   border: var(--accent-1) solid 2px;
 }
 
+.movie-detail {
+  display: grid;
+  grid-template-columns: 25% 1fr;
+}
+
 .show-detail-header,
 .movie-detail-header {
   display: flex;

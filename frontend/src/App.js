@@ -18,6 +18,7 @@ import MovieSearch from './pages/movie/Search';
 // layouts
 import RootLayout from './layouts/RootLayout';
 import NotFound from './pages/404';
+import MovieDetail from './pages/movie/MovieDetails';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -31,6 +32,7 @@ const router = createBrowserRouter(
       </Route>
       <Route path='movie'>
         <Route index element={<Movies />} />
+        <Route path='movie/:id' element={<MovieDetail />} />
         <Route path='search' element={<MovieSearch />} />
       </Route>
       <Route path='settings' element={<Settings />}/>

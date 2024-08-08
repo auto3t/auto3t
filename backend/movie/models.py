@@ -52,6 +52,7 @@ class Movie(models.Model):
     release_date = models.DateField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     tagline = models.TextField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
     image_movie = models.ForeignKey(
         Artwork, related_name="image_movie", on_delete=models.PROTECT, null=True, blank=True
     )

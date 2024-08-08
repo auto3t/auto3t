@@ -20,6 +20,11 @@ class Collection(models.Model):
         """collection string representation"""
         return str(self.name)
 
+    @property
+    def remote_server_url(self) -> str:
+        """concat url"""
+        return f"https://www.themoviedb.org/collection/{self.remote_server_id}"
+
     def update_image_collection(self, image_url: str | None) -> None:
         """handle update with or without existing"""
         if not image_url:
@@ -55,6 +60,11 @@ class Movie(models.Model):
     def __str__(self):
         """movie string representation"""
         return f"{self.name} ({self.release_date})"  # pylint: disable=no-member
+
+    @property
+    def remote_server_url(self) -> str:
+        """concat url"""
+        return f"https://www.themoviedb.org/movie/{self.remote_server_id}"
 
     def update_image_movie(self, image_url: str | None) -> None:
         """handle update with or without existing"""

@@ -1,6 +1,18 @@
 import { Link } from "react-router-dom"
+import { post } from "../api"
 
 const MovieSearchResult = ({ result }) => {
+
+  const handleAddMovie = (remoteServerId) => {
+    post('movie/movie/', { remoteServerId: remoteServerId })
+    .then(data => {
+      console.log('Movie added successfully: ', JSON.stringify(data))
+    })
+    .catch(error => {
+      console.error('Error adding movie: ', error)
+    });
+  }
+
   return (
     <div className="movie-detail">
       <div className="movie-detail-header">
@@ -16,7 +28,7 @@ const MovieSearchResult = ({ result }) => {
             {result.local_id ? (
               <Link to={`/tv/show/${result.local_id}/`}>Open</Link>
             ) : (
-              <button className="pointer">Add</button>
+              <button className='pointer' onClick={() => handleAddMovie(result.id)}>Add</button>
             )}
           </div>
         </div>

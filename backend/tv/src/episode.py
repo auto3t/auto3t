@@ -1,6 +1,6 @@
 """deal with episodes"""
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.db.models import Count, F, Q
 from django.utils import timezone
@@ -31,7 +31,8 @@ class EpisodeStatus:
 
     def set_searching(self):
         """set episodes to searching"""
-        to_update = TVEpisode.objects.filter(status="u", release_date__lte=datetime.today().astimezone())
+        lte = datetime.today().astimezone() + timedelta(hours=6)
+        to_update = TVEpisode.objects.filter(status="u", release_date__lte=lte)
         if to_update:
             print(f"set {to_update.count()} episodes as searching")
             to_update.update(status="s")

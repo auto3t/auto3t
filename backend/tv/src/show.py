@@ -35,18 +35,15 @@ class TVMazeShow:
             show = TVShow.objects.create(**show_data)
             image_show = self._get_image_url(response)
             if image_show:
-                show.image_show = Artwork(image_url=image_show)
-                show.image_show.save()
+                show.image_show = Artwork.objects.get_or_create(image_url=image_show)
 
             episode_fallback = self._get_fallback(response, "background")
             if episode_fallback:
-                show.episode_fallback = Artwork(image_url=episode_fallback)
-                show.episode_fallback.save()
+                show.episode_fallback = Artwork.objects.get_or_create(image_url=episode_fallback)
 
             season_fallback = self._get_fallback(response, "poster")
             if season_fallback:
-                show.season_fallback = Artwork(image_url=season_fallback)
-                show.season_fallback.save()
+                show.season_fallback = Artwork.objects.get_or_create(image_url=season_fallback)
 
             show.save()
 

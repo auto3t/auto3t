@@ -1,6 +1,7 @@
 """all tv tasks"""
 
 from datetime import timedelta
+from time import sleep
 
 from django_rq import job
 from django_rq.queues import get_queue
@@ -39,6 +40,7 @@ def import_show(remote_server_id: str) -> None:
 def refresh_show(remote_server_id: str) -> None:
     """job to refresh a single show"""
     TVMazeShow(show_id=remote_server_id).validate()
+    sleep(1)
 
 
 @job("show")

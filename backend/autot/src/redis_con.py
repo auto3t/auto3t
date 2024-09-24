@@ -1,6 +1,6 @@
 """interact with redis"""
 
-from redis import Redis
+import redis
 from autot.src.config import get_config
 
 
@@ -11,11 +11,7 @@ class RedisBase:
     NAME_SPACE = CONFIG["REDIS_NAME_SPACE"]
 
     def __init__(self):
-        self.conn = Redis(
-            host=self.CONFIG["REDIS_HOST"],
-            port=self.CONFIG["REDIS_PORT"],
-            decode_responses=True,
-        )
+        self.conn = redis.from_url(self.CONFIG["REDIS_CON"], decode_responses=True)
 
 
 class AutotRedis(RedisBase):

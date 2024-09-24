@@ -150,18 +150,15 @@ MEDIA_URL = ""
 
 RQ_QUEUES = {
     "default": {
-        "HOST": AUTOT_CONFIG["REDIS_HOST"],
-        "PORT": AUTOT_CONFIG["REDIS_PORT"],
+        "URL": AUTOT_CONFIG["REDIS_CON"],
         "DEFAULT_TIMEOUT": 360,
     },
     "thumbnails": {
-        "HOST": AUTOT_CONFIG["REDIS_HOST"],
-        "PORT": AUTOT_CONFIG["REDIS_PORT"],
+        "URL": AUTOT_CONFIG["REDIS_CON"],
         "DEFAULT_TIMEOUT": 30,
     },
     "show": {
-        "HOST": AUTOT_CONFIG["REDIS_HOST"],
-        "PORT": AUTOT_CONFIG["REDIS_PORT"],
+        "URL": AUTOT_CONFIG["REDIS_CON"],
         "DEFAULT_TIMEOUT": 360,
     }
 }

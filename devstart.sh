@@ -1,20 +1,49 @@
 #!/bin/bash
 
-open_and_execute() {
-    local command="$1"
-    kitty -- bash -c "$command" &
+SESSION_NAME="autot"
+
+wait_for_redis() {
+    echo "Waiting for Redis container to start..."
+    while [ "$(docker inspect -f '{{.State.Running}}' redis)" != "true" ]; do
+        echo "Redis not running yet, checking again in 5 seconds..."
+        sleep 5
+    done
+    echo "Redis is running!"
 }
 
-commands=(
-    "docker compose -f docker-compose_dev.yml up"
-    "source .venv/bin/activate && cd backend && python manage.py runserver"
-    "source .venv/bin/activate && cd backend && python manage.py shell"
-    "source .venv/bin/activate && cd backend && sleep 3 && python manage.py rqworker --with-scheduler default show thumbnails"
-    "cd frontend && npm start"
-)
+cleanup() {
+    echo "Cleaning up..."
+    docker compose down
+    echo "Containers stopped and removed!"
+}
 
-for cmd in "${commands[@]}"; do
-    open_and_execute "$cmd"
-done
+trap cleanup EXIT
 
-bspc node -k
+tmux has-session -t $SESSION_NAME 2>/dev/null
+
+if [ $? != 0 ]; then
+
+    # compose
+    tmux new-session -d -s $SESSION_NAME -n "dev"
+    tmux send-keys -t $SESSION_NAME:"dev" "docker compose pull && docker compose up -d && docker compose logs -f" C-m
+    wait_for_redis
+
+    # django
+    tmux split-window -t $SESSION_NAME -h
+    tmux send-keys -t $SESSION_NAME:"dev.1" "source .venv/bin/activate && cd backend && python manage.py runserver" C-m
+
+    # worker
+    tmux split-window -v -t $SESSION_NAME:"dev.0"
+    tmux send-keys -t $SESSION_NAME:"dev.1" "source .venv/bin/activate && cd backend && python manage.py rqworker --with-scheduler default show thumbnails" C-m
+
+    # react
+    tmux split-window -v -t $SESSION_NAME:"dev.0"
+    tmux send-keys -t $SESSION_NAME:"dev.1" "cd frontend && npm start" C-m
+
+    # shell
+    tmux split-window -v -t $SESSION_NAME:"dev.3"
+    tmux send-keys -t $SESSION_NAME:"dev.4" "source .venv/bin/activate && cd backend && python manage.py shell" C-m
+
+fi
+
+tmux attach-session -t $SESSION_NAME

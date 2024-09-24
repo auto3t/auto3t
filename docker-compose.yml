@@ -1,7 +1,7 @@
 services:
-  jackett:
+  autot-jackett:
     image: lscr.io/linuxserver/jackett
-    container_name: jackett
+    container_name: autot-jackett
     restart: unless-stopped
     environment:
       - PUID=1000
@@ -13,9 +13,9 @@ services:
       - ./volume/jackett/downloads:/downloads
     ports:
       - 127.0.0.1:9117:9117
-  redis:
+  autot-redis:
     image: redis
-    container_name: redis
+    container_name: autot-redis
     restart: unless-stopped
     ports:
       - 127.0.0.1:6379:6379

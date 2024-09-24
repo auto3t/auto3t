@@ -4,7 +4,7 @@ SESSION_NAME="autot"
 
 wait_for_redis() {
     echo "Waiting for Redis container to start..."
-    while [ "$(docker inspect -f '{{.State.Running}}' redis)" != "true" ]; do
+    while [ "$(docker inspect -f '{{.State.Running}}' autot-redis)" != "true" ]; do
         echo "Redis not running yet, checking again in 5 seconds..."
         sleep 5
     done

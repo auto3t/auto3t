@@ -135,7 +135,7 @@ class TVMazeShow:
             season_data = self._parse_season(season_response, show)
 
             try:
-                season = TVSeason.objects.get(remote_server_id=season_data["remote_server_id"])
+                season = TVSeason.objects.get(show=show, number=season_response["number"])
             except TVSeason.DoesNotExist:
                 season = TVSeason.objects.create(**season_data)
                 image_season = self._get_image_url(season_response)

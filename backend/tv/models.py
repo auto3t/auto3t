@@ -445,6 +445,10 @@ class TVEpisode(BaseModel):
 
     def add_magnet(self, magnet) -> None:
         """add magnet to episode"""
+        if self.torrent:
+            self.torrent.torrent_state = "i"
+            self.torrent.save()
+
         torrent, _ = Torrent.objects.get_or_create(magnet=magnet, torrent_type="e")
         self.torrent = torrent
         self.status = "d"

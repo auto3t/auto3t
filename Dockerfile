@@ -23,7 +23,7 @@ FROM python:3.11.3-slim-bullseye as autot
 ARG INSTALL_DEBUG
 ENV PYTHONUNBUFFERED 1
 
-RUN mkdir -p /data /downloads /media/tv
+RUN mkdir -p /data/static /downloads /media/tv
 
 RUN apt-get clean && apt-get -y update && apt-get -y install --no-install-recommends \
     nginx \

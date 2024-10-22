@@ -10,7 +10,8 @@ services:
     volumes:
       - ./volume/autot:/data
     environment:
-      - PB_REDIS_CON=redis://autot-redis:6379
+      - REDIS_CON=redis://autot-redis:6379
+      - APP_ROOT=/data
     ports:
       - 127.0.0.1:8000:8000
     depends_on:

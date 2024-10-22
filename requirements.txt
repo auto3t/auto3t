@@ -8,3 +8,4 @@ pillow==11.0.0
 pytz==2024.2
 requests==2.32.3
 transmission-rpc==7.0.11
+uWSGI==2.0.27

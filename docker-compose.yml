@@ -1,4 +1,21 @@
 services:
+  autot:
+    container_name: autot
+    restart: unless-stopped
+    user: 1000:1000
+    build:
+      context: .
+      args:
+        - INSTALL_DEBUG=1
+    volumes:
+      - ./volume/autot:/data
+    environment:
+      - PB_REDIS_CON=redis://autot-redis:6379
+    ports:
+      - 127.0.0.1:8000:8000
+    depends_on:
+      - autot-redis
+      - autot-jackett
   autot-jackett:
     image: lscr.io/linuxserver/jackett
     container_name: autot-jackett

@@ -5,5 +5,5 @@ flake8
 ipython
 isort
 pylint-django
-types-requests
 types-pytz
+types-requests

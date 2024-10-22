@@ -1,10 +1,10 @@
 bencode.py==4.0.0
-Django==5.0.6
-django-cors-headers==4.3.1
+django-cors-headers==4.5.0
 django-rq==2.10.2
-djangorestframework==3.15.1
+Django==5.1.2
 djangorestframework-simplejwt==5.3.1
-pillow==10.3.0
-pytz==2024.1
-requests==2.31.0
-transmission-rpc==7.0.5
+djangorestframework==3.15.2
+pillow==11.0.0
+pytz==2024.2
+requests==2.32.3
+transmission-rpc==7.0.11

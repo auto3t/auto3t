@@ -9,9 +9,10 @@ services:
         - INSTALL_DEBUG=1
     volumes:
       - ./volume/autot:/data
-    environment:
-      - REDIS_CON=redis://autot-redis:6379
-      - APP_ROOT=/data
+      - ./volume/downloads:/downloads
+      - ./volume/media:/media
+    env_file:
+      - env/autot.env
     ports:
       - 127.0.0.1:8000:8000
     depends_on:

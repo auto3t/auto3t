@@ -1,0 +1,50 @@
+"""read application config"""
+
+from os import environ
+from pathlib import Path
+from typing import TypedDict
+
+
+class ConfigType(TypedDict):
+    """represent config type"""
+
+    MEDIA_EXT: list[str]
+    MEDIA_MIN_SIZE: int
+    JF_URL: str
+    JF_API_KEY: str
+    JK_URL: str
+    JK_API_KEY: str
+    MOVIE_DB_API_KEY: str
+    REDIS_CON: str
+    REDIS_NAME_SPACE: str
+    TM_URL: str
+    TM_PORT: int
+    TM_USER: str
+    TM_PASS: str
+    TM_BASE_FOLDER: Path
+    TV_BASE_FOLDER: Path
+    APP_ROOT: Path | None
+
+
+def get_config() -> ConfigType:
+    """get config"""
+    config: ConfigType = {
+        "MEDIA_EXT": ["mp4", "mkv", "avi", "m4v"],
+        "MEDIA_MIN_SIZE": 50000000,
+        "JF_URL": environ["JF_URL"],
+        "JF_API_KEY": environ["JF_API_KEY"],
+        "JK_URL": environ["JK_URL"],
+        "JK_API_KEY": environ["JK_API_KEY"],
+        "MOVIE_DB_API_KEY": environ["MOVIE_DB_API_KEY"],
+        "REDIS_CON": environ.get("REDIS_CON") or "redis://localhost:6379",
+        "REDIS_NAME_SPACE": "tt:",
+        "TM_URL": environ["TM_URL"],
+        "TM_PORT": int(environ["TM_PORT"]),
+        "TM_USER": environ["TM_USER"],
+        "TM_PASS": environ["TM_PASS"],
+        "TM_BASE_FOLDER": Path(environ["TM_BASE_FOLDER"]),
+        "TV_BASE_FOLDER": Path(environ["TV_BASE_FOLDER"]),
+        "APP_ROOT": Path(environ["APP_ROOT"]) if environ.get("APP_ROOT") else None,
+    }
+
+    return config

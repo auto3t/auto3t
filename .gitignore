@@ -5,10 +5,12 @@ __pycache__
 .mypy_ache
 
 # local env
-config.py
 volume
 db.sqlite3
 db.sqlite3-journal
+
+# docker
+env/autot.env
 
 # frontend
 node_modules

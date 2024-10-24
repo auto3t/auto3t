@@ -1,7 +1,7 @@
 // all backend API fetching
 
-const API_BASE = '/api/';
-const AUTH_BASE = '/auth/';
+const API_BASE = 'http://localhost:8000/api/';
+const AUTH_BASE = 'http://localhost:8000/auth/';
 
 let isRefreshing = false;
 let refreshPromise = null;

@@ -2,8 +2,8 @@
 import { useState } from 'react';
 import useAuthStore from '../stores/AuthStore';
 
-const API_BASE = 'http://localhost:8000/api/';
-const AUTH_BASE = 'http://localhost:8000/auth/';
+const API_BASE = `${window.location.origin}/api/`;
+const AUTH_BASE = `${window.location.origin}/auth/`;
 
 const useApi = () => {
 

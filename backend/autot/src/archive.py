@@ -1,5 +1,6 @@
 """archive completed torrents"""
 
+import shutil
 from pathlib import Path
 
 from django.db.models import QuerySet
@@ -59,7 +60,7 @@ class Archiver:
         episode_path = episode.get_archive_path(suffix=download_path.suffix)
         archive_path = self.CONFIG["TV_BASE_FOLDER"] / episode_path
         archive_path.parent.mkdir(parents=True, exist_ok=True)
-        download_path.rename(archive_path)
+        shutil.move(download_path, archive_path, copy_function=shutil.copyfile)
         episode.status = "f"
         episode.save()
 

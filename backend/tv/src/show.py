@@ -200,7 +200,7 @@ class TVMazeShow:
             episode_data = self._parse_episode(episode_response, season)
 
             try:
-                episode = TVEpisode.objects.get(remote_server_id=episode_data["remote_server_id"])
+                episode = TVEpisode.objects.get(season=season, number=episode_data["number"])
             except TVEpisode.DoesNotExist:
                 episode = TVEpisode.objects.create(**episode_data)
                 image_episode = self._get_image_url(episode_response)

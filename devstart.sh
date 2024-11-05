@@ -25,7 +25,7 @@ if [ $? != 0 ]; then
 
     # compose
     tmux new-session -d -s $SESSION_NAME -n "dev"
-    tmux send-keys -t $SESSION_NAME:"dev" "docker compose pull && docker compose up -d && docker compose logs -f" C-m
+    tmux send-keys -t $SESSION_NAME:"dev" "docker compose pull && docker compose up -d autot-redis autot-jackett autot-jellyfin autot-transmission && docker compose logs -f" C-m
     wait_for_redis
 
     # django

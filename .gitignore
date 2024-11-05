@@ -5,6 +5,7 @@ __pycache__
 .mypy_ache
 
 # local env
+.env
 volume
 db.sqlite3
 db.sqlite3-journal

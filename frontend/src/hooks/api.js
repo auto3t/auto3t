@@ -2,8 +2,8 @@
 import { useState } from 'react';
 import useAuthStore from '../stores/AuthStore';
 
-const API_BASE = `${window.location.origin}/api/`;
-const AUTH_BASE = `${window.location.origin}/auth/`;
+const API_BASE = `${process.env.REACT_APP_API_URL || window.location.origin}/api/`;
+const AUTH_BASE = `${process.env.REACT_APP_API_URL || window.location.origin}/auth/`;
 
 const useApi = () => {
 

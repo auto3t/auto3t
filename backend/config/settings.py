@@ -13,6 +13,13 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 from autot.src.config import get_config
 
+try:
+    from dotenv import load_dotenv
+
+    load_dotenv(".env")
+except ModuleNotFoundError:
+    pass
+
 AUTOT_CONFIG = get_config()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.

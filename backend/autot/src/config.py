@@ -24,6 +24,7 @@ class ConfigType(TypedDict):
     TM_BASE_FOLDER: Path
     TV_BASE_FOLDER: Path
     APP_ROOT: Path | None
+    TZ: str
 
 
 def get_config() -> ConfigType:
@@ -45,6 +46,7 @@ def get_config() -> ConfigType:
         "TM_BASE_FOLDER": Path(environ["TM_BASE_FOLDER"]),
         "TV_BASE_FOLDER": Path(environ["TV_BASE_FOLDER"]),
         "APP_ROOT": Path(environ["APP_ROOT"]) if environ.get("APP_ROOT") else None,
+        "TZ": environ.get("TZ", "UTC"),
     }
 
     return config

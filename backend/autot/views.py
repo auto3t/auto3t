@@ -5,12 +5,14 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from autot.models import (
+    AutotScheduler,
     SearchWord,
     SearchWordCategory,
     Torrent,
 )
 from autot.src.search import Jackett
 from autot.serializers import (
+    SchedulerSeralizer,
     SearchWordSerializer,
     SearchWordCategorySerializer,
     TorrentSerializer,
@@ -50,3 +52,10 @@ class TorrentViewSet(viewsets.ReadOnlyModelViewSet):
 
         results = Jackett().free_search(search_term, category=5000)
         return Response(results)
+
+
+class SchedulerViewSet(viewsets.ModelViewSet):
+    """scheduler"""
+
+    serializer_class = SchedulerSeralizer
+    queryset = AutotScheduler.objects.all()

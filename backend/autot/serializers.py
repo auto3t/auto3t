@@ -2,7 +2,7 @@
 
 from rest_framework import serializers
 
-from autot.models import SearchWord, SearchWordCategory, Torrent
+from autot.models import AutotScheduler, SearchWord, SearchWordCategory, Torrent
 
 
 class SearchWordCategorySerializer(serializers.ModelSerializer):
@@ -39,4 +39,14 @@ class TorrentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Torrent
+        fields = "__all__"
+
+
+class SchedulerSeralizer(serializers.ModelSerializer):
+    """serialize schedule"""
+
+    job_display = serializers.CharField(source="get_job_display", read_only=True)
+
+    class Meta:
+        model = AutotScheduler
         fields = "__all__"

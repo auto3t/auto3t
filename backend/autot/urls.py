@@ -8,4 +8,5 @@ router = DefaultRouter()
 router.register(r"torrent", views.TorrentViewSet, basename="torrent")
 router.register(r"keyword-category", views.SearchWordCategoryView, basename="keyword-category")
 router.register(r"keyword", views.SearchWordView, basename="keyword")
+router.register(r"scheduler", views.SchedulerViewSet, basename="scheduler")
 urlpatterns = router.urls

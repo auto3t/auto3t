@@ -73,3 +73,14 @@ class Torrent(models.Model):
             torrent_string = f"{torrent_string}[{self.progress}%]"
 
         return torrent_string
+
+
+class AutotScheduler(models.Model):
+    """base class for schedules"""
+
+    JOB_CHOICES = [
+        ("tv.tasks.refresh_all_shows", "Refresh All Shows"),
+    ]
+
+    job = models.CharField(max_length=255, choices=JOB_CHOICES, unique=True)
+    cron_schedule = models.CharField(max_length=255)

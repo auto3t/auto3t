@@ -6,5 +6,6 @@ ipython
 isort
 pylint-django
 python-dotenv
+requirementscheck
 types-pytz
 types-requests

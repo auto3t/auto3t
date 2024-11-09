@@ -1,5 +1,6 @@
 """all core models"""
 
+from datetime import datetime, timezone
 from urllib.parse import parse_qs
 
 from crontab import CronTab
@@ -104,13 +105,25 @@ class AutotScheduler(models.Model):
         """describe schedule"""
         return f"{self.job} [{self.cron_schedule}]"
 
-    def get_on_scheduler(self, scheduler) -> Job | None:
+    @property
+    def next_execution(self) -> str | None:
+        """get next execution time"""
+        scheduler = get_scheduler("default")
+        job = self.get_on_scheduler(scheduler)
+        if not job:
+            return None
+
+        next_execution_time = job[1].astimezone(timezone.utc).isoformat()
+
+        return next_execution_time
+
+    def get_on_scheduler(self, scheduler) -> tuple[Job, datetime] | None:
         """get job on scheduler"""
         if not self.job_id_registered:
             return None
 
-        for job in scheduler.get_jobs():
-            if job.id == self.job_id_registered:
+        for job in scheduler.get_jobs(with_times=True):
+            if job[0].id == self.job_id_registered:
                 return job
 
         return None
@@ -128,7 +141,7 @@ class AutotScheduler(models.Model):
         """remove from scheduler"""
         job = self.get_on_scheduler(scheduler)
         if job:
-            job.delete()
+            job[0].delete()
 
 
 @receiver(post_delete, sender=AutotScheduler)

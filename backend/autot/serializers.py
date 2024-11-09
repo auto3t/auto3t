@@ -47,7 +47,10 @@ class SchedulerSeralizer(serializers.ModelSerializer):
 
     job_display = serializers.CharField(source="get_job_display", read_only=True)
     job_id_registered = serializers.CharField(read_only=True)
+    next_execution = serializers.CharField(read_only=True)
 
     class Meta:
         model = AutotScheduler
-        fields = ["id", "job", "job_display", "job_id_registered", "cron_schedule"]
+        fields = [
+            "id", "job", "job_display", "job_id_registered", "cron_schedule", "next_execution"
+        ]

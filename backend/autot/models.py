@@ -2,7 +2,13 @@
 
 from urllib.parse import parse_qs
 
+from crontab import CronTab
+from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models.signals import post_delete, pre_save
+from django.dispatch import receiver
+from django_rq import get_scheduler
+from django_rq.jobs import Job
 
 
 class SearchWordCategory(models.Model):
@@ -75,6 +81,14 @@ class Torrent(models.Model):
         return torrent_string
 
 
+def validate_cron(cron_schedule):
+    """check cron_schedule is valid"""
+    try:
+        CronTab(cron_schedule)
+    except ValueError as err:
+        raise ValidationError(err) from err
+
+
 class AutotScheduler(models.Model):
     """base class for schedules"""
 
@@ -83,4 +97,51 @@ class AutotScheduler(models.Model):
     ]
 
     job = models.CharField(max_length=255, choices=JOB_CHOICES, unique=True)
-    cron_schedule = models.CharField(max_length=255)
+    cron_schedule = models.CharField(max_length=255, validators=[validate_cron])
+    job_id_registered = models.CharField(max_length=255, null=True, blank=True)
+
+    def __str__(self) -> str:
+        """describe schedule"""
+        return f"{self.job} [{self.cron_schedule}]"
+
+    def get_on_scheduler(self, scheduler) -> Job | None:
+        """get job on scheduler"""
+        if not self.job_id_registered:
+            return None
+
+        for job in scheduler.get_jobs():
+            if job.id == self.job_id_registered:
+                return job
+
+        return None
+
+    def create_on_scheduler(self, scheduler):
+        """create on schedule"""
+        if self.job_id_registered:
+            self.delete_on_scheduler(scheduler)
+            self.job_id_registered = None
+
+        job = scheduler.cron(cron_string=self.cron_schedule, func=self.job)
+        self.job_id_registered = job.id
+
+    def delete_on_scheduler(self, scheduler) -> None:
+        """remove from scheduler"""
+        job = self.get_on_scheduler(scheduler)
+        if job:
+            job.delete()
+
+
+@receiver(post_delete, sender=AutotScheduler)
+def delete_schedule(sender, instance, **kwargs):  # pylint: disable=unused-argument
+    """delete from filesystem"""
+    print(f"delete signal: {instance}")
+    scheduler = get_scheduler("default")
+    instance.delete_on_scheduler(scheduler)
+
+
+@receiver(pre_save, sender=AutotScheduler)
+def create_update_schedule(sender, instance, **kwargs):  # pylint: disable=unused-argument
+    """create schedule"""
+    print(f"post_save signal: {instance}")
+    scheduler = get_scheduler("default")
+    instance.create_on_scheduler(scheduler)

@@ -5,11 +5,17 @@ import TimeComponent from "./TimeComponent";
 
 export default function Schedule() {
 
-  const { get, del } = useApi();
+  const { get, post, del } = useApi();
 
   const {
     schedules,
     setSchedules,
+    createSchedule,
+    setCreateSchedule,
+    selectedSchedule,
+    setSelectedSchedule,
+    newSchedule,
+    setNewSchedule,
     deletingSchedule,
     setDeletingSchedule,
   } = useScheduleStore();
@@ -45,6 +51,35 @@ export default function Schedule() {
     }
   }
 
+  const handleShowAddForm = () => {
+    setCreateSchedule(true);
+  }
+
+  const handleCancleCreate = () => {
+    setCreateSchedule(false);
+    setSelectedSchedule("");
+    setNewSchedule("");
+  }
+
+  const handleCreateSchedule = async (event) => {
+    event.preventDefault();
+    try {
+      const body = {
+        job: selectedSchedule,
+        cron_schedule: newSchedule,
+      }
+      const data = await post('scheduler/', body)
+      if (data) {
+        handleCancleCreate();
+        fetchSchedules();
+      } else {
+        console.error('Failed to create schedule');
+      }
+    } catch (error) {
+      console.error('Error creating keyword:', error);
+    }
+  }
+
   return (
     <>
       <h2>Schedule</h2>
@@ -54,10 +89,37 @@ export default function Schedule() {
             <th>Name</th>
             <th>Schedule</th>
             <th>Next Execution</th>
-            <th><button>Add</button></th>
+            <th>
+              {createSchedule === false && (
+                <button onClick={handleShowAddForm}>Add</button>
+              )}
+            </th>
           </tr>
         </thead>
         <tbody>
+          {createSchedule === true && (
+            <tr>
+              <td>
+                <select value={selectedSchedule} onChange={(e) => setSelectedSchedule(e.target.value)}>
+                  <option value="">Select Schedule</option>
+                  <option value="tv.tasks.refresh_all_shows">Refresh All Shows</option>
+                </select>
+              </td>
+              <td>
+                <input 
+                  type="text"
+                  value={newSchedule}
+                  onChange={(e) => setNewSchedule(e.target.value)}
+                  placeholder="Enter Cron Schedule"
+                />
+              </td>
+              <td></td>
+              <td>
+                <button onClick={handleCreateSchedule}>Create Schedule</button>
+                <button onClick={handleCancleCreate}>Cancel</button>
+              </td>
+            </tr>
+          )}
           {schedules.map((schedule) => (
             <tr key={schedule.id}>
               <td>{schedule.job_display}</td>
@@ -71,7 +133,6 @@ export default function Schedule() {
                   </>
                 ) : (
                   <>
-                    <button>Edit</button>
                     <button onClick={() => handleDeleteSchedule(schedule)}>Delete</button>
                   </>
                 )}

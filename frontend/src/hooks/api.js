@@ -43,7 +43,8 @@ const useApi = () => {
         }
 
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          const errorResponse = JSON.stringify(await response.json());
+          throw new Error(`HTTP error! status ${response.status} - ${errorResponse}`);
         }
       }
 
@@ -70,7 +71,8 @@ const useApi = () => {
         body: JSON.stringify(credentials)
       })
       if (!response.ok) {
-        setError(response.detail || 'Failed to login');
+        const errorResponse = await response.json();
+        setError(errorResponse.detail || 'Failed to login');
       } else {
         const tokenResponse = await response.json();
         setToken(tokenResponse);

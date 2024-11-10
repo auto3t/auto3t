@@ -5,7 +5,7 @@ import TimeComponent from "./TimeComponent";
 
 export default function Schedule() {
 
-  const { get, post, del } = useApi();
+  const { error, get, post, del } = useApi();
 
   const {
     schedules,
@@ -75,14 +75,15 @@ export default function Schedule() {
       } else {
         console.error('Failed to create schedule');
       }
-    } catch (error) {
-      console.error('Error creating keyword:', error);
+    } catch (err) {
+      console.error('Error creating keyword:', err.message);
     }
   }
 
   return (
     <>
       <h2>Schedule</h2>
+      {error && <p>Error: {error}</p>}
       <table className="keyword-table">
         <thead>
           <tr>

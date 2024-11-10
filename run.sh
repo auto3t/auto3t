@@ -9,4 +9,5 @@ python manage.py collectstatic --noinput
 nginx &
 python manage.py rqworker --with-scheduler default show thumbnails &
 python manage.py rqscheduler &
+python manage.py start_schedule
 uwsgi --ini uwsgi.ini

@@ -103,6 +103,7 @@ export default function Schedule() {
                 <select value={selectedSchedule} onChange={(e) => setSelectedSchedule(e.target.value)}>
                   <option value="">Select Schedule</option>
                   <option value="tv.tasks.refresh_all_shows">Refresh All Shows</option>
+                  <option value="tv.tasks.refresh_status">Refresh Status</option>
                 </select>
               </td>
               <td>

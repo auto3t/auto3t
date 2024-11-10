@@ -95,6 +95,7 @@ class AutotScheduler(models.Model):
 
     JOB_CHOICES = [
         ("tv.tasks.refresh_all_shows", "Refresh All Shows"),
+        ("tv.tasks.refresh_status", "Refresh Status"),
     ]
 
     job = models.CharField(max_length=255, choices=JOB_CHOICES, unique=True)

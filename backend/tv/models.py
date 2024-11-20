@@ -23,7 +23,7 @@ class BaseModel(models.Model):
     CONFIG: ConfigType = get_config()
     IMAGE_SIZE: None | tuple[int, int] = None
 
-    remote_server_id = models.CharField(max_length=255, unique=True)
+    remote_server_id = models.CharField(max_length=255)
     remote_server_url = models.URLField(null=True, blank=True)
     date_added = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)

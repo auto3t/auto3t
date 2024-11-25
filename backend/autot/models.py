@@ -218,7 +218,7 @@ def log_change(
 @receiver(post_save)
 def track_create_update(sender, instance, created, **kwargs):
     """record create events"""
-    if not all((hasattr(sender, "TRACK_CHANGES"), sender.TRACK_CHANGES)):
+    if not getattr(sender, "TRACK_CHANGES", None):
         return
 
     if created:
@@ -228,7 +228,7 @@ def track_create_update(sender, instance, created, **kwargs):
 @receiver(pre_delete)
 def track_delete(sender, instance, **kwargs):
     """track delete events"""
-    if not all((hasattr(sender, "TRACK_CHANGES"), sender.TRACK_CHANGES)):
+    if not getattr(sender, "TRACK_CHANGES", None):
         return
 
     log_change(instance, action="d")

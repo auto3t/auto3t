@@ -193,6 +193,15 @@ class ActionLog(models.Model):
         """Returns a human-readable name for the content type."""
         return self.content_type.model_class()._meta.verbose_name.title()
 
+    def __str__(self) -> str:
+        """action log string"""
+        base_str = f"{self.content_object} [{self.action}]"
+        if self.field_name:
+            base_str += f" {self.field_name}: {self.old_value} -> {self.new_value}"
+        if self.comment:
+            base_str += f" - {self.comment}"
+        return base_str
+
 
 def log_change(
     instance,

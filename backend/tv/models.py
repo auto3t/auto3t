@@ -155,13 +155,13 @@ class TVShow(BaseModel):
             image_show, _ = Artwork.objects.get_or_create(image_url=image_url)
             self.image_show = image_show
             self.save()
-            log_change(self, "c", "image_show", new_value=image_url)
+            log_change(self, "u", "image_show", new_value=image_url, comment="Added new image.")
             return
 
         if not self.image_show.image_url == image_url:
             print(f"update image_show artwork: {image_url}")
             self.image_show.update(image_url)
-            log_change(self, "u", "image_show", new_value=image_url)
+            log_change(self, "u", "image_show", new_value=image_url, comment="Updated image.")
 
     def update_episode_fallback(self, image_url: str | None) -> None:
         """handle update with or without existing"""
@@ -173,13 +173,13 @@ class TVShow(BaseModel):
             episode_fallback, _ = Artwork.objects.get_or_create(image_url=image_url)
             self.episode_fallback = episode_fallback
             self.save()
-            log_change(self, "c", "episode_fallback", new_value=image_url)
+            log_change(self, "u", "episode_fallback", new_value=image_url, comment="Added new image.")
             return
 
         if not self.episode_fallback.image_url == image_url:
             print(f"update episode_fallback artwork: {image_url}")
             self.episode_fallback.update(image_url)
-            log_change(self, "u", "episode_fallback", new_value=image_url)
+            log_change(self, "u", "episode_fallback", new_value=image_url, comment="Updated image.")
 
     def update_season_fallback(self, image_url: str | None) -> None:
         """handle update with or without existing"""
@@ -191,13 +191,13 @@ class TVShow(BaseModel):
             season_fallback, _ = Artwork.objects.get_or_create(image_url=image_url)
             self.season_fallback = season_fallback
             self.save()
-            log_change(self, "c", "season_fallback", new_value=image_url)
+            log_change(self, "u", "season_fallback", new_value=image_url, comment="Added new image.")
             return
 
         if not self.season_fallback.image_url == image_url:
             print(f"update season_fallback artwork: {image_url}")
             self.season_fallback.update(image_url)
-            log_change(self, "u", "season_fallback", new_value=image_url)
+            log_change(self, "u", "season_fallback", new_value=image_url, comment="Updated image.")
 
     def get_keywords(self: Self):
         """build keywords of show"""
@@ -257,13 +257,13 @@ class TVSeason(BaseModel):
             self.image_season = Artwork(image_url=image_url)
             self.image_season.save()
             self.save()
-            log_change(self, "c", "image_season", new_value=image_url)
+            log_change(self, "u", "image_season", new_value=image_url, comment="Added new image.")
             return
 
         if not self.image_season.image_url == image_url:
             print(f"update image_season artwork: {image_url}")
             self.image_season.update(image_url)
-            log_change(self, "u", "image_season", new_value=image_url)
+            log_change(self, "u", "image_season", new_value=image_url, comment="Updated image.")
 
     def get_archive_path(self) -> str:
         """get archive path of season"""
@@ -362,13 +362,13 @@ class TVEpisode(BaseModel):
             self.image_episode = Artwork(image_url=image_url)
             self.image_episode.save()
             self.save()
-            log_change(self, "c", "image_episode", new_value=image_url)
+            log_change(self, "u", "image_episode", new_value=image_url, comment="Added new image.")
             return
 
         if not self.image_episode.image_url == image_url:
             print(f"update image_episode artwork: {image_url}")
             self.image_episode.update(image_url)
-            log_change(self, "u", "image_episode", new_value=image_url)
+            log_change(self, "u", "image_episode", new_value=image_url, comment="Updated image.")
 
     def get_keywords(self: Self):
         """build keywords of show"""

@@ -2,7 +2,7 @@
 
 from rest_framework import serializers
 
-from autot.models import AutotScheduler, SearchWord, SearchWordCategory, Torrent
+from autot.models import ActionLog, AutotScheduler, SearchWord, SearchWordCategory, Torrent
 
 
 class SearchWordCategorySerializer(serializers.ModelSerializer):
@@ -54,3 +54,13 @@ class SchedulerSeralizer(serializers.ModelSerializer):
         fields = [
             "id", "job", "job_display", "job_id_registered", "cron_schedule", "next_execution"
         ]
+
+
+class ActionLogSerializer(serializers.ModelSerializer):
+    """serialize action log item"""
+
+    content_type_verbose = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = ActionLog
+        fields = "__all__"

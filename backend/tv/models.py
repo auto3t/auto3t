@@ -91,6 +91,7 @@ class BaseModel(models.Model):
 class TVShow(BaseModel):
     """describes a show"""
 
+    TRACK_CHANGES = True
     SHOW_STATUS = [
         ("r", "Running"),
         ("e", "Ended"),
@@ -222,6 +223,7 @@ class TVShow(BaseModel):
 class TVSeason(BaseModel):
     """describes a Season of a Show"""
 
+    TRACK_CHANGES = True
     IMAGE_SIZE = (1000, 1500)
 
     number = models.IntegerField()
@@ -312,6 +314,7 @@ class TVSeason(BaseModel):
 class TVEpisode(BaseModel):
     """describes an Episode of a Season of a Show"""
 
+    TRACK_CHANGES = True
     IMAGE_SIZE = (1920, 1080)
     EPISODE_STATUS = [
         ("u", "Upcoming"),

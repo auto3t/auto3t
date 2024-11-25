@@ -17,6 +17,8 @@ from django_rq.jobs import Job
 class SearchWordCategory(models.Model):
     """represent a category to group search words by"""
 
+    TRACK_CHANGES = True
+
     name = models.CharField(max_length=255, unique=True)
 
     def save(self, *args, **kwargs):
@@ -27,6 +29,7 @@ class SearchWordCategory(models.Model):
 class SearchWord(models.Model):
     """all available key words"""
 
+    TRACK_CHANGES = True
     DIRECTIONS = [
         ("i", "Include"),
         ("e", "Exclude"),
@@ -52,6 +55,7 @@ class SearchWord(models.Model):
 class Torrent(models.Model):
     """torrent representation"""
 
+    TRACK_CHANGES = True
     TORRENT_TYPE = [
         ("e", "Episode"),
         ("s", "Season"),
@@ -95,6 +99,7 @@ def validate_cron(cron_schedule):
 class AutotScheduler(models.Model):
     """base class for schedules"""
 
+    TRACK_CHANGES = True
     JOB_CHOICES = [
         ("tv.tasks.refresh_all_shows", "Refresh All Shows"),
         ("tv.tasks.refresh_status", "Refresh Status"),
@@ -213,8 +218,7 @@ def log_change(
 @receiver(post_save)
 def track_create_update(sender, instance, created, **kwargs):
     """record create events"""
-    if sender == ActionLog:
-        # avoid recursion
+    if not all((hasattr(sender, "TRACK_CHANGES"), sender.TRACK_CHANGES)):
         return
 
     if created:
@@ -224,8 +228,7 @@ def track_create_update(sender, instance, created, **kwargs):
 @receiver(pre_delete)
 def track_delete(sender, instance, **kwargs):
     """track delete events"""
-    if sender == ActionLog:
-        # avoid recursion
+    if not all((hasattr(sender, "TRACK_CHANGES"), sender.TRACK_CHANGES)):
         return
 
     log_change(instance, action="d")

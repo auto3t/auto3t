@@ -5,6 +5,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from autot.models import (
+    ActionLog,
     AutotScheduler,
     SearchWord,
     SearchWordCategory,
@@ -12,11 +13,19 @@ from autot.models import (
 )
 from autot.src.search import Jackett
 from autot.serializers import (
+    ActionLogSerializer,
     SchedulerSeralizer,
     SearchWordSerializer,
     SearchWordCategorySerializer,
     TorrentSerializer,
 )
+
+
+class ActionLogView(viewsets.ReadOnlyModelViewSet):
+    """action log views"""
+
+    serializer_class = ActionLogSerializer
+    queryset = ActionLog.objects.all().order_by("-timestamp")
 
 
 class SearchWordCategoryView(viewsets.ModelViewSet):

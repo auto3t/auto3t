@@ -2,6 +2,7 @@
 
 from rest_framework import viewsets
 from rest_framework.decorators import action
+from rest_framework.pagination import PageNumberPagination 
 from rest_framework.response import Response
 
 from autot.models import (
@@ -10,6 +11,7 @@ from autot.models import (
     SearchWord,
     SearchWordCategory,
     Torrent,
+    get_logs,
 )
 from autot.src.search import Jackett
 from autot.serializers import (
@@ -20,12 +22,20 @@ from autot.serializers import (
     TorrentSerializer,
 )
 
+class StandardResultsSetPagination(PageNumberPagination):
+    """define custom paginateion"""
+
+    page_size = 100
+    page_size_query_param = "page_size"
+    max_page_size = 1000
+
 
 class ActionLogView(viewsets.ReadOnlyModelViewSet):
     """action log views"""
 
     serializer_class = ActionLogSerializer
     queryset = ActionLog.objects.all().order_by("-timestamp")
+    pagination_class = StandardResultsSetPagination
 
 
 class SearchWordCategoryView(viewsets.ModelViewSet):
@@ -62,9 +72,29 @@ class TorrentViewSet(viewsets.ReadOnlyModelViewSet):
         results = Jackett().free_search(search_term, category=5000)
         return Response(results)
 
+    @action(detail=True, methods=["get"])
+    def actionlog(self, request, **kwargs):
+        """get torrent action logs"""
+        torrent = self.get_object()
+        action_logs = get_logs(torrent)
+        if action_logs:
+            serializer = ActionLogSerializer(action_logs, many=True)
+            return Response(serializer.data)
+        return Response([])
+
 
 class SchedulerViewSet(viewsets.ModelViewSet):
     """scheduler"""
 
     serializer_class = SchedulerSeralizer
     queryset = AutotScheduler.objects.all()
+
+    @action(detail=True, methods=["get"])
+    def actionlog(self, request, **kwargs):
+        """get schedule action logs"""
+        schedule = self.get_object()
+        action_logs = get_logs(schedule)
+        if action_logs:
+            serializer = ActionLogSerializer(action_logs, many=True)
+            return Response(serializer.data)
+        return Response([])

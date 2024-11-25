@@ -9,6 +9,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from autot.serializers import ActionLogSerializer
 from tv.models import TVShow, TVSeason, TVEpisode
 from tv.serializers import (
     TVShowSerializer,
@@ -18,7 +19,7 @@ from tv.serializers import (
 )
 from tv.src.show_search import ShowId
 from tv.tasks import import_show, refresh_status
-from autot.models import SearchWord
+from autot.models import SearchWord, get_logs
 from autot.src.download import Transmission
 from autot.src.redis_con import AutotRedis
 from autot.src.search import Jackett
@@ -85,6 +86,16 @@ class ShowViewSet(viewsets.ModelViewSet):
         elif direction == "remove":
             for to_remove in to_process:
                 instance.remove_keyword(instance, to_remove)
+
+    @action(detail=True, methods=["get"])
+    def actionlog(self, request, **kwargs):
+        """get show action logs"""
+        show = self.get_object()
+        action_logs = get_logs(show)
+        if action_logs:
+            serializer = ActionLogSerializer(action_logs, many=True)
+            return Response(serializer.data)
+        return Response([])
 
 
 class SeasonViewSet(viewsets.ModelViewSet):
@@ -162,6 +173,16 @@ class SeasonViewSet(viewsets.ModelViewSet):
 
         return Response(result)
 
+    @action(detail=True, methods=["get"])
+    def actionlog(self, request, **kwargs):
+        """get season action logs"""
+        season = self.get_object()
+        action_logs = get_logs(season)
+        if action_logs:
+            serializer = ActionLogSerializer(action_logs, many=True)
+            return Response(serializer.data)
+        return Response([])
+
 
 class EpisodeViewSet(viewsets.ModelViewSet):
     """get tv episode/s"""
@@ -231,6 +252,16 @@ class EpisodeViewSet(viewsets.ModelViewSet):
             serializer = TVEpisodeSerializer(previous_episode)
             return Response(serializer.data)
         return Response({})
+
+    @action(detail=True, methods=["get"])
+    def actionlog(self, request, **kwargs):
+        """get episode action logs"""
+        episode = self.get_object()
+        action_logs = get_logs(episode)
+        if action_logs:
+            serializer = ActionLogSerializer(action_logs, many=True)
+            return Response(serializer.data)
+        return Response([])
 
     @action(detail=True, methods=["post"])
     def torrent(self, request, **kwargs) -> Response:

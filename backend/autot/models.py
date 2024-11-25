@@ -215,6 +215,12 @@ def log_change(
     )
 
 
+def get_logs(instance):
+    """get logs of instance"""
+    content_type = ContentType.objects.get_for_model(instance.__class__)
+    return ActionLog.objects.filter(content_type=content_type, object_id=instance.pk).order_by("-timestamp")
+
+
 @receiver(post_save)
 def track_create_update(sender, instance, created, **kwargs):
     """record create events"""

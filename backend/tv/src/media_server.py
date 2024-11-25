@@ -5,6 +5,7 @@ import requests
 
 from django.db.models.query import QuerySet
 from tv.models import TVEpisode
+from autot.models import log_change
 from autot.src.config import get_config, ConfigType
 
 
@@ -91,9 +92,18 @@ class MediaServerEpisode:
             if not jf_data:
                 continue
 
+            old_status = episode.status
             episode.media_server_id = jf_data.pop("media_server_id")
             episode.media_server_meta = jf_data
             episode.status = "f"
+            log_change(
+                episode,
+                "u",
+                field_name="status",
+                old_value=old_status,
+                new_value="f",
+                comment=f"Found Mediaserver ID: {episode.media_server_id}",
+            )
             episode_to_update.append(episode)
 
         if not episode_to_update:

@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from django.db.models import Count, F, Q
 from django.utils import timezone
 from tv.models import TVEpisode, TVSeason
-from autot.models import Torrent
+from autot.models import Torrent, log_change
 from autot.src.search import Jackett
 
 
@@ -28,6 +28,8 @@ class EpisodeStatus:
         if to_update:
             print(f"set {to_update.count()} episodes as upcoming")
             to_update.update(status="u")
+            for episode in to_update:
+                log_change(episode, "u", field_name="status", new_value="u")
 
     def set_searching(self):
         """set episodes to searching"""
@@ -36,6 +38,8 @@ class EpisodeStatus:
         if to_update:
             print(f"set {to_update.count()} episodes as searching")
             to_update.update(status="s")
+            for episode in to_update:
+                log_change(episode, "u", field_name="status", old_value="u", new_value="s")
 
     def find_seasons_magnets(self) -> bool:
         """find complete season magnets"""
@@ -57,7 +61,17 @@ class EpisodeStatus:
                 continue
 
             torrent, _ = Torrent.objects.get_or_create(magnet=magnet, torrent_type="s")
-            TVEpisode.objects.filter(season=season).update(torrent=torrent, status="d")
+            season_episodes = TVEpisode.objects.filter(season=season)
+
+            for episode in season_episodes:
+                old_torrent = episode.torrent.magnet_hash
+                old_status = episode.status
+                episode.torrent = torrent
+                episode.status = "d"
+                episode.save()
+                log_change(episode, "c", field_name="torrent", old_value=old_torrent, new_value=torrent.magnet_hash)
+                log_change(episode, "c", field_name="status", old_value=old_status, new_value="d")
+
             found_magnets = True
             print(f"{season}: added magnet {torrent.magnet_hash}")
 

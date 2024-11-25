@@ -7,6 +7,7 @@ from pathlib import Path
 from io import BytesIO
 
 import pytz
+from autot.models import log_change
 from PIL import Image, ImageFilter
 from django.db import models
 from django.db.models.signals import post_delete
@@ -153,11 +154,13 @@ class TVShow(BaseModel):
             image_show, _ = Artwork.objects.get_or_create(image_url=image_url)
             self.image_show = image_show
             self.save()
+            log_change(self, "c", "image_show", new_value=image_url)
             return
 
         if not self.image_show.image_url == image_url:
             print(f"update image_show artwork: {image_url}")
             self.image_show.update(image_url)
+            log_change(self, "u", "image_show", new_value=image_url)
 
     def update_episode_fallback(self, image_url: str | None) -> None:
         """handle update with or without existing"""
@@ -169,11 +172,13 @@ class TVShow(BaseModel):
             episode_fallback, _ = Artwork.objects.get_or_create(image_url=image_url)
             self.episode_fallback = episode_fallback
             self.save()
+            log_change(self, "c", "episode_fallback", new_value=image_url)
             return
 
         if not self.episode_fallback.image_url == image_url:
             print(f"update episode_fallback artwork: {image_url}")
             self.episode_fallback.update(image_url)
+            log_change(self, "u", "episode_fallback", new_value=image_url)
 
     def update_season_fallback(self, image_url: str | None) -> None:
         """handle update with or without existing"""
@@ -185,11 +190,13 @@ class TVShow(BaseModel):
             season_fallback, _ = Artwork.objects.get_or_create(image_url=image_url)
             self.season_fallback = season_fallback
             self.save()
+            log_change(self, "c", "season_fallback", new_value=image_url)
             return
 
         if not self.season_fallback.image_url == image_url:
             print(f"update season_fallback artwork: {image_url}")
             self.season_fallback.update(image_url)
+            log_change(self, "u", "season_fallback", new_value=image_url)
 
     def get_keywords(self: Self):
         """build keywords of show"""
@@ -248,11 +255,13 @@ class TVSeason(BaseModel):
             self.image_season = Artwork(image_url=image_url)
             self.image_season.save()
             self.save()
+            log_change(self, "c", "image_season", new_value=image_url)
             return
 
         if not self.image_season.image_url == image_url:
             print(f"update image_season artwork: {image_url}")
             self.image_season.update(image_url)
+            log_change(self, "u", "image_season", new_value=image_url)
 
     def get_archive_path(self) -> str:
         """get archive path of season"""
@@ -291,6 +300,7 @@ class TVSeason(BaseModel):
         episodes.update(
             torrent=torrent, status="d", media_server_id=None, media_server_meta=None
         )
+        log_change(self, "c", comment=f"Added season Torrent with hash {torrent.magnet_hash}")
 
     def is_valid_path(self, path) -> bool:
         """check for valid season path"""
@@ -349,11 +359,13 @@ class TVEpisode(BaseModel):
             self.image_episode = Artwork(image_url=image_url)
             self.image_episode.save()
             self.save()
+            log_change(self, "c", "image_episode", new_value=image_url)
             return
 
         if not self.image_episode.image_url == image_url:
             print(f"update image_episode artwork: {image_url}")
             self.image_episode.update(image_url)
+            log_change(self, "u", "image_episode", new_value=image_url)
 
     def get_keywords(self: Self):
         """build keywords of show"""
@@ -446,8 +458,17 @@ class TVEpisode(BaseModel):
     def add_magnet(self, magnet) -> None:
         """add magnet to episode"""
         if self.torrent:
+            old_value = self.torrent.torrent_state
             self.torrent.torrent_state = "i"
             self.torrent.save()
+            log_change(
+                self,
+                action="u",
+                field_name="torrent",
+                old_value=old_value,
+                new_value="i",
+                comment="Ignored previous torrent.",
+            )
 
         torrent, _ = Torrent.objects.get_or_create(magnet=magnet, torrent_type="e")
         self.torrent = torrent
@@ -455,6 +476,7 @@ class TVEpisode(BaseModel):
         self.media_server_id = None
         self.media_server_meta = None
         self.save()
+        log_change(self, action="c", field_name="torrent", new_value=self.torrent.magnet_hash)
 
     def get_next(self) -> Self | None:
         """get next episode for nav"""

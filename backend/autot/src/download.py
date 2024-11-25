@@ -2,6 +2,7 @@
 
 from math import ceil
 
+from autot.models import log_change
 from django.utils import timezone
 from transmission_rpc import Client
 from transmission_rpc.torrent import Torrent as TransmissionTorrent
@@ -51,8 +52,10 @@ class Transmission(DownloaderBase):
     def add_single(self, torrent: Torrent) -> None:
         """add torrent to transmission queue"""
         self.transission_client.add_torrent(torrent.magnet)
+        old_state = torrent.torrent_state
         torrent.torrent_state = "q"
         torrent.save()
+        log_change(torrent, "u", field_name="torrent_state", old_value=old_state, new_value="q")
 
     def get_single(self, torrent: Torrent) -> TransmissionTorrent | None:
         """get single torrent instance"""
@@ -65,11 +68,14 @@ class Transmission(DownloaderBase):
 
     def cancle(self, torrent: Torrent) -> None:
         """cancle and reset torrent"""
-        TVEpisode.objects.filter(torrent=torrent).update(
-            torrent=None,
-            status=None,
-            media_server_id=None,
-        )
+        episodes = TVEpisode.objects.filter(torrent=torrent)
+        for episode in episodes:
+            episode.torrent = None
+            episode.status = None
+            episode.media_server_id = None
+            episode.save()
+            log_change(episode, "u", comment=f"Cancle Torrent Download: {torrent.magnet_hash}")
+
         to_delete = self.get_single(torrent)
         if to_delete:
             self.delete(to_delete)
@@ -91,6 +97,7 @@ class Transmission(DownloaderBase):
             return needs_checking, needs_archiving
 
         for local_torrent in to_check:
+            old_state = local_torrent.torrent_state
             remote_torrent = in_queue.get(local_torrent.magnet_hash)
             if not remote_torrent:
                 continue
@@ -110,6 +117,14 @@ class Transmission(DownloaderBase):
                 needs_archiving = True
 
             local_torrent.save()
+            if old_state != local_torrent.torrent_state:
+                log_change(
+                    local_torrent,
+                    "u",
+                    field_name="torrent_state",
+                    old_value=old_state,
+                    new_value=local_torrent.torrent_state,
+                )
 
         return needs_checking, needs_archiving
 

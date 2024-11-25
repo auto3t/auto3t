@@ -6,6 +6,7 @@ import pytz
 from django.db.models import QuerySet
 from django.utils import timezone
 from artwork.models import Artwork
+from autot.models import log_change
 from tv.models import TVEpisode, TVShow, TVSeason
 from tv.src.tv_maze_client import TVMaze
 
@@ -52,7 +53,9 @@ class TVMazeShow:
 
         fields_changed = False
         for key, value in show_data.items():
-            if getattr(show, key) != value:
+            old_value = getattr(show, key)
+            if old_value != value:
+                log_change(show, "u", field_name=key, old_value=old_value, new_value=value)
                 setattr(show, key, value)
                 print(f"{show.name}: update [{key}] to [{value}]")
                 fields_changed = True
@@ -150,7 +153,9 @@ class TVMazeShow:
 
             fields_changed = False
             for key, value in season_data.items():
-                if getattr(season, key) != value:
+                old_value = getattr(season, key)
+                if old_value != value:
+                    log_change(season, "u", field_name=key, old_value=old_value, new_value=value)
                     setattr(season, key, value)
                     print(f"{season}: update [{key}] to [{value}]")
                     fields_changed = True
@@ -215,7 +220,9 @@ class TVMazeShow:
 
             fields_changed = False
             for key, value in episode_data.items():
-                if getattr(episode, key) != value:
+                old_value = getattr(episode, key)
+                if old_value != value:
+                    log_change(episode, "u", field_name=key, old_value=old_value, new_value=value)
                     setattr(episode, key, value)
                     print(f"{episode}: update [{key}] to [{value}]")
                     fields_changed = True

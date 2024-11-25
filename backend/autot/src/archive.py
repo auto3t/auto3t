@@ -8,7 +8,7 @@ from transmission_rpc.torrent import Torrent as TransmissionTorrent
 from tv.models import TVEpisode
 from autot.src.config import get_config, ConfigType
 from autot.src.download import Transmission
-from autot.models import Torrent
+from autot.models import Torrent, log_change
 
 
 class Archiver:
@@ -46,8 +46,10 @@ class Archiver:
             raise NotImplementedError
 
         tm.delete(tm_torrent)
+        old_state = torrent.torrent_state
         torrent.torrent_state = "a"
         torrent.save()
+        log_change(torrent, "u", field_name="torrent_state", old_value=old_state, new_value="a")
 
     def _archive_episode(self, tm_torrent: TransmissionTorrent, episode: TVEpisode) -> None:
         """archive tvfile"""
@@ -61,8 +63,10 @@ class Archiver:
         archive_path = self.CONFIG["TV_BASE_FOLDER"] / episode_path
         archive_path.parent.mkdir(parents=True, exist_ok=True)
         shutil.move(download_path, archive_path, copy_function=shutil.copyfile)
+        old_status = episode.status
         episode.status = "f"
         episode.save()
+        log_change(episode, "u", field_name="status", old_value=old_status, new_value="f")
 
     def _get_valid_media_file(self, tm_torrent: TransmissionTorrent, episode: TVEpisode) -> str:
         """get valid media file"""

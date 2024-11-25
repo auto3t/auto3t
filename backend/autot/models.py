@@ -4,9 +4,11 @@ from datetime import datetime, timezone
 from urllib.parse import parse_qs
 
 from crontab import CronTab
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models.signals import post_delete, pre_save
+from django.db.models.signals import post_delete, post_save, pre_delete, pre_save
 from django.dispatch import receiver
 from django_rq import get_scheduler
 from django_rq.jobs import Job
@@ -159,3 +161,71 @@ def create_update_schedule(sender, instance, **kwargs):  # pylint: disable=unuse
     print(f"post_save signal: {instance}")
     scheduler = get_scheduler("default")
     instance.create_on_scheduler(scheduler)
+
+
+class ActionLog(models.Model):
+    """track actions"""
+
+    ACTION_OPTIONS = [
+        ("c", "created"),
+        ("u", "updated"),
+        ("d", "deleted"),
+    ]
+
+    content_type = models.ForeignKey(ContentType, on_delete=models.PROTECT)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey("content_type", "object_id")
+
+    timestamp = models.DateTimeField(auto_now_add=True)
+    action = models.CharField(max_length=1, choices=ACTION_OPTIONS)
+    field_name = models.CharField(max_length=255, blank=True, null=True)
+    old_value = models.TextField(blank=True, null=True)
+    new_value = models.TextField(blank=True, null=True)
+    comment = models.TextField(blank=True, null=True)
+
+    @property
+    def content_type_verbose(self):
+        """Returns a human-readable name for the content type."""
+        return self.content_type.model_class()._meta.verbose_name.title()
+
+
+def log_change(
+    instance,
+    action: str,
+    field_name: str | None = None,
+    old_value: str | None = None,
+    new_value: str | None = None,
+    comment: str | None = None,
+) -> None:
+    """Logs a change to the ActionLog model."""
+    content_type = ContentType.objects.get_for_model(instance.__class__)
+    ActionLog.objects.create(
+        content_type=content_type,
+        object_id=instance.pk,
+        action=action,
+        field_name=field_name,
+        old_value=old_value,
+        new_value=new_value,
+        comment=comment,
+    )
+
+
+@receiver(post_save)
+def track_create_update(sender, instance, created, **kwargs):
+    """record create events"""
+    if sender == ActionLog:
+        # avoid recursion
+        return
+
+    if created:
+        log_change(instance, action="c")
+
+
+@receiver(pre_delete)
+def track_delete(sender, instance, **kwargs):
+    """track delete events"""
+    if sender == ActionLog:
+        # avoid recursion
+        return
+
+    log_change(instance, action="d")

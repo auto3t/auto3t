@@ -143,7 +143,9 @@ class AutotScheduler(models.Model):
             self.job_id_registered = None
 
         job = scheduler.cron(cron_string=self.cron_schedule, func=self.job)
+        old_id = self.job_id_registered
         self.job_id_registered = job.id
+        log_change(self, "u", field_name="job_id_registered", old_value=old_id, new_value=self.job_id_registered)
 
     def delete_on_scheduler(self, scheduler) -> None:
         """remove from scheduler"""

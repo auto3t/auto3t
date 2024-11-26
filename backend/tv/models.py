@@ -7,9 +7,12 @@ from pathlib import Path
 from io import BytesIO
 
 import pytz
-from autot.models import log_change
+from autot.models import ActionLog, log_change
 from PIL import Image, ImageFilter
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.db.models import Q
+from django.db.models.query import QuerySet
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
 from artwork.models import Artwork
@@ -213,6 +216,24 @@ class TVShow(BaseModel):
         """get all episodes of show reverse lookup"""
         return TVEpisode.objects.filter(season__show=self)
 
+    def get_logs_related(self) -> QuerySet[ActionLog]:
+        """get related log instances of show"""
+        show_type = ContentType.objects.get_for_model(self)
+        season_type = ContentType.objects.get_for_model(TVSeason)
+        episode_type = ContentType.objects.get_for_model(TVEpisode)
+        seasons = TVSeason.objects.filter(show=self)
+        episodes = TVEpisode.objects.filter(season__show=self)
+
+        show_logs = ActionLog.objects.filter(
+            (
+                Q(content_type=episode_type) & Q(object_id__in=episodes) |
+                Q(content_type=season_type) & Q(object_id__in=seasons) |
+                Q(content_type=show_type) & Q(object_id=self.pk)
+            )
+        ).order_by("-timestamp")
+
+        return show_logs
+
 
 class TVSeason(BaseModel):
     """describes a Season of a Show"""
@@ -301,6 +322,20 @@ class TVSeason(BaseModel):
         has_complete = "complete" in path.lower()
 
         return has_complete
+
+    def get_logs_related(self) -> QuerySet[ActionLog]:
+        """get related log instances of season"""
+        season_type = ContentType.objects.get_for_model(self)
+        episode_type = ContentType.objects.get_for_model(TVEpisode)
+        season_episodes = TVEpisode.objects.filter(season=self)
+        season_logs = ActionLog.objects.filter(
+            (
+                Q(content_type=episode_type) & Q(object_id__in=season_episodes) |
+                Q(content_type=season_type) & Q(object_id=self.pk)
+            )
+        ).order_by("-timestamp")
+
+        return season_logs
 
 
 class TVEpisode(BaseModel):

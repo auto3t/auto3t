@@ -27,13 +27,13 @@ class BaseModel(models.Model):
     CONFIG: ConfigType = get_config()
     IMAGE_SIZE: None | tuple[int, int] = None
 
-    remote_server_id = models.CharField(max_length=255)
-    remote_server_url = models.URLField(null=True, blank=True)
-    date_added = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
-    release_date = models.DateTimeField(null=True, blank=True)
-    end_date = models.DateTimeField(null=True, blank=True)
-    description = models.TextField(null=True, blank=True)
+    remote_server_id = models.CharField(max_length=255, verbose_name="ID on remote server")
+    remote_server_url = models.URLField(null=True, blank=True, verbose_name="URL on remote server")
+    date_added = models.DateTimeField(auto_now_add=True, verbose_name="Date added")
+    date_modified = models.DateTimeField(auto_now=True, verbose_name="Date modified")
+    release_date = models.DateTimeField(null=True, blank=True, verbose_name="Release name")
+    end_date = models.DateTimeField(null=True, blank=True, verbose_name="End date")
+    description = models.TextField(null=True, blank=True, verbose_name="Description")
 
     class Meta:
         """set abstract to not create db relations"""
@@ -113,13 +113,28 @@ class TVShow(BaseModel):
     search_keywords = models.ManyToManyField(SearchWord)
     is_active = models.BooleanField(default=True)
     image_show = models.ForeignKey(
-        Artwork, related_name="image_show", on_delete=models.CASCADE, null=True, blank=True
+        Artwork,
+        related_name="image_show",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        verbose_name="Show Poster",
     )
     episode_fallback = models.ForeignKey(
-        Artwork, related_name="episode_fallback", on_delete=models.CASCADE, null=True, blank=True
+        Artwork,
+        related_name="episode_fallback",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        verbose_name="Episode Fallback Art",
     )
     season_fallback = models.ForeignKey(
-        Artwork, related_name="season_fallback", on_delete=models.CASCADE, null=True, blank=True
+        Artwork,
+        related_name="season_fallback",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        verbose_name="Season Fallback Art",
     )
 
     def __str__(self):

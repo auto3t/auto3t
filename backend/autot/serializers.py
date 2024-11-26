@@ -60,6 +60,7 @@ class ActionLogSerializer(serializers.ModelSerializer):
     """serialize action log item"""
 
     content_type_verbose = serializers.CharField(read_only=True)
+    parsed = serializers.JSONField(read_only=True)
 
     class Meta:
         model = ActionLog

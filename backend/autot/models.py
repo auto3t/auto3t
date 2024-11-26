@@ -11,6 +11,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models.signals import post_delete, post_save, pre_delete, pre_save
 from django.dispatch import receiver
+from django.urls import reverse
 from django_rq import get_scheduler
 from django_rq.jobs import Job
 
@@ -195,9 +196,75 @@ class ActionLog(models.Model):
     comment = models.TextField(blank=True, null=True)
 
     @property
-    def content_type_verbose(self):
-        """Returns a human-readable name for the content type."""
-        return self.content_type.model_class()._meta.verbose_name.title()
+    def parsed(self) -> dict:
+        """parse action log item for frontend"""
+        return {
+            "action": self.get_action_display().title(),
+            "content_type": self.content_type.model_class()._meta.verbose_name.title(),
+            "content_item_name": str(self.content_object),
+            "url": self._get_reverse_url(),
+            "message": self._build_message(),
+        }
+
+    def _get_reverse_url(self) -> str | None:
+        """get reverse url"""
+        if self.action == "d":
+            return None
+
+        content_class = self.content_type.model_class().__name__
+        if content_class == "TVEpisode":
+            return reverse("episode-detail", kwargs={"pk": self.object_id})
+
+        if content_class == "TVSeason":
+            return reverse("season-detail", kwargs={"pk": self.object_id})
+
+        if content_class == "TVShow":
+            return reverse("show-detail", kwargs={"pk": self.object_id})
+
+        return None
+
+    def _build_message(self):
+        """parse field"""
+        message = None
+
+        if self.field_name:
+            message = self._build_field_message()
+        elif self.action == "c":
+            message = self._build_create_message()
+
+        return message
+
+    def _build_create_message(self):
+        """build create message"""
+        content_type = self.content_type.model_class()._meta.verbose_name.title()
+        return f"Added new {content_type}."
+
+    def _build_field_message(self):
+        """build message for field changes"""
+
+        for field in self.content_type.model_class()._meta.fields:
+            if field.name != self.field_name:
+                continue
+
+            old_str = self.old_value
+            new_str = self.new_value
+
+            if field.choices:
+                for choice in field.choices:
+                    if choice[0] == self.old_value:
+                        old_str = choice[1]
+
+                    if choice[0] == self.new_value:
+                        new_str = choice[1]
+
+            if not old_str:
+                message = f"Added {field.verbose_name.title()} {new_str}"
+            else:
+                message = f"Changed {field.verbose_name.title()} from {old_str} to {new_str}"
+
+            return message
+
+        return None
 
     def __str__(self) -> str:
         """action log string"""

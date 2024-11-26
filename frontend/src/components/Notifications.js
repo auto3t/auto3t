@@ -1,6 +1,7 @@
 import { useCallback, useEffect } from "react";
 import useNotificationStore from "../stores/NotificationStore"
 import useApi from "../hooks/api";
+import { Link } from "react-router-dom";
 
 export default function NotificationBox() {
 
@@ -37,7 +38,13 @@ export default function NotificationBox() {
                   <span className="tag-item" title={notification.parsed.action}>{notification.action || '-'}</span>
                 </div>
                 <div>
-                  <p>{notification.parsed.content_type}: {notification.parsed.content_item_name}</p>
+                  {notification.parsed.url ? (
+                    <Link to={notification.parsed.url}>
+                      <p>{notification.parsed.content_type}: {notification.parsed.content_item_name}</p>
+                    </Link>
+                  ) : (
+                    <p>{notification.parsed.content_type}: {notification.parsed.content_item_name}</p>
+                  )}
                   <p>{notification.parsed.message}</p>
                   {notification.comment && (<p>{notification.comment}</p>)}
                 </div>

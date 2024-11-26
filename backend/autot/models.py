@@ -212,14 +212,18 @@ class ActionLog(models.Model):
             return None
 
         content_class = self.content_type.model_class().__name__
+        reverse_api_url = None
         if content_class == "TVEpisode":
-            return reverse("episode-detail", kwargs={"pk": self.object_id})
+            reverse_api_url = reverse("episode-detail", kwargs={"pk": self.object_id})
 
-        if content_class == "TVSeason":
-            return reverse("season-detail", kwargs={"pk": self.object_id})
+        elif content_class == "TVSeason":
+            reverse_api_url = reverse("season-detail", kwargs={"pk": self.object_id})
 
-        if content_class == "TVShow":
-            return reverse("show-detail", kwargs={"pk": self.object_id})
+        elif content_class == "TVShow":
+            reverse_api_url = reverse("show-detail", kwargs={"pk": self.object_id})
+
+        if reverse_api_url:
+            return reverse_api_url.lstrip("/api")
 
         return None
 

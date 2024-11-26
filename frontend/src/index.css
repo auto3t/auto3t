@@ -185,7 +185,7 @@ button:hover {
 }
 
 .notification-item {
-  background-color: var(--accent-2);
+  background-color: var(--main-bg);
   padding: 1rem;
   margin: 1rem 0;
   display: flex;

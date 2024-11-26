@@ -48,7 +48,6 @@ class TVMazeShow:
 
             show.save()
 
-            print(f"created new show: {show.name}")
             return show
 
         fields_changed = False
@@ -57,7 +56,6 @@ class TVMazeShow:
             if old_value != value:
                 log_change(show, "u", field_name=key, old_value=old_value, new_value=value)
                 setattr(show, key, value)
-                print(f"{show.name}: update [{key}] to [{value}]")
                 fields_changed = True
 
         if fields_changed:
@@ -148,7 +146,6 @@ class TVMazeShow:
 
                 season.save()
 
-                print(f"created new season: {season}")
                 continue
 
             fields_changed = False
@@ -157,7 +154,6 @@ class TVMazeShow:
                 if old_value != value:
                     log_change(season, "u", field_name=key, old_value=old_value, new_value=value)
                     setattr(season, key, value)
-                    print(f"{season}: update [{key}] to [{value}]")
                     fields_changed = True
 
             if fields_changed:
@@ -215,7 +211,6 @@ class TVMazeShow:
 
                 self._set_episode_status(episode)
                 episode.save()
-                print(f"created new episode: {episode}")
                 continue
 
             fields_changed = False
@@ -224,7 +219,6 @@ class TVMazeShow:
                 if old_value != value:
                     log_change(episode, "u", field_name=key, old_value=old_value, new_value=value)
                     setattr(episode, key, value)
-                    print(f"{episode}: update [{key}] to [{value}]")
                     fields_changed = True
 
             if fields_changed:

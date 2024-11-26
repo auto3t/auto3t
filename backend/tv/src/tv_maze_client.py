@@ -1,6 +1,10 @@
 """interact with TVmaze.com API"""
 
+import logging
+
 import requests
+
+logger = logging.getLogger("django")
 
 
 class TVMaze:
@@ -14,7 +18,7 @@ class TVMaze:
 
         response = requests.get(f"{self.BASE}/{url}", timeout=self.TIMEOUT)
         if not response.ok:
-            print(response.text)
+            logger.error("Request to tvmaze.com failed with status: %s, error: %s", response.status_code, response.text)
             return None
 
         return response.json()

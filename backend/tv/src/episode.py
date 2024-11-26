@@ -1,5 +1,6 @@
 """deal with episodes"""
 
+import logging
 from datetime import datetime, timedelta
 
 from django.db.models import Count, F, Q
@@ -7,6 +8,9 @@ from django.utils import timezone
 from tv.models import TVEpisode, TVSeason
 from autot.models import Torrent, log_change
 from autot.src.search import Jackett
+
+
+logger = logging.getLogger("django")
 
 
 class EpisodeStatus:
@@ -26,7 +30,6 @@ class EpisodeStatus:
         """set upcoming state if has release date"""
         to_update = TVEpisode.objects.filter(status__isnull=True, release_date__isnull=False)
         if to_update:
-            print(f"set {to_update.count()} episodes as upcoming")
             to_update.update(status="u")
             for episode in to_update:
                 log_change(episode, "u", field_name="status", new_value="u")
@@ -36,7 +39,6 @@ class EpisodeStatus:
         lte = datetime.today().astimezone() + timedelta(hours=6)
         to_update = TVEpisode.objects.filter(status="u", release_date__lte=lte)
         if to_update:
-            print(f"set {to_update.count()} episodes as searching")
             to_update.update(status="s")
             for episode in to_update:
                 log_change(episode, "u", field_name="status", old_value="u", new_value="s")
@@ -73,7 +75,7 @@ class EpisodeStatus:
                 log_change(episode, "c", field_name="status", old_value=old_status, new_value="d")
 
             found_magnets = True
-            print(f"{season}: added magnet {torrent.magnet_hash}")
+            log_change(season, "c", comment=f"Added magnet {torrent.magnet_hash} for season episodes")
 
         return found_magnets
 
@@ -84,7 +86,7 @@ class EpisodeStatus:
         if not to_search:
             return found_magnets
 
-        print(f"searching for {to_search.count()} magnets")
+        logger.info("Searching for %s magnet(s)", to_search.count())
         for episode in to_search:
             magnet = Jackett().get_magnet(episode)
             if not magnet:
@@ -92,6 +94,5 @@ class EpisodeStatus:
 
             episode.add_magnet(magnet)
             found_magnets = True
-            print(f"{episode}: added magnet {episode.torrent.magnet_hash}")
 
         return found_magnets

@@ -58,7 +58,6 @@ class Archiver:
         if not download_path.exists():
             raise FileNotFoundError(f"didn't find expected {str(download_path)}")
 
-        print(f"archive {episode.file_name}")
         episode_path = episode.get_archive_path(suffix=download_path.suffix)
         archive_path = self.CONFIG["TV_BASE_FOLDER"] / episode_path
         archive_path.parent.mkdir(parents=True, exist_ok=True)

@@ -1,6 +1,7 @@
 """search for magnet links in index"""
 
 import json
+import logging
 from hashlib import md5, sha1
 from urllib.parse import quote
 
@@ -8,8 +9,11 @@ import bencodepy
 import requests
 from django.db.models import QuerySet
 from tv.models import TVEpisode, TVSeason
+from autot.models import log_change
 from autot.src.config import get_config, ConfigType
 from autot.src.redis_con import AutotRedis
+
+logger = logging.getLogger("django")
 
 
 class BaseIndexer:
@@ -58,7 +62,7 @@ class Jackett(BaseIndexer):
         results = self.make_request(url)
         valid_results = self.validate_links(results, to_search)
         if not valid_results:
-            print("no valid magnet option found")
+            log_change(to_search, "u", comment="No valid magnet option found.")
             return None
 
         for result in valid_results:
@@ -188,7 +192,7 @@ class Magnator:
         """get fallback trackers"""
         response = requests.get(self.TRACKER_FALLBACK_URL, timeout=300)
         if not response.ok:
-            print("failed to get tracker fallback")
+            logger.error("failed to get tracker fallback: status %s, error: %s", response.status_code, response.text)
             return []
 
         return response.text.split()

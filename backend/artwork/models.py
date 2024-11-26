@@ -1,6 +1,7 @@
 """artwork model"""
 
 import base64
+import logging
 import os
 from hashlib import md5
 from io import BytesIO
@@ -12,6 +13,8 @@ from django.db import models
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
 from PIL import Image, ImageFilter
+
+logger = logging.getLogger("django")
 
 
 class Artwork(models.Model):
@@ -30,6 +33,7 @@ class Artwork(models.Model):
 
     def download(self) -> None:
         """download and index"""
+        logger.info("download artwork: %s", self.image_url)
         self._download_image()
         if self.image:
             self._get_image_blur()
@@ -48,8 +52,8 @@ class Artwork(models.Model):
                 img_content = ContentFile(img_io.getvalue(), self.file_path)
                 self.image.save(self.file_path, img_content)  # pylint: disable=no-member
 
-        except Exception:  # pylint: disable=broad-exception-caught
-            print(f"Failed to download image: {self.image_url}")
+        except Exception as err:  # pylint: disable=broad-exception-caught
+            logger.error("Failed to download image: %s, %s", self.image_url, str(err))
 
     def crop_to_aspect(self, img):
         """crop image to aspect ratio"""
@@ -101,6 +105,9 @@ class Artwork(models.Model):
         img_path = f"{folder}/{self.id_hash}.jpg"
 
         return img_path
+
+    def __str__(self) -> str:
+        return self.image_url
 
 
 @receiver(post_delete, sender=Artwork)

@@ -1,5 +1,6 @@
 """all core models"""
 
+import logging
 from datetime import datetime, timezone
 from urllib.parse import parse_qs
 
@@ -12,6 +13,9 @@ from django.db.models.signals import post_delete, post_save, pre_delete, pre_sav
 from django.dispatch import receiver
 from django_rq import get_scheduler
 from django_rq.jobs import Job
+
+
+logger = logging.getLogger("django")
 
 
 class SearchWordCategory(models.Model):
@@ -157,7 +161,7 @@ class AutotScheduler(models.Model):
 @receiver(post_delete, sender=AutotScheduler)
 def delete_schedule(sender, instance, **kwargs):  # pylint: disable=unused-argument
     """delete from filesystem"""
-    print(f"delete signal: {instance}")
+    logger.info("scheduler delete signal: %s", instance)
     scheduler = get_scheduler("default")
     instance.delete_on_scheduler(scheduler)
 
@@ -165,7 +169,7 @@ def delete_schedule(sender, instance, **kwargs):  # pylint: disable=unused-argum
 @receiver(pre_save, sender=AutotScheduler)
 def create_update_schedule(sender, instance, **kwargs):  # pylint: disable=unused-argument
     """create schedule"""
-    print(f"post_save signal: {instance}")
+    logger.info("scheduler post save signal: %s", instance)
     scheduler = get_scheduler("default")
     instance.create_on_scheduler(scheduler)
 
@@ -215,7 +219,7 @@ def log_change(
 ) -> None:
     """Logs a change to the ActionLog model."""
     content_type = ContentType.objects.get_for_model(instance.__class__)
-    ActionLog.objects.create(
+    log_item = ActionLog.objects.create(
         content_type=content_type,
         object_id=instance.pk,
         action=action,
@@ -224,6 +228,7 @@ def log_change(
         new_value=new_value,
         comment=comment,
     )
+    logger.info(log_item)
 
 
 def get_logs(instance):

@@ -176,3 +176,32 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:8000",
 ]
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": True,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {message}",
+            "style": "{",
+        },
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {
+            "level": "INFO",
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        }
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": True,
+        }
+    },
+}

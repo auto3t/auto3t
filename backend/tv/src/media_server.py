@@ -1,5 +1,6 @@
 """jellyfin integration"""
 
+import logging
 from typing import TypedDict, NotRequired
 import requests
 
@@ -7,6 +8,9 @@ from django.db.models.query import QuerySet
 from tv.models import TVEpisode
 from autot.models import log_change
 from autot.src.config import get_config, ConfigType
+
+
+logger = logging.getLogger("django")
 
 
 class MediaServerItem(TypedDict):
@@ -110,7 +114,7 @@ class MediaServerEpisode:
             return
 
         ided = TVEpisode.objects.bulk_update(episode_to_update, ["media_server_id", "media_server_meta", "status"])
-        print(f"found jf ids for {ided} episodes")
+        logger.info("Found jf ids for %s episodes", ided)
 
     def make_request(self, url, method, data=False):
         """make API request"""

@@ -1,5 +1,6 @@
 """all generic reoccuring tasks"""
 
+import logging
 from datetime import timedelta
 
 from artwork.models import Artwork
@@ -8,6 +9,8 @@ from django_rq.queues import get_queue
 from tv.src.media_server import MediaServerEpisode
 from autot.src.archive import Archiver
 from autot.src.download import Transmission
+
+logger = logging.getLogger("django")
 
 
 def is_pending(queue_name: str, func_name: str) -> bool:
@@ -35,7 +38,7 @@ def run_archiver() -> None:
 def download_watcher() -> None:
     """watch download queue"""
     if is_pending("show", "download_watcher"):
-        print("job is already scheduled, exiting...")
+        logger.info("download_watcher job is already scheduled, exiting...")
         return
 
     needs_checking, needs_archiving = Transmission().update_state()
@@ -63,7 +66,6 @@ def download_thumbnails() -> None:
     """download thumbnails"""
     to_download = Artwork.objects.filter(image="")[:10]
     for artwork in to_download:
-        print(f"download artwork: {artwork.image_url}")
         artwork.download()
 
     if Artwork.objects.filter(image="").exists():

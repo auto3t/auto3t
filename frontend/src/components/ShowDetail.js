@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ImageComponent from "./ImageComponent";
 import useApi from "../hooks/api";
 import TimeComponent from "./TimeComponent";
@@ -7,10 +8,12 @@ import KeywordTableCompnent from "./KeywordTableComponent";
 
 export default function ShowDetail({ showDetail, fetchShow }) {
 
-  const { put } = useApi();
+  const navigate = useNavigate();
+  const { put, del } = useApi();
   const [showDetails, setShowDetails] = useState(false);
   const [editedSearchName, setEditedSearchName] = useState('');
   const [editMode, setEditMode] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
 
   const toggleShowDetails = () => {
     setShowDetails(!showDetails);
@@ -53,6 +56,17 @@ export default function ShowDetail({ showDetail, fetchShow }) {
     return {image: '/poster-default.jpg'}
   }
 
+  const toggleShowConfirm = () => {
+    setShowDelete(!showDelete);
+  }
+
+  const handleShowDelete = () => {
+    del(`tv/show/${showDetail.id}/`)
+    .then(() => {
+      navigate("/tv");
+    })
+  }
+
   return (
     <div className="show-detail">
       <div className="show-detail-header">
@@ -75,6 +89,16 @@ export default function ShowDetail({ showDetail, fetchShow }) {
       </button>
       {showDetails && (
         <>
+          <div>
+            <button onClick={toggleShowConfirm}>Remove Show</button>
+            {showDelete && (
+              <>
+                <p>Remove '{showDetail.name}' from AutoT?</p>
+                <button onClick={handleShowDelete}>Confirm</button>
+                <button onClick={toggleShowConfirm}>Cancel</button>
+              </>
+            )}
+          </div>
           <table className="keyword-table">
             <tbody>
               <tr>

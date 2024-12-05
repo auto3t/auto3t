@@ -96,13 +96,16 @@ class MediaServerEpisode:
             if not jf_data:
                 continue
 
+            old_status = episode.status
             episode.media_server_id = jf_data.pop("media_server_id")
             episode.media_server_meta = jf_data
-            episode.status = "f"
+            episode.status = "a"
             log_change(
                 episode,
                 "u",
                 field_name="status",
+                old_value=old_status,
+                new_value="a",
                 comment=f"Found Mediaserver ID: {episode.media_server_id}",
             )
             episode_to_update.append(episode)

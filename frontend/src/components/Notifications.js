@@ -43,7 +43,7 @@ export default function NotificationBox() {
                       <p>{notification.parsed.content_type}: {notification.parsed.content_item_name}</p>
                     </Link>
                   ) : (
-                    <p>{notification.parsed.content_type}: {notification.parsed.content_item_name}</p>
+                    <p>{notification.parsed.content_type}: {notification.parsed.content_item_name || 'Unavailable'}</p>
                   )}
                   <p>{notification.parsed.message}</p>
                   {notification.comment && (<p>{notification.comment}</p>)}

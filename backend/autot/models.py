@@ -201,7 +201,7 @@ class ActionLog(models.Model):
         return {
             "action": self.get_action_display().title(),
             "content_type": self.content_type.model_class()._meta.verbose_name.title(),
-            "content_item_name": str(self.content_object),
+            "content_item_name": str(self.content_object) if self.content_object else "",
             "url": self._get_reverse_url(),
             "message": self._build_message(),
         }
@@ -324,4 +324,4 @@ def track_delete(sender, instance, **kwargs):
     if not getattr(sender, "TRACK_CHANGES", None):
         return
 
-    log_change(instance, action="d")
+    log_change(instance, action="d", comment=f"Deleting: {instance}")

@@ -363,6 +363,7 @@ class TVEpisode(BaseModel):
         ("s", "Searching"),
         ("d", "Downloading"),
         ("f", "Finished"),
+        ("a", "Archived"),
         ("i", "Ignored"),
     ]
 

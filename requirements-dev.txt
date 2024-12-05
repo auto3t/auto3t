@@ -3,7 +3,7 @@
 black==24.10.0
 codespell==2.3.0
 flake8==7.1.1
-ipython==8.29.0
+ipython==8.30.0
 isort==5.13.2
 pylint-django==2.6.1
 python-dotenv==1.0.1

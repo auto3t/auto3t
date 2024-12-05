@@ -29,19 +29,27 @@ class EpisodeStatus:
     def set_upcoming(self):
         """set upcoming state if has release date"""
         to_update = TVEpisode.objects.filter(status__isnull=True, release_date__isnull=False)
-        if to_update:
-            to_update.update(status="u")
-            for episode in to_update:
-                log_change(episode, "u", field_name="status", new_value="u")
+        if not to_update:
+            return
+
+        for episode in to_update:
+            old_status = episode.status
+            episode.status = "u"
+            episode.save()
+            log_change(episode, "u", field_name="status", old_value=old_status, new_value="u")
 
     def set_searching(self):
         """set episodes to searching"""
         lte = datetime.today().astimezone() + timedelta(hours=6)
         to_update = TVEpisode.objects.filter(status="u", release_date__lte=lte)
-        if to_update:
-            to_update.update(status="s")
-            for episode in to_update:
-                log_change(episode, "u", field_name="status", old_value="u", new_value="s")
+        if not to_update:
+            return
+
+        for episode in to_update:
+            old_status = episode.status
+            episode.status = "s"
+            episode.save()
+            log_change(episode, "u", field_name="status", old_value=old_status, new_value="s")
 
     def find_seasons_magnets(self) -> bool:
         """find complete season magnets"""

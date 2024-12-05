@@ -1,30 +1,52 @@
-import { useCallback, useEffect } from "react";
-import useNotificationStore from "../stores/NotificationStore"
+import { useCallback, useEffect, useRef } from "react";
+import useNotificationStore from "../stores/NotificationStore";
 import useApi from "../hooks/api";
 import { Link } from "react-router-dom";
 
 export default function NotificationBox() {
-
-  const { get } = useApi()
+  const { get } = useApi();
   const {
     showNotifications,
     setShowNotifications,
-    notifications, 
+    notifications,
     setNotifications,
   } = useNotificationStore();
 
+  const pollingTimeoutRef = useRef(null);
+
   const fetchNotifications = useCallback(async () => {
-    const data = await get('actionlog/');
-    setNotifications(data.results);
+    try {
+      const data = await get("actionlog/");
+      setNotifications(data.results);
+    } catch (error) {
+      console.error("Failed to fetch notifications:", error);
+    }
   }, [setNotifications]);
 
   useEffect(() => {
-    fetchNotifications();
-  }, [showNotifications]);
+    const startPolling = () => {
+      pollingTimeoutRef.current = setTimeout(async () => {
+        await fetchNotifications();
+        startPolling();
+      }, 5000);
+    };
+
+    if (showNotifications) {
+      fetchNotifications();
+      startPolling();
+    }
+
+    return () => {
+      if (pollingTimeoutRef.current) {
+        clearTimeout(pollingTimeoutRef.current);
+        pollingTimeoutRef.current = null;
+      }
+    };
+  }, [showNotifications, fetchNotifications]);
 
   const handleHideNotifications = () => {
     setShowNotifications(false);
-  }
+  };
 
   return (
     <div>
@@ -35,18 +57,26 @@ export default function NotificationBox() {
             {notifications.map((notification) => (
               <div key={notification.id} className="notification-item">
                 <div className="notification-meta">
-                  <span className="tag-item" title={notification.parsed.action}>{notification.action || '-'}</span>
+                  <span className="tag-item" title={notification.parsed.action}>
+                    {notification.action || "-"}
+                  </span>
                 </div>
                 <div>
                   {notification.parsed.url ? (
                     <Link to={notification.parsed.url}>
-                      <p>{notification.parsed.content_type}: {notification.parsed.content_item_name}</p>
+                      <p>
+                        {notification.parsed.content_type}:{" "}
+                        {notification.parsed.content_item_name}
+                      </p>
                     </Link>
                   ) : (
-                    <p>{notification.parsed.content_type}: {notification.parsed.content_item_name || 'Unavailable'}</p>
+                    <p>
+                      {notification.parsed.content_type}:{" "}
+                      {notification.parsed.content_item_name || "Unavailable"}
+                    </p>
                   )}
                   <p>{notification.parsed.message}</p>
-                  {notification.comment && (<p>{notification.comment}</p>)}
+                  {notification.comment && <p>{notification.comment}</p>}
                 </div>
               </div>
             ))}
@@ -54,5 +84,5 @@ export default function NotificationBox() {
         </div>
       )}
     </div>
-  )
+  );
 }

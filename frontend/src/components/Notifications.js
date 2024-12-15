@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import useNotificationStore from "../stores/NotificationStore";
 import useApi from "../hooks/api";
+import TimeComponent from "./TimeComponent";
 import { Link } from "react-router-dom";
 
 export default function NotificationBox() {
@@ -75,6 +76,7 @@ export default function NotificationBox() {
                       {notification.parsed.content_item_name || "Unavailable"}
                     </p>
                   )}
+                  <TimeComponent timestamp={notification.timestamp} />
                   <p>{notification.parsed.message}</p>
                   {notification.comment && <p>{notification.comment}</p>}
                 </div>

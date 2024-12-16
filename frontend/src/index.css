@@ -5,19 +5,19 @@
 
 @font-face {
 font-family: 'Righteous';
-  src:  url('../public/font/Righteous-Regular.ttf');
+  src:  url('../assets/font/Righteous-Regular.ttf');
   font-family: 'Righteous';
 }
 
 @font-face {
 font-family: 'Alef-Bold';
-  src:  url('../public/font/Alef-Bold.ttf');
+  src:  url('../assets/font/Alef-Bold.ttf');
   font-family: 'Alef-Bold';
 }
 
 @font-face {
 font-family: 'Alef-Regular';
-  src:  url('../public/font/Alef-Regular.ttf');
+  src:  url('../assets/font/Alef-Regular.ttf');
   font-family: 'Alef-Regular';
 }
 

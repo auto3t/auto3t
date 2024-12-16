@@ -26,7 +26,7 @@ export default function RootLayout() {
       <header className="boxed-content">
         <nav className="main-nav">            
           <div className="nav-items">
-            <img src="/logo.png" />
+            <img src="/assets/logo.png" />
             <NavLink className='nav-item' to="/">Home</NavLink>
             <NavLink className='nav-item' to="tv">TV</NavLink>
             <NavLink className='nav-item' to="movie">Movie</NavLink>

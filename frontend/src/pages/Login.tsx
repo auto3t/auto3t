@@ -15,7 +15,7 @@ export default function Login() {
   return(
     <div className="login-wrapper">
       <div className='login-elements'>
-        <img src='/logo.png' />
+        <img src='/assets/logo.png' />
         <form onSubmit={handleSubmit}>
           {error && <div>{error}</div>}
           <div>

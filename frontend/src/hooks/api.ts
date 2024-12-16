@@ -2,8 +2,8 @@
 import { useState } from 'react';
 import useAuthStore from '../stores/AuthStore';
 
-const API_BASE = `${process.env.REACT_APP_API_URL || window.location.origin}/api/`;
-const AUTH_BASE = `${process.env.REACT_APP_API_URL || window.location.origin}/auth/`;
+const API_BASE = `${import.meta.env.VITE_APP_API_URL || window.location.origin}/api/`;
+const AUTH_BASE = `${import.meta.env.VITE_APP_API_URL || window.location.origin}/auth/`;
 
 type OptionsType = {
   method: string
@@ -111,7 +111,7 @@ const useApi = () => {
   const getImage = async (url: string) => {
 
     try {
-      const imageAPIURL = `${process.env.REACT_APP_API_URL || window.location.origin}/${url}`
+      const imageAPIURL = `${import.meta.env.VITE_APP_API_URL || window.location.origin}/${url}`
       const blob = await fetchData(imageAPIURL, undefined, undefined, undefined, false);
       const imageUrl = URL.createObjectURL(blob);
       return imageUrl;

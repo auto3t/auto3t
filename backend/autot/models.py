@@ -59,7 +59,6 @@ class SearchWord(models.Model):
 class Torrent(models.Model):
     """torrent representation"""
 
-    TRACK_CHANGES = True
     TORRENT_TYPE = [
         ("e", "Episode"),
         ("s", "Season"),

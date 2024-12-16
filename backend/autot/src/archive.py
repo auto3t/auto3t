@@ -46,10 +46,8 @@ class Archiver:
             raise NotImplementedError
 
         tm.delete(tm_torrent)
-        old_state = torrent.torrent_state
         torrent.torrent_state = "a"
         torrent.save()
-        log_change(torrent, "u", field_name="torrent_state", old_value=old_state, new_value="a")
 
     def _archive_episode(self, tm_torrent: TransmissionTorrent, episode: TVEpisode) -> None:
         """archive tvfile"""

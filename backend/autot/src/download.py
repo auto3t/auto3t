@@ -52,10 +52,8 @@ class Transmission(DownloaderBase):
     def add_single(self, torrent: Torrent) -> None:
         """add torrent to transmission queue"""
         self.transission_client.add_torrent(torrent.magnet)
-        old_state = torrent.torrent_state
         torrent.torrent_state = "q"
         torrent.save()
-        log_change(torrent, "u", field_name="torrent_state", old_value=old_state, new_value="q")
 
     def get_single(self, torrent: Torrent) -> TransmissionTorrent | None:
         """get single torrent instance"""
@@ -97,7 +95,6 @@ class Transmission(DownloaderBase):
             return needs_checking, needs_archiving
 
         for local_torrent in to_check:
-            old_state = local_torrent.torrent_state
             remote_torrent = in_queue.get(local_torrent.magnet_hash)
             if not remote_torrent:
                 continue
@@ -117,14 +114,6 @@ class Transmission(DownloaderBase):
                 needs_archiving = True
 
             local_torrent.save()
-            if old_state != local_torrent.torrent_state:
-                log_change(
-                    local_torrent,
-                    "u",
-                    field_name="torrent_state",
-                    old_value=old_state,
-                    new_value=local_torrent.torrent_state,
-                )
 
         return needs_checking, needs_archiving
 

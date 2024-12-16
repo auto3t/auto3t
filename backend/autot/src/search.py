@@ -8,10 +8,11 @@ from urllib.parse import quote
 import bencodepy
 import requests
 from django.db.models import QuerySet
-from tv.models import TVEpisode, TVSeason
+
 from autot.models import log_change
-from autot.src.config import get_config, ConfigType
+from autot.src.config import ConfigType, get_config
 from autot.src.redis_con import AutotRedis
+from tv.models import TVEpisode, TVSeason
 
 logger = logging.getLogger("django")
 

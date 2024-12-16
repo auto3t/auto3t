@@ -5,10 +5,11 @@ from pathlib import Path
 
 from django.db.models import QuerySet
 from transmission_rpc.torrent import Torrent as TransmissionTorrent
-from tv.models import TVEpisode
-from autot.src.config import get_config, ConfigType
-from autot.src.download import Transmission
+
 from autot.models import Torrent, log_change
+from autot.src.config import ConfigType, get_config
+from autot.src.download import Transmission
+from tv.models import TVEpisode
 
 
 class Archiver:

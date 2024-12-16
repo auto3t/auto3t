@@ -5,9 +5,10 @@ from datetime import datetime, timedelta
 import pytz
 from django.db.models import QuerySet
 from django.utils import timezone
+
 from artwork.models import Artwork
 from autot.models import log_change
-from tv.models import TVEpisode, TVShow, TVSeason
+from tv.models import TVEpisode, TVSeason, TVShow
 from tv.src.tv_maze_client import TVMaze
 
 

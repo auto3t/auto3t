@@ -1,12 +1,13 @@
 """all movie views"""
 
-from movie.models import Collection, Movie
-from movie.src.movie_search import MovieId
-from movie.serializers import CollectionSerializer, MovieSerializer
-from movie.tasks import import_movie
 from rest_framework import viewsets
-from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from movie.models import Collection, Movie
+from movie.serializers import CollectionSerializer, MovieSerializer
+from movie.src.movie_search import MovieId
+from movie.tasks import import_movie
 
 
 class CollectionViewSet(viewsets.ReadOnlyModelViewSet):

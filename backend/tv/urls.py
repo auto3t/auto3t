@@ -1,10 +1,9 @@
 """all tv api urls"""
 
 from django.urls import path
-
 from rest_framework.routers import DefaultRouter
-from tv import views
 
+from tv import views
 
 router = DefaultRouter()
 router.register(r"show", views.ShowViewSet, basename="show")

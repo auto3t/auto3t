@@ -1,14 +1,14 @@
 """jellyfin integration"""
 
 import logging
-from typing import TypedDict, NotRequired
+from typing import NotRequired, TypedDict
+
 import requests
-
 from django.db.models.query import QuerySet
-from tv.models import TVEpisode
-from autot.models import log_change
-from autot.src.config import get_config, ConfigType
 
+from autot.models import log_change
+from autot.src.config import ConfigType, get_config
+from tv.models import TVEpisode
 
 logger = logging.getLogger("django")
 

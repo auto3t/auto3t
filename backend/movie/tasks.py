@@ -2,9 +2,10 @@
 
 from django_rq import job
 from django_rq.queues import get_queue
+
+from autot.tasks import download_thumbnails, media_server_identify
 from movie.models import Movie
 from movie.src.movie import MovieDBMovie
-from autot.tasks import download_thumbnails, media_server_identify
 
 
 @job

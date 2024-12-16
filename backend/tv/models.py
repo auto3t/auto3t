@@ -1,22 +1,22 @@
 """all tv models"""
 
-import re
 import base64
-from typing import Self
-from pathlib import Path
+import re
 from io import BytesIO
+from pathlib import Path
+from typing import Self
 
 import pytz
-from autot.models import ActionLog, log_change
-from PIL import Image, ImageFilter
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models import Q
 from django.db.models.query import QuerySet
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
+from PIL import Image, ImageFilter
+
 from artwork.models import Artwork
-from autot.models import SearchWord, SearchWordCategory, Torrent
+from autot.models import ActionLog, SearchWord, SearchWordCategory, Torrent, log_change
 from autot.src.config import ConfigType, get_config
 from autot.src.helper import sanitize_file_name
 

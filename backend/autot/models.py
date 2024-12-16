@@ -15,7 +15,6 @@ from django.urls import reverse
 from django_rq import get_scheduler
 from django_rq.jobs import Job
 
-
 logger = logging.getLogger("django")
 
 

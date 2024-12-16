@@ -3,12 +3,13 @@
 import logging
 from datetime import timedelta
 
-from artwork.models import Artwork
 from django_rq import job
 from django_rq.queues import get_queue
-from tv.src.media_server import MediaServerEpisode
+
+from artwork.models import Artwork
 from autot.src.archive import Archiver
 from autot.src.download import Transmission
+from tv.src.media_server import MediaServerEpisode
 
 logger = logging.getLogger("django")
 

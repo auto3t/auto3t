@@ -1,8 +1,9 @@
 """search for movies on remote"""
 
 from urllib import parse
-from movie.src.movie_db_client import MovieDB
+
 from movie.models import Movie
+from movie.src.movie_db_client import MovieDB
 
 
 class MovieId:

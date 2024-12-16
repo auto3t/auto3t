@@ -5,22 +5,15 @@ from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
-from autot.models import (
-    ActionLog,
-    AutotScheduler,
-    SearchWord,
-    SearchWordCategory,
-    Torrent,
-    get_logs,
-)
-from autot.src.search import Jackett
+from autot.models import ActionLog, AutotScheduler, SearchWord, SearchWordCategory, Torrent, get_logs
 from autot.serializers import (
     ActionLogSerializer,
     SchedulerSeralizer,
-    SearchWordSerializer,
     SearchWordCategorySerializer,
+    SearchWordSerializer,
     TorrentSerializer,
 )
+from autot.src.search import Jackett
 
 
 class StandardResultsSetPagination(PageNumberPagination):

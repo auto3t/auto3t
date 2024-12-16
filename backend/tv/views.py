@@ -9,15 +9,15 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from autot.serializers import ActionLogSerializer
-from tv.models import TVShow, TVSeason, TVEpisode
-from tv.serializers import TVShowSerializer, TVSeasonSerializer, TVEpisodeBulkUpdateSerializer, TVEpisodeSerializer
-from tv.src.show_search import ShowId
-from tv.tasks import import_show, refresh_status
 from autot.models import SearchWord, get_logs
+from autot.serializers import ActionLogSerializer
 from autot.src.download import Transmission
 from autot.src.redis_con import AutotRedis
 from autot.src.search import Jackett
+from tv.models import TVEpisode, TVSeason, TVShow
+from tv.serializers import TVEpisodeBulkUpdateSerializer, TVEpisodeSerializer, TVSeasonSerializer, TVShowSerializer
+from tv.src.show_search import ShowId
+from tv.tasks import import_show, refresh_status
 
 
 class ShowViewSet(viewsets.ModelViewSet):

@@ -1,7 +1,7 @@
 """artwork view"""
 
 from django.conf import settings
-from django.http import Http404, FileResponse
+from django.http import FileResponse, Http404
 from rest_framework.views import APIView
 
 

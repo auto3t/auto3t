@@ -2,12 +2,13 @@
 
 from math import ceil
 
-from autot.models import log_change
 from django.utils import timezone
 from transmission_rpc import Client
 from transmission_rpc.torrent import Torrent as TransmissionTorrent
-from tv.models import TVEpisode, Torrent
-from autot.src.config import get_config, ConfigType
+
+from autot.models import log_change
+from autot.src.config import ConfigType, get_config
+from tv.models import Torrent, TVEpisode
 
 
 class DownloaderBase:

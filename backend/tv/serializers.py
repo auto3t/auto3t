@@ -3,8 +3,8 @@
 from rest_framework import serializers
 
 from artwork.serializers import ArtworkSerializer
-from tv.models import TVShow, TVSeason, TVEpisode
 from autot.serializers import SearchWordSerializer, TorrentSerializer
+from tv.models import TVEpisode, TVSeason, TVShow
 
 
 class TVShowSerializer(serializers.ModelSerializer):

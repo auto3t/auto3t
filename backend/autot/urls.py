@@ -1,8 +1,8 @@
 """all api urls"""
 
 from rest_framework.routers import DefaultRouter
-from autot import views
 
+from autot import views
 
 router = DefaultRouter()
 router.register(r"torrent", views.TorrentViewSet, basename="torrent")

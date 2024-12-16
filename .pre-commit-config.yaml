@@ -1,0 +1,39 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: end-of-file-fixer
+  - repo: https://github.com/psf/black
+    rev: 24.8.0
+    hooks:
+      - id: black
+        alias: python
+        files: ^backend/
+        args: ["--line-length=120"]
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        name: isort (python)
+        alias: python
+        files: ^backend/
+        args: ["--profile", "black", "-l 120"]
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.1.1
+    hooks:
+      - id: flake8
+        alias: python
+        files: ^backend/
+        args: [ "--max-complexity=10", "--max-line-length=120" ]
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.3.0
+    hooks:
+      - id: codespell
+        exclude: ^frontend/package-lock.json
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: 'v4.0.0-alpha.8'
+    hooks:
+      - id: prettier
+        files: /.*\.(js|jsx|ts|tsx|json|css|scss|md)
+
+exclude: 'migrations/.*'

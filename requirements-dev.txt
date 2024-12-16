@@ -4,6 +4,7 @@ codespell==2.3.0
 flake8==7.1.1
 ipython==8.30.0
 isort==5.13.2
+pre-commit==4.0.1
 pylint-django==2.6.1
 python-dotenv==1.0.1
 requirementscheck==0.0.4

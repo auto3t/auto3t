@@ -22,7 +22,13 @@ const useApi = () => {
     setToken,
   } = useAuthStore();
 
-  const fetchData = async (url: string, method = 'GET', body = null, retry = true) => {
+  const fetchData = async (
+    url: string,
+    method: string = 'GET',
+    body: object | null = null,
+    retry: boolean = true,
+    concat: boolean = true,
+  ) => {
     setError(null);
 
     const options: OptionsType = {
@@ -38,7 +44,8 @@ const useApi = () => {
     }
 
     try {
-      let response = await fetch(`${API_BASE}${url}`, options);
+      let fullURL = concat ? `${API_BASE}${url}` : url
+      let response = await fetch(fullURL, options);
 
       if (!response.ok) {
         if (response.status === 401 && retry) {
@@ -104,7 +111,8 @@ const useApi = () => {
   const getImage = async (url: string) => {
 
     try {
-      const blob = await fetchData(url);
+      const imageAPIURL = `${process.env.REACT_APP_API_URL || window.location.origin}/${url}`
+      const blob = await fetchData(imageAPIURL, undefined, undefined, undefined, false);
       const imageUrl = URL.createObjectURL(blob);
       return imageUrl;
     } catch (error) {

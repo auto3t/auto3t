@@ -30,10 +30,5 @@ repos:
     hooks:
       - id: codespell
         exclude: ^frontend/package-lock.json
-  - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: 'v4.0.0-alpha.8'
-    hooks:
-      - id: prettier
-        files: /.*\.(js|jsx|ts|tsx|json|css|scss|md)
 
 exclude: 'migrations/.*'

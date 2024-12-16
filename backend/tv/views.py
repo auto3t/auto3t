@@ -152,7 +152,7 @@ class SeasonViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["post"])
     def torrent(self, request, **kwargs) -> Response:
         """overwrite torrent on season"""
-        season = self.get_object()
+        season: TVSeason = self.get_object()
         data = request.data
         if not data:
             return Response({"message": "missing request body"}, status=400)

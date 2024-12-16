@@ -107,7 +107,7 @@ class Jackett(BaseIndexer):
 
         torrent_link = result.get("Link")
         if not torrent_link:
-            raise ValueError("faild to extract magnet")
+            raise ValueError("failed to extract magnet")
 
         response = requests.get(torrent_link, allow_redirects=False, timeout=self.TIMEOUT)
         if response.status_code == 200:
@@ -120,7 +120,7 @@ class Jackett(BaseIndexer):
         if location and location.startswith("magnet:?"):
             return location
 
-        raise ValueError("faild to extract magnet")
+        raise ValueError("failed to extract magnet")
 
     def validate_links(self, results: list[dict], to_search: TVEpisode | TVSeason) -> list[dict] | None:
         """validate for auto tasks"""

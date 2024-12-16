@@ -67,15 +67,15 @@ class Transmission(DownloaderBase):
 
         return None
 
-    def cancle(self, torrent: Torrent) -> None:
-        """cancle and reset torrent"""
+    def cancel(self, torrent: Torrent) -> None:
+        """cancel and reset torrent"""
         episodes = TVEpisode.objects.filter(torrent=torrent)
         for episode in episodes:
             episode.torrent = None
             episode.status = None
             episode.media_server_id = None
             episode.save()
-            log_change(episode, "u", comment=f"Cancle Torrent Download: {torrent.magnet_hash}")
+            log_change(episode, "u", comment=f"Cancel Torrent Download: {torrent.magnet_hash}")
 
         to_delete = self.get_single(torrent)
         if to_delete:

@@ -35,4 +35,4 @@ Auto Tape, Track, Torrent
 | tv      | `/api/tv/remote-search/`                   | search remote |
 | auth    | `/auth/token/`                             | login token |
 | auth    | `/auth/token/refresh/`                     | refresh token |
-| artwork | `/artwork/<foler>/<hash>.jpg`              | artwork item |
+| artwork | `/artwork/<folder>/<hash>.jpg`             | artwork item |

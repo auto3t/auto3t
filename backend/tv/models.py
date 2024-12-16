@@ -4,7 +4,7 @@ import base64
 import re
 from io import BytesIO
 from pathlib import Path
-from typing import Self
+from typing import Self, TYPE_CHECKING
 
 import pytz
 from django.contrib.contenttypes.models import ContentType
@@ -19,6 +19,9 @@ from artwork.models import Artwork
 from autot.models import ActionLog, SearchWord, SearchWordCategory, Torrent, log_change
 from autot.src.config import ConfigType, get_config
 from autot.src.helper import sanitize_file_name
+
+if TYPE_CHECKING:
+    from autot.src.download import Transmission
 
 
 class BaseModel(models.Model):
@@ -317,13 +320,13 @@ class TVSeason(BaseModel):
 
         return f"{show_name} S{str(self.number).zfill(2)} COMPLETE"
 
-    def add_magnet(self, magnet: str, tm_instance) -> None:
+    def add_magnet(self, magnet: str, tm_instance: "Transmission") -> None:
         """add magnet to all episodes in season"""
         episodes = TVEpisode.objects.filter(season=self)
         related = Torrent.objects.filter(torrent_episode__in=episodes).distinct()
         if related:
             for torrent in related:
-                tm_instance.cancle(torrent)
+                tm_instance.cancel(torrent)
 
         torrent, _ = Torrent.objects.get_or_create(magnet=magnet, torrent_type="s")
         episodes.update(torrent=torrent, status="d", media_server_id=None, media_server_meta=None)
@@ -425,13 +428,13 @@ class TVEpisode(BaseModel):
         return keywords.distinct()
 
     @property
-    def identifyer(self) -> str:
-        """build S00E00 identifyer"""
+    def identifier(self) -> str:
+        """build S00E00 identifier"""
         return f"S{str(self.season.number).zfill(2)}E{str(self.number).zfill(2)}"
 
     @property
-    def identifyer_date(self) -> str:
-        """date yyyy.mm.dd identifyer"""
+    def identifier_date(self) -> str:
+        """date yyyy.mm.dd identifier"""
         time_zone = pytz.timezone(self.season.show.show_time_zone)
         return self.release_date.astimezone(time_zone).strftime("%Y.%m.%d")  # pylint: disable=no-member
 
@@ -440,18 +443,18 @@ class TVEpisode(BaseModel):
         """build search query"""
         show_search = self.season.show.search_name or self.season.show.name
         if self.season.show.is_daily:
-            seach_identifyer = self.identifyer_date
+            seach_identifier = self.identifier_date
         else:
-            seach_identifyer = self.identifyer
+            seach_identifier = self.identifier
 
-        return f"{show_search} {seach_identifyer}"
+        return f"{show_search} {seach_identifier}"
 
     @property
     def file_name(self) -> str:
         """build clean filename"""
         show_name = sanitize_file_name(self.season.show.name)
         title = sanitize_file_name(self.title)
-        return f"{show_name} - {self.identifyer} - {title}"
+        return f"{show_name} - {self.identifier} - {title}"
 
     @property
     def media_server_url(self) -> str | None:
@@ -475,7 +478,7 @@ class TVEpisode(BaseModel):
         season_number = self.season.number
         episode_number = self.number
 
-        if self.identifyer_date in path:
+        if self.identifier_date in path:
             return True
 
         pattern_s = re.compile(rf"s0?{season_number}e0?{episode_number}", re.IGNORECASE)

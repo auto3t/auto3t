@@ -3,6 +3,7 @@ import Login from '../pages/Login';
 import useAuthStore from "../stores/AuthStore";
 import NotificationBox from "../components/Notifications";
 import useNotificationStore from "../stores/NotificationStore";
+import logo from '../../assets/logo.png';
 
 export default function RootLayout() {
 
@@ -26,7 +27,7 @@ export default function RootLayout() {
       <header className="boxed-content">
         <nav className="main-nav">            
           <div className="nav-items">
-            <img src="/assets/logo.png" />
+            <img src={logo} />
             <NavLink className='nav-item' to="/">Home</NavLink>
             <NavLink className='nav-item' to="tv">TV</NavLink>
             <NavLink className='nav-item' to="movie">Movie</NavLink>

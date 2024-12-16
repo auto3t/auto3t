@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import useApi from '../hooks/api';
+import logo from '../../assets/logo.png';
 
 export default function Login() {
 
@@ -15,7 +16,7 @@ export default function Login() {
   return(
     <div className="login-wrapper">
       <div className='login-elements'>
-        <img src='/assets/logo.png' />
+        <img src={logo} />
         <form onSubmit={handleSubmit}>
           {error && <div>{error}</div>}
           <div>

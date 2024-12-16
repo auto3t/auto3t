@@ -1,26 +1,25 @@
 // api.js
-import { useState } from 'react';
-import useAuthStore from '../stores/AuthStore';
+import { useState } from 'react'
+import useAuthStore from '../stores/AuthStore'
 
-const API_BASE = `${import.meta.env.VITE_APP_API_URL || window.location.origin}/api/`;
-const AUTH_BASE = `${import.meta.env.VITE_APP_API_URL || window.location.origin}/auth/`;
+const API_BASE = `${import.meta.env.VITE_APP_API_URL || window.location.origin}/api/`
+const AUTH_BASE = `${import.meta.env.VITE_APP_API_URL || window.location.origin}/auth/`
+
+type HeadersType = {
+  Authorization: string
+  'Content-Type': string
+}
 
 type OptionsType = {
   method: string
-  headers: any
+  headers: HeadersType
   body?: string
 }
 
 const useApi = () => {
-
-  const [error, setError] = useState<string | null>(null);
-  const {
-    accessToken,
-    logout,
-    refreshToken,
-    setAccessToken,
-    setToken,
-  } = useAuthStore();
+  const [error, setError] = useState<string | null>(null)
+  const { accessToken, logout, refreshToken, setAccessToken, setToken } =
+    useAuthStore()
 
   const fetchData = async (
     url: string,
@@ -29,7 +28,7 @@ const useApi = () => {
     retry: boolean = true,
     concat: boolean = true,
   ) => {
-    setError(null);
+    setError(null)
 
     const options: OptionsType = {
       method,
@@ -37,114 +36,120 @@ const useApi = () => {
         Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
-    };
+    }
 
     if (body) {
-      options.body = JSON.stringify(body);
+      options.body = JSON.stringify(body)
     }
 
     try {
-      let fullURL = concat ? `${API_BASE}${url}` : url
-      let response = await fetch(fullURL, options);
+      const fullURL = concat ? `${API_BASE}${url}` : url
+      let response = await fetch(fullURL, options)
 
       if (!response.ok) {
         if (response.status === 401 && retry) {
-          await handleTokenRefresh();
-          const latestAccessToken = useAuthStore.getState().accessToken;
-          options.headers['Authorization'] = `Bearer ${latestAccessToken}`;
-          response = await fetch(`${API_BASE}${url}`, options);
+          await handleTokenRefresh()
+          const latestAccessToken = useAuthStore.getState().accessToken
+          options.headers['Authorization'] = `Bearer ${latestAccessToken}`
+          response = await fetch(`${API_BASE}${url}`, options)
         }
 
         if (!response.ok) {
-          const errorResponse = JSON.stringify(await response.json());
-          throw new Error(`HTTP error! status ${response.status} - ${errorResponse}`);
+          const errorResponse = JSON.stringify(await response.json())
+          throw new Error(
+            `HTTP error! status ${response.status} - ${errorResponse}`,
+          )
         }
       }
 
-      const contentType = response.headers.get('content-type');
+      const contentType = response.headers.get('content-type')
       if (contentType && contentType.includes('image/jpeg')) {
-        return await response.blob();
+        return await response.blob()
       }
       if (contentType && contentType.includes('application/json')) {
-        return await response.json();
+        return await response.json()
       } else {
-        return true;
+        return true
       }
     } catch (error) {
       if (error instanceof Error) {
-        setError(error.message);
+        setError(error.message)
       } else {
-        setError("data fetching failed");
+        setError('data fetching failed')
       }
-      throw error;
+      throw error
     }
-  };
+  }
 
-  const loginUser = async (credentials: any) => {
-    setError(null);
+  const loginUser = async (credentials: object) => {
+    setError(null)
     try {
-      const response = await fetch (`${AUTH_BASE}token/`, {
+      const response = await fetch(`${AUTH_BASE}token/`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(credentials)
+        body: JSON.stringify(credentials),
       })
       if (!response.ok) {
-        const errorResponse = await response.json();
-        setError(errorResponse.detail || 'Failed to login');
+        const errorResponse = await response.json()
+        setError(errorResponse.detail || 'Failed to login')
       } else {
-        const tokenResponse = await response.json();
-        setToken(tokenResponse);
-        setError(null);
+        const tokenResponse = await response.json()
+        setToken(tokenResponse)
+        setError(null)
       }
     } catch (error) {
       if (error instanceof Error) {
-        setError(error.message);
+        setError(error.message)
       } else {
-        setError("login failed");
+        setError('login failed')
       }
-      throw error;
+      throw error
     }
   }
 
   const getImage = async (url: string) => {
-
     try {
       const imageAPIURL = `${import.meta.env.VITE_APP_API_URL || window.location.origin}/${url}`
-      const blob = await fetchData(imageAPIURL, undefined, undefined, undefined, false);
-      const imageUrl = URL.createObjectURL(blob);
-      return imageUrl;
+      const blob = await fetchData(
+        imageAPIURL,
+        undefined,
+        undefined,
+        undefined,
+        false,
+      )
+      const imageUrl = URL.createObjectURL(blob)
+      return imageUrl
     } catch (error) {
-      console.error('Error fetching image:', error);
-      throw error;
+      console.error('Error fetching image:', error)
+      throw error
     }
-  
   }
 
   const get = async (url: string) => {
-    return await fetchData(url);
-  };
+    return await fetchData(url)
+  }
 
-  const post = async (url: string, body: any) => {
-    return await fetchData(url, 'POST', body);
-  };
+  const post = async (url: string, body: object | null) => {
+    return await fetchData(url, 'POST', body)
+  }
 
-  const put = async (url: string, body: any) => {
-    return await fetchData(url, 'PUT', body);
-  };
+  const put = async (url: string, body: object | null) => {
+    return await fetchData(url, 'PUT', body)
+  }
 
-  const patch = async (url: string, body: any) => {
-    return await fetchData(url, 'PATCH', body);
+  const patch = async (url: string, body: object | null) => {
+    return await fetchData(url, 'PATCH', body)
   }
 
   const del = async (url: string) => {
-    return await fetchData(url, 'DELETE');
-  };
+    return await fetchData(url, 'DELETE')
+  }
 
   const handleTokenRefresh = async () => {
     if (!refreshToken) {
-      throw new Error('Refresh token not found');
+      throw new Error('Refresh token not found')
     }
     try {
       const response = await fetch(`${AUTH_BASE}token/refresh/`, {
@@ -153,19 +158,19 @@ const useApi = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ refresh: refreshToken }),
-      });
+      })
       if (!response.ok) {
-        throw new Error('Refresh failed');
+        throw new Error('Refresh failed')
       }
-      const data = await response.json();
-      setAccessToken(data.access);
+      const data = await response.json()
+      setAccessToken(data.access)
     } catch (error) {
-      console.error('Error refreshing token:', error);
-      logout();
+      console.error('Error refreshing token:', error)
+      logout()
     }
-  };
+  }
 
-  return { error, get, post, patch, put, del, loginUser, getImage};
-};
+  return { error, get, post, patch, put, del, loginUser, getImage }
+}
 
-export default useApi;
+export default useApi

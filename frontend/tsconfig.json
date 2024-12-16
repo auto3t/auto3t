@@ -8,7 +8,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "types": ["vite/client"]
+    "types": ["node", "vite/client"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]

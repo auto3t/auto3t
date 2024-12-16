@@ -1,14 +1,14 @@
-import { create } from "zustand";
-import { EpisodeType } from "../components/Episode";
+import { create } from 'zustand'
+import { EpisodeType } from '../components/Episode'
 
 interface TVEpisodeStoreInterface {
-  episodes: EpisodeType[];
-  setEpisodes: (episodes: EpisodeType[]) => void;
+  episodes: EpisodeType[]
+  setEpisodes: (episodes: EpisodeType[]) => void
 }
 
 const useTVEpisodeStore = create<TVEpisodeStoreInterface>((set) => ({
   episodes: [],
   setEpisodes: (episodes) => set({ episodes }),
-}));
+}))
 
 export default useTVEpisodeStore

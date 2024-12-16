@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import useApi from "../../hooks/api"
-import useMovieSearchStore from "../../stores/MovieSearchStore";
-import MovieSearchResult from '../../components/MovieSearchResult';
+import { useState } from 'react'
+import useApi from '../../hooks/api'
+import useMovieSearchStore from '../../stores/MovieSearchStore'
+import MovieSearchResult from '../../components/MovieSearchResult'
 
 export type MovieSearchResultType = {
   id: string
@@ -14,49 +14,54 @@ export type MovieSearchResultType = {
 }
 
 const MovieSearch = () => {
-  const { get } = useApi();
-  const [isLoading, setIsLoading] = useState(false);
-  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
-  const { query, results, setQuery, setResults } = useMovieSearchStore();
+  const { get } = useApi()
+  const [isLoading, setIsLoading] = useState(false)
+  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null)
+  const { query, results, setQuery, setResults } = useMovieSearchStore()
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newQuery = event.target.value;
-    setQuery(newQuery);
+    const newQuery = event.target.value
+    setQuery(newQuery)
 
     if (timer) {
-      clearTimeout(timer);
+      clearTimeout(timer)
     }
 
     if (newQuery.length >= 2) {
-      setIsLoading(true);
+      setIsLoading(true)
       // Set a new timer for search
       const newTimer = setTimeout(() => {
         get(`movie/remote-search?q=${encodeURIComponent(newQuery)}`)
           .then((data) => {
-            setResults(data);
-            setIsLoading(false);
+            setResults(data)
+            setIsLoading(false)
           })
           .catch((error) => {
-            console.error('Error fetching search results:', error);
-            setIsLoading(false);
-          });
-      }, 500);
-      setTimer(newTimer);
+            console.error('Error fetching search results:', error)
+            setIsLoading(false)
+          })
+      }, 500)
+      setTimer(newTimer)
     } else {
-      setResults([]);
+      setResults([])
     }
-  };
+  }
 
   const handleClear = () => {
-    setQuery('');
-    setResults([]);
-  };
+    setQuery('')
+    setResults([])
+  }
 
   if (!results) return <></>
   return (
     <div>
       <h1>Search Movies</h1>
-      <input type="text" value={query} onChange={handleInputChange} placeholder="Search..." />
+      <input
+        type="text"
+        value={query}
+        onChange={handleInputChange}
+        placeholder="Search..."
+      />
       <button onClick={handleClear}>Clear</button>
       {isLoading ? (
         <p>Loading...</p>

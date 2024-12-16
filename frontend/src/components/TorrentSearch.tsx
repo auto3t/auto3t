@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react"
-import useApi from "../hooks/api";
-import TimeComponent from "./TimeComponent";
-import { formatBytes } from "../utils";
+import { useEffect, useState } from 'react'
+import useApi from '../hooks/api'
+import TimeComponent from './TimeComponent'
+import { formatBytes } from '../utils'
 
 export type TorrentSearchType = {
   Id: string
@@ -20,42 +20,49 @@ interface TorrentSearchInterface {
   searchDefault: string
 }
 
-const TorrentSearch: React.FC<TorrentSearchInterface> = ({ searchType, searchTypeId, searchDefault = '' }) => {
-
-  const { post, error } = useApi();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [isSearching, setIsSearching] = useState(false);
-  const [searchResults, setSearchResults] = useState<TorrentSearchType[] | null>(null);
+const TorrentSearch: React.FC<TorrentSearchInterface> = ({
+  searchType,
+  searchTypeId,
+  searchDefault = '',
+}) => {
+  const { post, error } = useApi()
+  const [searchTerm, setSearchTerm] = useState('')
+  const [isSearching, setIsSearching] = useState(false)
+  const [searchResults, setSearchResults] = useState<
+    TorrentSearchType[] | null
+  >(null)
 
   const handleSearch = async () => {
-    setIsSearching(true);
-    setSearchResults(null);
-    const data = await post('torrent/search/', {search_term: searchTerm});
+    setIsSearching(true)
+    setSearchResults(null)
+    const data = await post('torrent/search/', { search_term: searchTerm })
     if (data) {
-      setSearchResults(data);
+      setSearchResults(data)
     } else {
       setSearchResults(null)
     }
-    setIsSearching(false);
+    setIsSearching(false)
   }
 
   const handleClear = () => {
-    setSearchResults(null);
+    setSearchResults(null)
   }
 
   const handleDownload = async (resultId: string) => {
     console.log(resultId)
     try {
-      const data = await post(`tv/${searchType}/${searchTypeId}/torrent/`, {search_id: resultId});
-      console.log(data);
+      const data = await post(`tv/${searchType}/${searchTypeId}/torrent/`, {
+        search_id: resultId,
+      })
+      console.log(data)
     } catch (error) {
-      console.error('failed to add torrent', error);
+      console.error('failed to add torrent', error)
     }
   }
 
   useEffect(() => {
-    setSearchTerm(searchDefault);
-  }, [searchDefault]);
+    setSearchTerm(searchDefault)
+  }, [searchDefault])
 
   return (
     <div className="manual-search">
@@ -80,12 +87,21 @@ const TorrentSearch: React.FC<TorrentSearchInterface> = ({ searchType, searchTyp
                   <div className="tag-group">
                     <span className="tag-item">{result.Tracker}</span>
                     <span className="tag-item">{formatBytes(result.Size)}</span>
-                    <span className="tag-item">Published: <TimeComponent timestamp={result.PublishDate} /></span>
-                    <span className="tag-item" title="Seeders / Leechers / Gain">
-                      {result.Seeders} / {result.Peers} / {result.Gain.toFixed(2)}
+                    <span className="tag-item">
+                      Published:{' '}
+                      <TimeComponent timestamp={result.PublishDate} />
+                    </span>
+                    <span
+                      className="tag-item"
+                      title="Seeders / Leechers / Gain"
+                    >
+                      {result.Seeders} / {result.Peers} /{' '}
+                      {result.Gain.toFixed(2)}
                     </span>
                   </div>
-                  <button onClick={() => handleDownload(result.Id)}>Download</button>
+                  <button onClick={() => handleDownload(result.Id)}>
+                    Download
+                  </button>
                   {error && <span>Failed to add: {error}</span>}
                 </div>
               ))}
@@ -96,7 +112,7 @@ const TorrentSearch: React.FC<TorrentSearchInterface> = ({ searchType, searchTyp
         )
       ) : null}
     </div>
-  );
+  )
 }
 
-export default TorrentSearch;
+export default TorrentSearch

@@ -1,15 +1,14 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import ImageComponent, { ImageType } from "./ImageComponent";
-import useApi from "../hooks/api";
-import TimeComponent from "./TimeComponent";
-import AddKeywordComponent from "./AddKeywordComponent";
-import KeywordTableCompnent from "./KeywordTableComponent";
-import { KeywordType } from "./Keywords";
-
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import ImageComponent, { ImageType } from './ImageComponent'
+import useApi from '../hooks/api'
+import TimeComponent from './TimeComponent'
+import AddKeywordComponent from './AddKeywordComponent'
+import KeywordTableCompnent from './KeywordTableComponent'
+import { KeywordType } from './Keywords'
 
 export type ShowType = {
-  id: Number
+  id: number
   name: string
   description: string
   status_display: string
@@ -26,68 +25,71 @@ export type ShowType = {
 }
 
 interface ShowInterface {
-  showDetail: ShowType;
-  fetchShow: any;
+  showDetail: ShowType
+  fetchShow: () => void
 }
 
 const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
-
-  const navigate = useNavigate();
-  const { put, del } = useApi();
-  const [showDetails, setShowDetails] = useState(false);
-  const [editedSearchName, setEditedSearchName] = useState('');
-  const [editMode, setEditMode] = useState(false);
-  const [showDelete, setShowDelete] = useState(false);
+  const navigate = useNavigate()
+  const { put, del } = useApi()
+  const [showDetails, setShowDetails] = useState(false)
+  const [editedSearchName, setEditedSearchName] = useState('')
+  const [editMode, setEditMode] = useState(false)
+  const [showDelete, setShowDelete] = useState(false)
 
   const toggleShowDetails = () => {
-    setShowDetails(!showDetails);
-    setEditedSearchName(showDetail.search_name || '');
-    setEditMode(false);
+    setShowDetails(!showDetails)
+    setEditedSearchName(showDetail.search_name || '')
+    setEditMode(false)
   }
 
-  const handleSearchNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEditedSearchName(event.target.value);
+  const handleSearchNameChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setEditedSearchName(event.target.value)
   }
 
-  const handleSearchNameSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
+  const handleSearchNameSubmit = (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    event.preventDefault()
 
     put(`tv/show/${showDetail.id}/`, { search_name: editedSearchName })
-    .then(() => {
-      fetchShow();
-      setEditMode(false);
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    });
+      .then(() => {
+        fetchShow()
+        setEditMode(false)
+      })
+      .catch((error) => {
+        console.error('Error:', error)
+      })
   }
 
   const handleSearchNameCancel = () => {
-    setEditedSearchName(showDetail.search_name || '');
-    setEditMode(false);
+    setEditedSearchName(showDetail.search_name || '')
+    setEditMode(false)
   }
 
   const handleActiveToggle = () => {
-    put(`tv/show/${showDetail.id}/`, { is_active: !showDetail.is_active })
-      .catch(error => {
-        console.error('Error:', error);
-      });
-    fetchShow();
+    put(`tv/show/${showDetail.id}/`, {
+      is_active: !showDetail.is_active,
+    }).catch((error) => {
+      console.error('Error:', error)
+    })
+    fetchShow()
   }
 
   const getShowPoster = (showDetail: ShowType) => {
     if (showDetail.image_show?.image) return showDetail.image_show
-    return {image: '/poster-default.jpg'}
+    return { image: '/poster-default.jpg' }
   }
 
   const toggleShowConfirm = () => {
-    setShowDelete(!showDelete);
+    setShowDelete(!showDelete)
   }
 
   const handleShowDelete = () => {
-    del(`tv/show/${showDetail.id}/`)
-    .then(() => {
-      navigate("/tv");
+    del(`tv/show/${showDetail.id}/`).then(() => {
+      navigate('/tv')
     })
   }
 
@@ -95,21 +97,40 @@ const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
     <div className="show-detail">
       <div className="show-detail-header">
         <div className="show-poster">
-          <ImageComponent image={getShowPoster(showDetail)} alt='show-poster' />
+          <ImageComponent image={getShowPoster(showDetail)} alt="show-poster" />
         </div>
         <div className="show-description">
           <h1>{showDetail.name}</h1>
-          <span className='smaller'>ID: <a href={showDetail.remote_server_url} target='_blank' rel='noreferrer'>{showDetail.remote_server_id}</a></span>
-          <p dangerouslySetInnerHTML={{__html: showDetail.description}} />
-          <div className='tag-group'>
-            <span className="tag-item">Status: {showDetail.status_display}</span>
-            {showDetail.release_date && <span className="tag-item">Start: <TimeComponent timestamp={showDetail.release_date} /></span>}
-            {showDetail.end_date && <span className="tag-item">End: <TimeComponent timestamp={showDetail.end_date} /></span>}
+          <span className="smaller">
+            ID:{' '}
+            <a
+              href={showDetail.remote_server_url}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {showDetail.remote_server_id}
+            </a>
+          </span>
+          <p dangerouslySetInnerHTML={{ __html: showDetail.description }} />
+          <div className="tag-group">
+            <span className="tag-item">
+              Status: {showDetail.status_display}
+            </span>
+            {showDetail.release_date && (
+              <span className="tag-item">
+                Start: <TimeComponent timestamp={showDetail.release_date} />
+              </span>
+            )}
+            {showDetail.end_date && (
+              <span className="tag-item">
+                End: <TimeComponent timestamp={showDetail.end_date} />
+              </span>
+            )}
           </div>
         </div>
       </div>
       <button onClick={toggleShowDetails}>
-        {showDetails ? "Hide Details" : "Show Details"}
+        {showDetails ? 'Hide Details' : 'Show Details'}
       </button>
       {showDetails && (
         <>
@@ -117,7 +138,7 @@ const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
             <button onClick={toggleShowConfirm}>Remove Show</button>
             {showDelete && (
               <>
-                <p>Remove '{showDetail.name}' from AutoT?</p>
+                <p>Remove &apos;{showDetail.name}&apos; from AutoT?</p>
                 <button onClick={handleShowDelete}>Confirm</button>
                 <button onClick={toggleShowConfirm}>Cancel</button>
               </>
@@ -140,13 +161,17 @@ const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
                 <td>
                   {editMode ? (
                     <>
-                      <input type="text" value={editedSearchName || ''} onChange={handleSearchNameChange} />
+                      <input
+                        type="text"
+                        value={editedSearchName || ''}
+                        onChange={handleSearchNameChange}
+                      />
                       <button onClick={handleSearchNameSubmit}>Submit</button>
                       <button onClick={handleSearchNameCancel}>Cancel</button>
                     </>
                   ) : (
                     <>
-                      <span>{showDetail.search_name || ""}{" "}</span>
+                      <span>{showDetail.search_name || ''} </span>
                       <button onClick={() => setEditMode(true)}>Edit</button>
                     </>
                   )}
@@ -174,4 +199,4 @@ const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
   )
 }
 
-export default ShowDetail;
+export default ShowDetail

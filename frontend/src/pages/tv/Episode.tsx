@@ -1,62 +1,71 @@
-import { useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
-import useApi from "../../hooks/api";
-import ImageComponent from "../../components/ImageComponent";
-import TimeComponent from "../../components/TimeComponent";
-import useEpsiodeDetailStore from "../../stores/EpisodeDetailStore"
-import EpisodeNav from "../../components/EpisodeNav";
-import Torrent from "../../components/Torrent";
-import TorrentSearch from "../../components/TorrentSearch";
-import { formatBitrate, formatBytes, formatDuration } from "../../utils";
-import { EpisodeType } from "../../components/Episode";
-
+import { useEffect } from 'react'
+import { Link, useParams } from 'react-router-dom'
+import useApi from '../../hooks/api'
+import ImageComponent from '../../components/ImageComponent'
+import TimeComponent from '../../components/TimeComponent'
+import useEpsiodeDetailStore from '../../stores/EpisodeDetailStore'
+import EpisodeNav from '../../components/EpisodeNav'
+import Torrent from '../../components/Torrent'
+import TorrentSearch from '../../components/TorrentSearch'
+import { formatBitrate, formatBytes, formatDuration } from '../../utils'
+import { EpisodeType } from '../../components/Episode'
 
 const TVEpisode: React.FC = () => {
+  const { id } = useParams()
+  const { get } = useApi()
 
-  const { id } = useParams();
-  const { get } = useApi();
-
-  const {
-    episodeDetail,
-    setEpisodeDetail,
-    episodeImage,
-    setEpisodeImage,
-  } = useEpsiodeDetailStore();
+  const { episodeDetail, setEpisodeDetail, episodeImage, setEpisodeImage } =
+    useEpsiodeDetailStore()
 
   useEffect(() => {
     const getEpisodeImage = (data: EpisodeType) => {
-      if (data.image_episode?.image) return data.image_episode;
-      if (data.season.show.episode_fallback?.image) return data.season.show.episode_fallback;
-      return {image: '/episode-default.jpg'}
+      if (data.image_episode?.image) return data.image_episode
+      if (data.season.show.episode_fallback?.image)
+        return data.season.show.episode_fallback
+      return { image: '/episode-default.jpg' }
     }
     const fetchEpisode = async () => {
       try {
-        const data = await get(`tv/episode/${id}/`);
-        setEpisodeDetail(data);
-        setEpisodeImage(getEpisodeImage(data));
+        const data = await get(`tv/episode/${id}/`)
+        setEpisodeDetail(data)
+        setEpisodeImage(getEpisodeImage(data))
       } catch (error) {
-        console.error("error fetching episode: ", error);
+        console.error('error fetching episode: ', error)
       }
     }
-    fetchEpisode();
-  }, [id]);
+    fetchEpisode()
+  }, [id])
 
   return (
     <div>
       {episodeDetail && (
         <>
           <div className="episode-detail-header">
-            {episodeImage && (<ImageComponent image={episodeImage} alt='episode-poster' />)}
+            {episodeImage && (
+              <ImageComponent image={episodeImage} alt="episode-poster" />
+            )}
             <div className="episode-description">
               <h1>{episodeDetail.title}</h1>
               <Link to={`/tv/show/${episodeDetail.season.show.id}`}>
                 <h2>{episodeDetail.season.show.name}</h2>
               </Link>
-              <p>S{String(episodeDetail.season.number).padStart(2, '0')}E{String(episodeDetail.number).padStart(2, '0')}</p>
-              <p dangerouslySetInnerHTML={{__html: episodeDetail.description}} />
+              <p>
+                S{String(episodeDetail.season.number).padStart(2, '0')}E
+                {String(episodeDetail.number).padStart(2, '0')}
+              </p>
+              <p
+                dangerouslySetInnerHTML={{ __html: episodeDetail.description }}
+              />
               <div className="tag-group">
-                {episodeDetail.release_date && <span className="tag-item">Release: <TimeComponent timestamp={episodeDetail.release_date} /></span>}
-                <span className="tag-item">Status: {episodeDetail.status_display || 'undefined'}</span>
+                {episodeDetail.release_date && (
+                  <span className="tag-item">
+                    Release:{' '}
+                    <TimeComponent timestamp={episodeDetail.release_date} />
+                  </span>
+                )}
+                <span className="tag-item">
+                  Status: {episodeDetail.status_display || 'undefined'}
+                </span>
               </div>
             </div>
           </div>
@@ -83,7 +92,9 @@ const TVEpisode: React.FC = () => {
                   </tr>
                   <tr>
                     <td>Duration</td>
-                    <td>{formatDuration(episodeDetail.media_server_meta.duration)}</td>
+                    <td>
+                      {formatDuration(episodeDetail.media_server_meta.duration)}
+                    </td>
                   </tr>
                   <tr>
                     <td>Size</td>
@@ -91,7 +102,9 @@ const TVEpisode: React.FC = () => {
                   </tr>
                   <tr>
                     <td>Bitrate</td>
-                    <td>{formatBitrate(episodeDetail.media_server_meta.bitrate)}</td>
+                    <td>
+                      {formatBitrate(episodeDetail.media_server_meta.bitrate)}
+                    </td>
                   </tr>
                   <tr>
                     <td>FPS</td>
@@ -99,11 +112,13 @@ const TVEpisode: React.FC = () => {
                   </tr>
                 </tbody>
               </table>
-              <Link to={episodeDetail.media_server_url} target="_blank">Open</Link>
+              <Link to={episodeDetail.media_server_url} target="_blank">
+                Open
+              </Link>
             </>
           )}
           <TorrentSearch
-            searchType='episode'
+            searchType="episode"
             searchTypeId={episodeDetail.id}
             searchDefault={episodeDetail.search_query}
           />
@@ -113,4 +128,4 @@ const TVEpisode: React.FC = () => {
   )
 }
 
-export default TVEpisode;
+export default TVEpisode

@@ -1,4 +1,4 @@
-import { create } from "zustand";
+import { create } from 'zustand'
 
 export type TokenResponseType = {
   access: string
@@ -8,10 +8,10 @@ export type TokenResponseType = {
 interface AuthStoreInterface {
   accessToken: string | null
   refreshToken: string | null
-  setAccessToken: (newAccessToken: string) => void;
-  setRefreshToken: (newRefreshToken: string) => void;
-  setToken: (tokenResponse: TokenResponseType) => void;
-  logout: () => void;
+  setAccessToken: (newAccessToken: string) => void
+  setRefreshToken: (newRefreshToken: string) => void
+  setToken: (tokenResponse: TokenResponseType) => void
+  logout: () => void
 }
 
 const useAuthStore = create<AuthStoreInterface>((set) => ({
@@ -19,29 +19,29 @@ const useAuthStore = create<AuthStoreInterface>((set) => ({
   refreshToken: localStorage.getItem('refreshToken') || null,
 
   setAccessToken: (newAccessToken) => {
-    localStorage.setItem('accessToken', newAccessToken);
-    set({ accessToken: newAccessToken });
+    localStorage.setItem('accessToken', newAccessToken)
+    set({ accessToken: newAccessToken })
   },
 
   setRefreshToken: (newRefreshToken) => {
-    localStorage.setItem('refreshToken', newRefreshToken);
-    set({ refreshToken: newRefreshToken });
+    localStorage.setItem('refreshToken', newRefreshToken)
+    set({ refreshToken: newRefreshToken })
   },
 
   setToken: (tokenResponse) => {
-    localStorage.setItem('accessToken', tokenResponse.access);
-    localStorage.setItem('refreshToken', tokenResponse.refresh);
+    localStorage.setItem('accessToken', tokenResponse.access)
+    localStorage.setItem('refreshToken', tokenResponse.refresh)
     set({
       accessToken: tokenResponse.access,
       refreshToken: tokenResponse.refresh,
-    });
+    })
   },
 
   logout: () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    set({ accessToken: null, refreshToken: null });
-  }
-}));
+    localStorage.removeItem('accessToken')
+    localStorage.removeItem('refreshToken')
+    set({ accessToken: null, refreshToken: null })
+  },
+}))
 
-export default useAuthStore;
+export default useAuthStore

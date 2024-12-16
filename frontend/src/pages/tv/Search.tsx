@@ -1,8 +1,7 @@
-import { useState } from 'react';
-import useTVSearchStore from '../../stores/TVSearchStore';
-import useApi from '../../hooks/api';
-import ShowSearchResult from '../../components/ShowSearchResult';
-
+import { useState } from 'react'
+import useTVSearchStore from '../../stores/TVSearchStore'
+import useApi from '../../hooks/api'
+import ShowSearchResult from '../../components/ShowSearchResult'
 
 export type ShowSearchResultType = {
   id: number
@@ -18,48 +17,53 @@ export type ShowSearchResultType = {
 }
 
 const TVSearch = () => {
-  const { get } = useApi();
-  const [isLoading, setIsLoading] = useState(false);
-  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
-  const { query, results, setQuery, setResults } = useTVSearchStore();
+  const { get } = useApi()
+  const [isLoading, setIsLoading] = useState(false)
+  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null)
+  const { query, results, setQuery, setResults } = useTVSearchStore()
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newQuery = event.target.value;
-    setQuery(newQuery);
+    const newQuery = event.target.value
+    setQuery(newQuery)
 
     if (timer) {
-      clearTimeout(timer);
+      clearTimeout(timer)
     }
 
     if (newQuery.length >= 2) {
-      setIsLoading(true);
+      setIsLoading(true)
       // Set a new timer for search
       const newTimer = setTimeout(() => {
         get(`tv/remote-search?q=${encodeURIComponent(newQuery)}`)
           .then((data) => {
-            setResults(data);
-            setIsLoading(false);
+            setResults(data)
+            setIsLoading(false)
           })
           .catch((error) => {
-            console.error('Error fetching search results:', error);
-            setIsLoading(false);
-          });
-      }, 500);
-      setTimer(newTimer);
+            console.error('Error fetching search results:', error)
+            setIsLoading(false)
+          })
+      }, 500)
+      setTimer(newTimer)
     } else {
-      setResults([]);
+      setResults([])
     }
-  };
+  }
 
   const handleClear = () => {
-    setQuery('');
-    setResults([]);
-  };
+    setQuery('')
+    setResults([])
+  }
 
   return (
     <div>
       <h1>Search TV Shows</h1>
-      <input type="text" value={query} onChange={handleInputChange} placeholder="Search..." />
+      <input
+        type="text"
+        value={query}
+        onChange={handleInputChange}
+        placeholder="Search..."
+      />
       <button onClick={handleClear}>Clear</button>
       {isLoading ? (
         <p>Loading...</p>
@@ -71,7 +75,7 @@ const TVSearch = () => {
         <p>Search query did not return any results.</p>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default TVSearch;
+export default TVSearch

@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import useApi from '../hooks/api';
+import { useState, useEffect } from 'react'
+import useApi from '../hooks/api'
 
 export type ImageType = {
   image_url?: string
@@ -8,33 +8,27 @@ export type ImageType = {
 }
 
 interface ImageComponentInterface {
-  image: ImageType;
-  alt: string;
+  image: ImageType
+  alt: string
 }
 
 const ImageComponent: React.FC<ImageComponentInterface> = ({ image, alt }) => {
-
-  const { getImage } = useApi();
-  const [imageUrl, setImageUrl] = useState(image.image_blur);
+  const { getImage } = useApi()
+  const [imageUrl, setImageUrl] = useState(image.image_blur)
 
   useEffect(() => {
     const fetchImage = async () => {
-      const newImageUrl = await getImage(image.image);
-      setImageUrl(newImageUrl);
+      const newImageUrl = await getImage(image.image)
+      setImageUrl(newImageUrl)
     }
-    fetchImage();
+    fetchImage()
 
     return () => {
-      imageUrl && URL.revokeObjectURL(imageUrl);
-    };
-
+      if (imageUrl) URL.revokeObjectURL(imageUrl)
+    }
   }, [image])
 
-  return (
-    <div>
-      {imageUrl && (<img src={imageUrl} alt={alt} />)}
-    </div>
-  );
+  return <div>{imageUrl && <img src={imageUrl} alt={alt} />}</div>
 }
 
-export default ImageComponent;
+export default ImageComponent

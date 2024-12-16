@@ -1,50 +1,55 @@
-import { useEffect, useState } from "react";
-import Episode from "../components/Episode";
-import useProcessingEpisodeStore from "../stores/processingEpisodesStore";
-import useUpcomingEpisodeStore from "../stores/UpcomingEpisodesStore";
-import useApi from "../hooks/api";
+import { useEffect, useState } from 'react'
+import Episode from '../components/Episode'
+import useProcessingEpisodeStore from '../stores/processingEpisodesStore'
+import useUpcomingEpisodeStore from '../stores/UpcomingEpisodesStore'
+import useApi from '../hooks/api'
 
 const Home: React.FC = () => {
-  const { error, get } = useApi();
-  const [isLoadingProcessingEpisodes, setIsLoadingProcessingEpisodes] = useState(true);
-  const [isLoadingUpcomingEpisodes, setIsLoadingUpcomingEpisodes] = useState(true);
-  const [upcomingItemCount, setUpcomingItemCount] = useState(12);
-  const [hasMoreUpcoming, setHasMoreUpcoming] = useState(false);
-  const { processingEpisodes, setProcessingEpisodes } = useProcessingEpisodeStore();
-  const { upcomingEpisodes, setUpcomingEpisodes } = useUpcomingEpisodeStore();
+  const { error, get } = useApi()
+  const [isLoadingProcessingEpisodes, setIsLoadingProcessingEpisodes] =
+    useState(true)
+  const [isLoadingUpcomingEpisodes, setIsLoadingUpcomingEpisodes] =
+    useState(true)
+  const [upcomingItemCount, setUpcomingItemCount] = useState(12)
+  const [hasMoreUpcoming, setHasMoreUpcoming] = useState(false)
+  const { processingEpisodes, setProcessingEpisodes } =
+    useProcessingEpisodeStore()
+  const { upcomingEpisodes, setUpcomingEpisodes } = useUpcomingEpisodeStore()
 
   useEffect(() => {
     const fetchEpisodes = async () => {
       try {
-        const data = await get('tv/episode/?status=d,s');
-        setProcessingEpisodes(data);
+        const data = await get('tv/episode/?status=d,s')
+        setProcessingEpisodes(data)
       } catch (error) {
-        console.error("error fetching episodes: ", error);
+        console.error('error fetching episodes: ', error)
       }
-      setIsLoadingProcessingEpisodes(false);
-    };
+      setIsLoadingProcessingEpisodes(false)
+    }
 
-    fetchEpisodes();
-  }, [setProcessingEpisodes]);
+    fetchEpisodes()
+  }, [setProcessingEpisodes])
 
   useEffect(() => {
     const fetchEpisodes = async () => {
       try {
-        const data = await get(`tv/episode/?limit=${upcomingItemCount}&status=u&order-by=release_date`);
-        setUpcomingEpisodes(data);
-        setHasMoreUpcoming(data.length === upcomingItemCount);
+        const data = await get(
+          `tv/episode/?limit=${upcomingItemCount}&status=u&order-by=release_date`,
+        )
+        setUpcomingEpisodes(data)
+        setHasMoreUpcoming(data.length === upcomingItemCount)
       } catch (error) {
-        console.error("error fetching episodes: ", error);
+        console.error('error fetching episodes: ', error)
       }
-      setIsLoadingUpcomingEpisodes(false);
-    };
+      setIsLoadingUpcomingEpisodes(false)
+    }
 
-    fetchEpisodes();
-  }, [setProcessingEpisodes, upcomingItemCount]);
+    fetchEpisodes()
+  }, [setProcessingEpisodes, upcomingItemCount])
 
   const handleLoadMoreUpcomingEpisodes = () => {
-    setUpcomingItemCount(upcomingItemCount + 12);
-  };
+    setUpcomingItemCount(upcomingItemCount + 12)
+  }
 
   return (
     <div className="movies">
@@ -82,7 +87,7 @@ const Home: React.FC = () => {
         <button onClick={handleLoadMoreUpcomingEpisodes}>Load More</button>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home

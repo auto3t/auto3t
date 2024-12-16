@@ -1,15 +1,14 @@
-import { useEffect, useCallback } from "react";
-import useCategoryFormStore from "../stores/CategoryFormStore";
-import useApi from "../hooks/api";
+import { useEffect, useCallback } from 'react'
+import useCategoryFormStore from '../stores/CategoryFormStore'
+import useApi from '../hooks/api'
 
 export type KeyWordCategoryType = {
-  id: number;
+  id: number
   name: string
 }
 
 export default function KeywordCategories() {
-
-  const { get, post, put, del } = useApi();
+  const { get, post, put, del } = useApi()
 
   const {
     categories,
@@ -23,88 +22,92 @@ export default function KeywordCategories() {
     editingCategory,
     setEditingCategory,
     editedCategoryName,
-    setEditedCategoryName
+    setEditedCategoryName,
   } = useCategoryFormStore()
 
   const fetchCategories = useCallback(async () => {
-    const data = await get('keyword-category/');
-    setCategories(data);
-  }, [setCategories]);
+    const data = await get('keyword-category/')
+    setCategories(data)
+  }, [setCategories])
 
   useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
+    fetchCategories()
+  }, [fetchCategories])
 
-  const handleNewCategorySubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
+  const handleNewCategorySubmit = async (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    event.preventDefault()
     try {
-      const data = await post('keyword-category/', { name: newCategoryName });
+      const data = await post('keyword-category/', { name: newCategoryName })
       if (data) {
-        setNewCategoryName("");
-        setCreateCategory(false);
-        fetchCategories();
+        setNewCategoryName('')
+        setCreateCategory(false)
+        fetchCategories()
       }
     } catch (error) {
-      console.error('Error creating category:', error);
+      console.error('Error creating category:', error)
     }
-  };
+  }
 
   const handleEditCategory = (category: KeyWordCategoryType) => {
-    setEditingCategory(category);
-    setEditedCategoryName(category.name);
-  };
+    setEditingCategory(category)
+    setEditedCategoryName(category.name)
+  }
 
   const handleUpdateCategory = async () => {
     if (!editingCategory) return
     try {
-      const data = await put(`keyword-category/${editingCategory.id}/`, { name: editedCategoryName });
+      const data = await put(`keyword-category/${editingCategory.id}/`, {
+        name: editedCategoryName,
+      })
       if (data) {
-        setEditingCategory(null);
-        fetchCategories();
+        setEditingCategory(null)
+        fetchCategories()
       } else {
-        console.error('Failed to update category');
+        console.error('Failed to update category')
       }
     } catch (error) {
-      console.error('Error updating category:', error);
+      console.error('Error updating category:', error)
     }
-  };
+  }
 
   const handleCancelEdit = () => {
-    setEditingCategory(null);
-    setEditedCategoryName("");
-  };
+    setEditingCategory(null)
+    setEditedCategoryName('')
+  }
 
   const handleDeleteCategory = (category: KeyWordCategoryType) => {
-    setDeletingCategory(category);
-  };
+    setDeletingCategory(category)
+  }
 
   const handleDeleteConfirm = async () => {
     if (!deletingCategory) return
     try {
-      const data = await del(`keyword-category/${deletingCategory.id}/`);
+      const data = await del(`keyword-category/${deletingCategory.id}/`)
       if (data) {
-        setDeletingCategory(null);
-        fetchCategories();
+        setDeletingCategory(null)
+        fetchCategories()
       } else {
-        console.error('Failed to delete category');
+        console.error('Failed to delete category')
       }
     } catch (error) {
-      console.error('Error deleting category:', error);
+      console.error('Error deleting category:', error)
     }
-  };
+  }
 
   const handleCancelDelete = () => {
-    setDeletingCategory(null);
-  };
+    setDeletingCategory(null)
+  }
 
   const handleShowCreateForm = () => {
-    setCreateCategory(true);
+    setCreateCategory(true)
   }
 
   const handleCancelCreate = () => {
-    setNewCategoryName('');
-    setCreateCategory(false);
-  };
+    setNewCategoryName('')
+    setCreateCategory(false)
+  }
 
   return (
     <>
@@ -132,7 +135,9 @@ export default function KeywordCategories() {
                 />
               </td>
               <td>
-                <button onClick={handleNewCategorySubmit}>Create Category</button>
+                <button onClick={handleNewCategorySubmit}>
+                  Create Category
+                </button>
                 <button onClick={handleCancelCreate}>Cancel</button>
               </td>
             </tr>
@@ -164,8 +169,12 @@ export default function KeywordCategories() {
                       </>
                     ) : (
                       <>
-                        <button onClick={() => handleEditCategory(category)}>Edit</button>
-                        <button onClick={() => handleDeleteCategory(category)}>Delete</button>
+                        <button onClick={() => handleEditCategory(category)}>
+                          Edit
+                        </button>
+                        <button onClick={() => handleDeleteCategory(category)}>
+                          Delete
+                        </button>
                       </>
                     )}
                   </td>

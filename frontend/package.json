@@ -15,7 +15,9 @@
   "scripts": {
     "start": "vite",
     "build": "vite build",
-    "test": "vitest"
+    "test": "vitest",
+    "lint": "eslint '**/*.{js,jsx,ts,tsx}' --fix",
+    "format": "prettier --write '**/*.{js,jsx,ts,tsx,json,css,md}'"
   },
   "eslintConfig": {
     "extends": [
@@ -36,9 +38,18 @@
     ]
   },
   "devDependencies": {
+    "@types/node": "^22.10.2",
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.2",
+    "@typescript-eslint/eslint-plugin": "^8.18.0",
+    "@typescript-eslint/parser": "^8.18.0",
     "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^9.17.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-react": "^7.37.2",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "prettier": "^3.4.2",
     "typescript": "5.7.2",
     "vite": "^6.0.3"
   }

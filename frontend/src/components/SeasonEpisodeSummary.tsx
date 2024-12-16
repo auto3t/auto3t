@@ -1,9 +1,8 @@
-import useTVEpisodeStore from "../stores/EpisodesStore";
-import { formatBitrate, formatBytes } from "../utils";
+import useTVEpisodeStore from '../stores/EpisodesStore'
+import { formatBitrate, formatBytes } from '../utils'
 
 const SeasonEpisodeSummary = () => {
-
-  const { episodes } = useTVEpisodeStore();
+  const { episodes } = useTVEpisodeStore()
 
   return (
     <>
@@ -26,9 +25,14 @@ const SeasonEpisodeSummary = () => {
                   <td>{episode.number.toString()}</td>
                   {episode.media_server_meta && (
                     <>
-                      <td>{episode.media_server_meta.width}x{episode.media_server_meta.height}</td>
+                      <td>
+                        {episode.media_server_meta.width}x
+                        {episode.media_server_meta.height}
+                      </td>
                       <td>{episode.media_server_meta.codec}</td>
-                      <td>{formatBitrate(episode.media_server_meta.bitrate)}</td>
+                      <td>
+                        {formatBitrate(episode.media_server_meta.bitrate)}
+                      </td>
                       <td>{formatBytes(episode.media_server_meta.size)}</td>
                     </>
                   )}
@@ -42,4 +46,4 @@ const SeasonEpisodeSummary = () => {
   )
 }
 
-export default SeasonEpisodeSummary;
+export default SeasonEpisodeSummary

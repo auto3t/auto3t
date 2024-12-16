@@ -1,40 +1,40 @@
-import { useEffect, useState } from "react";
-import useApi from "../hooks/api";
-import { KeywordType } from "./Keywords";
-
+import { useEffect, useState } from 'react'
+import useApi from '../hooks/api'
+import { KeywordType } from './Keywords'
 
 interface AddKeywordComponentInterface {
-  patchURL: string;
-  refreshCallback: () => void;
+  patchURL: string
+  refreshCallback: () => void
 }
 
-const AddKeywordComponent: React.FC<AddKeywordComponentInterface> = ({ patchURL, refreshCallback }) => {
-
-  const { get, patch } = useApi();
-  const [allKeywords, setAllKeywords] = useState<KeywordType[] | null>(null);
-  const [selectedOption, setSelectedOption] = useState<string>();
+const AddKeywordComponent: React.FC<AddKeywordComponentInterface> = ({
+  patchURL,
+  refreshCallback,
+}) => {
+  const { get, patch } = useApi()
+  const [allKeywords, setAllKeywords] = useState<KeywordType[] | null>(null)
+  const [selectedOption, setSelectedOption] = useState<string>()
 
   useEffect(() => {
     const getKeywords = () => {
-      get('keyword/')
-      .then(response => {
-        setAllKeywords(response);
+      get('keyword/').then((response) => {
+        setAllKeywords(response)
       })
     }
-    getKeywords();
+    getKeywords()
   }, [patchURL])
 
   const handleOptionSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedOption(event.target.value);
-  };
+    setSelectedOption(event.target.value)
+  }
 
   const handleOptionUpdate = async () => {
     if (selectedOption) {
-      await patch(patchURL, { search_keywords: [selectedOption]});
-      setSelectedOption('');
-      refreshCallback();
+      await patch(patchURL, { search_keywords: [selectedOption] })
+      setSelectedOption('')
+      refreshCallback()
     }
-  };
+  }
 
   return (
     <>
@@ -42,7 +42,7 @@ const AddKeywordComponent: React.FC<AddKeywordComponentInterface> = ({ patchURL,
         <>
           <select onChange={handleOptionSelect} defaultValue={''}>
             <option value="">---</option>
-            {allKeywords.map(keyword => (
+            {allKeywords.map((keyword) => (
               <option key={keyword.id} value={keyword.id}>
                 {keyword.category_name} [{keyword.direction}] {keyword.word}
               </option>
@@ -55,4 +55,4 @@ const AddKeywordComponent: React.FC<AddKeywordComponentInterface> = ({ patchURL,
   )
 }
 
-export default AddKeywordComponent;
+export default AddKeywordComponent

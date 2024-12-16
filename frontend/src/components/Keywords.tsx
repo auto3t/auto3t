@@ -1,8 +1,7 @@
-import { useEffect, useCallback, useState } from "react";
-import useCategoryFormStore from "../stores/CategoryFormStore";
-import useSearchKeyWordStore from "../stores/SearchKeyWordsStore";
-import useApi from "../hooks/api";
-
+import { useEffect, useCallback, useState } from 'react'
+import useCategoryFormStore from '../stores/CategoryFormStore'
+import useSearchKeyWordStore from '../stores/SearchKeyWordsStore'
+import useApi from '../hooks/api'
 
 export type KeywordType = {
   id: number
@@ -15,18 +14,10 @@ export type KeywordType = {
   tv_default: boolean
 }
 
-interface InputEventInterface {
-  name: string
-  value: string
-  type: string
-  checked: boolean
-}
-
 export default function Keywords() {
+  const { get, post, put, del } = useApi()
 
-  const { get, post, put, del } = useApi();
-
-  const { categories } = useCategoryFormStore();
+  const { categories } = useCategoryFormStore()
   const {
     keywords,
     setKeywords,
@@ -46,36 +37,38 @@ export default function Keywords() {
     setIsDefaultTV,
     isDefaultMovie,
     setIsDefaultMovie,
-  } = useSearchKeyWordStore();
+  } = useSearchKeyWordStore()
 
   const [editedKeyword, setEditedKeyword] = useState<KeywordType>({
     id: 0,
-    category: "",
-    word: "",
-    direction: "i",
+    category: '',
+    word: '',
+    direction: 'i',
     movie_default: false,
     tv_default: false,
-  });
+  })
 
   const fetchKeywords = useCallback(async () => {
-    const data = await get('keyword/');
-    setKeywords(data);
-  }, [setKeywords]);
+    const data = await get('keyword/')
+    setKeywords(data)
+  }, [setKeywords])
 
   useEffect(() => {
-    fetchKeywords();
-  }, [fetchKeywords]);
+    fetchKeywords()
+  }, [fetchKeywords])
 
   const resetFormDefaults = () => {
-    setNewKeyword("");
-    setSelectedCategory("");
-    setDirection("i");
-    setIsDefaultTV(false);
-    setIsDefaultMovie(false);
+    setNewKeyword('')
+    setSelectedCategory('')
+    setDirection('i')
+    setIsDefaultTV(false)
+    setIsDefaultMovie(false)
   }
 
-  const handleNewKeywordSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
+  const handleNewKeywordSubmit = async (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    event.preventDefault()
     try {
       const body = {
         category: selectedCategory,
@@ -84,44 +77,44 @@ export default function Keywords() {
         movie_default: isDefaultMovie,
         tv_default: isDefaultTV,
       }
-      const data = await post('keyword/', body);
+      const data = await post('keyword/', body)
       if (data) {
-        resetFormDefaults();
-        setCreateKeyword(false);
-        fetchKeywords();
+        resetFormDefaults()
+        setCreateKeyword(false)
+        fetchKeywords()
       } else {
-        console.error('Failed to create keyword');
+        console.error('Failed to create keyword')
       }
     } catch (error) {
-      console.error('Error creating keyword:', error);
+      console.error('Error creating keyword:', error)
     }
-  };
+  }
 
   const handleDeleteKeyword = (keyword: KeywordType) => {
-    setDeletingKeyword(keyword);
-  };
+    setDeletingKeyword(keyword)
+  }
 
   const handleDeleteConfirm = async () => {
     if (!deletingKeyword) return
     try {
-      const data = await del(`keyword/${deletingKeyword.id}/`);
+      const data = await del(`keyword/${deletingKeyword.id}/`)
       if (data) {
-        setDeletingKeyword(null);
-        fetchKeywords();
+        setDeletingKeyword(null)
+        fetchKeywords()
       } else {
-        console.error('Failed to delete keyword');
+        console.error('Failed to delete keyword')
       }
     } catch (error) {
-      console.error('Error deleting keyword:', error);
+      console.error('Error deleting keyword:', error)
     }
   }
 
   const handleCancelDelete = () => {
-    setDeletingKeyword(null);
-  };
+    setDeletingKeyword(null)
+  }
 
   const handleEditKeyword = (keyword: KeywordType) => {
-    setEditingKeyword(keyword);
+    setEditingKeyword(keyword)
     setEditedKeyword({
       id: keyword.id,
       category: keyword.category,
@@ -129,52 +122,52 @@ export default function Keywords() {
       direction: keyword.direction,
       movie_default: keyword.movie_default,
       tv_default: keyword.tv_default,
-    });
-  };
+    })
+  }
 
   const handleEditCancel = () => {
-    setEditingKeyword(null);
-  };
+    setEditingKeyword(null)
+  }
 
   const handleEditSubmit = async () => {
     if (!editingKeyword) return
     try {
-      const data = await put(`keyword/${editingKeyword.id}/`, editedKeyword);
+      const data = await put(`keyword/${editingKeyword.id}/`, editedKeyword)
       if (data) {
-        setEditingKeyword(null);
-        fetchKeywords();
+        setEditingKeyword(null)
+        fetchKeywords()
       } else {
-        console.error('Failed to update keyword');
+        console.error('Failed to update keyword')
       }
     } catch (error) {
-      console.error('Error updating keyword:', error);
+      console.error('Error updating keyword:', error)
     }
-  };
+  }
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = event.target;
-    const val = type === "checkbox" ? checked : value;
-    setEditedKeyword(prevState => ({
+    const { name, value, type, checked } = event.target
+    const val = type === 'checkbox' ? checked : value
+    setEditedKeyword((prevState) => ({
       ...prevState,
-      [name]: val
-    }));
-  };
+      [name]: val,
+    }))
+  }
 
   const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value, type } = event.target;
-    setEditedKeyword(prevState => ({
+    const { name, value } = event.target
+    setEditedKeyword((prevState) => ({
       ...prevState,
-      [name]: value
-    }));
-  };
+      [name]: value,
+    }))
+  }
 
   const handleShowAddForm = () => {
-    setCreateKeyword(true);
+    setCreateKeyword(true)
   }
 
   const handleCancelCreate = () => {
-    setCreateKeyword(false);
-    resetFormDefaults();
+    setCreateKeyword(false)
+    resetFormDefaults()
   }
 
   return (
@@ -199,10 +192,15 @@ export default function Keywords() {
           {createKeyword === true && (
             <tr>
               <td>
-                <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                >
                   <option value="">Select Category</option>
                   {categories.map((category) => (
-                    <option key={category.id} value={category.id}>{category.name}</option>
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
                   ))}
                 </select>
               </td>
@@ -215,7 +213,10 @@ export default function Keywords() {
                 />
               </td>
               <td>
-                <select value={direction} onChange={(e) => setDirection(e.target.value)}>
+                <select
+                  value={direction}
+                  onChange={(e) => setDirection(e.target.value)}
+                >
                   <option value="i">Include</option>
                   <option value="e">Exclude</option>
                 </select>
@@ -252,7 +253,9 @@ export default function Keywords() {
                     >
                       <option value="">Select Category</option>
                       {categories.map((category) => (
-                        <option key={category.id} value={category.id}>{category.name}</option>
+                        <option key={category.id} value={category.id}>
+                          {category.name}
+                        </option>
                       ))}
                     </select>
                   </td>
@@ -291,8 +294,12 @@ export default function Keywords() {
                     />
                   </td>
                   <td>
-                    <button type="button" onClick={handleEditSubmit}>Update</button>
-                    <button type="button" onClick={handleEditCancel}>Cancel</button>
+                    <button type="button" onClick={handleEditSubmit}>
+                      Update
+                    </button>
+                    <button type="button" onClick={handleEditCancel}>
+                      Cancel
+                    </button>
                   </td>
                 </>
               ) : (
@@ -300,8 +307,8 @@ export default function Keywords() {
                   <td>{keyword.category_name}</td>
                   <td>{keyword.word} </td>
                   <td>{keyword.direction_display}</td>
-                  <td>{keyword.tv_default ? ('✅') : ('-')}</td>
-                  <td>{keyword.movie_default ? ('✅') : ('-')}</td>
+                  <td>{keyword.tv_default ? '✅' : '-'}</td>
+                  <td>{keyword.movie_default ? '✅' : '-'}</td>
                   <td>
                     {deletingKeyword === keyword ? (
                       <>
@@ -310,8 +317,12 @@ export default function Keywords() {
                       </>
                     ) : (
                       <>
-                        <button onClick={() => handleEditKeyword(keyword)}>Edit</button>
-                        <button onClick={() => handleDeleteKeyword(keyword)}>Delete</button>
+                        <button onClick={() => handleEditKeyword(keyword)}>
+                          Edit
+                        </button>
+                        <button onClick={() => handleDeleteKeyword(keyword)}>
+                          Delete
+                        </button>
                       </>
                     )}
                   </td>

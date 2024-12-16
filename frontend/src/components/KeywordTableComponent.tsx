@@ -1,19 +1,22 @@
-import useApi from "../hooks/api";
-import { KeywordType } from "./Keywords";
+import useApi from '../hooks/api'
+import { KeywordType } from './Keywords'
 
 interface KeywortTableComponentInterface {
-  all_keywords: KeywordType[];
-  patchURL: string;
-  refreshCallback: () => void;
+  all_keywords: KeywordType[]
+  patchURL: string
+  refreshCallback: () => void
 }
 
-const KeywordTableCompnent: React.FC<KeywortTableComponentInterface> = ({ all_keywords, patchURL, refreshCallback }) => {
-
-  const { patch } = useApi();
+const KeywordTableCompnent: React.FC<KeywortTableComponentInterface> = ({
+  all_keywords,
+  patchURL,
+  refreshCallback,
+}) => {
+  const { patch } = useApi()
 
   const handleKeywordRemove = async (keywordId: number) => {
-    await patch(patchURL, { search_keywords: [keywordId]})
-    refreshCallback();
+    await patch(patchURL, { search_keywords: [keywordId] })
+    refreshCallback()
   }
 
   return (
@@ -36,7 +39,9 @@ const KeywordTableCompnent: React.FC<KeywortTableComponentInterface> = ({ all_ke
               {keyword.tv_default ? (
                 'default'
               ) : (
-                <button onClick={() => handleKeywordRemove(keyword.id)}>remove</button>
+                <button onClick={() => handleKeywordRemove(keyword.id)}>
+                  remove
+                </button>
               )}
             </td>
           </tr>
@@ -46,4 +51,4 @@ const KeywordTableCompnent: React.FC<KeywortTableComponentInterface> = ({ all_ke
   )
 }
 
-export default KeywordTableCompnent;
+export default KeywordTableCompnent

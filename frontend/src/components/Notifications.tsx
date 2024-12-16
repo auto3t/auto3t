@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useRef } from "react";
-import useNotificationStore from "../stores/NotificationStore";
-import useApi from "../hooks/api";
-import TimeComponent from "./TimeComponent";
-import { Link } from "react-router-dom";
+import { useCallback, useEffect, useRef } from 'react'
+import useNotificationStore from '../stores/NotificationStore'
+import useApi from '../hooks/api'
+import TimeComponent from './TimeComponent'
+import { Link } from 'react-router-dom'
 
 type NotificationParsedType = {
   action: string
@@ -13,7 +13,7 @@ type NotificationParsedType = {
 }
 
 export type NotificationType = {
-  id: Number
+  id: number
   action: string
   timestamp: string
   comment: string
@@ -21,49 +21,49 @@ export type NotificationType = {
 }
 
 export default function NotificationBox() {
-  const { get } = useApi();
+  const { get } = useApi()
   const {
     showNotifications,
     setShowNotifications,
     notifications,
     setNotifications,
-  } = useNotificationStore();
+  } = useNotificationStore()
 
-  const pollingTimeoutRef: any = useRef(null);
+  const pollingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const fetchNotifications = useCallback(async () => {
     try {
-      const data = await get("actionlog/");
-      setNotifications(data.results);
+      const data = await get('actionlog/')
+      setNotifications(data.results)
     } catch (error) {
-      console.error("Failed to fetch notifications:", error);
+      console.error('Failed to fetch notifications:', error)
     }
-  }, [setNotifications]);
+  }, [setNotifications])
 
   useEffect(() => {
     const startPolling = () => {
       pollingTimeoutRef.current = setTimeout(async () => {
-        await fetchNotifications();
-        startPolling();
-      }, 5000);
-    };
+        await fetchNotifications()
+        startPolling()
+      }, 5000)
+    }
 
     if (showNotifications) {
-      fetchNotifications();
-      startPolling();
+      fetchNotifications()
+      startPolling()
     }
 
     return () => {
       if (pollingTimeoutRef.current) {
-        clearTimeout(pollingTimeoutRef.current);
-        pollingTimeoutRef.current = null;
+        clearTimeout(pollingTimeoutRef.current)
+        pollingTimeoutRef.current = null
       }
-    };
-  }, [showNotifications, fetchNotifications]);
+    }
+  }, [showNotifications, fetchNotifications])
 
   const handleHideNotifications = () => {
-    setShowNotifications(false);
-  };
+    setShowNotifications(false)
+  }
 
   return (
     <div>
@@ -72,24 +72,27 @@ export default function NotificationBox() {
           <div className="notifactions-content">
             <button onClick={handleHideNotifications}>X</button>
             {notifications.map((notification) => (
-              <div key={notification.id.toString()} className="notification-item">
+              <div
+                key={notification.id.toString()}
+                className="notification-item"
+              >
                 <div className="notification-meta">
                   <span className="tag-item" title={notification.parsed.action}>
-                    {notification.action || "-"}
+                    {notification.action || '-'}
                   </span>
                 </div>
                 <div>
                   {notification.parsed.url ? (
                     <Link to={notification.parsed.url}>
                       <p>
-                        {notification.parsed.content_type}:{" "}
+                        {notification.parsed.content_type}:{' '}
                         {notification.parsed.content_item_name}
                       </p>
                     </Link>
                   ) : (
                     <p>
-                      {notification.parsed.content_type}:{" "}
-                      {notification.parsed.content_item_name || "Unavailable"}
+                      {notification.parsed.content_type}:{' '}
+                      {notification.parsed.content_item_name || 'Unavailable'}
                     </p>
                   )}
                   <TimeComponent timestamp={notification.timestamp} />
@@ -102,5 +105,5 @@ export default function NotificationBox() {
         </div>
       )}
     </div>
-  );
+  )
 }

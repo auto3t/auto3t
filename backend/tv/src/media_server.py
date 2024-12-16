@@ -36,9 +36,7 @@ class MediaServerEpisode:
 
     def needs_matching(self) -> bool:
         """get archived but not identified"""
-        return TVEpisode.objects.filter(
-            torrent__torrent_state="a", media_server_id__isnull=True
-        ).exists()
+        return TVEpisode.objects.filter(torrent__torrent_state="a", media_server_id__isnull=True).exists()
 
     def get_unidentified(self) -> QuerySet[TVEpisode]:
         """get tv episodes not identified"""
@@ -61,7 +59,7 @@ class MediaServerEpisode:
 
             media_streams = sources[0].get("MediaStreams")
             if not media_streams:
-                continue           
+                continue
 
             video_streams = [i for i in media_streams if i["Type"] == "Video"]
             if not video_streams:

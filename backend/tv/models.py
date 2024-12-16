@@ -37,6 +37,7 @@ class BaseModel(models.Model):
 
     class Meta:
         """set abstract to not create db relations"""
+
         abstract = True
 
     def crop_image(self, image_io: BytesIO) -> bytes:
@@ -105,9 +106,7 @@ class TVShow(BaseModel):
 
     name = models.CharField(max_length=255)
     search_name = models.CharField(max_length=255, null=True, blank=True)
-    status = models.CharField(
-        choices=SHOW_STATUS, max_length=1, null=True, blank=True
-    )
+    status = models.CharField(choices=SHOW_STATUS, max_length=1, null=True, blank=True)
     is_daily = models.BooleanField(default=False)
     show_time_zone = models.CharField(max_length=255, default="UTC")
     search_keywords = models.ManyToManyField(SearchWord)
@@ -241,9 +240,9 @@ class TVShow(BaseModel):
 
         show_logs = ActionLog.objects.filter(
             (
-                Q(content_type=episode_type) & Q(object_id__in=episodes) |
-                Q(content_type=season_type) & Q(object_id__in=seasons) |
-                Q(content_type=show_type) & Q(object_id=self.pk)
+                Q(content_type=episode_type) & Q(object_id__in=episodes)
+                | Q(content_type=season_type) & Q(object_id__in=seasons)
+                | Q(content_type=show_type) & Q(object_id=self.pk)
             )
         ).order_by("-timestamp")
 
@@ -327,9 +326,7 @@ class TVSeason(BaseModel):
                 tm_instance.cancle(torrent)
 
         torrent, _ = Torrent.objects.get_or_create(magnet=magnet, torrent_type="s")
-        episodes.update(
-            torrent=torrent, status="d", media_server_id=None, media_server_meta=None
-        )
+        episodes.update(torrent=torrent, status="d", media_server_id=None, media_server_meta=None)
         log_change(self, "c", comment=f"Added season Torrent with hash {torrent.magnet_hash}")
 
     def is_valid_path(self, path) -> bool:
@@ -345,8 +342,8 @@ class TVSeason(BaseModel):
         season_episodes = TVEpisode.objects.filter(season=self)
         season_logs = ActionLog.objects.filter(
             (
-                Q(content_type=episode_type) & Q(object_id__in=season_episodes) |
-                Q(content_type=season_type) & Q(object_id=self.pk)
+                Q(content_type=episode_type) & Q(object_id__in=season_episodes)
+                | Q(content_type=season_type) & Q(object_id=self.pk)
             )
         ).order_by("-timestamp")
 
@@ -481,11 +478,11 @@ class TVEpisode(BaseModel):
         if self.identifyer_date in path:
             return True
 
-        pattern_s = re.compile(fr"s0?{season_number}e0?{episode_number}", re.IGNORECASE)
+        pattern_s = re.compile(rf"s0?{season_number}e0?{episode_number}", re.IGNORECASE)
         if pattern_s.search(path):
             return True
 
-        pattern_x = re.compile(fr"0?{season_number}x0?{episode_number}", re.IGNORECASE)
+        pattern_x = re.compile(rf"0?{season_number}x0?{episode_number}", re.IGNORECASE)
         if pattern_x.search(path):
             return True
 
@@ -544,7 +541,7 @@ class TVEpisode(BaseModel):
 
         previous_season = TVSeason.objects.filter(show=self.season.show, number=self.season.number - 1).first()
         if previous_season:
-            previous_episode = TVEpisode.objects.filter(season=previous_season).order_by('-number').first()
+            previous_episode = TVEpisode.objects.filter(season=previous_season).order_by("-number").first()
             if previous_episode:
                 return previous_episode
 

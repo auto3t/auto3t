@@ -11,12 +11,7 @@ from rest_framework.views import APIView
 
 from autot.serializers import ActionLogSerializer
 from tv.models import TVShow, TVSeason, TVEpisode
-from tv.serializers import (
-    TVShowSerializer,
-    TVSeasonSerializer,
-    TVEpisodeBulkUpdateSerializer,
-    TVEpisodeSerializer
-)
+from tv.serializers import TVShowSerializer, TVSeasonSerializer, TVEpisodeBulkUpdateSerializer, TVEpisodeSerializer
 from tv.src.show_search import ShowId
 from tv.tasks import import_show, refresh_status
 from autot.models import SearchWord, get_logs
@@ -31,9 +26,7 @@ class ShowViewSet(viewsets.ModelViewSet):
     UPDATABLE_FIELDS = {"search_name", "is_active", "search_keywords"}
 
     serializer_class = TVShowSerializer
-    queryset = TVShow.objects.annotate(
-        name_sort=Replace(F("name"), Value("The "), Value(""))
-    ).order_by("name_sort")
+    queryset = TVShow.objects.annotate(name_sort=Replace(F("name"), Value("The "), Value(""))).order_by("name_sort")
 
     def create(self, request, *args, **kwargs):
         """import show"""
@@ -49,7 +42,7 @@ class ShowViewSet(viewsets.ModelViewSet):
         message = {
             "id": job.id,
             "message": f"show import task started: {remote_server_id}",
-            "time": job.enqueued_at.isoformat()
+            "time": job.enqueued_at.isoformat(),
         }
 
         return Response(message)
@@ -238,7 +231,7 @@ class EpisodeViewSet(viewsets.ModelViewSet):
         limit = self.request.GET.get("limit")
         if limit:
             if limit.isnumeric():
-                queryset = queryset[:int(limit)]
+                queryset = queryset[: int(limit)]
 
         return queryset
 

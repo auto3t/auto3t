@@ -36,7 +36,7 @@ class MovieViewSet(viewsets.ModelViewSet):
         message = {
             "id": job.id,
             "message": f"movie import task started: {remote_server_id}",
-            "time": job.enqueued_at.isoformat()
+            "time": job.enqueued_at.isoformat(),
         }
 
         return Response(message)

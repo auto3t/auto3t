@@ -14,11 +14,9 @@ class SearchWordCategorySerializer(serializers.ModelSerializer):
 
 
 class SearchWordSerializer(serializers.ModelSerializer):
-    """serialize search word """
+    """serialize search word"""
 
-    category = serializers.PrimaryKeyRelatedField(
-        queryset=SearchWordCategory.objects.all()
-    )
+    category = serializers.PrimaryKeyRelatedField(queryset=SearchWordCategory.objects.all())
     category_name = serializers.SerializerMethodField(read_only=True)
     direction_display = serializers.CharField(source="get_direction_display", read_only=True)
 
@@ -51,9 +49,7 @@ class SchedulerSeralizer(serializers.ModelSerializer):
 
     class Meta:
         model = AutotScheduler
-        fields = [
-            "id", "job", "job_display", "job_id_registered", "cron_schedule", "next_execution"
-        ]
+        fields = ["id", "job", "job_display", "job_id_registered", "cron_schedule", "next_execution"]
 
 
 class ActionLogSerializer(serializers.ModelSerializer):

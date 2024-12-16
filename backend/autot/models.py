@@ -82,7 +82,7 @@ class Torrent(models.Model):
     @property
     def magnet_hash(self):
         """extract magnet hash"""
-        return parse_qs(self.magnet).get('magnet:?xt')[0].split(":")[-1].lower()
+        return parse_qs(self.magnet).get("magnet:?xt")[0].split(":")[-1].lower()
 
     def __str__(self):
         """describe torrent"""

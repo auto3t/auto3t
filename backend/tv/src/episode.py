@@ -56,11 +56,8 @@ class EpisodeStatus:
         found_magnets = False
         finished_seasons = TVSeason.objects.filter(end_date__lt=timezone.now())
         searching_seasons = finished_seasons.annotate(
-            total_episodes=Count("tvepisode"),
-            searching_episodes=Count("tvepisode", filter=Q(tvepisode__status="s"))
-        ).filter(
-            total_episodes=F("searching_episodes")
-        )
+            total_episodes=Count("tvepisode"), searching_episodes=Count("tvepisode", filter=Q(tvepisode__status="s"))
+        ).filter(total_episodes=F("searching_episodes"))
 
         if not searching_seasons:
             return found_magnets

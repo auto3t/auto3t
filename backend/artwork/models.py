@@ -47,7 +47,7 @@ class Artwork(models.Model):
                 cropped_image = self.crop_to_aspect(img)
 
                 img_io = BytesIO()
-                cropped_image.save(img_io, format='JPEG')
+                cropped_image.save(img_io, format="JPEG")
 
                 img_content = ContentFile(img_io.getvalue(), self.file_path)
                 self.image.save(self.file_path, img_content)  # pylint: disable=no-member

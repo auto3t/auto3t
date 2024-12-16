@@ -169,7 +169,7 @@ RQ_QUEUES = {
     "show": {
         "URL": AUTOT_CONFIG["REDIS_CON"],
         "DEFAULT_TIMEOUT": 360,
-    }
+    },
 }
 
 CORS_ALLOWED_ORIGINS = [

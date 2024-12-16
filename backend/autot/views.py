@@ -2,7 +2,7 @@
 
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.pagination import PageNumberPagination 
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
 from autot.models import (
@@ -21,6 +21,7 @@ from autot.serializers import (
     SearchWordCategorySerializer,
     TorrentSerializer,
 )
+
 
 class StandardResultsSetPagination(PageNumberPagination):
     """define custom paginateion"""

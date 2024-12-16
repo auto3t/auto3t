@@ -11,7 +11,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """handle"""
-        self.stdout.write(self.style.SUCCESS('Initiate Schedules'))
+        self.stdout.write(self.style.SUCCESS("Initiate Schedules"))
         scheduler = get_scheduler("default")
         all_schedules = AutotScheduler.objects.all()
 

@@ -3,11 +3,10 @@
 import logging
 from datetime import datetime, timedelta
 
-from django.db.models import Count, F, Q
-from django.utils import timezone
-
 from autot.models import Torrent, log_change
 from autot.src.search import Jackett
+from django.db.models import Count, F, Q
+from django.utils import timezone
 from tv.models import TVEpisode, TVSeason
 
 logger = logging.getLogger("django")

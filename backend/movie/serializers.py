@@ -1,9 +1,8 @@
 """all movie serializers"""
 
-from rest_framework import serializers
-
 from artwork.serializers import ArtworkSerializer
 from movie.models import Collection, Movie
+from rest_framework import serializers
 
 
 class CollectionSerializer(serializers.ModelSerializer):

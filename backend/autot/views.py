@@ -1,10 +1,5 @@
 """all api views"""
 
-from rest_framework import viewsets
-from rest_framework.decorators import action
-from rest_framework.pagination import PageNumberPagination
-from rest_framework.response import Response
-
 from autot.models import ActionLog, AutotScheduler, SearchWord, SearchWordCategory, Torrent, get_logs
 from autot.serializers import (
     ActionLogSerializer,
@@ -14,6 +9,10 @@ from autot.serializers import (
     TorrentSerializer,
 )
 from autot.src.search import Jackett
+from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.response import Response
 
 
 class StandardResultsSetPagination(PageNumberPagination):

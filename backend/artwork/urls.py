@@ -1,8 +1,7 @@
 """artwork urls"""
 
-from django.urls import path
-
 from artwork import views
+from django.urls import path
 
 urlpatterns = [
     path("<str:folder>/<str:filename>", views.ImageView.as_view(), name="image-view"),

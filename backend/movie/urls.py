@@ -1,9 +1,8 @@
 """all movie api urls"""
 
 from django.urls import path
-from rest_framework.routers import DefaultRouter
-
 from movie import views
+from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
 router.register(r"collection", views.CollectionViewSet, basename="collection")

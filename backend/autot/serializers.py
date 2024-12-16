@@ -1,8 +1,7 @@
 """serialize backend models"""
 
-from rest_framework import serializers
-
 from autot.models import ActionLog, AutotScheduler, SearchWord, SearchWordCategory, Torrent
+from rest_framework import serializers
 
 
 class SearchWordCategorySerializer(serializers.ModelSerializer):

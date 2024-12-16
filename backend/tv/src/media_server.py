@@ -4,10 +4,9 @@ import logging
 from typing import NotRequired, TypedDict
 
 import requests
-from django.db.models.query import QuerySet
-
 from autot.models import log_change
 from autot.src.config import ConfigType, get_config
+from django.db.models.query import QuerySet
 from tv.models import TVEpisode
 
 logger = logging.getLogger("django")

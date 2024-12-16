@@ -2,11 +2,10 @@
 
 from datetime import timedelta
 
-from django_rq import job
-from django_rq.queues import get_queue
-
 from autot.src.download import Transmission
 from autot.tasks import download_thumbnails, download_watcher, media_server_identify
+from django_rq import job
+from django_rq.queues import get_queue
 from tv.models import TVShow
 from tv.src.episode import EpisodeStatus
 from tv.src.show import TVMazeShow

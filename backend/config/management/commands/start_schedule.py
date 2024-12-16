@@ -1,9 +1,8 @@
 """start schedules"""
 
+from autot.models import AutotScheduler
 from django.core.management.base import BaseCommand
 from django_rq import get_scheduler
-
-from autot.models import AutotScheduler
 
 
 class Command(BaseCommand):

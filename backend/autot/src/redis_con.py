@@ -1,7 +1,6 @@
 """interact with redis"""
 
 import redis
-
 from autot.src.config import get_config
 
 

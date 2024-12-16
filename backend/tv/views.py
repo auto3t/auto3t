@@ -2,18 +2,17 @@
 
 import json
 
+from autot.models import SearchWord, get_logs
+from autot.serializers import ActionLogSerializer
+from autot.src.download import Transmission
+from autot.src.redis_con import AutotRedis
+from autot.src.search import Jackett
 from django.db.models import F, Value
 from django.db.models.functions import Replace
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-from autot.models import SearchWord, get_logs
-from autot.serializers import ActionLogSerializer
-from autot.src.download import Transmission
-from autot.src.redis_con import AutotRedis
-from autot.src.search import Jackett
 from tv.models import TVEpisode, TVSeason, TVShow
 from tv.serializers import TVEpisodeBulkUpdateSerializer, TVEpisodeSerializer, TVSeasonSerializer, TVShowSerializer
 from tv.src.show_search import ShowId

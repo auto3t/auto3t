@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import useApi from '../hooks/api';
 
 export type ImageType = {
-  id?: Number
   image_url?: string
   image: string
   image_blur?: string

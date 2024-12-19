@@ -34,7 +34,7 @@ if [ $? != 0 ]; then
 
     # worker
     tmux split-window -v -t $SESSION_NAME:"dev.0" -l 66%
-    tmux send-keys -t $SESSION_NAME:"dev.1" "source .venv/bin/activate && cd backend && python manage.py rqworker --with-scheduler default show thumbnails" C-m
+    tmux send-keys -t $SESSION_NAME:"dev.1" "source .venv/bin/activate && cd backend && python manage.py rqworker --with-scheduler default show thumbnails movie" C-m
 
     # scheduler
     tmux split-window -v -t $SESSION_NAME:"dev.1" -l 50%

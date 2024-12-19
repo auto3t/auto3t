@@ -18,7 +18,12 @@ const ImageComponent: React.FC<ImageComponentInterface> = ({ image, alt }) => {
 
   useEffect(() => {
     const fetchImage = async () => {
-      const newImageUrl = await getImage(image.image)
+      let newImageUrl
+      if (image.image.startsWith('/assets')) {
+        newImageUrl = `${import.meta.env.VITE_API_URL}${image.image}`
+      } else {
+        newImageUrl = await getImage(image.image)
+      }
       setImageUrl(newImageUrl)
     }
     fetchImage()

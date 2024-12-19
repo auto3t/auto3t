@@ -12,7 +12,7 @@ const MovieSearchResult: React.FC<MovieSearchResultInterface> = ({
   const { post } = useApi()
 
   const handleAddMovie = (remoteServerId: string) => {
-    post('movie/movie/', { remoteServerId: remoteServerId })
+    post('movie/movie/', { remote_server_id: remoteServerId })
       .then((data) => {
         console.log('Movie added successfully: ', JSON.stringify(data))
       })

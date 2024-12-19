@@ -171,6 +171,10 @@ RQ_QUEUES = {
         "URL": AUTOT_CONFIG["REDIS_CON"],
         "DEFAULT_TIMEOUT": 360,
     },
+    "movie": {
+        "URL": AUTOT_CONFIG["REDIS_CON"],
+        "DEFAULT_TIMEOUT": 360,
+    },
 }
 
 CORS_ALLOWED_ORIGINS = [

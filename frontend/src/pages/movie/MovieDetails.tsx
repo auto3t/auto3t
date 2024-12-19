@@ -3,6 +3,7 @@ import useApi from '../../hooks/api'
 import ImageComponent, { ImageType } from '../../components/ImageComponent'
 import TimeComponent from '../../components/TimeComponent'
 import { useParams } from 'react-router-dom'
+import posterDefault from '../../../assets/poster-default.jpg'
 
 export type MovieType = {
   id: number
@@ -38,7 +39,7 @@ const MovieDetail: React.FC = () => {
 
   const getMoviePoster = (movieDetail: MovieType) => {
     if (movieDetail.image_movie?.image) return movieDetail.image_movie
-    return { image: '/poster-default.jpg' }
+    return { image: posterDefault }
   }
 
   return (

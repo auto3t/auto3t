@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import ImageComponent from './ImageComponent'
 import { MovieType } from '../pages/movie/MovieDetails'
+import posterDefault from '../../assets/poster-default.jpg'
 
 interface MovieTileInterface {
   movie: MovieType
@@ -9,7 +10,8 @@ interface MovieTileInterface {
 const MovieTile: React.FC<MovieTileInterface> = ({ movie }) => {
   const getMoviePoster = (movie: MovieType) => {
     if (movie.image_movie?.image) return movie.image_movie
-    return { image: '/poster-default.jpg' }
+    console.log(posterDefault)
+    return { image: posterDefault }
   }
 
   return (

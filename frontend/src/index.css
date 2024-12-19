@@ -247,10 +247,15 @@ button:hover {
   gap: 1rem;
 }
 
-.episode-items,
-.movie-items {
+.episode-items {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
+  gap: 1rem;
+}
+
+.movie-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(20%, 1fr));
   gap: 1rem;
 }
 

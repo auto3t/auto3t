@@ -10,7 +10,6 @@ interface MovieTileInterface {
 const MovieTile: React.FC<MovieTileInterface> = ({ movie }) => {
   const getMoviePoster = (movie: MovieType) => {
     if (movie.image_movie?.image) return movie.image_movie
-    console.log(posterDefault)
     return { image: posterDefault }
   }
 
@@ -22,7 +21,9 @@ const MovieTile: React.FC<MovieTileInterface> = ({ movie }) => {
           alt={'movie-poster-' + movie.name}
         />
         <div className="tile-description">
-          <h2>{movie.name}</h2>
+          <h2>
+            {movie.name} ({new Date(movie.release_date).getFullYear()})
+          </h2>
         </div>
       </div>
     </Link>

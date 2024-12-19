@@ -47,31 +47,33 @@ const MovieDetail: React.FC = () => {
       {movieDetail && (
         <>
           <div className="movie-detail">
-            <div className="movie-item">
-              <ImageComponent
-                image={getMoviePoster(movieDetail)}
-                alt="movie-poster"
-              />
-            </div>
-            <div className="movie-description">
-              <h1>{movieDetail.name}</h1>
-              <h3>{movieDetail.tagline}</h3>
-              <span className="smaller">
-                ID:{' '}
-                <a
-                  href={movieDetail.remote_server_url}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {movieDetail.remote_server_id}
-                </a>
-              </span>
-              <p>{movieDetail.description}</p>
-              <div className="tag-group">
-                <span className="tag-item">
-                  Release:{' '}
-                  <TimeComponent timestamp={movieDetail.release_date} />
+            <div className="movie-detail-header">
+              <div className="movie-poster">
+                <ImageComponent
+                  image={getMoviePoster(movieDetail)}
+                  alt="movie-poster"
+                />
+              </div>
+              <div className="movie-description">
+                <h1>{movieDetail.name}</h1>
+                <h3>{movieDetail.tagline}</h3>
+                <span className="smaller">
+                  ID:{' '}
+                  <a
+                    href={movieDetail.remote_server_url}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {movieDetail.remote_server_id}
+                  </a>
                 </span>
+                <p>{movieDetail.description}</p>
+                <div className="tag-group">
+                  <span className="tag-item">
+                    Release:{' '}
+                    <TimeComponent timestamp={movieDetail.release_date} />
+                  </span>
+                </div>
               </div>
             </div>
           </div>

@@ -93,6 +93,26 @@ class Movie(models.Model):
             self.image_movie.update(image_url)
 
 
+class MovieRelease(models.Model):
+    """track release of movie"""
+
+    RELEASE_TYPE = [
+        (1, "Premiere"),
+        (2, "Theatrical (limited)"),
+        (3, "Theatrical"),
+        (4, "Digital"),
+        (5, "Physical"),
+        (6, "TV"),
+    ]
+
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    country = models.CharField(max_length=2)
+    release_type = models.PositiveIntegerField(choices=RELEASE_TYPE)
+    release_date = models.DateTimeField()
+    release_lang = models.CharField(max_length=2, blank=True, null=True)
+    note = models.TextField(blank=True, null=True)
+
+
 @receiver(post_delete, sender=Movie)
 def delete_movie_image(sender, instance, **kwargs):  # pylint: disable=unused-argument
     """signal for deleting movie image"""

@@ -74,8 +74,19 @@ class MovieDBMovie:
             "description": response["overview"],
             "tagline": response["tagline"],
             "release_date": date.fromisoformat(response["release_date"]),
+            "status": self._parse_status(response),
         }
         return movie_data
+
+    @staticmethod
+    def _parse_status(response) -> str:
+        """parse status"""
+        status_options = Movie.MOVIE_STATUS
+        status_found = [i for i in status_options if i[1] == response["status"]]
+        if not status_found:
+            raise ValueError("did not find status choice")
+
+        return status_found[0][0]
 
     def get_collection(self, collection_id) -> Collection:
         """get collection"""

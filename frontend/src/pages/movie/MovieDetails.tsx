@@ -13,6 +13,7 @@ export type MovieType = {
   remote_server_url: string
   remote_server_id: string
   release_date: string
+  status_display: string
   image_movie?: ImageType
 }
 
@@ -72,6 +73,9 @@ const MovieDetail: React.FC = () => {
                   <span className="tag-item">
                     Release:{' '}
                     <TimeComponent timestamp={movieDetail.release_date} />
+                  </span>
+                  <span className="tag-item">
+                    {movieDetail?.status_display}
                   </span>
                 </div>
               </div>

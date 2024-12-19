@@ -45,6 +45,14 @@ class Collection(models.Model):
 class Movie(models.Model):
     """describes a movie"""
 
+    MOVIE_STATUS = [
+        ("r", "Rumored"),
+        ("p", "Planned"),
+        ("i", "In Production"),
+        ("p", "Post Production"),
+        ("r", "Released"),
+    ]
+
     remote_server_id = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     date_added = models.DateTimeField(auto_now_add=True)
@@ -57,6 +65,7 @@ class Movie(models.Model):
         Artwork, related_name="image_movie", on_delete=models.PROTECT, null=True, blank=True
     )
     collection = models.ForeignKey(Collection, on_delete=models.PROTECT, null=True, blank=True)
+    status = models.CharField(choices=MOVIE_STATUS, max_length=1, null=True, blank=True)
 
     def __str__(self):
         """movie string representation"""

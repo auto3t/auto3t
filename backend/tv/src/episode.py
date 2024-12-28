@@ -70,7 +70,7 @@ class EpisodeStatus:
             season_episodes = TVEpisode.objects.filter(season=season)
 
             for episode in season_episodes:
-                old_torrent = episode.torrent.magnet_hash
+                old_torrent = episode.torrent.magnet_hash if episode.torrent else None
                 old_status = episode.status
                 episode.torrent = torrent
                 episode.status = "d"

@@ -112,6 +112,9 @@ class MovieRelease(models.Model):
     release_lang = models.CharField(max_length=2, blank=True, null=True)
     note = models.TextField(blank=True, null=True)
 
+    class Meta:
+        unique_together = ("movie", "release_type")
+
 
 @receiver(post_delete, sender=Movie)
 def delete_movie_image(sender, instance, **kwargs):  # pylint: disable=unused-argument

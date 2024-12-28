@@ -1,9 +1,9 @@
 """movie import functionality"""
 
-from datetime import date
+from datetime import date, datetime
 
 from artwork.models import Artwork
-from movie.models import Collection, Movie
+from movie.models import Collection, Movie, MovieRelease
 from movie.src.movie_db_client import MovieDB
 
 
@@ -144,3 +144,62 @@ class MovieDBMovie:
     def _get_image_url(self, moviedb_file_path: str) -> str:
         """build URL from snipped"""
         return f"https://image.tmdb.org/t/p/original{moviedb_file_path}"
+
+    def get_releases(self):
+        """get releases for movie"""
+        response = self._get_remote_releases()
+        releases = self._parse_releases(response)
+        for release_data in releases:
+            try:
+                release_type = release_data["release_type"]
+                movie_release = MovieRelease.objects.get(
+                    movie__remote_server_id=self.movie_id, release_type=release_type
+                )
+            except MovieRelease.DoesNotExist:
+                movie_release = MovieRelease.objects.create(**release_data)
+                return movie_release
+
+            fields_changed = False
+            for key, value in release_data.items():
+                if getattr(movie_release, key) != value:
+                    setattr(movie_release, key, value)
+                    print(f"{movie_release.movie.name}: update [{key}] to [{value}]")
+                    fields_changed = True
+
+            if fields_changed:
+                movie_release.save()
+
+    def _get_remote_releases(self) -> dict:
+        """get remote releases"""
+        url = f"movie/{self.movie_id}/release_dates"
+        response = MovieDB().get(url)
+        if not response:
+            raise ValueError
+
+        return response
+
+    def _parse_releases(self, response: dict) -> list[dict]:
+        """parse releases by type"""
+        newest_releases: dict = {}
+
+        for country_release in response["results"]:
+            for release_data in country_release["release_dates"]:
+                release_type = release_data["type"]
+                release_date = datetime.fromisoformat(release_data["release_date"])
+
+                if newest_type := newest_releases.get(release_type):
+                    if newest_type["release_date"] < release_date:
+                        continue
+
+                release_data = {
+                    "country": country_release["iso_3166_1"],
+                    "release_type": release_type,
+                    "release_date": release_date,
+                    "release_lang": release_data["iso_639_1"],
+                    "note": release_data["note"],
+                }
+                newest_releases[release_type] = release_data
+
+        releases = list(newest_releases.values())
+
+        return releases

@@ -1,10 +1,11 @@
 """all movie views"""
 
-from movie.models import Collection, Movie
-from movie.serializers import CollectionSerializer, MovieSerializer
+from movie.models import Collection, Movie, MovieRelease
+from movie.serializers import CollectionSerializer, MovieReleaseSerializer, MovieSerializer
 from movie.src.movie_search import MovieId
 from movie.tasks import import_movie
 from rest_framework import viewsets
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -40,6 +41,16 @@ class MovieViewSet(viewsets.ModelViewSet):
         }
 
         return Response(message)
+
+    @action(detail=True, methods=["get"])
+    def releases(self, request, **kwargs):
+        """get movie release"""
+        movie = self.get_object()
+        movie_releases = MovieRelease.objects.filter(movie=movie)
+        if movie_releases:
+            serializer = MovieReleaseSerializer(movie_releases, many=True)
+            return Response(serializer.data)
+        return Response([])
 
 
 class MovieRemoteSearch(APIView):

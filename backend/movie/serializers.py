@@ -1,7 +1,7 @@
 """all movie serializers"""
 
 from artwork.serializers import ArtworkSerializer
-from movie.models import Collection, Movie
+from movie.models import Collection, Movie, MovieRelease
 from rest_framework import serializers
 
 
@@ -26,4 +26,12 @@ class MovieSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Movie
+        fields = "__all__"
+
+
+class MovieReleaseSerializer(serializers.ModelSerializer):
+    """serialize release"""
+
+    class Meta:
+        model = MovieRelease
         fields = "__all__"

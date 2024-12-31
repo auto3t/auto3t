@@ -1,6 +1,7 @@
 """all move models"""
 
 from artwork.models import Artwork
+from autot.models import log_change
 from django.db import models
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
@@ -9,6 +10,7 @@ from django.dispatch import receiver
 class Collection(models.Model):
     """describes a movie collection"""
 
+    TRACK_CHANGES = True
     remote_server_id = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
@@ -31,20 +33,21 @@ class Collection(models.Model):
             return
 
         if not self.image_collection:
-            print(f"add image_collection artwork: {image_url}")
             image_collection, _ = Artwork.objects.get_or_create(image_url=image_url)
             self.image_collection = image_collection
             self.save()
+            log_change(self, "u", "image_collection", new_value=image_url, comment="Added new image.")
             return
 
         if not self.image_collection.image_url == image_url:
-            print(f"update image_collection artwork: {image_url}")
+            log_change(self, "u", "image_collection", new_value=image_url, comment="Updated image.")
             self.image_collection.update(image_url)
 
 
 class Movie(models.Model):
     """describes a movie"""
 
+    TRACK_CHANGES = True
     MOVIE_STATUS = [
         ("r", "Rumored"),
         ("p", "Planned"),
@@ -82,20 +85,21 @@ class Movie(models.Model):
             return
 
         if not self.image_movie:
-            print(f"add image_movie artwork: {image_url}")
             image_movie, _ = Artwork.objects.get_or_create(image_url=image_url)
             self.image_movie = image_movie
             self.save()
+            log_change(self, "u", "image_movie", new_value=image_url, comment="Added new image")
             return
 
         if not self.image_movie.image_url == image_url:
-            print(f"update image_movie artwork: {image_url}")
             self.image_movie.update(image_url)
+            log_change(self, "u", "image_movie", new_value=image_url, comment="Updated new image")
 
 
 class MovieRelease(models.Model):
     """track release of movie"""
 
+    TRACK_CHANGES = True
     RELEASE_TYPE = [
         (1, "Premiere"),
         (2, "Theatrical (limited)"),
@@ -114,6 +118,11 @@ class MovieRelease(models.Model):
 
     class Meta:
         unique_together = ("movie", "release_type")
+
+    def __str__(self) -> str:
+        movie_str = f"{self.movie.name} ({self.movie.release_date.year})"
+        release_str = f"{self.get_release_type_display()} {self.release_date.date().isoformat()}"
+        return f"{movie_str} - {release_str}"
 
 
 @receiver(post_delete, sender=Movie)

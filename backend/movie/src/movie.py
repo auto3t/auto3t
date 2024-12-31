@@ -3,6 +3,7 @@
 from datetime import date, datetime
 
 from artwork.models import Artwork
+from autot.models import log_change
 from movie.models import Collection, Movie, MovieRelease
 from movie.src.movie_db_client import MovieDB
 
@@ -15,7 +16,8 @@ class MovieDBMovie:
 
     def validate(self) -> None:
         """import movie as needed"""
-        self.get_movie()
+        movie = self.get_movie()
+        self.get_releases(movie)
 
     def get_movie(self) -> Movie:
         """get or create moview"""
@@ -38,14 +40,14 @@ class MovieDBMovie:
                 movie.collection = collection
 
             movie.save()
-            print(f"created new movie: {movie.name}")
             return movie
 
         fields_changed = False
         for key, value in movie_data.items():
-            if getattr(movie, key) != value:
+            old_value = getattr(movie, key)
+            if old_value != value:
                 setattr(movie, key, value)
-                print(f"{movie.name}: update [{key}] to [{value}]")
+                log_change(movie, "u", field_name=key, old_value=old_value, new_value=value)
                 fields_changed = True
 
         if fields_changed:
@@ -104,14 +106,14 @@ class MovieDBMovie:
                 collection.image_collection.save()
 
             collection.save()
-            print(f"created new collection: {collection.name}")
             return collection
 
         fields_changed = False
         for key, value in collection_data.items():
-            if getattr(collection, key) != value:
+            old_value = getattr(collection, key)
+            if old_value != value:
+                log_change(collection, "u", field_name=key, old_value=old_value, new_value=value)
                 setattr(collection, key, value)
-                print(f"{collection.name}: update [{key}] to [{value}]")
                 fields_changed = True
 
         if fields_changed:
@@ -145,10 +147,10 @@ class MovieDBMovie:
         """build URL from snipped"""
         return f"https://image.tmdb.org/t/p/original{moviedb_file_path}"
 
-    def get_releases(self):
+    def get_releases(self, movie: Movie):
         """get releases for movie"""
         response = self._get_remote_releases()
-        releases = self._parse_releases(response)
+        releases = self._parse_releases(response, movie)
         for release_data in releases:
             try:
                 release_type = release_data["release_type"]
@@ -157,13 +159,14 @@ class MovieDBMovie:
                 )
             except MovieRelease.DoesNotExist:
                 movie_release = MovieRelease.objects.create(**release_data)
-                return movie_release
+                continue
 
             fields_changed = False
             for key, value in release_data.items():
-                if getattr(movie_release, key) != value:
+                old_value = getattr(movie_release, key)
+                if old_value != value:
+                    log_change(movie_release, "u", field_name=key, old_value=old_value, new_value=value)
                     setattr(movie_release, key, value)
-                    print(f"{movie_release.movie.name}: update [{key}] to [{value}]")
                     fields_changed = True
 
             if fields_changed:
@@ -178,7 +181,7 @@ class MovieDBMovie:
 
         return response
 
-    def _parse_releases(self, response: dict) -> list[dict]:
+    def _parse_releases(self, response: dict, movie: Movie) -> list[dict]:
         """parse releases by type"""
         newest_releases: dict = {}
 
@@ -192,6 +195,7 @@ class MovieDBMovie:
                         continue
 
                 release_data = {
+                    "movie": movie,
                     "country": country_release["iso_3166_1"],
                     "release_type": release_type,
                     "release_date": release_date,

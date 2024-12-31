@@ -220,6 +220,9 @@ class ActionLog(models.Model):
         elif content_class == "TVShow":
             reverse_api_url = reverse("show-detail", kwargs={"pk": self.object_id})
 
+        elif content_class == "Movie":
+            reverse_api_url = reverse("movie-detail", kwargs={"pk": self.object_id})
+
         if reverse_api_url:
             return reverse_api_url.lstrip("/api")
 

@@ -4,6 +4,7 @@ import ImageComponent, { ImageType } from '../../components/ImageComponent'
 import TimeComponent from '../../components/TimeComponent'
 import { useParams } from 'react-router-dom'
 import posterDefault from '../../../assets/poster-default.jpg'
+import MovieReleases from '../../components/MovieReleases'
 
 export type MovieType = {
   id: number
@@ -81,6 +82,7 @@ const MovieDetail: React.FC = () => {
               </div>
             </div>
           </div>
+          <MovieReleases movie_id={movieDetail.id} />
         </>
       )}
     </div>

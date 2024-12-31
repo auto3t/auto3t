@@ -32,6 +32,8 @@ class MovieSerializer(serializers.ModelSerializer):
 class MovieReleaseSerializer(serializers.ModelSerializer):
     """serialize release"""
 
+    release_type_display = serializers.CharField(source="get_release_type_display", read_only=True)
+
     class Meta:
         model = MovieRelease
         fields = "__all__"

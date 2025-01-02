@@ -21,9 +21,7 @@ const MovieTile: React.FC<MovieTileInterface> = ({ movie }) => {
           alt={'movie-poster-' + movie.name}
         />
         <div className="tile-description">
-          <h2>
-            {movie.name} ({new Date(movie.release_date).getFullYear()})
-          </h2>
+          <h2>{movie.name_display}</h2>
         </div>
       </div>
     </Link>

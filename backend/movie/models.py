@@ -72,12 +72,17 @@ class Movie(models.Model):
 
     def __str__(self):
         """movie string representation"""
-        return f"{self.name} ({self.release_date})"  # pylint: disable=no-member
+        return self.name_display
 
     @property
     def remote_server_url(self) -> str:
         """concat url"""
         return f"https://www.themoviedb.org/movie/{self.remote_server_id}"
+
+    @property
+    def name_display(self) -> str:
+        """display name"""
+        return f"{self.name} ({self.release_date.year})"
 
     def update_image_movie(self, image_url: str | None) -> None:
         """handle update with or without existing"""
@@ -120,9 +125,8 @@ class MovieRelease(models.Model):
         unique_together = ("movie", "release_type")
 
     def __str__(self) -> str:
-        movie_str = f"{self.movie.name} ({self.movie.release_date.year})"
         release_str = f"{self.get_release_type_display()} {self.release_date.date().isoformat()}"
-        return f"{movie_str} - {release_str}"
+        return f"{self.movie.name_display} - {release_str}"
 
 
 @receiver(post_delete, sender=Movie)

@@ -9,6 +9,7 @@ import MovieReleases from '../../components/MovieReleases'
 export type MovieType = {
   id: number
   name: string
+  name_display: string
   tagline: string
   description: string
   remote_server_url: string
@@ -57,7 +58,7 @@ const MovieDetail: React.FC = () => {
                 />
               </div>
               <div className="movie-description">
-                <h1>{movieDetail.name}</h1>
+                <h1>{movieDetail.name_display}</h1>
                 <h3>{movieDetail.tagline}</h3>
                 <span className="smaller">
                   ID:{' '}

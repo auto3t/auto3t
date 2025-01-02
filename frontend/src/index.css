@@ -284,6 +284,25 @@ button:hover {
   margin: 1rem;
 }
 
+.movie-release-table {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.movie-release-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.row-title {
+  border-bottom: 1px solid;
+}
+
+.movie-release-cell {
+  flex: 1;
+}
+
 .tag-group {
   display: flex;
   gap: 1rem;
@@ -295,6 +314,7 @@ button:hover {
   background-color: var(--accent-3);
   padding: 5px 10px;
   border-radius: 5px;
+  align-content: center;
 }
 
 .episode-detail-header {

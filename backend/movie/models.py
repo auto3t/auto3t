@@ -1,7 +1,7 @@
 """all move models"""
 
 from artwork.models import Artwork
-from autot.models import log_change
+from autot.models import Torrent, log_change
 from django.db import models
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
@@ -56,6 +56,15 @@ class Movie(models.Model):
         ("r", "Released"),
     ]
 
+    MOVIE_STATE = [
+        ("u", "Upcoming"),
+        ("s", "Searching"),
+        ("d", "Downloading"),
+        ("f", "Finished"),
+        ("a", "Archived"),
+        ("i", "Ignored"),
+    ]
+
     remote_server_id = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     date_added = models.DateTimeField(auto_now_add=True)
@@ -69,6 +78,11 @@ class Movie(models.Model):
     )
     collection = models.ForeignKey(Collection, on_delete=models.PROTECT, null=True, blank=True)
     status = models.CharField(choices=MOVIE_STATUS, max_length=1, null=True, blank=True)
+    state = models.CharField(choices=MOVIE_STATE, max_length=1, null=True, blank=True)
+    torrent = models.ManyToManyField(Torrent, related_name="torrent")
+
+    media_server_id = models.CharField(max_length=255, null=True, blank=True)
+    media_server_meta = models.JSONField(null=True, blank=True)
 
     def __str__(self):
         """movie string representation"""
@@ -99,6 +113,31 @@ class Movie(models.Model):
         if not self.image_movie.image_url == image_url:
             self.image_movie.update(image_url)
             log_change(self, "u", "image_movie", new_value=image_url, comment="Updated new image")
+
+    def add_magnet(self, magnet: str) -> None:
+        """add magnet to movie"""
+        if self.torrent.exists():
+            to_ignore = self.torrent.exclude(torrent_state__in=["u", "i"])
+            for torrent_to_ignore in to_ignore:
+                old_value = torrent_to_ignore.torrent_state
+                torrent_to_ignore.torrent_state = "i"
+                torrent_to_ignore.save()
+                log_change(
+                    self,
+                    action="u",
+                    field_name="torrent",
+                    old_value=old_value,
+                    new_value="i",
+                    comment="Ignored previous torrent.",
+                )
+
+        torrent, _ = Torrent.objects.get_or_create(magnet=magnet, torrent_type="m")
+        self.torrent.add(torrent)
+        self.state = "d"
+        self.media_server_id = None
+        self.media_server_meta = None
+        self.save()
+        log_change(self, action="c", field_name="torrent", new_value=torrent.magnet_hash)
 
 
 class MovieRelease(models.Model):

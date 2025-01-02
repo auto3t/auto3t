@@ -38,13 +38,22 @@ class Jackett(BaseIndexer):
     """implement jackett indexer"""
 
     CONFIG: ConfigType = get_config()
+    CATEGORY_MAP: dict[str, int] = {
+        "episode": 5000,
+        "season": 5000,
+        "movie": 2000,
+    }
 
-    def free_search(self, search_term: str, category=5000) -> list[dict]:
+    def free_search(self, search_term: str, category: str | None) -> list[dict]:
         """free form search"""
         base = self.CONFIG["JK_URL"]
         key = self.CONFIG["JK_API_KEY"]
         query = quote(search_term)
-        url = f"{base}/api/v2.0/indexers/all/results?apikey={key}&Query={query}&Category[]={category}"
+        url = f"{base}/api/v2.0/indexers/all/results?apikey={key}&Query={query}"
+        if category:
+            if jk_category := self.CATEGORY_MAP.get(category):
+                url += f"&Category[]={jk_category}"
+
         results = self.make_request(url)
         if results:
             self._cache_free_search(results)

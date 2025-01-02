@@ -1,5 +1,9 @@
 """all movie views"""
 
+import json
+
+from autot.src.redis_con import AutotRedis
+from autot.src.search import Jackett
 from movie.models import Collection, Movie, MovieRelease
 from movie.serializers import CollectionSerializer, MovieReleaseSerializer, MovieSerializer
 from movie.src.movie_search import MovieId
@@ -51,6 +55,31 @@ class MovieViewSet(viewsets.ModelViewSet):
             serializer = MovieReleaseSerializer(movie_releases, many=True)
             return Response(serializer.data)
         return Response([])
+
+    @action(detail=True, methods=["post"])
+    def torrent(self, request, **kwargs) -> Response:
+        """overwrite torrent on episode"""
+        movie = self.get_object()
+        data = request.data
+        if not data:
+            return Response({"message": "missing request body"}, status=400)
+
+        search_id = data.get("search_id")
+        if not data:
+            return Response({"message": "missing search_id"}, status=400)
+
+        search_result = AutotRedis().get_message(f"search:{search_id}")
+        if not search_result:
+            return Response({"message": "did not find search result"}, status=404)
+
+        result = json.loads(search_result)
+        magnet = Jackett().extract_magnet(result)
+        if not magnet:
+            return Response({"message": "failed to extract magnet url"}, status=400)
+
+        movie.add_magnet(magnet)
+
+        return Response(result)
 
 
 class MovieRemoteSearch(APIView):

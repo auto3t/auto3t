@@ -35,7 +35,10 @@ const ManualSearch: React.FC<ManualSearchInterface> = ({
   const handleSearch = async () => {
     setIsSearching(true)
     setSearchResults(null)
-    const data = await post('torrent/search/', { search_term: searchTerm })
+    const data = await post('torrent/search/', {
+      search_term: searchTerm,
+      category: searchType,
+    })
     if (data) {
       setSearchResults(data)
     } else {
@@ -50,10 +53,19 @@ const ManualSearch: React.FC<ManualSearchInterface> = ({
 
   const handleDownload = async (resultId: string) => {
     console.log(resultId)
+    let searchCategory = null
+    if (searchType == 'movie') {
+      searchCategory = 'movie'
+    } else {
+      searchCategory = 'tv'
+    }
     try {
-      const data = await post(`tv/${searchType}/${searchTypeId}/torrent/`, {
-        search_id: resultId,
-      })
+      const data = await post(
+        `${searchCategory}/${searchType}/${searchTypeId}/torrent/`,
+        {
+          search_id: resultId,
+        },
+      )
       console.log(data)
     } catch (error) {
       console.error('failed to add torrent', error)

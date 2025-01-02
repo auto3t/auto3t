@@ -62,7 +62,11 @@ class TorrentViewSet(viewsets.ReadOnlyModelViewSet):
         if not search_term:
             return Response({"message": "missing search_term"}, status=400)
 
-        results = Jackett().free_search(search_term, category=5000)
+        category = data.get("category")
+        if not category:
+            return Response({"message": "missing category"}, status=400)
+
+        results = Jackett().free_search(search_term, category=category)
         return Response(results)
 
     @action(detail=True, methods=["get"])

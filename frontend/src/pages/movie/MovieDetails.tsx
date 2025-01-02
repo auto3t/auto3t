@@ -5,6 +5,8 @@ import TimeComponent from '../../components/TimeComponent'
 import { useParams } from 'react-router-dom'
 import posterDefault from '../../../assets/poster-default.jpg'
 import MovieReleases from '../../components/MovieReleases'
+import ManualSearch from '../../components/ManualSearch'
+import Torrent, { TorrentType } from '../../components/Torrent'
 
 export type MovieType = {
   id: number
@@ -17,6 +19,7 @@ export type MovieType = {
   release_date: string
   status_display: string
   image_movie?: ImageType
+  torrent: TorrentType[]
 }
 
 const MovieDetail: React.FC = () => {
@@ -84,6 +87,15 @@ const MovieDetail: React.FC = () => {
             </div>
           </div>
           <MovieReleases movie_id={movieDetail.id} />
+          {movieDetail.torrent?.length > 0 &&
+            movieDetail.torrent?.map((torrent) => (
+              <Torrent key={torrent.id} torrent={torrent} />
+            ))}
+          <ManualSearch
+            searchType="movie"
+            searchTypeId={movieDetail.id}
+            searchDefault={movieDetail.name_display}
+          />
         </>
       )}
     </div>

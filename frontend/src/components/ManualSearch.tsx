@@ -3,7 +3,7 @@ import useApi from '../hooks/api'
 import TimeComponent from './TimeComponent'
 import { formatBytes } from '../utils'
 
-export type TorrentSearchType = {
+export type ManualSearchType = {
   Id: string
   Title: string
   Tracker: string
@@ -14,13 +14,13 @@ export type TorrentSearchType = {
   PublishDate: string
 }
 
-interface TorrentSearchInterface {
+interface ManualSearchInterface {
   searchType: string
   searchTypeId: number
   searchDefault: string
 }
 
-const TorrentSearch: React.FC<TorrentSearchInterface> = ({
+const ManualSearch: React.FC<ManualSearchInterface> = ({
   searchType,
   searchTypeId,
   searchDefault = '',
@@ -28,9 +28,9 @@ const TorrentSearch: React.FC<TorrentSearchInterface> = ({
   const { post, error } = useApi()
   const [searchTerm, setSearchTerm] = useState('')
   const [isSearching, setIsSearching] = useState(false)
-  const [searchResults, setSearchResults] = useState<
-    TorrentSearchType[] | null
-  >(null)
+  const [searchResults, setSearchResults] = useState<ManualSearchType[] | null>(
+    null,
+  )
 
   const handleSearch = async () => {
     setIsSearching(true)
@@ -115,4 +115,4 @@ const TorrentSearch: React.FC<TorrentSearchInterface> = ({
   )
 }
 
-export default TorrentSearch
+export default ManualSearch

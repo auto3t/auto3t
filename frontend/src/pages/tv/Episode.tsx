@@ -6,7 +6,7 @@ import TimeComponent from '../../components/TimeComponent'
 import useEpsiodeDetailStore from '../../stores/EpisodeDetailStore'
 import EpisodeNav from '../../components/EpisodeNav'
 import Torrent from '../../components/Torrent'
-import TorrentSearch from '../../components/TorrentSearch'
+import ManualSearch from '../../components/ManualSearch'
 import { formatBitrate, formatBytes, formatDuration } from '../../utils'
 import { EpisodeType } from '../../components/Episode'
 
@@ -117,7 +117,7 @@ const TVEpisode: React.FC = () => {
               </Link>
             </>
           )}
-          <TorrentSearch
+          <ManualSearch
             searchType="episode"
             searchTypeId={episodeDetail.id}
             searchDefault={episodeDetail.search_query}

@@ -5,7 +5,7 @@ import useBulkUpdateStore from '../stores/EpisodeBulkUpdateStore'
 import useSelectedSeasonStore from '../stores/SeasonSelectedStore'
 import AddKeywordComponent from './AddKeywordComponent'
 import KeywordTableCompnent from './KeywordTableComponent'
-import TorrentSearch from './TorrentSearch'
+import ManualSearch from './ManualSearch'
 import SeasonEpisodeSummary from './SeasonEpisodeSummary'
 
 interface SeasonMetaDataInterface {
@@ -104,7 +104,7 @@ const SeasonMetaData: React.FC<SeasonMetaDataInterface> = ({
               refreshCallback={() => fetchEpisodes(selectedSeason.id)}
             />
             <SeasonEpisodeSummary />
-            <TorrentSearch
+            <ManualSearch
               searchType="season"
               searchTypeId={selectedSeason.id}
               searchDefault={selectedSeason.search_query}

@@ -59,13 +59,13 @@ class MovieViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["post"])
     def torrent(self, request, **kwargs) -> Response:
         """overwrite torrent on episode"""
-        movie = self.get_object()
+        movie: Movie = self.get_object()
         data = request.data
         if not data:
             return Response({"message": "missing request body"}, status=400)
 
         search_id = data.get("search_id")
-        if not data:
+        if not search_id:
             return Response({"message": "missing search_id"}, status=400)
 
         search_result = AutotRedis().get_message(f"search:{search_id}")

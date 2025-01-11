@@ -7,6 +7,7 @@ from autot.models import Torrent, log_change
 from autot.src.config import ConfigType, get_config
 from autot.src.download import Transmission
 from django.db.models import QuerySet
+from movie.models import Movie
 from transmission_rpc.torrent import Torrent as TransmissionTorrent
 from tv.models import TVEpisode
 
@@ -42,6 +43,9 @@ class Archiver:
             episodes = TVEpisode.objects.filter(torrent=torrent).exclude(status="f")
             for episode in episodes:
                 self._archive_episode(tm_torrent, episode)
+        elif torrent.torrent_type == "m":
+            movie = Movie.objects.get(torrent=torrent)
+            self._archive_movie(tm_torrent, movie)
         else:
             raise NotImplementedError
 
@@ -74,6 +78,40 @@ class Archiver:
                 continue
 
             is_valid_path = episode.is_valid_path(torrent_file.name.lower())
+            if is_valid_path:
+                return torrent_file.name
+
+        raise FileNotFoundError(f"didn't find expected media file in {tm_torrent}")
+
+    def _archive_movie(self, tm_torrent, movie) -> None:
+        """archive movie"""
+        filename = self._get_valid_movie_file(tm_torrent, movie)
+        download_path: Path = self.CONFIG["TM_BASE_FOLDER"] / filename
+        if not download_path.exists():
+            raise FileNotFoundError(f"didn't find expected {str(download_path)}")
+
+        movie_path = movie.get_archive_path(suffix=download_path.suffix)
+        archive_path = self.CONFIG["MOVIE_BASE_FOLDER"] / movie_path
+        archive_path.parent.mkdir(parents=True, exist_ok=True)
+        shutil.move(download_path, archive_path, copy_function=shutil.copyfile)
+        old_state = movie.state
+        movie.state = "f"
+        movie.save()
+        log_change(movie, "u", field_name="state", old_value=old_state, new_value="f")
+
+    def _get_valid_movie_file(self, tm_torrent: TransmissionTorrent, movie: Movie) -> str:
+        """get valid media file"""
+        for torrent_file in tm_torrent.get_files():
+            if torrent_file.size < self.CONFIG["MEDIA_MIN_SIZE"]:
+                continue
+
+            if torrent_file.name.split(".")[-1] not in self.CONFIG["MEDIA_EXT"]:
+                continue
+
+            if "trailer" in torrent_file.name.lower():
+                continue
+
+            is_valid_path = movie.is_valid_path(torrent_file.name.lower().replace(".", " "))
             if is_valid_path:
                 return torrent_file.name
 

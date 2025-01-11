@@ -1,10 +1,14 @@
 """all movie tasks"""
 
-from autot.tasks import download_thumbnails, media_server_identify
+from datetime import timedelta
+
+from autot.src.download import Transmission
+from autot.tasks import download_thumbnails, download_watcher, media_server_identify
 from django_rq import job
 from django_rq.queues import get_queue
 from movie.models import Movie
 from movie.src.movie import MovieDBMovie
+from movie.src.movie_status import MovieStatus
 
 
 @job
@@ -18,6 +22,7 @@ def refresh_all_movies() -> None:
         jobs.append(refresh_job)
 
     if jobs:
+        queue.enqueue(refresh_status, depends_on=jobs)
         queue.enqueue(download_thumbnails, depends_on=jobs)
 
 
@@ -34,3 +39,13 @@ def import_movie(remote_server_id: str) -> None:
 def refresh_movie(remote_server_id: str) -> None:
     """job to refresh a single movie"""
     MovieDBMovie(remote_server_id).validate()
+
+
+@job("movie")
+def refresh_status() -> None:
+    """refresh movie status"""
+    found_magnets = MovieStatus().refresh()
+    if found_magnets:
+        Transmission().add_all()
+        queue = get_queue("movie")
+        queue.enqueue_in(timedelta(seconds=60), download_watcher)

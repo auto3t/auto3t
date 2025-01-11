@@ -1,5 +1,7 @@
 """all move models"""
 
+from pathlib import Path
+
 from artwork.models import Artwork
 from autot.models import Torrent, log_change
 from django.db import models
@@ -138,6 +140,24 @@ class Movie(models.Model):
         self.media_server_meta = None
         self.save()
         log_change(self, action="c", field_name="torrent", new_value=torrent.magnet_hash)
+
+    def get_archive_path(self, suffix: str | None = None) -> Path:
+        """build archive path"""
+        path = Path(str(self.release_date.year)) / self.name_display / self.name_display
+        if suffix:
+            path = Path(f"{path}{suffix}")
+
+        return path
+
+    def is_valid_path(self, path: str) -> bool:
+        """check if path is valid"""
+        movie_search = self.name.lower().replace(".", "").replace(":", "")
+        year_str = str(self.release_date.year)
+
+        if movie_search in path and year_str in path:
+            return True
+
+        return False
 
 
 class MovieRelease(models.Model):

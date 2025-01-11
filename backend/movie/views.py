@@ -7,7 +7,7 @@ from autot.src.search import Jackett
 from movie.models import Collection, Movie, MovieRelease
 from movie.serializers import CollectionSerializer, MovieReleaseSerializer, MovieSerializer
 from movie.src.movie_search import MovieId
-from movie.tasks import import_movie
+from movie.tasks import import_movie, refresh_status
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -78,6 +78,7 @@ class MovieViewSet(viewsets.ModelViewSet):
             return Response({"message": "failed to extract magnet url"}, status=400)
 
         movie.add_magnet(magnet)
+        refresh_status.delay()
 
         return Response(result)
 

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import ImageComponent from './ImageComponent'
 import { MovieType } from '../pages/movie/MovieDetails'
 import posterDefault from '../../assets/poster-default.jpg'
+import ProgressBar from './ProgressBar'
 
 interface MovieTileInterface {
   movie: MovieType
@@ -16,10 +17,13 @@ const MovieTile: React.FC<MovieTileInterface> = ({ movie }) => {
   return (
     <Link to={`movie/${movie.id}`}>
       <div className="movie-item">
-        <ImageComponent
-          image={getMoviePoster(movie)}
-          alt={'movie-poster-' + movie.name}
-        />
+        <div className="image-wrap">
+          <ImageComponent
+            image={getMoviePoster(movie)}
+            alt={'movie-poster-' + movie.name}
+          />
+          <ProgressBar torrents={movie?.torrent} />
+        </div>
         <div className="tile-description">
           <h2>{movie.name_display}</h2>
         </div>

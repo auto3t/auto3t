@@ -26,6 +26,7 @@ const MovieDetail: React.FC = () => {
   const { id } = useParams()
   const { get } = useApi()
   const [movieDetail, setMovieDetail] = useState<MovieType | null>(null)
+  const [movieRefresh, setMovieRefresh] = useState(false)
 
   const fetchMovie = useCallback(
     async (id: number) => {
@@ -41,7 +42,8 @@ const MovieDetail: React.FC = () => {
 
   useEffect(() => {
     fetchMovie(parseInt(id || '0'))
-  }, [id])
+    setMovieRefresh(false)
+  }, [id, movieRefresh])
 
   const getMoviePoster = (movieDetail: MovieType) => {
     if (movieDetail.image_movie?.image) return movieDetail.image_movie
@@ -87,10 +89,14 @@ const MovieDetail: React.FC = () => {
             </div>
           </div>
           <MovieReleases movie_id={movieDetail.id} />
-          {movieDetail.torrent?.length > 0 &&
-            movieDetail.torrent?.map((torrent) => (
-              <Torrent key={torrent.id} torrent={torrent} />
-            ))}
+          {movieDetail.torrent?.length > 0 && (
+            <>
+              <h2>Torrents</h2>
+              {movieDetail.torrent?.map((torrent) => (
+                <Torrent key={torrent.id} torrent={torrent} />
+              ))}
+            </>
+          )}
           <ManualSearch
             searchType="movie"
             searchTypeId={movieDetail.id}

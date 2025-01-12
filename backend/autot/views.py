@@ -9,7 +9,7 @@ from autot.serializers import (
     TorrentSerializer,
 )
 from autot.src.search import Jackett
-from rest_framework import viewsets
+from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
@@ -45,7 +45,12 @@ class SearchWordView(viewsets.ModelViewSet):
     queryset = SearchWord.objects.all().order_by("category__name")
 
 
-class TorrentViewSet(viewsets.ReadOnlyModelViewSet):
+class TorrentViewSet(
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet,
+):
     """get torrent/s"""
 
     serializer_class = TorrentSerializer

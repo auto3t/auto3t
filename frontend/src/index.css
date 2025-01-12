@@ -261,7 +261,8 @@ button:hover {
 
 .show-detail,
 .season-detail,
-.movie-detail {
+.movie-detail,
+.torrent-detail {
   padding: 1rem;
   margin: 1rem 0;
   border: var(--accent-1) solid 2px;
@@ -391,4 +392,8 @@ button:hover {
 .keyword-table td:nth-child(1),
 .keyword-table td:nth-child(2) {
   min-width: 150px;
+}
+
+.torrent-item {
+  margin-bottom: 1rem;
 }

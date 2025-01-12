@@ -123,6 +123,7 @@ class Movie(models.Model):
             for torrent_to_ignore in to_ignore:
                 old_value = torrent_to_ignore.torrent_state
                 torrent_to_ignore.torrent_state = "i"
+                torrent_to_ignore.progress = None
                 torrent_to_ignore.save()
                 log_change(
                     self,

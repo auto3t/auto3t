@@ -29,7 +29,7 @@ def refresh_all_shows() -> None:
 @job("show")
 def import_show(remote_server_id: str) -> None:
     """import new show"""
-    queue = get_queue("show")
+    queue = get_queue("default")
     refresh_job = refresh_show.delay(remote_server_id)
     queue.enqueue(media_server_identify, depends_on=refresh_job)
     download_thumbnails.delay()
@@ -47,5 +47,5 @@ def refresh_status() -> None:
     found_magnets = EpisodeStatus().refresh()
     if found_magnets:
         Transmission().add_all()
-        queue = get_queue("show")
+        queue = get_queue("default")
         queue.enqueue_in(timedelta(seconds=60), download_watcher)

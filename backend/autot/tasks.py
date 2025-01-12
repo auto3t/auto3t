@@ -6,9 +6,9 @@ from datetime import timedelta
 from artwork.models import Artwork
 from autot.src.archive import Archiver
 from autot.src.download import Transmission
+from autot.src.media_server import EpisodeIdentify, MediaServerIdentify, MovieIdentify
 from django_rq import job
 from django_rq.queues import get_queue
-from tv.src.media_server import MediaServerEpisode
 
 logger = logging.getLogger("django")
 
@@ -25,39 +25,39 @@ def is_pending(queue_name: str, func_name: str) -> bool:
     return False
 
 
-@job("show")
+@job
 def run_archiver() -> None:
     """archive torrents"""
     archived = Archiver().archive()
     if archived:
-        queue = get_queue("show")
+        queue = get_queue("default")
         queue.enqueue_in(timedelta(seconds=60), media_server_identify)
 
 
-@job("show")
+@job
 def download_watcher() -> None:
     """watch download queue"""
-    if is_pending("show", "download_watcher"):
+    if is_pending("default", "download_watcher"):
         logger.info("download_watcher job is already scheduled, exiting...")
         return
 
     needs_checking, needs_archiving = Transmission().update_state()
     if needs_checking:
-        queue = get_queue("show")
+        queue = get_queue("default")
         queue.enqueue_in(timedelta(seconds=60), download_watcher)
 
     if needs_archiving:
         run_archiver.delay()
 
 
-@job("show")
+@job
 def media_server_identify() -> None:
     """identify in media server"""
-    handler = MediaServerEpisode()
-    handler.identify()
+    EpisodeIdentify().identify()
+    MovieIdentify().identify()
 
-    if handler.needs_matching():
-        queue = get_queue("show")
+    if MediaServerIdentify().needs_matching():
+        queue = get_queue("default")
         queue.enqueue_in(timedelta(seconds=60), media_server_identify)
 
 

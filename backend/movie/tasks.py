@@ -29,7 +29,7 @@ def refresh_all_movies() -> None:
 @job("movie")
 def import_movie(remote_server_id: str) -> None:
     """import new movie"""
-    queue = get_queue("movie")
+    queue = get_queue("default")
     refresh_job = refresh_movie.delay(remote_server_id)
     queue.enqueue(media_server_identify, depends_on=refresh_job)
     download_thumbnails.delay()
@@ -47,5 +47,5 @@ def refresh_status() -> None:
     found_magnets = MovieStatus().refresh()
     if found_magnets:
         Transmission().add_all()
-        queue = get_queue("movie")
+        queue = get_queue("default")
         queue.enqueue_in(timedelta(seconds=60), download_watcher)

@@ -78,7 +78,7 @@ const ManualSearch: React.FC<ManualSearchInterface> = ({
 
   return (
     <div className="manual-search">
-      <h3>Manual Search</h3>
+      <h2>Manual Search</h2>
       <input
         type="text"
         value={searchTerm}

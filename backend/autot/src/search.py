@@ -105,7 +105,9 @@ class Jackett(BaseIndexer):
             hex_hash = md5(json.dumps(result).encode()).digest().hex()
             result["Id"] = hex_hash
 
-        return results
+        results_sorted = sorted(results, key=lambda x: x["Gain"], reverse=True)
+
+        return results_sorted
 
     def extract_magnet(self, result: dict) -> str | None:
         """extract magnet from list or results"""
@@ -136,9 +138,7 @@ class Jackett(BaseIndexer):
         if not valid_magnets:
             return None
 
-        sorted_magnets = sorted(valid_magnets, key=lambda x: x["Gain"], reverse=True)
-
-        return sorted_magnets
+        return valid_magnets
 
     @staticmethod
     def _filter_magnets(result_item: dict, to_search: TVEpisode | TVSeason) -> bool:

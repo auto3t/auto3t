@@ -89,11 +89,15 @@ const MovieDetail: React.FC = () => {
             </div>
           </div>
           <MovieReleases movie_id={movieDetail.id} />
-          {movieDetail.torrent?.length > 0 && (
+          {movieDetail.torrent.length > 0 && (
             <>
               <h2>Torrents</h2>
               {movieDetail.torrent?.map((torrent) => (
-                <Torrent key={torrent.id} torrent={torrent} />
+                <Torrent
+                  key={torrent.id}
+                  torrent={torrent}
+                  setMovieRefresh={setMovieRefresh}
+                />
               ))}
             </>
           )}

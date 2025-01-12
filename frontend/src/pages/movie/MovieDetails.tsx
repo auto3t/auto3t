@@ -96,7 +96,7 @@ const MovieDetail: React.FC = () => {
                 <Torrent
                   key={torrent.id}
                   torrent={torrent}
-                  setMovieRefresh={setMovieRefresh}
+                  setRefresh={setMovieRefresh}
                 />
               ))}
             </>

@@ -4,7 +4,7 @@ import TimeComponent from './TimeComponent'
 import { TorrentType } from './Torrent'
 import { SeasonType } from './Season'
 
-type MediaServerMetaType = {
+export type MediaServerMetaType = {
   width: number
   height: number
   codec: string

@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import useApi from '../../hooks/api'
 import ImageComponent from '../../components/ImageComponent'
@@ -7,12 +7,13 @@ import useEpsiodeDetailStore from '../../stores/EpisodeDetailStore'
 import EpisodeNav from '../../components/EpisodeNav'
 import Torrent from '../../components/Torrent'
 import ManualSearch from '../../components/ManualSearch'
-import { formatBitrate, formatBytes, formatDuration } from '../../utils'
 import { EpisodeType } from '../../components/Episode'
+import MediaServerDetail from '../../components/MediaServerDetail'
 
 const TVEpisode: React.FC = () => {
   const { id } = useParams()
   const { get } = useApi()
+  const [episodeRefresh, setEpisodeRefresh] = useState(false)
 
   const { episodeDetail, setEpisodeDetail, episodeImage, setEpisodeImage } =
     useEpsiodeDetailStore()
@@ -34,7 +35,7 @@ const TVEpisode: React.FC = () => {
       }
     }
     fetchEpisode()
-  }, [id])
+  }, [id, episodeRefresh])
 
   return (
     <div>
@@ -71,51 +72,16 @@ const TVEpisode: React.FC = () => {
           </div>
           <EpisodeNav currentEpisodeId={episodeDetail.id} />
           {episodeDetail?.torrent && (
-            <Torrent torrent={episodeDetail.torrent} />
+            <Torrent
+              torrent={episodeDetail.torrent}
+              setRefresh={setEpisodeRefresh}
+            />
           )}
           {episodeDetail?.media_server_id && (
-            <>
-              <h2>File Meta Data</h2>
-              <table>
-                <tbody>
-                  <tr>
-                    <td>Codec</td>
-                    <td>{episodeDetail.media_server_meta.codec}</td>
-                  </tr>
-                  <tr>
-                    <td>Width</td>
-                    <td>{episodeDetail.media_server_meta.width}</td>
-                  </tr>
-                  <tr>
-                    <td>Height</td>
-                    <td>{episodeDetail.media_server_meta.height}</td>
-                  </tr>
-                  <tr>
-                    <td>Duration</td>
-                    <td>
-                      {formatDuration(episodeDetail.media_server_meta.duration)}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Size</td>
-                    <td>{formatBytes(episodeDetail.media_server_meta.size)}</td>
-                  </tr>
-                  <tr>
-                    <td>Bitrate</td>
-                    <td>
-                      {formatBitrate(episodeDetail.media_server_meta.bitrate)}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>FPS</td>
-                    <td>{episodeDetail.media_server_meta.fps.toFixed(2)}</td>
-                  </tr>
-                </tbody>
-              </table>
-              <Link to={episodeDetail.media_server_url} target="_blank">
-                Open
-              </Link>
-            </>
+            <MediaServerDetail
+              mediaServerDetail={episodeDetail.media_server_meta}
+              mediaServerURL={episodeDetail.media_server_url}
+            />
           )}
           <ManualSearch
             searchType="episode"

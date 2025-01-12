@@ -13,10 +13,10 @@ export type TorrentType = {
 
 interface TorrentInterface {
   torrent: TorrentType
-  setMovieRefresh: (arg0: boolean) => void
+  setRefresh: (arg0: boolean) => void
 }
 
-const Torrent: React.FC<TorrentInterface> = ({ torrent, setMovieRefresh }) => {
+const Torrent: React.FC<TorrentInterface> = ({ torrent, setRefresh }) => {
   const { del } = useApi()
   const [isExpanded, setIsExpanded] = useState(false)
   const [deleteConfirm, setDeleteConfirm] = useState(false)
@@ -28,7 +28,7 @@ const Torrent: React.FC<TorrentInterface> = ({ torrent, setMovieRefresh }) => {
   const handleDelete = async () => {
     try {
       await del(`torrent/${torrent.id}/`)
-      setMovieRefresh(true)
+      setRefresh(true)
     } catch {
       console.error('failed to delete torrent')
     }

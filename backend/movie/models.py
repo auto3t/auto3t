@@ -58,7 +58,7 @@ class Movie(models.Model):
         ("r", "Released"),
     ]
 
-    MOVIE_STATE = [
+    MOVIE_STATUS = [
         ("u", "Upcoming"),
         ("s", "Searching"),
         ("d", "Downloading"),
@@ -80,7 +80,7 @@ class Movie(models.Model):
     )
     collection = models.ForeignKey(Collection, on_delete=models.PROTECT, null=True, blank=True)
     production_state = models.CharField(choices=PRODUCTION_STATE, max_length=1, null=True, blank=True)
-    state = models.CharField(choices=MOVIE_STATE, max_length=1, null=True, blank=True)
+    status = models.CharField(choices=MOVIE_STATUS, max_length=1, null=True, blank=True)
     torrent = models.ManyToManyField(Torrent, related_name="torrent")
 
     media_server_id = models.CharField(max_length=255, null=True, blank=True)
@@ -136,7 +136,7 @@ class Movie(models.Model):
 
         torrent, _ = Torrent.objects.get_or_create(magnet=magnet, torrent_type="m")
         self.torrent.add(torrent)
-        self.state = "d"
+        self.status = "d"
         self.media_server_id = None
         self.media_server_meta = None
         self.save()

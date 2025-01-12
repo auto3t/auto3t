@@ -94,10 +94,10 @@ class Archiver:
         archive_path = self.CONFIG["MOVIE_BASE_FOLDER"] / movie_path
         archive_path.parent.mkdir(parents=True, exist_ok=True)
         shutil.move(download_path, archive_path, copy_function=shutil.copyfile)
-        old_state = movie.state
-        movie.state = "f"
+        old_status = movie.status
+        movie.status = "f"
         movie.save()
-        log_change(movie, "u", field_name="state", old_value=old_state, new_value="f")
+        log_change(movie, "u", field_name="status", old_value=old_status, new_value="f")
 
     def _get_valid_movie_file(self, tm_torrent: TransmissionTorrent, movie: Movie) -> str:
         """get valid media file"""

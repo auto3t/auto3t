@@ -50,7 +50,7 @@ class Movie(models.Model):
     """describes a movie"""
 
     TRACK_CHANGES = True
-    MOVIE_STATUS = [
+    PRODUCTION_STATE = [
         ("r", "Rumored"),
         ("p", "Planned"),
         ("i", "In Production"),
@@ -79,7 +79,7 @@ class Movie(models.Model):
         Artwork, related_name="image_movie", on_delete=models.PROTECT, null=True, blank=True
     )
     collection = models.ForeignKey(Collection, on_delete=models.PROTECT, null=True, blank=True)
-    status = models.CharField(choices=MOVIE_STATUS, max_length=1, null=True, blank=True)
+    production_state = models.CharField(choices=PRODUCTION_STATE, max_length=1, null=True, blank=True)
     state = models.CharField(choices=MOVIE_STATE, max_length=1, null=True, blank=True)
     torrent = models.ManyToManyField(Torrent, related_name="torrent")
 

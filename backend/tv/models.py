@@ -322,16 +322,12 @@ class TVSeason(BaseModel):
     def add_magnet(self, magnet: str, tm_instance: "Transmission") -> None:
         """add magnet to all episodes in season"""
         episodes = TVEpisode.objects.filter(season=self)
-        to_cancel = Torrent.objects.filter(torrent_tv__in=episodes).distinct()
-        if to_cancel:
-            for torrent in to_cancel:
-                tm_instance.cancel(torrent)
 
         for episode in episodes:
-            episode.add_magnet(magnet)
+            episode.add_magnet(magnet, torrent_type="s")
 
         episodes.update(status="d", media_server_id=None, media_server_meta=None)
-        log_change(self, "c", comment=f"Added season Torrent with hash {torrent.magnet_hash}")
+        log_change(self, "c", comment="Added season Torrent.")
 
     def is_valid_path(self, path) -> bool:
         """check for valid season path"""
@@ -498,13 +494,13 @@ class TVEpisode(BaseModel):
         self.media_server_meta = None
         self.save()
 
-    def add_magnet(self, magnet) -> None:
+    def add_magnet(self, magnet, torrent_type="e") -> None:
         """add magnet to episode"""
         to_cancel = self.torrent.exclude(torrent_state="i")
         for torrent in to_cancel:
             Transmission().cancel(torrent)
 
-        torrent, _ = Torrent.objects.get_or_create(magnet=magnet, torrent_type="e")
+        torrent, _ = Torrent.objects.get_or_create(magnet=magnet, torrent_type=torrent_type)
         self.torrent.add(torrent)
         self.status = "d"
         self.media_server_id = None

@@ -66,20 +66,12 @@ class EpisodeStatus:
             if not magnet:
                 continue
 
-            torrent, _ = Torrent.objects.get_or_create(magnet=magnet, torrent_type="s")
             season_episodes = TVEpisode.objects.filter(season=season)
-
             for episode in season_episodes:
-                old_torrent = episode.torrent.magnet_hash if episode.torrent else None
-                old_status = episode.status
-                episode.torrent = torrent
-                episode.status = "d"
-                episode.save()
-                log_change(episode, "c", field_name="torrent", old_value=old_torrent, new_value=torrent.magnet_hash)
-                log_change(episode, "c", field_name="status", old_value=old_status, new_value="d")
+                episode.add_magnet(magnet)
 
             found_magnets = True
-            log_change(season, "c", comment=f"Added magnet {torrent.magnet_hash} for season episodes")
+            log_change(season, "c", comment="Added magnet for season episodes")
 
         return found_magnets
 

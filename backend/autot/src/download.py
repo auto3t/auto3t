@@ -66,18 +66,30 @@ class Transmission(DownloaderBase):
 
     def cancel(self, torrent: Torrent) -> None:
         """cancel and reset torrent"""
-        episodes = TVEpisode.objects.filter(torrent=torrent)
-        for episode in episodes:
-            episode.torrent = None
-            episode.status = None
-            episode.media_server_id = None
-            episode.save()
-            log_change(episode, "u", comment=f"Cancel Torrent Download: {torrent.magnet_hash}")
+        if torrent.torrent_type in ["e", "s"]:
+            self._cancel_episode(torrent)
+        elif torrent.torrent_type == "m":
+            raise NotImplementedError
 
         to_delete = self.get_single(torrent)
         if to_delete:
             self.delete(to_delete)
             torrent.delete()
+
+    def _cancel_episode(self, torrent: Torrent) -> None:
+        """cancel episode torrents"""
+        episodes = TVEpisode.objects.filter(torrent=torrent)
+        for episode in episodes:
+            episode.torrent.update(torrent_state="i")
+            episode_torrents = episode.torrent.filter(torrent_state="i")
+            for episode_torrent in episode_torrents:
+                episode_torrent.torrent_state = "i"
+                episode_torrent.save()
+                log_change(episode, "u", comment=f"Cancel Torrent Download: {episode_torrent.magnet_hash}")
+
+            episode.status = None
+            episode.media_server_id = None
+            episode.save()
 
     def delete(self, torrent: TransmissionTorrent) -> None:
         """delete torrent"""

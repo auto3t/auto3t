@@ -3,6 +3,7 @@ import ImageComponent, { ImageType } from './ImageComponent'
 import TimeComponent from './TimeComponent'
 import { TorrentType } from './Torrent'
 import { SeasonType } from './Season'
+import ProgressBar from './ProgressBar'
 
 export type MediaServerMetaType = {
   width: number
@@ -21,7 +22,7 @@ export type EpisodeType = {
   status_display: string
   description: string
   status?: string
-  torrent: TorrentType
+  torrent: TorrentType[]
   release_date: string
   title: string
   search_query: string
@@ -37,12 +38,6 @@ interface EpisodeComponent {
 }
 
 const Episode: React.FC<EpisodeComponent> = ({ episode, showShow = false }) => {
-  const progress = episode.torrent?.progress
-  let validatedProgress = null
-  if (progress !== null && progress !== undefined) {
-    validatedProgress = Math.min(100, Math.max(0, progress))
-  }
-
   const getEpisodeImage = (episode: EpisodeType) => {
     if (episode?.image_episode) {
       if (episode.image_episode.image) {
@@ -63,16 +58,7 @@ const Episode: React.FC<EpisodeComponent> = ({ episode, showShow = false }) => {
             image={getEpisodeImage(episode)}
             alt={'episode-poster-' + episode.number}
           />
-          {validatedProgress && validatedProgress > 0 && (
-            <div className="progress-bar-background">
-              <div
-                className="progress-bar"
-                style={{ width: `${validatedProgress}%` }}
-              >
-                <span className="smaller">{validatedProgress}%</span>
-              </div>
-            </div>
-          )}
+          <ProgressBar torrents={episode?.torrent} />
         </div>
       </Link>
       <div className="tile-description">

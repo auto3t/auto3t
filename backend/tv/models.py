@@ -322,9 +322,9 @@ class TVSeason(BaseModel):
     def add_magnet(self, magnet: str, tm_instance: "Transmission") -> None:
         """add magnet to all episodes in season"""
         episodes = TVEpisode.objects.filter(season=self)
-        related = Torrent.objects.filter(torrent_episode__in=episodes).distinct()
-        if related:
-            for torrent in related:
+        to_cancel = Torrent.objects.filter(torrent_tv__in=episodes).distinct()
+        if to_cancel:
+            for torrent in to_cancel:
                 tm_instance.cancel(torrent)
 
         torrent, _ = Torrent.objects.get_or_create(magnet=magnet, torrent_type="s")
@@ -372,9 +372,7 @@ class TVEpisode(BaseModel):
     media_server_id = models.CharField(max_length=255, null=True, blank=True)
     media_server_meta = models.JSONField(null=True, blank=True)
     status = models.CharField(choices=EPISODE_STATUS, max_length=1, null=True, blank=True)
-    torrent = models.ForeignKey(
-        Torrent, related_name="torrent_episode", null=True, blank=True, on_delete=models.PROTECT
-    )
+    torrent = models.ManyToManyField(Torrent, related_name="torrent_tv")
     search_keywords = models.ManyToManyField(SearchWord)
     image_episode = models.ForeignKey(
         Artwork, related_name="image_episode", on_delete=models.CASCADE, null=True, blank=True
@@ -492,7 +490,7 @@ class TVEpisode(BaseModel):
 
     def reset_download(self) -> None:
         """reset torrent and state"""
-        self.torrent = None
+        self.torrent.update(torrent_state="i")
         self.status = None
         self.media_server_id = None
         self.media_server_meta = None
@@ -500,21 +498,12 @@ class TVEpisode(BaseModel):
 
     def add_magnet(self, magnet) -> None:
         """add magnet to episode"""
-        if self.torrent:
-            old_value = self.torrent.torrent_state
-            self.torrent.torrent_state = "i"
-            self.torrent.save()
-            log_change(
-                self,
-                action="u",
-                field_name="torrent",
-                old_value=old_value,
-                new_value="i",
-                comment="Ignored previous torrent.",
-            )
+        to_cancel = self.torrent.exclude(torrent_state="i")
+        for torrent in to_cancel:
+            Transmission().cancel(torrent)
 
         torrent, _ = Torrent.objects.get_or_create(magnet=magnet, torrent_type="e")
-        self.torrent = torrent
+        self.torrent.add(torrent)
         self.status = "d"
         self.media_server_id = None
         self.media_server_meta = None
@@ -571,13 +560,13 @@ def delete_season_images(sender, instance, **kwargs):  # pylint: disable=unused-
 @receiver(post_delete, sender=TVEpisode)
 def delete_torrent(sender, instance, **kwargs):  # pylint: disable=unused-argument
     """delete torrent if not used else where"""
-    if not instance.torrent:
+    if not instance.torrent.exists():
         return
 
-    if TVEpisode.objects.filter(torrent=instance.torrent).count() > 1:
-        return
-
-    instance.torrent.delete()
+    torrents = TVEpisode.objects.filter(torrent__in=instance.torrent.all())
+    for torrent in torrents:
+        if not TVEpisode.objects.filter(torrent=torrent):
+            torrent.delete()
 
 
 @receiver(post_delete, sender=TVEpisode)

@@ -37,7 +37,7 @@ class TVEpisodeSerializer(serializers.ModelSerializer):
     """serialize tv episode"""
 
     season = TVSeasonSerializer()
-    torrent = TorrentSerializer()
+    torrent = TorrentSerializer(many=True)
     status_display = serializers.CharField(source="get_status_display", read_only=True)
     image_episode = ArtworkSerializer(read_only=True)
     search_query = serializers.ReadOnlyField()

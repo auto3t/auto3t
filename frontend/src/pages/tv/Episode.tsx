@@ -71,11 +71,17 @@ const TVEpisode: React.FC = () => {
             </div>
           </div>
           <EpisodeNav currentEpisodeId={episodeDetail.id} />
-          {episodeDetail?.torrent && (
-            <Torrent
-              torrent={episodeDetail.torrent}
-              setRefresh={setEpisodeRefresh}
-            />
+          {episodeDetail.torrent.length > 0 && (
+            <>
+              <h2>Torrents</h2>
+              {episodeDetail.torrent?.map((torrent) => (
+                <Torrent
+                  key={torrent.id}
+                  torrent={torrent}
+                  setRefresh={setEpisodeRefresh}
+                />
+              ))}
+            </>
           )}
           {episodeDetail?.media_server_id && (
             <MediaServerDetail

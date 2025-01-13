@@ -327,8 +327,10 @@ class TVSeason(BaseModel):
             for torrent in to_cancel:
                 tm_instance.cancel(torrent)
 
-        torrent, _ = Torrent.objects.get_or_create(magnet=magnet, torrent_type="s")
-        episodes.update(torrent=torrent, status="d", media_server_id=None, media_server_meta=None)
+        for episode in episodes:
+            episode.add_magnet(magnet)
+
+        episodes.update(status="d", media_server_id=None, media_server_meta=None)
         log_change(self, "c", comment=f"Added season Torrent with hash {torrent.magnet_hash}")
 
     def is_valid_path(self, path) -> bool:
@@ -508,7 +510,7 @@ class TVEpisode(BaseModel):
         self.media_server_id = None
         self.media_server_meta = None
         self.save()
-        log_change(self, action="c", field_name="torrent", new_value=self.torrent.magnet_hash)
+        log_change(self, action="c", field_name="torrent", new_value=torrent.magnet_hash)
 
     def get_next(self) -> Self | None:
         """get next episode for nav"""

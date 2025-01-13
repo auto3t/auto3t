@@ -73,10 +73,13 @@ class Torrent(models.Model):
         ("i", "ignored"),
     ]
 
-    magnet = models.TextField(unique=True)
+    magnet = models.TextField()
     torrent_type = models.CharField(choices=TORRENT_TYPE, max_length=1)
     torrent_state = models.CharField(choices=TORRENT_STATE, max_length=1, default="u")
     progress = models.IntegerField(null=True, blank=True)
+
+    class Meta:
+        unique_together = ("magnet", "torrent_type")
 
     @property
     def magnet_hash(self):

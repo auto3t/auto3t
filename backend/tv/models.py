@@ -281,7 +281,7 @@ class TVSeason(BaseModel):
             return
 
         if not self.image_season:
-            self.image_season = Artwork(image_url=image_url)
+            self.image_season, _ = Artwork.objects.get_or_create(image_url=image_url)
             self.image_season.save()
             self.save()
             log_change(self, "u", "image_season", new_value=image_url, comment="Added new image.")
@@ -393,7 +393,7 @@ class TVEpisode(BaseModel):
             return
 
         if not self.image_episode:
-            self.image_episode = Artwork(image_url=image_url)
+            self.image_episode, _ = Artwork.objects.get_or_create(image_url=image_url)
             self.image_episode.save()
             self.save()
             log_change(self, "u", "image_episode", new_value=image_url, comment="Added new image.")

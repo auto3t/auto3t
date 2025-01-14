@@ -141,7 +141,7 @@ class TVMazeShow:
                 season = TVSeason.objects.create(**season_data)
                 image_season = self._get_image_url(season_response)
                 if image_season:
-                    season.image_season = Artwork(image_url=image_season)
+                    season.image_season, _ = Artwork.objects.get_or_create(image_url=image_season)
                     season.image_season.save()
 
                 season.save()
@@ -206,7 +206,7 @@ class TVMazeShow:
                 episode = TVEpisode.objects.create(**episode_data)
                 image_episode = self._get_image_url(episode_response)
                 if image_episode:
-                    episode.image_episode = Artwork(image_url=image_episode)
+                    episode.image_episode, _ = Artwork.objects.get_or_create(image_url=image_episode)
                     episode.image_episode.save()
 
                 self._set_episode_status(episode)

@@ -40,7 +40,7 @@ class Artwork(models.Model):
     def _download_image(self) -> None:
         """download from url"""
         try:
-            response = requests.get(self.image_url, timeout=30)
+            response = requests.get(self.image_url, timeout=60)
             if response.status_code == 200:
                 img = Image.open(BytesIO(response.content))
                 cropped_image = self.crop_to_aspect(img)

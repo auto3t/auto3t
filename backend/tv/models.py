@@ -15,7 +15,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models import Q
 from django.db.models.query import QuerySet
-from django.db.models.signals import post_delete
+from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from PIL import Image, ImageFilter
 
@@ -538,38 +538,37 @@ class TVEpisode(BaseModel):
         return None
 
 
-@receiver(post_delete, sender=TVShow)
+@receiver(pre_delete, sender=TVShow)
 def delete_show_images(sender, instance, **kwargs):  # pylint: disable=unused-argument
     """signal for deleting show images"""
-    if instance.image_show:
+    if instance.image_show and Path(instance.image_season.image.path).exists():
         instance.image_show.delete()
-    if instance.episode_fallback:
+    if instance.episode_fallback and Path(instance.episode_fallback.image.path).exists():
         instance.episode_fallback.delete()
-    if instance.season_fallback:
+    if instance.season_fallback and Path(instance.season_fallback.image.path).exists():
         instance.season_fallback.delete()
 
 
-@receiver(post_delete, sender=TVSeason)
+@receiver(pre_delete, sender=TVSeason)
 def delete_season_images(sender, instance, **kwargs):  # pylint: disable=unused-argument
     """signal for deleting season images"""
-    if instance.image_season:
+    if instance.image_season and Path(instance.image_season.image.path).exists():
         instance.image_season.delete()
 
 
-@receiver(post_delete, sender=TVEpisode)
+@receiver(pre_delete, sender=TVEpisode)
 def delete_torrent(sender, instance, **kwargs):  # pylint: disable=unused-argument
     """delete torrent if not used else where"""
     if not instance.torrent.exists():
         return
 
-    torrents = TVEpisode.objects.filter(torrent__in=instance.torrent.all())
-    for torrent in torrents:
-        if not TVEpisode.objects.filter(torrent=torrent):
+    for torrent in instance.torrent.all():
+        if TVEpisode.objects.filter(torrent=torrent).count() == 1:
             torrent.delete()
 
 
-@receiver(post_delete, sender=TVEpisode)
+@receiver(pre_delete, sender=TVEpisode)
 def delete_episode_images(sender, instance, **kwargs):  # pylint: disable=unused-argument
     """signal for deleting episode images"""
-    if instance.image_episode:
+    if instance.image_episode and Path(instance.image_episode.image.path).exists():
         instance.image_episode.delete()

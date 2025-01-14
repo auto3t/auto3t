@@ -17,7 +17,7 @@ export type MovieType = {
   remote_server_url: string
   remote_server_id: string
   release_date: string
-  status_display: string
+  status_display: string | null
   image_movie?: ImageType
   torrent: TorrentType[]
 }
@@ -82,7 +82,7 @@ const MovieDetail: React.FC = () => {
                     <TimeComponent timestamp={movieDetail.release_date} />
                   </span>
                   <span className="tag-item">
-                    {movieDetail?.status_display}
+                    {movieDetail?.status_display || 'undefined'}
                   </span>
                 </div>
               </div>

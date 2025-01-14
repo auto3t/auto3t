@@ -496,6 +496,8 @@ class TVEpisode(BaseModel):
 
     def add_magnet(self, magnet, torrent_type="e") -> None:
         """add magnet to episode"""
+        from autot.src.download import Transmission
+
         to_cancel = self.torrent.exclude(torrent_state="i")
         for torrent in to_cancel:
             Transmission().cancel(torrent)

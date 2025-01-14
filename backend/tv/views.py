@@ -4,7 +4,6 @@ import json
 
 from autot.models import SearchWord, get_logs
 from autot.serializers import ActionLogSerializer
-from autot.src.download import Transmission
 from autot.src.redis_con import AutotRedis
 from autot.src.search import Jackett
 from django.db.models import F, Value
@@ -169,8 +168,7 @@ class SeasonViewSet(viewsets.ModelViewSet):
         if not magnet:
             return Response({"message": "failed to extract magnet url"}, status=400)
 
-        tm_instance = Transmission()
-        season.add_magnet(magnet, tm_instance)
+        season.add_magnet(magnet)
         refresh_status.delay()
 
         return Response(result)

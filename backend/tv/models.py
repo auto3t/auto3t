@@ -4,7 +4,7 @@ import base64
 import re
 from io import BytesIO
 from pathlib import Path
-from typing import TYPE_CHECKING, Self
+from typing import Self
 
 import pytz
 from artwork.models import Artwork
@@ -18,9 +18,6 @@ from django.db.models.query import QuerySet
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
 from PIL import Image, ImageFilter
-
-if TYPE_CHECKING:
-    from autot.src.download import Transmission
 
 
 class BaseModel(models.Model):
@@ -319,7 +316,7 @@ class TVSeason(BaseModel):
 
         return f"{show_name} S{str(self.number).zfill(2)} COMPLETE"
 
-    def add_magnet(self, magnet: str, tm_instance: "Transmission") -> None:
+    def add_magnet(self, magnet: str) -> None:
         """add magnet to all episodes in season"""
         episodes = TVEpisode.objects.filter(season=self)
 
@@ -503,6 +500,8 @@ class TVEpisode(BaseModel):
             Transmission().cancel(torrent)
 
         torrent, _ = Torrent.objects.get_or_create(magnet=magnet, torrent_type=torrent_type)
+        torrent.torrent_state = "u"
+        torrent.save()
         self.torrent.add(torrent)
         self.status = "d"
         self.media_server_id = None

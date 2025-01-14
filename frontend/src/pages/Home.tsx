@@ -3,6 +3,7 @@ import Episode from '../components/Episode'
 import useProcessingEpisodeStore from '../stores/processingEpisodesStore'
 import useUpcomingEpisodeStore from '../stores/UpcomingEpisodesStore'
 import useApi from '../hooks/api'
+import usePolling from '../hooks/usePolling'
 
 const Home: React.FC = () => {
   const { error, get } = useApi()
@@ -16,36 +17,31 @@ const Home: React.FC = () => {
     useProcessingEpisodeStore()
   const { upcomingEpisodes, setUpcomingEpisodes } = useUpcomingEpisodeStore()
 
-  useEffect(() => {
-    const fetchEpisodes = async () => {
-      try {
-        const data = await get('tv/episode/?status=d,s')
-        setProcessingEpisodes(data)
-      } catch (error) {
-        console.error('error fetching episodes: ', error)
-      }
-      setIsLoadingProcessingEpisodes(false)
+  const fetchProcessing = async () => {
+    try {
+      const data = await get('tv/episode/?status=d,s')
+      setProcessingEpisodes(data)
+    } catch (error) {
+      console.error('error fetching episodes: ', error)
     }
+    setIsLoadingProcessingEpisodes(false)
+  }
 
-    fetchEpisodes()
-  }, [setProcessingEpisodes])
-
-  useEffect(() => {
-    const fetchEpisodes = async () => {
-      try {
-        const data = await get(
-          `tv/episode/?limit=${upcomingItemCount}&status=u&order-by=release_date`,
-        )
-        setUpcomingEpisodes(data)
-        setHasMoreUpcoming(data.length === upcomingItemCount)
-      } catch (error) {
-        console.error('error fetching episodes: ', error)
-      }
-      setIsLoadingUpcomingEpisodes(false)
+  const fetchUpcomingEpisodes = async () => {
+    try {
+      const data = await get(
+        `tv/episode/?limit=${upcomingItemCount}&status=u&order-by=release_date`,
+      )
+      setUpcomingEpisodes(data)
+      setHasMoreUpcoming(data.length === upcomingItemCount)
+    } catch (error) {
+      console.error('error fetching episodes: ', error)
     }
+    setIsLoadingUpcomingEpisodes(false)
+  }
 
-    fetchEpisodes()
-  }, [setProcessingEpisodes, upcomingItemCount])
+  usePolling(fetchUpcomingEpisodes, 60000)
+  usePolling(fetchProcessing, 30000)
 
   const handleLoadMoreUpcomingEpisodes = () => {
     setUpcomingItemCount(upcomingItemCount + 12)

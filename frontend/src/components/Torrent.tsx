@@ -6,6 +6,7 @@ export type TorrentType = {
   torrent_type_display: string
   torrent_state_display: string
   magnet: string
+  magnet_hash: string
   torrent_type: string
   torrent_state: string
   progress?: number
@@ -21,10 +22,6 @@ const Torrent: React.FC<TorrentInterface> = ({ torrent, setRefresh }) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [deleteConfirm, setDeleteConfirm] = useState(false)
 
-  const toggleExpansion = () => {
-    setIsExpanded(!isExpanded)
-  }
-
   const handleDelete = async () => {
     try {
       await del(`torrent/${torrent.id}/`)
@@ -39,10 +36,6 @@ const Torrent: React.FC<TorrentInterface> = ({ torrent, setRefresh }) => {
   if (progress !== null && progress !== undefined) {
     validatedProgress = Math.min(100, Math.max(0, progress))
   }
-
-  const displayMagnet = isExpanded
-    ? torrent.magnet
-    : torrent.magnet.slice(0, 60)
 
   return (
     <div className="torrent-detail">
@@ -64,11 +57,10 @@ const Torrent: React.FC<TorrentInterface> = ({ torrent, setRefresh }) => {
       )}
       <div>
         <p className="text-blob">
-          {displayMagnet}
-          {!isExpanded && '...'}
+          {isExpanded ? torrent.magnet : torrent.magnet_hash}
         </p>
-        <button onClick={toggleExpansion}>
-          {isExpanded ? 'Show Less' : 'Show More'}
+        <button onClick={() => setIsExpanded(!isExpanded)}>
+          {isExpanded ? 'Show hash' : 'Show Magnet'}
         </button>
         {torrent.torrent_state === 'i' && (
           <>

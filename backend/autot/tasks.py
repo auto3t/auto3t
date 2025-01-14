@@ -2,6 +2,7 @@
 
 import logging
 from datetime import timedelta
+from pathlib import Path
 
 from artwork.models import Artwork
 from autot.src.archive import Archiver
@@ -71,3 +72,18 @@ def download_thumbnails() -> None:
     if Artwork.objects.filter(image="").exists():
         queue = get_queue("thumbnails")
         queue.enqueue_in(timedelta(seconds=10), download_thumbnails)
+
+
+@job("thumbnails")
+def validate_thumbnails() -> None:
+    """check if thumbs are there"""
+    all_thumbs = Artwork.objects.all()
+    for thumb in all_thumbs:
+        if not thumb.image:
+            continue
+
+        if not Path(thumb.image.path).exists():
+            thumb.image.delete()
+            thumb.save()
+
+    download_thumbnails.delay()

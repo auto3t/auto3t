@@ -2,15 +2,18 @@ import { Link } from 'react-router-dom'
 import TimeComponent from './TimeComponent'
 import { ShowSearchResultType } from '../pages/tv/Search'
 import useApi from '../hooks/api'
+import { useState } from 'react'
 
 interface ShowSearchResultInterface {
   result: ShowSearchResultType
 }
 
 const ShowSearchResult: React.FC<ShowSearchResultInterface> = ({ result }) => {
-  const { post } = useApi()
+  const { post, error } = useApi()
+  const [addingShow, setAddingShow] = useState<null | Boolean>(null)
 
   const handleAddShow = (remoteServerId: number) => {
+    setAddingShow(true)
     post('tv/show/', { remote_server_id: remoteServerId })
       .then((data) => {
         console.log('Show added successfully: ', JSON.stringify(data))
@@ -18,6 +21,7 @@ const ShowSearchResult: React.FC<ShowSearchResultInterface> = ({ result }) => {
       .catch((error) => {
         console.error('Error adding show:', error)
       })
+    setAddingShow(false)
   }
 
   return (
@@ -50,12 +54,19 @@ const ShowSearchResult: React.FC<ShowSearchResultInterface> = ({ result }) => {
             {result.local_id ? (
               <Link to={`/tv/show/${result.local_id}/`}>Open</Link>
             ) : (
-              <button
-                className="pointer"
-                onClick={() => handleAddShow(result.id)}
-              >
-                Add
-              </button>
+              <>
+                {addingShow === null && (
+                  <button
+                    className="pointer"
+                    onClick={() => handleAddShow(result.id)}
+                  >
+                    Add
+                  </button>
+                )}
+                {addingShow === true && <p>Loading...</p>}
+                {addingShow === false && !error && <p>Done</p>}
+                {error && <span>Failed to add: {error}</span>}
+              </>
             )}
           </div>
           {result.genres.length > 0 && (

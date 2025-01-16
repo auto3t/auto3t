@@ -220,6 +220,12 @@ button:hover {
   max-width: 80%;
 }
 
+.filter-bar {
+  background-color: var(--accent-3);
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
 .tile-description {
   text-align: center;
 }

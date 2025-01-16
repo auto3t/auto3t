@@ -2,6 +2,7 @@ import { useState } from 'react'
 import useTVSearchStore from '../../stores/TVSearchStore'
 import useApi from '../../hooks/api'
 import ShowSearchResult from '../../components/ShowSearchResult'
+import { Link } from 'react-router-dom'
 
 export type ShowSearchResultType = {
   id: number
@@ -58,6 +59,11 @@ const TVSearch = () => {
   return (
     <div>
       <h1>Search TV Shows</h1>
+      <div className="filter-bar">
+        <Link to={'/tv'}>
+          <button>Back</button>
+        </Link>
+      </div>
       <input
         type="text"
         value={query}

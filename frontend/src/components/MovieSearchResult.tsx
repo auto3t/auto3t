@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { MovieSearchResultType } from '../pages/movie/Search'
 import useApi from '../hooks/api'
+import { useState } from 'react'
 
 interface MovieSearchResultInterface {
   result: MovieSearchResultType
@@ -9,9 +10,11 @@ interface MovieSearchResultInterface {
 const MovieSearchResult: React.FC<MovieSearchResultInterface> = ({
   result,
 }) => {
-  const { post } = useApi()
+  const { post, error } = useApi()
+  const [addingMovie, setAddingMovie] = useState<null | Boolean>(null)
 
   const handleAddMovie = (remoteServerId: string) => {
+    setAddingMovie(true)
     post('movie/movie/', { remote_server_id: remoteServerId })
       .then((data) => {
         console.log('Movie added successfully: ', JSON.stringify(data))
@@ -19,6 +22,7 @@ const MovieSearchResult: React.FC<MovieSearchResultInterface> = ({
       .catch((error) => {
         console.error('Error adding movie: ', error)
       })
+    setAddingMovie(false)
   }
 
   return (
@@ -45,12 +49,19 @@ const MovieSearchResult: React.FC<MovieSearchResultInterface> = ({
             {result.local_id ? (
               <Link to={`/tv/show/${result.local_id}/`}>Open</Link>
             ) : (
-              <button
-                className="pointer"
-                onClick={() => handleAddMovie(result.id)}
-              >
-                Add
-              </button>
+              <>
+                {addingMovie === null && (
+                  <button
+                    className="pointer"
+                    onClick={() => handleAddMovie(result.id)}
+                  >
+                    Add
+                  </button>
+                )}
+                {addingMovie === true && <p>Loading...</p>}
+                {addingMovie === false && !error && <p>Done</p>}
+                {error && <span>Failed to add: {error}</span>}
+              </>
             )}
           </div>
         </div>

@@ -22,9 +22,9 @@ class ShowViewSet(viewsets.ModelViewSet):
     """get tv show/s"""
 
     UPDATABLE_FIELDS = {"search_name", "is_active", "search_keywords"}
+    VALID_STATUS = [i[0] for i in TVShow.SHOW_STATUS]
 
     serializer_class = TVShowSerializer
-    queryset = TVShow.objects.annotate(name_sort=Replace(F("name"), Value("The "), Value(""))).order_by("name_sort")
 
     def create(self, request, *args, **kwargs):
         """import show"""
@@ -62,6 +62,31 @@ class ShowViewSet(viewsets.ModelViewSet):
             self.perform_update(serializer)
 
         return Response(serializer.data)
+
+    def get_queryset(self):
+        """implement filters"""
+        queryset = queryset = TVShow.objects.annotate(name_sort=Replace(F("name"), Value("The "), Value(""))).order_by(
+            "name_sort"
+        )
+
+        status = self.request.GET.get("status")
+        if status:
+            if status not in self.VALID_STATUS:
+                message = {"error": f"Invalid status field: {status}."}
+                return Response(message, status=400)
+
+            queryset = queryset.filter(status=status)
+
+        is_active = self.request.GET.get("is_active")
+        if is_active:
+            active_value = True if is_active.lower() == "true" else False
+            queryset = queryset.filter(is_active=active_value)
+
+        query = self.request.GET.get("q")
+        if query:
+            queryset = queryset.filter(name__icontains=query)
+
+        return queryset
 
     def _update_m2m(self, instance: TVShow) -> None:
         """handle search_keywords"""

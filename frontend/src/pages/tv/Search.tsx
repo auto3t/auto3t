@@ -58,7 +58,7 @@ const TVSearch = () => {
 
   return (
     <div>
-      <h1>Search TV Shows</h1>
+      <h1>Start tracking new TV Show</h1>
       <div className="filter-bar">
         <Link to={'/tv'}>
           <button>Back</button>

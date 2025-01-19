@@ -23,7 +23,7 @@ def refresh_all_shows() -> None:
 
     if jobs:
         queue.enqueue(refresh_status, depends_on=jobs)
-        queue.enqueue(download_thumbnails, depends_on=jobs)
+        download_thumbnails.delay(depends_on=jobs)
 
 
 @job("show")

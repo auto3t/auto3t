@@ -3,6 +3,7 @@
 import { Link } from 'react-router-dom'
 import ImageComponent from './ImageComponent'
 import { ShowType } from './ShowDetail'
+import posterDefault from '../../assets/poster-default.jpg'
 
 interface ShowTileInterface {
   show: ShowType
@@ -11,7 +12,7 @@ interface ShowTileInterface {
 const ShowTile: React.FC<ShowTileInterface> = ({ show }) => {
   const getShowPoster = (show: ShowType) => {
     if (show.image_show?.image) return show.image_show
-    return { image: '/poster-default.jpg' }
+    return { image: posterDefault }
   }
 
   return (

@@ -6,6 +6,7 @@ import TimeComponent from './TimeComponent'
 import AddKeywordComponent from './AddKeywordComponent'
 import KeywordTableCompnent from './KeywordTableComponent'
 import { KeywordType } from './Keywords'
+import posterDefault from '../../assets/poster-default.jpg'
 
 export type ShowType = {
   id: number
@@ -80,7 +81,7 @@ const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
 
   const getShowPoster = (showDetail: ShowType) => {
     if (showDetail.image_show?.image) return showDetail.image_show
-    return { image: '/poster-default.jpg' }
+    return { image: posterDefault }
   }
 
   const toggleShowConfirm = () => {

@@ -4,6 +4,7 @@ import TimeComponent from './TimeComponent'
 import { TorrentType } from './Torrent'
 import { SeasonType } from './Season'
 import ProgressBar from './ProgressBar'
+import episodeLogoDefault from '../../assets/episode-default.jpg'
 
 export type MediaServerMetaType = {
   width: number
@@ -47,7 +48,7 @@ const Episode: React.FC<EpisodeComponent> = ({ episode, showShow = false }) => {
     if (episode.season.show?.episode_fallback?.image) {
       return episode.season.show?.episode_fallback
     }
-    return { image: '/episode-default.jpg' }
+    return { image: episodeLogoDefault }
   }
 
   return (

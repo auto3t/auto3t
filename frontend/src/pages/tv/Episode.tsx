@@ -9,6 +9,7 @@ import Torrent from '../../components/Torrent'
 import ManualSearch from '../../components/ManualSearch'
 import { EpisodeType } from '../../components/Episode'
 import MediaServerDetail from '../../components/MediaServerDetail'
+import episodeLogoDefault from '../../../assets/episode-default.jpg'
 
 const TVEpisode: React.FC = () => {
   const { id } = useParams()
@@ -23,7 +24,7 @@ const TVEpisode: React.FC = () => {
       if (data.image_episode?.image) return data.image_episode
       if (data.season.show.episode_fallback?.image)
         return data.season.show.episode_fallback
-      return { image: '/episode-default.jpg' }
+      return { image: episodeLogoDefault }
     }
     const fetchEpisode = async () => {
       try {

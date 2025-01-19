@@ -2,6 +2,7 @@ import useSelectedSeasonStore from '../stores/SeasonSelectedStore'
 import ImageComponent, { ImageType } from './ImageComponent'
 import { KeywordType } from './Keywords'
 import { ShowType } from './ShowDetail'
+import posterDefault from '../../assets/poster-default.jpg'
 
 export type SeasonType = {
   id: number
@@ -29,7 +30,7 @@ const Season: React.FC<SeasonComponent> = ({ season, onClick }) => {
   const getSeasonPoster = (season: SeasonType) => {
     if (season.image_season?.image) return season.image_season
     if (season.show?.season_fallback?.image) return season.show.season_fallback
-    return { image: '/poster-default.jpg' }
+    return { image: posterDefault }
   }
 
   return (

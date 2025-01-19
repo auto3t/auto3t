@@ -40,7 +40,7 @@ const Home: React.FC = () => {
     setIsLoadingUpcomingEpisodes(false)
   }
 
-  usePolling(fetchUpcomingEpisodes, 60000)
+  usePolling(fetchUpcomingEpisodes, 60000, [upcomingItemCount])
   usePolling(fetchProcessing, 30000)
 
   const handleLoadMoreUpcomingEpisodes = () => {

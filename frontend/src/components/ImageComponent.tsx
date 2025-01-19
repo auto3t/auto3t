@@ -31,7 +31,7 @@ const ImageComponent: React.FC<ImageComponentInterface> = ({ image, alt }) => {
     return () => {
       if (imageUrl) URL.revokeObjectURL(imageUrl)
     }
-  }, [image])
+  }, [image.image])
 
   return <div>{imageUrl && <img src={imageUrl} alt={alt} />}</div>
 }

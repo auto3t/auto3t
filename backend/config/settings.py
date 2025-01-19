@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+import hashlib
 from pathlib import Path
 
 from autot.src.config import get_config
@@ -31,10 +32,10 @@ BASE_DIR = AUTOT_CONFIG["APP_ROOT"] or Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-sj5^3kn1^zjmu_ec=oxt(leo7vds!2v36$i8vz4-x&f4t*+o0g"
+SECRET_KEY = hashlib.sha256(str(AUTOT_CONFIG).encode()).hexdigest()
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = AUTOT_CONFIG["DJANGO_DEBUG"]
 
 ALLOWED_HOSTS = ["*"]
 

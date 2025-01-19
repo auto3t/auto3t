@@ -1,8 +1,5 @@
 FROM python:3.11.3-slim-bullseye AS python-builder
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential
-
 # install requirements
 RUN python -m venv /applib
 ENV PATH="/applib/bin:$PATH"
@@ -19,7 +16,7 @@ COPY frontend/ .
 RUN npm run build
 
 # build final image
-FROM python:3.11.3-slim-bullseye as autot
+FROM python:3.11.3-slim-bullseye AS autot
 ARG INSTALL_DEBUG
 ENV PYTHONUNBUFFERED 1
 
@@ -54,10 +51,8 @@ COPY ./backend /app
 COPY --from=js-builder /app/frontend/build/ /app/static/
 RUN chmod 777 -R /app/static /var/log/nginx/
 
-COPY /run.sh /app
-COPY /uwsgi.ini /app
-
-VOLUME /data
+COPY ./run.sh /app
+COPY ./backend_start.py /app
 
 WORKDIR /app
 EXPOSE 8000

@@ -11,4 +11,4 @@ nginx &
 python manage.py rqworker --with-scheduler default show movie thumbnails &
 python manage.py rqscheduler &
 python manage.py start_schedule
-uwsgi --ini uwsgi.ini
+python backend_start.py

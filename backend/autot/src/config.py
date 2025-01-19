@@ -26,6 +26,7 @@ class ConfigType(TypedDict):
     MOVIE_BASE_FOLDER: Path
     APP_ROOT: Path | None
     TZ: str
+    DJANGO_DEBUG: bool
 
 
 def get_config() -> ConfigType:
@@ -49,6 +50,7 @@ def get_config() -> ConfigType:
         "MOVIE_BASE_FOLDER": Path(environ["MOVIE_BASE_FOLDER"]),
         "APP_ROOT": Path(environ["APP_ROOT"]) if environ.get("APP_ROOT") else None,
         "TZ": environ.get("TZ", "UTC"),
+        "DJANGO_DEBUG": bool(environ.get("DJANGO_DEBUG", False)),
     }
 
     return config

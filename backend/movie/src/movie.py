@@ -3,9 +3,10 @@
 from datetime import date, datetime
 
 from artwork.models import Artwork
-from autot.models import log_change
 from movie.models import Collection, Movie, MovieRelease
 from movie.src.movie_db_client import MovieDB
+
+from autot.models import log_change
 
 
 class MovieDBMovie:
@@ -24,7 +25,7 @@ class MovieDBMovie:
         response = self._get_remote_movie()
         movie_data = self._parse_movie(response)
         poster_path = response.get("poster_path")
-        collection_id = response.get("belongs_to_collection", {}).get("id")
+        collection_id = (response.get("belongs_to_collection") or {}).get("id")
 
         try:
             movie = Movie.objects.get(remote_server_id=response["id"])

@@ -178,21 +178,21 @@ button:hover {
   align-items: center;
   justify-content: flex-start;
   border-radius: 9999px;
-  background-color: #d1d5db; /* Gray (off) */
+  background-color: var(--main-fg);
   cursor: pointer;
   position: relative;
   transition: background-color 0.3s ease;
 }
 
 .toggle-container.toggle-on {
-  background-color: #10b981; /* Green (on) */
+  background-color: var(--accent-2);
 }
 
 /* Circle styles */
 .toggle-circle {
   width: 18px;
   height: 18px;
-  background-color: white;
+  background-color: var(--accent-1);
   border-radius: 50%;
   position: absolute;
   top: 4px;

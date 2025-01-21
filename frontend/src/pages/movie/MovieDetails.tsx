@@ -7,6 +7,8 @@ import posterDefault from '../../../assets/poster-default.jpg'
 import MovieReleases from '../../components/MovieReleases'
 import ManualSearch from '../../components/ManualSearch'
 import Torrent, { TorrentType } from '../../components/Torrent'
+import { MediaServerMetaType } from '../../components/Episode'
+import MediaServerDetail from '../../components/MediaServerDetail'
 
 export type MovieType = {
   id: number
@@ -20,6 +22,9 @@ export type MovieType = {
   status_display: string | null
   image_movie?: ImageType
   torrent: TorrentType[]
+  media_server_id: string
+  media_server_meta: MediaServerMetaType
+  media_server_url: string
 }
 
 const MovieDetail: React.FC = () => {
@@ -100,6 +105,12 @@ const MovieDetail: React.FC = () => {
                 />
               ))}
             </>
+          )}
+          {movieDetail?.media_server_id && (
+            <MediaServerDetail
+              mediaServerDetail={movieDetail.media_server_meta}
+              mediaServerURL={movieDetail.media_server_url}
+            />
           )}
           <ManualSearch
             searchType="movie"

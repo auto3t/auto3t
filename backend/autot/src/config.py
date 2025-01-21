@@ -11,6 +11,7 @@ class ConfigType(TypedDict):
     MEDIA_EXT: list[str]
     MEDIA_MIN_SIZE: int
     JF_URL: str
+    JF_PROXY_URL: str
     JF_API_KEY: str
     JK_URL: str
     JK_API_KEY: str
@@ -35,6 +36,7 @@ def get_config() -> ConfigType:
         "MEDIA_EXT": ["mp4", "mkv", "avi", "m4v"],
         "MEDIA_MIN_SIZE": 50000000,
         "JF_URL": environ["JF_URL"],
+        "JF_PROXY_URL": environ.get("JF_PROXY_URL") or environ["JF_URL"],
         "JF_API_KEY": environ["JF_API_KEY"],
         "JK_URL": environ["JK_URL"],
         "JK_API_KEY": environ["JK_API_KEY"],

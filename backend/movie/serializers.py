@@ -1,9 +1,10 @@
 """all movie serializers"""
 
 from artwork.serializers import ArtworkSerializer
-from autot.serializers import TorrentSerializer
 from movie.models import Collection, Movie, MovieRelease
 from rest_framework import serializers
+
+from autot.serializers import TorrentSerializer
 
 
 class CollectionSerializer(serializers.ModelSerializer):
@@ -26,6 +27,7 @@ class MovieSerializer(serializers.ModelSerializer):
     name_display = serializers.CharField(read_only=True)
     collection = CollectionSerializer()
     torrent = TorrentSerializer(many=True)
+    media_server_url = serializers.CharField(read_only=True)
 
     class Meta:
         model = Movie

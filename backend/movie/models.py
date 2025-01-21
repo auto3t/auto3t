@@ -3,10 +3,12 @@
 from pathlib import Path
 
 from artwork.models import Artwork
-from autot.models import Torrent, log_change
 from django.db import models
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
+
+from autot.models import Torrent, log_change
+from autot.src.config import ConfigType, get_config
 
 
 class Collection(models.Model):
@@ -50,6 +52,7 @@ class Movie(models.Model):
     """describes a movie"""
 
     TRACK_CHANGES = True
+    CONFIG: ConfigType = get_config()
     PRODUCTION_STATE = [
         ("r", "Rumored"),
         ("p", "Planned"),
@@ -99,6 +102,15 @@ class Movie(models.Model):
     def name_display(self) -> str:
         """display name"""
         return f"{self.name} ({self.release_date.year})"
+
+    @property
+    def media_server_url(self) -> str | None:
+        """url in media server"""
+        if not self.media_server_id:
+            return None
+
+        base_url = self.CONFIG["JF_PROXY_URL"]
+        return f"{base_url}/web/#/details?id={self.media_server_id}"
 
     def update_image_movie(self, image_url: str | None) -> None:
         """handle update with or without existing"""

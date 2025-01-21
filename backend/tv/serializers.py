@@ -5,6 +5,7 @@ from rest_framework import serializers
 from tv.models import TVEpisode, TVSeason, TVShow
 
 from autot.serializers import SearchWordSerializer, TorrentSerializer
+from autot.static import TvEpisodeStatus
 
 
 class TVShowSerializer(serializers.ModelSerializer):
@@ -52,7 +53,7 @@ class TVEpisodeSerializer(serializers.ModelSerializer):
 class TVEpisodeBulkUpdateSerializer(serializers.Serializer):  # pylint: disable=abstract-method
     """update tv episodes in bulk"""
 
-    status = serializers.ChoiceField(choices=TVEpisode.EPISODE_STATUS)
+    status = serializers.ChoiceField(choices=TvEpisodeStatus.choices())
 
     def update(self, instance, validated_data):
         """update status field"""

@@ -17,13 +17,14 @@ from autot.models import SearchWord, get_logs
 from autot.serializers import ActionLogSerializer
 from autot.src.redis_con import AutotRedis
 from autot.src.search import Jackett
+from autot.static import TvShowStatus
 
 
 class ShowViewSet(viewsets.ModelViewSet):
     """get tv show/s"""
 
     UPDATABLE_FIELDS = {"search_name", "is_active", "search_keywords"}
-    VALID_STATUS = [i[0] for i in TVShow.SHOW_STATUS]
+    VALID_STATUS = [i.name for i in TvShowStatus]
 
     serializer_class = TVShowSerializer
 

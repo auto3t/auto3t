@@ -19,6 +19,7 @@ from PIL import Image, ImageFilter
 from autot.models import ActionLog, SearchWord, SearchWordCategory, Torrent, log_change
 from autot.src.config import ConfigType, get_config
 from autot.src.helper import sanitize_file_name
+from autot.static import TvEpisodeStatus, TvShowStatus
 
 
 class BaseModel(models.Model):
@@ -96,17 +97,11 @@ class TVShow(BaseModel):
     """describes a show"""
 
     TRACK_CHANGES = True
-    SHOW_STATUS = [
-        ("r", "Running"),
-        ("e", "Ended"),
-        ("d", "In Development"),
-        ("t", "To Be Determined"),
-    ]
     IMAGE_SIZE = (2160, 2880)
 
     name = models.CharField(max_length=255)
     search_name = models.CharField(max_length=255, null=True, blank=True)
-    status = models.CharField(choices=SHOW_STATUS, max_length=1, null=True, blank=True)
+    status = models.CharField(choices=TvShowStatus.choices(), max_length=1, null=True, blank=True)
     is_daily = models.BooleanField(default=False)
     show_time_zone = models.CharField(max_length=255, default="UTC")
     search_keywords = models.ManyToManyField(SearchWord)
@@ -353,21 +348,13 @@ class TVEpisode(BaseModel):
 
     TRACK_CHANGES = True
     IMAGE_SIZE = (1920, 1080)
-    EPISODE_STATUS = [
-        ("u", "Upcoming"),
-        ("s", "Searching"),
-        ("d", "Downloading"),
-        ("f", "Finished"),
-        ("a", "Archived"),
-        ("i", "Ignored"),
-    ]
 
     number = models.IntegerField()
     title = models.CharField(max_length=255)
     season = models.ForeignKey(TVSeason, on_delete=models.CASCADE)
     media_server_id = models.CharField(max_length=255, null=True, blank=True)
     media_server_meta = models.JSONField(null=True, blank=True)
-    status = models.CharField(choices=EPISODE_STATUS, max_length=1, null=True, blank=True)
+    status = models.CharField(choices=TvEpisodeStatus.choices(), max_length=1, null=True, blank=True)
     torrent = models.ManyToManyField(Torrent, related_name="torrent_tv")
     search_keywords = models.ManyToManyField(SearchWord)
     image_episode = models.ForeignKey(

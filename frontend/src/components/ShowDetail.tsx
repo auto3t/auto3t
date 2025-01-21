@@ -7,6 +7,7 @@ import AddKeywordComponent from './AddKeywordComponent'
 import KeywordTableCompnent from './KeywordTableComponent'
 import { KeywordType } from './Keywords'
 import posterDefault from '../../assets/poster-default.jpg'
+import ToggleSwitch from './ConfigToggle'
 
 export type ShowType = {
   id: number
@@ -150,9 +151,8 @@ const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
               <tr>
                 <td>Active</td>
                 <td>
-                  <input
-                    type="checkbox"
-                    checked={showDetail.is_active}
+                  <ToggleSwitch
+                    value={showDetail.is_active}
                     onChange={handleActiveToggle}
                   />
                 </td>

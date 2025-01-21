@@ -25,7 +25,11 @@ export default function Movies() {
   return (
     <div className="movies">
       <h1>Movies</h1>
-      <Link to={'search'}>Add</Link>
+      <div className="filter-bar">
+        <Link to={'search'}>
+          <button>Add</button>
+        </Link>
+      </div>
       <div className="movie-items">
         {isLoadingMovies ? (
           <p>Loading...</p>

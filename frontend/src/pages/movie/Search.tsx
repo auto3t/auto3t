@@ -2,6 +2,7 @@ import { useState } from 'react'
 import useApi from '../../hooks/api'
 import useMovieSearchStore from '../../stores/MovieSearchStore'
 import MovieSearchResult from '../../components/MovieSearchResult'
+import { Link } from 'react-router-dom'
 
 export type MovieSearchResultType = {
   id: string
@@ -55,7 +56,12 @@ const MovieSearch = () => {
   if (!results) return <></>
   return (
     <div>
-      <h1>Search Movies</h1>
+      <h1>Start track a new Movie</h1>
+      <div className="filter-bar">
+        <Link to={'/movie'}>
+          <button>Back</button>
+        </Link>
+      </div>
       <input
         type="text"
         value={query}

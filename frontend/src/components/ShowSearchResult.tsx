@@ -10,7 +10,7 @@ interface ShowSearchResultInterface {
 
 const ShowSearchResult: React.FC<ShowSearchResultInterface> = ({ result }) => {
   const { post, error } = useApi()
-  const [addingShow, setAddingShow] = useState<null | Boolean>(null)
+  const [addingShow, setAddingShow] = useState<null | boolean>(null)
 
   const handleAddShow = (remoteServerId: number) => {
     setAddingShow(true)

@@ -11,7 +11,7 @@ const MovieSearchResult: React.FC<MovieSearchResultInterface> = ({
   result,
 }) => {
   const { post, error } = useApi()
-  const [addingMovie, setAddingMovie] = useState<null | Boolean>(null)
+  const [addingMovie, setAddingMovie] = useState<null | boolean>(null)
 
   const handleAddMovie = (remoteServerId: string) => {
     setAddingMovie(true)

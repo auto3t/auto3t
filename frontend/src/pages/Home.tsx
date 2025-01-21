@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Episode from '../components/Episode'
 import useProcessingEpisodeStore from '../stores/processingEpisodesStore'
 import useUpcomingEpisodeStore from '../stores/UpcomingEpisodesStore'

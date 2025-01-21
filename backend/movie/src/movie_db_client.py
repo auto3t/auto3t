@@ -1,6 +1,7 @@
 """interact with themoviedb.org API"""
 
 import requests
+
 from autot.src.config import ConfigType, get_config
 
 

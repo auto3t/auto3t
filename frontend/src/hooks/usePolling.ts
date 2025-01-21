@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from 'react'
 const usePolling = (
   callback: () => Promise<number | void> | void,
   initialDelay: number,
-  dependencies: any[] = [],
+  dependencies: number[] | string[] = [],
 ) => {
   const savedCallback = useRef(callback)
   const [delay, setDelay] = useState<number | null>(initialDelay)

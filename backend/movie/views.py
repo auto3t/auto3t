@@ -2,8 +2,6 @@
 
 import json
 
-from autot.src.redis_con import AutotRedis
-from autot.src.search import Jackett
 from movie.models import Collection, Movie, MovieRelease
 from movie.serializers import CollectionSerializer, MovieReleaseSerializer, MovieSerializer
 from movie.src.movie_search import MovieId
@@ -12,6 +10,9 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from autot.src.redis_con import AutotRedis
+from autot.src.search import Jackett
 
 
 class CollectionViewSet(viewsets.ReadOnlyModelViewSet):

@@ -3,13 +3,14 @@
 import shutil
 from pathlib import Path
 
-from autot.models import Torrent, log_change
-from autot.src.config import ConfigType, get_config
-from autot.src.download import Transmission
 from django.db.models import QuerySet
 from movie.models import Movie
 from transmission_rpc.torrent import Torrent as TransmissionTorrent
 from tv.models import TVEpisode
+
+from autot.models import Torrent, log_change
+from autot.src.config import ConfigType, get_config
+from autot.src.download import Transmission
 
 
 class Archiver:

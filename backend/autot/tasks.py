@@ -5,11 +5,12 @@ from datetime import timedelta
 from pathlib import Path
 
 from artwork.models import Artwork
+from django_rq import job
+from django_rq.queues import get_queue
+
 from autot.src.archive import Archiver
 from autot.src.download import Transmission
 from autot.src.media_server import EpisodeIdentify, MediaServerIdentify, MovieIdentify
-from django_rq import job
-from django_rq.queues import get_queue
 
 logger = logging.getLogger("django")
 

@@ -31,7 +31,7 @@ repos:
       - id: codespell
         exclude: ^frontend/package-lock.json
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v9.17.0
+    rev: v9.18.0
     hooks:
       - id: eslint
         name: eslint-frontend

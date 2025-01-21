@@ -2,10 +2,6 @@
 
 import json
 
-from autot.models import SearchWord, get_logs
-from autot.serializers import ActionLogSerializer
-from autot.src.redis_con import AutotRedis
-from autot.src.search import Jackett
 from django.db.models import F, Value
 from django.db.models.functions import Replace
 from rest_framework import viewsets
@@ -16,6 +12,11 @@ from tv.models import TVEpisode, TVSeason, TVShow
 from tv.serializers import TVEpisodeBulkUpdateSerializer, TVEpisodeSerializer, TVSeasonSerializer, TVShowSerializer
 from tv.src.show_search import ShowId
 from tv.tasks import import_show, refresh_status
+
+from autot.models import SearchWord, get_logs
+from autot.serializers import ActionLogSerializer
+from autot.src.redis_con import AutotRedis
+from autot.src.search import Jackett
 
 
 class ShowViewSet(viewsets.ModelViewSet):

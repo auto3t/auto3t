@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     "movie",
     "authentication",
     "artwork",
+    "user",
     "django_rq",
 ]
 

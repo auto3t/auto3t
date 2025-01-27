@@ -23,6 +23,7 @@ urlpatterns = [
     path("api/", include("autot.urls")),
     path("api/tv/", include("tv.urls")),
     path("api/movie/", include("movie.urls")),
+    path("api/user/", include("user.urls")),
     path("artwork/", include("artwork.urls")),
     path("auth/", include("authentication.urls")),
 ]

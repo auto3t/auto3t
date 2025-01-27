@@ -10,6 +10,7 @@ from tv.models import TVEpisode, TVSeason, TVShow
 from tv.src.tv_maze_client import TVMaze
 
 from autot.models import log_change
+from autot.static import TvShowStatus
 
 
 class TVMazeShow:
@@ -111,7 +112,7 @@ class TVMazeShow:
 
     def _parse_show_status(self, status: str) -> str | None:
         """get show status"""
-        matches = [i for i in TVShow.SHOW_STATUS if i[1] == status]
+        matches = [i for i in TvShowStatus.choices() if i[1] == status]
         if not matches:
             return None
 

@@ -1,14 +1,16 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import useTVShowsStore from '../../stores/ShowsStore'
 import ShowTile from '../../components/ShowTile'
 import useApi from '../../hooks/api'
 import { Link } from 'react-router-dom'
+import useUserProfileStore from '../../stores/UserProfileStore'
 
 export default function TVShows() {
+  const { userProfile, setUserProfile } = useUserProfileStore()
   const [isLoadingShows, setIsLoadingShows] = useState(true)
   const [showSearchInput, setShowSearchInput] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
-  const { error, get } = useApi()
+  const { error, get, post } = useApi()
   const { shows, setShows } = useTVShowsStore()
 
   useEffect(() => {
@@ -32,6 +34,9 @@ export default function TVShows() {
       if (showSearchInput) {
         params.append('q', searchTerm)
       }
+      if (userProfile?.shows_status_filter) {
+        params.append('status', userProfile.shows_status_filter)
+      }
       try {
         const data = await get(`tv/show/?${params.toString()}`)
         setShows(data)
@@ -42,7 +47,7 @@ export default function TVShows() {
     }
 
     fetchShows()
-  }, [setShows, searchTerm])
+  }, [setShows, searchTerm, userProfile?.shows_status_filter])
 
   const handleShowSearchInput = async () => {
     if (showSearchInput) {
@@ -51,6 +56,19 @@ export default function TVShows() {
     } else {
       setShowSearchInput(true)
     }
+  }
+
+  const handleStatusFilterUpdate = async (
+    event: React.ChangeEvent<HTMLSelectElement>,
+  ) => {
+    const newStatus = event.target.value === '' ? null : event.target.value
+    post('user/profile/', { shows_status_filter: newStatus })
+      .then((data) => {
+        setUserProfile(data)
+      })
+      .catch((error) => {
+        console.error('Error updating status:', error)
+      })
   }
 
   return (
@@ -69,6 +87,18 @@ export default function TVShows() {
             onChange={(e) => setSearchTerm(e.target.value)}
             autoFocus
           />
+        )}
+        {userProfile && (
+          <select
+            defaultValue={userProfile.shows_status_filter}
+            onChange={handleStatusFilterUpdate}
+          >
+            <option value={''}>--- all show status ---</option>
+            <option value="r">Running</option>
+            <option value="e">Ended</option>
+            <option value="d">In Development</option>
+            <option value="t">To Be Determined</option>
+          </select>
         )}
       </div>
       <div className="show-items">

@@ -82,6 +82,10 @@ input {
   margin: 0 5px;
 }
 
+select {
+  text-align: center;
+}
+
 button:hover {
   background-color: var(--accent-2);
 }

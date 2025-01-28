@@ -37,6 +37,9 @@ export default function TVShows() {
       if (userProfile?.shows_status_filter) {
         params.append('status', userProfile.shows_status_filter)
       }
+      if (userProfile && userProfile?.shows_active_filter !== null) {
+        params.append('is_active', userProfile.shows_active_filter)
+      }
       try {
         const data = await get(`tv/show/?${params.toString()}`)
         setShows(data)
@@ -47,7 +50,12 @@ export default function TVShows() {
     }
 
     fetchShows()
-  }, [setShows, searchTerm, userProfile?.shows_status_filter])
+  }, [
+    setShows,
+    searchTerm,
+    userProfile?.shows_status_filter,
+    userProfile?.shows_active_filter,
+  ])
 
   const handleShowSearchInput = async () => {
     if (showSearchInput) {
@@ -63,6 +71,21 @@ export default function TVShows() {
   ) => {
     const newStatus = event.target.value === '' ? null : event.target.value
     post('user/profile/', { shows_status_filter: newStatus })
+      .then((data) => {
+        setUserProfile(data)
+      })
+      .catch((error) => {
+        console.error('Error updating status:', error)
+      })
+  }
+
+  const handleActiveFilterUpdate = async (
+    event: React.ChangeEvent<HTMLSelectElement>,
+  ) => {
+    const newActive: boolean | null =
+      event.target.value === '' ? null : event.target.value === '1'
+    console.log(newActive)
+    post('user/profile/', { shows_active_filter: newActive })
       .then((data) => {
         setUserProfile(data)
       })
@@ -89,16 +112,32 @@ export default function TVShows() {
           />
         )}
         {userProfile && (
-          <select
-            defaultValue={userProfile.shows_status_filter}
-            onChange={handleStatusFilterUpdate}
-          >
-            <option value={''}>--- all show status ---</option>
-            <option value="r">Running</option>
-            <option value="e">Ended</option>
-            <option value="d">In Development</option>
-            <option value="t">To Be Determined</option>
-          </select>
+          <>
+            <select
+              defaultValue={userProfile.shows_status_filter}
+              onChange={handleStatusFilterUpdate}
+            >
+              <option value={''}>--- all show status ---</option>
+              <option value="r">Running</option>
+              <option value="e">Ended</option>
+              <option value="d">In Development</option>
+              <option value="t">To Be Determined</option>
+            </select>
+            <select
+              defaultValue={
+                userProfile.shows_active_filter === null
+                  ? ''
+                  : userProfile.shows_active_filter
+                    ? '1'
+                    : '0'
+              }
+              onChange={handleActiveFilterUpdate}
+            >
+              <option value={''}>--- all ---</option>
+              <option value="1">Active</option>
+              <option value="0">Inactive</option>
+            </select>
+          </>
         )}
       </div>
       <div className="show-items">

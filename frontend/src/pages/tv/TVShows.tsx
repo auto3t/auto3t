@@ -84,7 +84,6 @@ export default function TVShows() {
   ) => {
     const newActive: boolean | null =
       event.target.value === '' ? null : event.target.value === '1'
-    console.log(newActive)
     post('user/profile/', { shows_active_filter: newActive })
       .then((data) => {
         setUserProfile(data)

@@ -11,7 +11,7 @@ repos:
         files: ^backend/
         args: ["--line-length=120"]
   - repo: https://github.com/pycqa/isort
-    rev: 5.13.2
+    rev: 6.0.0
     hooks:
       - id: isort
         name: isort (python)
@@ -26,12 +26,12 @@ repos:
         files: ^backend/
         args: [ "--max-complexity=10", "--max-line-length=120" ]
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.3.0
+    rev: v2.4.0
     hooks:
       - id: codespell
         exclude: ^frontend/package-lock.json
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v9.18.0
+    rev: v9.19.0
     hooks:
       - id: eslint
         name: eslint-frontend

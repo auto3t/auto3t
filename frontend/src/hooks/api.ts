@@ -92,8 +92,10 @@ const useApi = () => {
         credentials: 'include',
       })
       if (!response.ok) {
-        const errorResponse = await response.json()
-        setError(errorResponse.detail || 'Failed to login')
+        if (response.status === 403) {
+          const errorResponse = await response.json()
+          setError(errorResponse.detail || 'Failed to login')
+        }
       } else {
         setIsLoggedIn(true)
         setError(null)

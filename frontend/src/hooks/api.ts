@@ -3,39 +3,44 @@ import { useState } from 'react'
 import useAuthStore from '../stores/AuthStore'
 
 const API_BASE = `${import.meta.env.VITE_APP_API_URL || window.location.origin}/api/`
-const AUTH_BASE = `${import.meta.env.VITE_APP_API_URL || window.location.origin}/auth/`
 
-type HeadersType = {
-  Authorization: string
-  'Content-Type': string
-}
+function getCookie(name: string) {
+  let cookieValue = null
 
-type OptionsType = {
-  method: string
-  headers: HeadersType
-  body?: string
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';')
+
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim()
+      if (cookie.substring(0, name.length + 1) === name + '=') {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1))
+        break
+      }
+    }
+  }
+  return cookieValue
 }
 
 const useApi = () => {
   const [error, setError] = useState<string | null>(null)
-  const { accessToken, logout, refreshToken, setAccessToken, setToken } =
-    useAuthStore()
+  const { setIsLoggedIn } = useAuthStore()
+  const csrfToken = getCookie('csrftoken')
 
   const fetchData = async (
     url: string,
     method: string = 'GET',
     body: object | null = null,
-    retry: boolean = true,
     concat: boolean = true,
   ) => {
     setError(null)
 
-    const options: OptionsType = {
+    const options: RequestInit = {
       method,
       headers: {
-        Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
+        ...(csrfToken ? { 'X-CSRFToken': csrfToken } : {}),
       },
+      credentials: 'include',
     }
 
     if (body) {
@@ -47,19 +52,12 @@ const useApi = () => {
       let response = await fetch(fullURL, options)
 
       if (!response.ok) {
-        if (response.status === 401 && retry) {
-          await handleTokenRefresh()
-          const latestAccessToken = useAuthStore.getState().accessToken
-          options.headers['Authorization'] = `Bearer ${latestAccessToken}`
-          response = await fetch(`${API_BASE}${url}`, options)
-        }
-
-        if (!response.ok) {
-          const errorResponse = JSON.stringify(await response.json())
-          throw new Error(
-            `HTTP error! status ${response.status} - ${errorResponse}`,
-          )
-        }
+        const errorResponse = JSON.stringify(await response.json())
+        console.log(errorResponse)
+        setIsLoggedIn(false)
+        throw new Error(
+          `HTTP error! status ${response.status} - ${errorResponse}`,
+        )
       }
 
       const contentType = response.headers.get('content-type')
@@ -84,19 +82,20 @@ const useApi = () => {
   const loginUser = async (credentials: object) => {
     setError(null)
     try {
-      const response = await fetch(`${AUTH_BASE}token/`, {
+      const response = await fetch(`${API_BASE}auth/login/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...(csrfToken ? { 'X-CSRFToken': csrfToken } : {}),
         },
         body: JSON.stringify(credentials),
+        credentials: 'include',
       })
       if (!response.ok) {
         const errorResponse = await response.json()
         setError(errorResponse.detail || 'Failed to login')
       } else {
-        const tokenResponse = await response.json()
-        setToken(tokenResponse)
+        setIsLoggedIn(true)
         setError(null)
       }
     } catch (error) {
@@ -109,16 +108,23 @@ const useApi = () => {
     }
   }
 
+  const logoutUser = async () => {
+    const response = await fetch(`${API_BASE}auth/logout/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(csrfToken ? { 'X-CSRFToken': csrfToken } : {}),
+      },
+      credentials: 'include',
+    })
+    console.log(response.json())
+    setIsLoggedIn(false)
+  }
+
   const getImage = async (url: string) => {
     try {
       const imageAPIURL = `${import.meta.env.VITE_APP_API_URL || window.location.origin}/${url}`
-      const blob = await fetchData(
-        imageAPIURL,
-        undefined,
-        undefined,
-        undefined,
-        false,
-      )
+      const blob = await fetchData(imageAPIURL, undefined, undefined, false)
       const imageUrl = URL.createObjectURL(blob)
       return imageUrl
     } catch (error) {
@@ -147,30 +153,7 @@ const useApi = () => {
     return await fetchData(url, 'DELETE')
   }
 
-  const handleTokenRefresh = async () => {
-    if (!refreshToken) {
-      throw new Error('Refresh token not found')
-    }
-    try {
-      const response = await fetch(`${AUTH_BASE}token/refresh/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ refresh: refreshToken }),
-      })
-      if (!response.ok) {
-        throw new Error('Refresh failed')
-      }
-      const data = await response.json()
-      setAccessToken(data.access)
-    } catch (error) {
-      console.error('Error refreshing token:', error)
-      logout()
-    }
-  }
-
-  return { error, get, post, patch, put, del, loginUser, getImage }
+  return { error, get, post, patch, put, del, loginUser, logoutUser, getImage }
 }
 
 export default useApi

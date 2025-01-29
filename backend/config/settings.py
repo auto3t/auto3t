@@ -51,7 +51,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.auth",
     "rest_framework",
-    "rest_framework_simplejwt",
     "config",
     "autot",
     "tv",
@@ -151,7 +150,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
         "rest_framework.authentication.SessionAuthentication",
     ],
     "DEFAULT_PAGINATION_CLASS": None,
@@ -183,6 +181,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:8000",
 ]
+CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
+CORS_ALLOW_CREDENTIALS = True
 
 LOGGING = {
     "version": 1,

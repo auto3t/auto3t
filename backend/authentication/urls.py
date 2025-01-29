@@ -1,9 +1,9 @@
 """all auth urls"""
 
+from authentication import views
 from django.urls import path
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
-    path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
-    path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("login/", views.LoginView.as_view(), name="login"),
+    path("logout/", views.LogOutView.as_view(), name="logout"),
 ]

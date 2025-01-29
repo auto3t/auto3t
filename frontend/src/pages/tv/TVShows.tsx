@@ -14,6 +14,18 @@ export default function TVShows() {
   const { shows, setShows } = useTVShowsStore()
 
   useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const data = await get('user/profile/')
+        setUserProfile(data)
+      } catch (error) {
+        console.error('Error fetching user profile:', error)
+      }
+    }
+    fetchProfile()
+  }, [])
+
+  useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === '/') {
         event.preventDefault()

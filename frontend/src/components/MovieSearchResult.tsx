@@ -33,7 +33,9 @@ const MovieSearchResult: React.FC<MovieSearchResultInterface> = ({
         </div>
         <div className="movie-description">
           <h2>
-            {result.name} ({new Date(result.release_date).getFullYear()})
+            {result.name}{' '}
+            {result.release_date &&
+              `(${new Date(result.release_date).getFullYear()})`}
           </h2>
           <span className="smaller">
             ID:{' '}

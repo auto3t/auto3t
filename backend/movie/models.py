@@ -101,7 +101,11 @@ class Movie(models.Model):
     @property
     def name_display(self) -> str:
         """display name"""
-        return f"{self.name} ({self.release_date.year})"
+        display = self.name
+        if self.release_date:
+            display += f" ({self.release_date.year})"
+
+        return display
 
     @property
     def media_server_url(self) -> str | None:

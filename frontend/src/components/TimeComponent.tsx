@@ -3,6 +3,7 @@ interface TimeStampInterface {
 }
 
 const TimeComponent: React.FC<TimeStampInterface> = ({ timestamp }) => {
+  if (!timestamp) return 'TBD'
   const date = new Date(timestamp)
   const now = new Date()
   const localDateString = date.toLocaleDateString()

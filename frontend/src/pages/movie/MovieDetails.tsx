@@ -87,7 +87,7 @@ const MovieDetail: React.FC = () => {
                     <TimeComponent timestamp={movieDetail.release_date} />
                   </span>
                   <span className="tag-item">
-                    {movieDetail?.status_display || 'undefined'}
+                    {movieDetail?.status_display || 'Status: TBD'}
                   </span>
                 </div>
               </div>

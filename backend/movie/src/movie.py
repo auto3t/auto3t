@@ -71,12 +71,13 @@ class MovieDBMovie:
 
     def _parse_movie(self, response: dict) -> dict:
         """parse API response for model"""
+        release_date = date.fromisoformat(response["release_date"]) if response["release_date"] else None
         movie_data = {
             "remote_server_id": str(response["id"]),
             "name": response["original_title"],
             "description": response["overview"],
             "tagline": response["tagline"],
-            "release_date": date.fromisoformat(response["release_date"]),
+            "release_date": release_date,
             "production_state": self._parse_status(response),
         }
         return movie_data

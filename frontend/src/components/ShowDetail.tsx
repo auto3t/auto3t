@@ -136,16 +136,16 @@ const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
       </button>
       {showDetails && (
         <>
-          <div>
-            <button onClick={toggleShowConfirm}>Remove Show</button>
-            {showDelete && (
-              <>
-                <p>Remove &apos;{showDetail.name}&apos; from AutoT?</p>
+          <button onClick={toggleShowConfirm}>Remove Show</button>
+          {showDelete && (
+            <>
+              <p>
+                Remove &apos;{showDetail.name}&apos; from AutoT?
                 <button onClick={handleShowDelete}>Confirm</button>
                 <button onClick={toggleShowConfirm}>Cancel</button>
-              </>
-            )}
-          </div>
+              </p>
+            </>
+          )}
           <table className="keyword-table">
             <tbody>
               <tr>

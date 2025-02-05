@@ -71,7 +71,7 @@ class Torrent(models.Model):
         ("d", "Downloading"),
         ("f", "Finished"),
         ("a", "Archived"),
-        ("i", "ignored"),
+        ("i", "Ignored"),
     ]
 
     magnet = models.TextField()

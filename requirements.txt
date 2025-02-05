@@ -4,7 +4,7 @@ django-rq==3.0.0
 Django==5.1.5
 djangorestframework==3.15.2
 pillow==11.1.0
-pytz==2024.2
+pytz==2025.1
 requests==2.32.3
 rq_scheduler==0.14.0
 transmission-rpc==7.0.11

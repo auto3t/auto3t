@@ -1,12 +1,12 @@
 -r requirements.txt
-black==24.10.0
-codespell==2.4.0
+black==25.1.0
+codespell==2.4.1
 flake8==7.1.1
-ipython==8.31.0
+ipython==8.32.0
 isort==6.0.0
 pre-commit==4.1.0
 pylint-django==2.6.1
 python-dotenv==1.0.1
 requirementscheck==0.0.5
-types-pytz==2024.2.0.20241221
+types-pytz==2025.1.0.20250204
 types-requests==2.32.0.20241016

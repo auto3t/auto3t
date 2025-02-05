@@ -12,6 +12,7 @@ from tv.models import TVEpisode, TVSeason
 
 from autot.models import log_change
 from autot.src.config import ConfigType, get_config
+from autot.src.helper import get_magnet_hash
 from autot.src.redis_con import AutotRedis
 
 logger = logging.getLogger("django")
@@ -68,6 +69,7 @@ class Jackett(BaseIndexer):
 
     def get_magnet(self, to_search: TVEpisode | TVSeason) -> str | bytes | None:
         """get episode magnet link"""
+        to_ignore = [i.magnet_hash for i in to_search.torrent.filter(torrent_state="i")]
         url = self.build_url(to_search)
         results = self.make_request(url)
         valid_results = self.validate_links(results, to_search)
@@ -78,6 +80,12 @@ class Jackett(BaseIndexer):
         for result in valid_results:
             try:
                 magnet = self.extract_magnet(result)
+                if not magnet:
+                    continue
+
+                if get_magnet_hash(magnet) in to_ignore:
+                    continue
+
                 return magnet
             except ValueError:
                 continue

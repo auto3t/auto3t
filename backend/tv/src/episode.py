@@ -79,7 +79,7 @@ class EpisodeStatus:
     def find_episode_magnets(self) -> bool:
         """find magnet links for searching episodes"""
         found_magnets = False
-        to_search = TVEpisode.objects.filter(status="s").exclude(torrent__isnull=False)
+        to_search = TVEpisode.objects.filter(status="s")
         if not to_search:
             return found_magnets
 

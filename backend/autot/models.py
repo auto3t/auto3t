@@ -2,7 +2,6 @@
 
 import logging
 from datetime import datetime, timezone
-from urllib.parse import parse_qs
 
 from crontab import CronTab
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -14,6 +13,8 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django_rq import get_scheduler
 from django_rq.jobs import Job
+
+from autot.src.helper import get_magnet_hash
 
 logger = logging.getLogger("django")
 
@@ -85,7 +86,7 @@ class Torrent(models.Model):
     @property
     def magnet_hash(self):
         """extract magnet hash"""
-        return parse_qs(self.magnet).get("magnet:?xt")[0].split(":")[-1].lower()
+        return get_magnet_hash(self.magnet)
 
     def __str__(self):
         """describe torrent"""

@@ -123,21 +123,22 @@ const TVShowDetail: React.FC = () => {
           </button>
         )}
       </div>
-      {selectedSeason && (
-        <div>
+      {selectedSeason ? (
+        <>
           <SeasonMetaData fetchEpisodes={fetchEpisodes} />
           <div className="episode-items">
             {isLoadingEpisodes ? (
               <p>Loading...</p>
-            ) : episodes?.length > 0 ? (
+            ) : (
+              episodes?.length > 0 &&
               episodes.map((episode) => (
                 <Episode key={episode.id} episode={episode} />
               ))
-            ) : (
-              <p>No episodes in season.</p>
             )}
           </div>
-        </div>
+        </>
+      ) : (
+        <p>No episodes in season.</p>
       )}
     </>
   )

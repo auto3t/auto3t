@@ -26,13 +26,6 @@ RUN apt-get clean && apt-get -y update && apt-get -y install --no-install-recomm
     nginx \
     curl && rm -rf /var/lib/apt/lists/*
 
-# install debug tools for testing environment
-RUN if [ "$INSTALL_DEBUG" ] ; then \
-    apt-get -y update && apt-get -y install --no-install-recommends \
-    vim htop bmon net-tools iputils-ping procps curl lsof \
-    && /applib/bin/python -m pip install ipython \
-    ; fi
-
 RUN for dir in uwsgi body proxy fastcgi scgi; do \
         mkdir -p /var/lib/nginx/$dir && \
         chown www-data:www-data /var/lib/nginx/$dir; \
@@ -43,6 +36,13 @@ COPY nginx.conf /etc/nginx/nginx.conf
 # copy build requirements
 COPY --from=python-builder /applib /applib
 ENV PATH=/applib/bin:$PATH
+
+# install debug tools for testing environment
+RUN if [ "$INSTALL_DEBUG" ] ; then \
+    apt-get -y update && apt-get -y install --no-install-recommends \
+    vim htop bmon net-tools iputils-ping procps curl lsof \
+    && /applib/bin/python -m pip install ipython \
+    ; fi
 
 # copy application into container
 COPY ./backend /app

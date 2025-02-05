@@ -76,7 +76,6 @@ class Transmission(DownloaderBase):
         to_delete = self.get_single(torrent)
         if to_delete:
             self.delete(to_delete)
-            torrent.delete()
 
     def _cancel_episode(self, torrent: Torrent) -> None:
         """cancel episode torrents"""

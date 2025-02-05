@@ -59,6 +59,9 @@ const Episode: React.FC<EpisodeComponent> = ({ episode, showShow = false }) => {
             image={getEpisodeImage(episode)}
             alt={'episode-poster-' + episode.number}
           />
+          <span className="tag-item" title={episode.status_display}>
+            {episode.status || '-'}
+          </span>
           <ProgressBar torrents={episode?.torrent} />
         </div>
       </Link>
@@ -74,9 +77,6 @@ const Episode: React.FC<EpisodeComponent> = ({ episode, showShow = false }) => {
         <span>S{String(episode.season.number).padStart(2, '0')}</span>
         <span>E{String(episode.number).padStart(2, '0')}</span>
         <span> - {episode.title}</span>
-        <span className="tag-item" title={episode.status_display}>
-          {episode.status || '-'}
-        </span>
         <br />
         {episode.status === 'u' && (
           <TimeComponent timestamp={episode.release_date} />

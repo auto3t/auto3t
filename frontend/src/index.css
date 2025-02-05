@@ -119,6 +119,13 @@ button:hover {
   position: relative;
 }
 
+.image-wrap .tag-item {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 7px;
+}
+
 .progress-wrap {
   height: 20px;
 }
@@ -363,6 +370,7 @@ button:hover {
 
 .tag-item {
   background-color: var(--accent-3);
+  color: var(--main-fg);
   padding: 5px 10px;
   border-radius: 5px;
   align-content: center;

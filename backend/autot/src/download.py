@@ -80,6 +80,7 @@ class Transmission(DownloaderBase):
     def _cancel_episode(self, torrent: Torrent) -> None:
         """cancel episode torrents"""
         torrent.torrent_state = "i"
+        torrent.progress = None
         torrent.save()
         episodes = TVEpisode.objects.filter(torrent=torrent)
         for episode in episodes:
@@ -108,7 +109,7 @@ class Transmission(DownloaderBase):
             if not remote_torrent:
                 continue
 
-            if local_torrent.has_expected_files is None:
+            if not local_torrent.has_expected_files:
                 self.validate_expected(remote_torrent, local_torrent)
                 if local_torrent.torrent_state == "i":
                     continue

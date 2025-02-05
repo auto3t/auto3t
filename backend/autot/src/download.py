@@ -158,11 +158,11 @@ class Transmission(DownloaderBase):
             episode = TVEpisode.objects.get(torrent=local_torrent)
             try:
                 Archiver().get_valid_media_file(remote_torrent, episode)
-                local_torrent.has_expected_files(True)
+                local_torrent.has_expected_files = True
                 local_torrent.save()
             except FileNotFoundError:
                 self.cancel(local_torrent)
                 episode.status = TvEpisodeStatus.s.name
                 episode.save()
-                local_torrent.has_expected_files(False)
+                local_torrent.has_expected_files = False
                 local_torrent.save()

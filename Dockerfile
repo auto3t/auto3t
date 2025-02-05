@@ -29,8 +29,8 @@ RUN apt-get clean && apt-get -y update && apt-get -y install --no-install-recomm
 # install debug tools for testing environment
 RUN if [ "$INSTALL_DEBUG" ] ; then \
     apt-get -y update && apt-get -y install --no-install-recommends \
-    vim htop bmon net-tools iputils-ping procps curl \
-    && pip install ipython \
+    vim htop bmon net-tools iputils-ping procps curl lsof \
+    && /applib/bin/python -m pip install ipython \
     ; fi
 
 RUN for dir in uwsgi body proxy fastcgi scgi; do \

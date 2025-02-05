@@ -9,6 +9,7 @@ from tv.models import Torrent, TVEpisode
 
 from autot.models import log_change
 from autot.src.config import ConfigType, get_config
+from autot.static import TvEpisodeStatus
 
 
 class DownloaderBase:
@@ -79,18 +80,14 @@ class Transmission(DownloaderBase):
 
     def _cancel_episode(self, torrent: Torrent) -> None:
         """cancel episode torrents"""
+        torrent.torrent_state = "i"
+        torrent.save()
         episodes = TVEpisode.objects.filter(torrent=torrent)
         for episode in episodes:
-            episode.torrent.update(torrent_state="i")
-            episode_torrents = episode.torrent.filter(torrent_state="i")
-            for episode_torrent in episode_torrents:
-                episode_torrent.torrent_state = "i"
-                episode_torrent.save()
-                log_change(episode, "u", comment=f"Cancel Torrent Download: {episode_torrent.magnet_hash}")
-
             episode.status = None
             episode.media_server_id = None
             episode.save()
+            log_change(episode, "u", comment=f"Cancel Torrent Download: {torrent.magnet_hash}")
 
     def delete(self, torrent: TransmissionTorrent) -> None:
         """delete torrent"""
@@ -111,6 +108,11 @@ class Transmission(DownloaderBase):
             remote_torrent = in_queue.get(local_torrent.magnet_hash)
             if not remote_torrent:
                 continue
+
+            if local_torrent.has_expected_files is None:
+                self.validate_expected(remote_torrent, local_torrent)
+                if local_torrent.torrent_state == "i":
+                    continue
 
             state = remote_torrent.status.value
             if state == "downloading":
@@ -147,3 +149,20 @@ class Transmission(DownloaderBase):
             return False
 
         return True
+
+    def validate_expected(self, remote_torrent: TransmissionTorrent, local_torrent: Torrent):
+        """validate expected files are in torrent"""
+        from autot.src.archive import Archiver
+
+        if local_torrent.torrent_type == "e":
+            episode = TVEpisode.objects.get(torrent=local_torrent)
+            try:
+                Archiver().get_valid_media_file(remote_torrent, episode)
+                local_torrent.has_expected_files(True)
+                local_torrent.save()
+            except FileNotFoundError:
+                self.cancel(local_torrent)
+                episode.status = TvEpisodeStatus.s.name
+                episode.save()
+                local_torrent.has_expected_files(False)
+                local_torrent.save()

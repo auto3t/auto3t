@@ -56,7 +56,7 @@ class Archiver:
 
     def _archive_episode(self, tm_torrent: TransmissionTorrent, episode: TVEpisode) -> None:
         """archive tvfile"""
-        filename = self._get_valid_media_file(tm_torrent, episode)
+        filename = self.get_valid_media_file(tm_torrent, episode)
         download_path: Path = self.CONFIG["TM_BASE_FOLDER"] / filename
         if not download_path.exists():
             raise FileNotFoundError(f"didn't find expected {str(download_path)}")
@@ -70,7 +70,7 @@ class Archiver:
         episode.save()
         log_change(episode, "u", field_name="status", old_value=old_status, new_value="f")
 
-    def _get_valid_media_file(self, tm_torrent: TransmissionTorrent, episode: TVEpisode) -> str:
+    def get_valid_media_file(self, tm_torrent: TransmissionTorrent, episode: TVEpisode) -> str:
         """get valid media file"""
         for torrent_file in tm_torrent.get_files():
             if torrent_file.size < self.CONFIG["MEDIA_MIN_SIZE"]:

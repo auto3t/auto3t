@@ -8,7 +8,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models.signals import post_delete, post_save, pre_delete, pre_save
+from django.db.models.signals import post_delete, post_save, pre_delete
 from django.dispatch import receiver
 from django.urls import reverse
 from django_rq import get_scheduler
@@ -171,7 +171,7 @@ def delete_schedule(sender, instance, **kwargs):  # pylint: disable=unused-argum
     instance.delete_on_scheduler(scheduler)
 
 
-@receiver(pre_save, sender=AutotScheduler)
+@receiver(post_save, sender=AutotScheduler)
 def create_update_schedule(sender, instance, **kwargs):  # pylint: disable=unused-argument
     """create schedule"""
     logger.info("scheduler post save signal: %s", instance)

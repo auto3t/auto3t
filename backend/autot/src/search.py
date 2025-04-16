@@ -10,7 +10,7 @@ import requests
 from django.db.models import QuerySet
 from tv.models import TVEpisode, TVSeason
 
-from autot.models import log_change
+from autot.models import Torrent, log_change
 from autot.src.config import ConfigType, get_config
 from autot.src.helper import get_magnet_hash
 from autot.src.redis_con import AutotRedis
@@ -69,7 +69,13 @@ class Jackett(BaseIndexer):
 
     def get_magnet(self, to_search: TVEpisode | TVSeason) -> str | bytes | None:
         """get episode magnet link"""
-        to_ignore = [i.magnet_hash for i in to_search.torrent.filter(torrent_state="i")]
+        to_ignore = []
+        if isinstance(to_search, TVEpisode):
+            to_ignore = [i.magnet_hash for i in to_search.torrent.filter(torrent_state="i")]
+        elif isinstance(to_search, TVSeason):
+            torrents = Torrent.objects.filter(torrent_state="i", torrent_type="s", torrent_tv__season=to_search)
+            to_ignore = [i.magnet_hash for i in torrents]
+
         url = self.build_url(to_search)
         results = self.make_request(url)
         valid_results = self.validate_links(results, to_search)

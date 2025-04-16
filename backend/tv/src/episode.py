@@ -69,7 +69,7 @@ class EpisodeStatus:
 
             season_episodes = TVEpisode.objects.filter(season=season)
             for episode in season_episodes:
-                episode.add_magnet(magnet)
+                episode.add_magnet(magnet, torrent_type="s")
 
             found_magnets = True
             log_change(season, "c", comment="Added magnet for season episodes")

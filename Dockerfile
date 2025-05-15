@@ -9,6 +9,9 @@ RUN pip install -r requirements.txt
 # build main.js
 FROM node:22.10 AS js-builder
 
+ARG GIT_COMMIT
+ENV VITE_GIT_COMMIT=$GIT_COMMIT
+
 WORKDIR /app/frontend
 COPY frontend/package*.json ./
 RUN npm install
@@ -19,9 +22,6 @@ RUN npm run build
 FROM python:3.11.3-slim-bullseye AS autot
 ARG INSTALL_DEBUG
 ENV PYTHONUNBUFFERED=1
-
-ARG GIT_COMMIT
-ENV VITE_GIT_COMMIT=$GIT_COMMIT
 
 RUN mkdir -p /data/static /downloads /media/tv
 

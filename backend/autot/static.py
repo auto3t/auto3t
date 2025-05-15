@@ -29,3 +29,32 @@ class TvEpisodeStatus(StrEnum):
     @classmethod
     def choices(cls):
         return [(i.name, i.value) for i in cls]
+
+
+class MovieStatus(StrEnum):
+    """possible movie status choices"""
+
+    u = "Upcoming"
+    s = "Searching"
+    d = "Downloading"
+    f = "Finished"
+    a = "Archived"
+    i = "Ignored"
+
+    @classmethod
+    def choices(cls):
+        return [(i.name, i.value) for i in cls]
+
+
+class MovieProductionState(StrEnum):
+    """movie production state choices"""
+
+    r = "Rumored"
+    p = "Planned"
+    i = "In Production"
+    o = "Post Production"
+    e = "Released"
+
+    @classmethod
+    def choices(cls):
+        return [(i.name, i.value) for i in cls]

@@ -53,6 +53,9 @@ class MediaServerIdentify:
             message = f"jf request failed: {response.json()}"
             raise ValueError(message)
 
+        if response.status_code == 204:
+            return None
+
         return response.json()
 
     def get_jf_data(self) -> dict[str, MediaServerItem]:
@@ -129,6 +132,21 @@ class MediaServerIdentify:
                 Movie.objects.filter(torrent__torrent_state="a", media_server_id__isnull=True).exists(),
             ]
         )
+
+    def refresh(self, to_refresh: set[str]) -> None:
+        """refresh items"""
+        if not to_refresh:
+            return
+
+        for item_id in to_refresh:
+            url = (
+                f"Items/{item_id}/Refresh?"
+                "metadataRefreshMode=FullRefresh&"
+                "imageRefreshMode=FullRefresh&"
+                "replaceAllMetadata=true&"
+                "replaceAllImages=true"
+            )
+            self.make_request(url, "POST")
 
 
 class EpisodeIdentify(MediaServerIdentify):

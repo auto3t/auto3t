@@ -10,6 +10,7 @@ from tv.models import TVEpisode, TVSeason, TVShow
 from tv.src.tv_maze_client import TVMaze
 
 from autot.models import log_change
+from autot.src.media_server import MediaServerIdentify
 from autot.static import TvShowStatus
 
 
@@ -198,6 +199,8 @@ class TVMazeShow:
         if not episode_remote:
             return
 
+        to_refresh = set()
+
         for episode_response in episode_remote:
             season = seasons.get(number=episode_response["season"])
             episode_data = self._parse_episode(episode_response, season)
@@ -222,12 +225,16 @@ class TVMazeShow:
                     log_change(episode, "u", field_name=key, old_value=old_value, new_value=value)
                     setattr(episode, key, value)
                     fields_changed = True
+                    if episode.media_server_id:
+                        to_refresh.add(episode.media_server_id)
 
             if fields_changed:
                 episode.save()
 
             image_episode = self._get_image_url(episode_response)
             episode.update_image_episode(image_episode)
+
+        MediaServerIdentify().refresh(to_refresh)
 
     def _get_remote_episodes(self) -> dict | None:
         """get episodes of show"""

@@ -18,7 +18,7 @@ RUN npm run build
 # build final image
 FROM python:3.11.3-slim-bullseye AS autot
 ARG INSTALL_DEBUG
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONUNBUFFERED=1
 
 RUN mkdir -p /data/static /downloads /media/tv
 

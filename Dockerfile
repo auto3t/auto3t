@@ -20,6 +20,9 @@ FROM python:3.11.3-slim-bullseye AS autot
 ARG INSTALL_DEBUG
 ENV PYTHONUNBUFFERED=1
 
+ARG GIT_COMMIT
+ENV VITE_GIT_COMMIT=$GIT_COMMIT
+
 RUN mkdir -p /data/static /downloads /media/tv
 
 RUN apt-get clean && apt-get -y update && apt-get -y install --no-install-recommends \

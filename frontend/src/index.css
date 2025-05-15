@@ -29,7 +29,12 @@
   --accent-3: #018f9c;
 }
 
-body {
+.main {
+  flex-grow: 1;
+  margin: 2rem 5rem;
+}
+
+#root {
   background-color: var(--main-bg);
   color: var(--main-fg);
   font-family: Alef-Regular;
@@ -88,11 +93,6 @@ select {
 
 button:hover {
   background-color: var(--accent-2);
-}
-
-.main {
-  flex-grow: 1;
-  margin: 2rem 5rem;
 }
 
 .boxed-content {

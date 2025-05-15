@@ -23,37 +23,49 @@ export default function RootLayout() {
     setShowNotifications(!showNotifications)
   }
 
+  const commitHash = import.meta.env.VITE_GIT_COMMIT
+
   return (
     <>
-      <header className="boxed-content">
-        <nav className="main-nav">
-          <div className="nav-items">
-            <img src={logo} />
-            <NavLink className="nav-item" to="/">
-              Home
-            </NavLink>
-            <NavLink className="nav-item" to="tv">
-              TV
-            </NavLink>
-            <NavLink className="nav-item" to="movie">
-              Movie
-            </NavLink>
-            <NavLink className="nav-item" to="settings">
-              Settings
-            </NavLink>
-          </div>
-          <div>
-            <button onClick={handleShowNotifications}>
-              Show Notifications
-            </button>
-            {isLoggedIn && <button onClick={handleLogout}>Logout</button>}
-          </div>
-        </nav>
-      </header>
-      <main className="boxed-content">
-        <Outlet />
-        <NotificationBox />
-      </main>
+      <div className="main">
+        <header className="boxed-content">
+          <nav className="main-nav">
+            <div className="nav-items">
+              <img src={logo} />
+              <NavLink className="nav-item" to="/">
+                Home
+              </NavLink>
+              <NavLink className="nav-item" to="tv">
+                TV
+              </NavLink>
+              <NavLink className="nav-item" to="movie">
+                Movie
+              </NavLink>
+              <NavLink className="nav-item" to="settings">
+                Settings
+              </NavLink>
+            </div>
+            <div>
+              <button onClick={handleShowNotifications}>
+                Show Notifications
+              </button>
+              {isLoggedIn && <button onClick={handleLogout}>Logout</button>}
+            </div>
+          </nav>
+        </header>
+        <main className="boxed-content">
+          <Outlet />
+          <NotificationBox />
+        </main>
+      </div>
+      <footer>
+        <div className="boxed-content">
+          <p>
+            © AutoT {new Date().getFullYear()} - v0.0.1{' '}
+            {commitHash && `- ${commitHash.substring(0, 7)}`}
+          </p>
+        </div>
+      </footer>
     </>
   )
 }

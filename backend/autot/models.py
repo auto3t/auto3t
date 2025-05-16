@@ -1,9 +1,11 @@
 """all core models"""
 
 import logging
-from datetime import datetime, timezone
+import zoneinfo
+from datetime import datetime
 
 from crontab import CronTab
+from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
@@ -113,52 +115,57 @@ class AutotScheduler(models.Model):
         ("tv.tasks.refresh_all_shows", "Refresh All Shows"),
         ("tv.tasks.refresh_status", "Refresh Status"),
     ]
+    SCHEDULER_MAP = {
+        "tv.tasks.refresh_all_shows": "default",
+        "tv.tasks.refresh_status": "show",
+    }
 
     job = models.CharField(max_length=255, choices=JOB_CHOICES, unique=True)
     cron_schedule = models.CharField(max_length=255, validators=[validate_cron])
-    job_id_registered = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self) -> str:
         """describe schedule"""
         return f"{self.job} [{self.cron_schedule}]"
 
     @property
+    def schedule_name(self) -> str:
+        """schedule name to run job on"""
+        return self.SCHEDULER_MAP[self.job]
+
+    @property
     def next_execution(self) -> str | None:
         """get next execution time"""
-        scheduler = get_scheduler("default")
-        job = self.get_on_scheduler(scheduler)
+        job = self.get_on_scheduler()
         if not job:
             return None
 
-        next_execution_time = job[1].astimezone(timezone.utc).isoformat()
+        next_utc = job[1].replace(tzinfo=zoneinfo.ZoneInfo("UTC"))
+        next_tz = next_utc.astimezone(zoneinfo.ZoneInfo(settings.TIME_ZONE))
 
-        return next_execution_time
+        return next_tz.isoformat()
 
-    def get_on_scheduler(self, scheduler) -> tuple[Job, datetime] | None:
+    def get_on_scheduler(self) -> tuple[Job, datetime] | None:
         """get job on scheduler"""
-        if not self.job_id_registered:
-            return None
-
+        scheduler = get_scheduler(self.schedule_name)
         for job in scheduler.get_jobs(with_times=True):
-            if job[0].id == self.job_id_registered:
+            if job[0].func_name == self.job:
                 return job
 
         return None
 
-    def create_on_scheduler(self, scheduler):
+    def create_on_scheduler(self):
         """create on schedule"""
-        if self.job_id_registered:
-            self.delete_on_scheduler(scheduler)
-            self.job_id_registered = None
+        scheduled = self.get_on_scheduler()
+        if scheduled:
+            scheduled[0].delete()
 
+        scheduler = get_scheduler(self.schedule_name)
         job = scheduler.cron(cron_string=self.cron_schedule, func=self.job)
-        old_id = self.job_id_registered
-        self.job_id_registered = job.id
-        log_change(self, "u", field_name="job_id_registered", old_value=old_id, new_value=self.job_id_registered)
+        logger.info(f"registered new schedule for job {job.func_name}")
 
-    def delete_on_scheduler(self, scheduler) -> None:
+    def delete_on_scheduler(self) -> None:
         """remove from scheduler"""
-        job = self.get_on_scheduler(scheduler)
+        job = self.get_on_scheduler()
         if job:
             job[0].delete()
 
@@ -167,16 +174,14 @@ class AutotScheduler(models.Model):
 def delete_schedule(sender, instance, **kwargs):  # pylint: disable=unused-argument
     """delete from filesystem"""
     logger.info("scheduler delete signal: %s", instance)
-    scheduler = get_scheduler("default")
-    instance.delete_on_scheduler(scheduler)
+    instance.delete_on_scheduler()
 
 
 @receiver(post_save, sender=AutotScheduler)
 def create_update_schedule(sender, instance, **kwargs):  # pylint: disable=unused-argument
     """create schedule"""
     logger.info("scheduler post save signal: %s", instance)
-    scheduler = get_scheduler("default")
-    instance.create_on_scheduler(scheduler)
+    instance.create_on_scheduler()
 
 
 class ActionLog(models.Model):

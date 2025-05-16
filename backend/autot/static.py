@@ -1,6 +1,7 @@
 """collection of static variables"""
 
 from enum import StrEnum
+from typing import TypedDict
 
 
 class TvShowStatus(StrEnum):
@@ -58,3 +59,17 @@ class MovieProductionState(StrEnum):
     @classmethod
     def choices(cls):
         return [(i.name, i.value) for i in cls]
+
+
+class TaskItem(TypedDict):
+    """describe a task"""
+
+    job: str
+    name: str
+    queue: str
+
+
+TASK_OPTIONS: list[TaskItem] = [
+    TaskItem(job="tv.tasks.refresh_all_shows", name="Refresh All Shows", queue="default"),
+    TaskItem(job="tv.tasks.refresh_status", name="Refresh Episode Status", queue="show"),
+]

@@ -1,5 +1,6 @@
 """all api urls"""
 
+from django.urls import path
 from rest_framework.routers import DefaultRouter
 
 from autot import views
@@ -11,3 +12,7 @@ router.register(r"keyword", views.SearchWordView, basename="keyword")
 router.register(r"scheduler", views.SchedulerViewSet, basename="scheduler")
 router.register(r"actionlog", views.ActionLogView, basename="actionlog")
 urlpatterns = router.urls
+
+urlpatterns.append(
+    path("tasks/", views.TaskView.as_view(), name="tasks"),
+)

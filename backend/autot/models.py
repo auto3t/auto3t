@@ -17,6 +17,7 @@ from django_rq import get_scheduler
 from django_rq.jobs import Job
 
 from autot.src.helper import get_magnet_hash
+from autot.static import TASK_OPTIONS
 
 logger = logging.getLogger("django")
 
@@ -111,14 +112,7 @@ class AutotScheduler(models.Model):
     """base class for schedules"""
 
     TRACK_CHANGES = True
-    JOB_CHOICES = [
-        ("tv.tasks.refresh_all_shows", "Refresh All Shows"),
-        ("tv.tasks.refresh_status", "Refresh Status"),
-    ]
-    SCHEDULER_MAP = {
-        "tv.tasks.refresh_all_shows": "default",
-        "tv.tasks.refresh_status": "show",
-    }
+    JOB_CHOICES = [(i["job"], i["name"]) for i in TASK_OPTIONS]
 
     job = models.CharField(max_length=255, choices=JOB_CHOICES, unique=True)
     cron_schedule = models.CharField(max_length=255, validators=[validate_cron])
@@ -130,7 +124,11 @@ class AutotScheduler(models.Model):
     @property
     def schedule_name(self) -> str:
         """schedule name to run job on"""
-        return self.SCHEDULER_MAP[self.job]
+        for task in TASK_OPTIONS:
+            if task["job"] == self.job:
+                return task["queue"]
+
+        raise ValueError(f"failed to find queue in TASK_OPTIONS for {self.job}")
 
     @property
     def next_execution(self) -> str | None:

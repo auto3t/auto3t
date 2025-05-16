@@ -1,9 +1,11 @@
 """all api views"""
 
+import django_rq
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from autot.models import ActionLog, AutotScheduler, SearchWord, SearchWordCategory, Torrent, get_logs
 from autot.serializers import (
@@ -14,6 +16,7 @@ from autot.serializers import (
     TorrentSerializer,
 )
 from autot.src.search import Jackett
+from autot.static import TASK_OPTIONS
 
 
 class StandardResultsSetPagination(PageNumberPagination):
@@ -101,3 +104,36 @@ class SchedulerViewSet(viewsets.ModelViewSet):
             serializer = ActionLogSerializer(action_logs, many=True)
             return Response(serializer.data)
         return Response([])
+
+
+class TaskView(APIView):
+    """start new task"""
+
+    def get(self, request):
+        """get task options"""
+        return Response(TASK_OPTIONS)
+
+    def post(self, request):
+        """start new task"""
+        job = request.data.get("job")
+        if not job:
+            return Response({"message": "missing job key"}, status=400)
+
+        task = None
+        for task_option in TASK_OPTIONS:
+            if task_option["job"] == job:
+                task = task_option
+
+        if not task:
+            return Response({"message": "invalid job"}, status=400)
+
+        queue = django_rq.get_queue(task["schedule"])
+        job = queue.enqueue(task["job"])
+
+        response = {
+            "id": job.id,
+            "job": job.func_name,
+            "enqueued_at": job.enqueued_at.isoformat(),
+        }
+
+        return Response(response)

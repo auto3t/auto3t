@@ -90,6 +90,9 @@ class MovieRemoteSearch(APIView):
     def get(self, request):
         """get request"""
         query = request.GET.get("q")
+        if not query:
+            return Response({"message": "missing query string"}, status=400)
+
         response = MovieId().search(query)
 
         return Response(response)

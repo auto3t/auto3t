@@ -21,6 +21,9 @@ def is_pending(queue_name: str, func_name: str) -> bool:
     all_job_ids = queue.scheduled_job_registry.get_job_ids()
     for job_id in all_job_ids:
         job_queued = queue.fetch_job(job_id)
+        if not job_queued:
+            continue
+
         if job_queued.func_name == f"autot.tasks.{func_name}" and job_queued.is_scheduled:
             return True
 

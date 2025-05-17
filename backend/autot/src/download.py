@@ -184,6 +184,6 @@ class Transmission(DownloaderBase):
     def add_trackers(self):
         """add trackers for transmissions"""
         tracker_list = get_tracker_list()
+        tracker_list_list = [[i] for i in tracker_list]
         for torrent in self.transission_client.get_torrents():
-            self.transission_client.change_torrent(torrent.id, tracker_list=[tracker_list])
-            break
+            self.transission_client.change_torrent(torrent.id, tracker_list=tracker_list_list)

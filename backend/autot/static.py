@@ -64,12 +64,13 @@ class MovieProductionState(StrEnum):
 class TaskItem(TypedDict):
     """describe a task"""
 
+    id: int
     job: str
     name: str
     queue: str
 
 
 TASK_OPTIONS: list[TaskItem] = [
-    TaskItem(job="tv.tasks.refresh_all_shows", name="Refresh All Shows", queue="default"),
-    TaskItem(job="tv.tasks.refresh_status", name="Refresh Episode Status", queue="show"),
+    TaskItem(id=1, job="tv.tasks.refresh_all_shows", name="Refresh All Shows", queue="default"),
+    TaskItem(id=2, job="tv.tasks.refresh_status", name="Refresh Episode Status", queue="show"),
 ]

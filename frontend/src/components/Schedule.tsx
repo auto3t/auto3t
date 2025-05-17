@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import useApi from '../hooks/api'
 import useScheduleStore from '../stores/ScheduleStore'
 import TimeComponent from './TimeComponent'
@@ -8,6 +8,46 @@ export type SchedulerType = {
   job_display: string
   cron_schedule: string
   next_execution: string
+}
+
+type TaskType = {
+  id: number
+  job: string
+  name: string
+  queue: string
+}
+
+const TaskTableRow = function ({ task }: { task: TaskType }) {
+  const { post } = useApi()
+  const [taskMessage, setTaskMessage] = useState('')
+
+  const handleRunTask = async () => {
+    try {
+      const body = { job: task.job }
+      const data = await post('tasks/', body)
+      if (data) {
+        setTaskMessage('new task started')
+      } else {
+        console.error('Failed to create task')
+      }
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error('Error creating keyword:', err.message)
+      } else {
+        console.error('An unknown error creating keyword')
+      }
+    }
+  }
+
+  return (
+    <tr key={task.id}>
+      <td>{task.name}</td>
+      <td>{taskMessage}</td>
+      <td>
+        <button onClick={handleRunTask}>Run</button>
+      </td>
+    </tr>
+  )
 }
 
 export default function Schedule() {
@@ -26,14 +66,25 @@ export default function Schedule() {
     setDeletingSchedule,
   } = useScheduleStore()
 
+  const [tasks, setTasks] = useState<TaskType[]>([])
+
   const fetchSchedules = useCallback(async () => {
     const data = await get('scheduler/')
     setSchedules(data)
   }, [setSchedules])
 
+  const fetchTasks = useCallback(async () => {
+    const data = await get('tasks/')
+    setTasks(data)
+  }, [setTasks])
+
   useEffect(() => {
     fetchSchedules()
   }, [fetchSchedules])
+
+  useEffect(() => {
+    fetchTasks()
+  }, [fetchTasks])
 
   const handleDeleteSchedule = (schedule: SchedulerType) => {
     setDeletingSchedule(schedule)
@@ -116,12 +167,12 @@ export default function Schedule() {
                   onChange={(e) => setSelectedSchedule(e.target.value)}
                 >
                   <option value="">Select Schedule</option>
-                  <option value="tv.tasks.refresh_all_shows">
-                    Refresh All Shows
-                  </option>
-                  <option value="tv.tasks.refresh_status">
-                    Refresh Status
-                  </option>
+                  {tasks.length > 0 &&
+                    tasks.map((task) => (
+                      <option value={task.job} key={task.id}>
+                        {task.name}
+                      </option>
+                    ))}
                 </select>
               </td>
               <td>
@@ -162,6 +213,20 @@ export default function Schedule() {
               </td>
             </tr>
           ))}
+        </tbody>
+      </table>
+      <h2>Tasks</h2>
+      <table className="keyword-table">
+        <thead>
+          <tr>
+            <th>Task</th>
+            <th>Message</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {tasks.length > 0 &&
+            tasks.map((task) => <TaskTableRow task={task} key={task.id} />)}
         </tbody>
       </table>
     </>

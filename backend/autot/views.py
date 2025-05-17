@@ -127,7 +127,7 @@ class TaskView(APIView):
         if not task:
             return Response({"message": "invalid job"}, status=400)
 
-        queue = django_rq.get_queue(task["schedule"])
+        queue = django_rq.get_queue(task["queue"])
         job = queue.enqueue(task["job"])
 
         response = {

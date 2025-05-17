@@ -154,6 +154,11 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_PAGINATION_CLASS": None,
 }
+if not DEBUG:
+    REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = [
+        "rest_framework.renderers.JSONRenderer",
+    ]
+
 
 MEDIA_ROOT = BASE_DIR / "artwork"
 MEDIA_URL = ""

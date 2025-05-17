@@ -110,7 +110,8 @@ class Transmission(DownloaderBase):
             if not remote_torrent:
                 continue
 
-            if not local_torrent.has_expected_files:
+            has_files = remote_torrent.get_files()
+            if has_files and not local_torrent.has_expected_files:
                 self.validate_expected(remote_torrent, local_torrent)
                 if local_torrent.torrent_state == "i":
                     continue

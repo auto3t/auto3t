@@ -1,7 +1,13 @@
 """collection of helper functions"""
 
+import logging
 import re
 from urllib.parse import parse_qs
+
+import requests
+from django.conf import settings
+
+logger = logging.getLogger("django")
 
 
 def sanitize_file_name(filename: str) -> str:
@@ -23,3 +29,13 @@ def get_magnet_hash(magnet: str) -> str:
         raise ValueError
 
     return magnets[0].split(":")[-1].lower()
+
+
+def get_tracker_list() -> list[str]:
+    """get tracker lists"""
+    response = requests.get(settings.AUTOT_TRACKER_URL, timeout=300)
+    if not response.ok:
+        logger.error("failed to get tracker fallback: status %s, error: %s", response.status_code, response.text)
+        return []
+
+    return response.text.split()

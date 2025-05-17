@@ -9,6 +9,7 @@ from tv.models import Torrent, TVEpisode
 
 from autot.models import log_change
 from autot.src.config import ConfigType, get_config
+from autot.src.helper import get_tracker_list
 from autot.static import TvEpisodeStatus
 
 
@@ -179,3 +180,10 @@ class Transmission(DownloaderBase):
                 episodes.update(status=TvEpisodeStatus.s.name)
                 local_torrent.has_expected_files = False
                 local_torrent.save()
+
+    def add_trackers(self):
+        """add trackers for transmissions"""
+        tracker_list = get_tracker_list()
+        for torrent in self.transission_client.get_torrents():
+            self.transission_client.change_torrent(torrent.id, tracker_list=[tracker_list])
+            break

@@ -217,3 +217,5 @@ LOGGING = {
         }
     },
 }
+
+AUTOT_TRACKER_URL = "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all.txt"

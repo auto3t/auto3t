@@ -12,7 +12,7 @@ from tv.models import TVEpisode, TVSeason
 
 from autot.models import Torrent, log_change
 from autot.src.config import ConfigType, get_config
-from autot.src.helper import get_magnet_hash
+from autot.src.helper import get_magnet_hash, get_tracker_list
 from autot.src.redis_con import AutotRedis
 
 logger = logging.getLogger("django")
@@ -172,8 +172,6 @@ class Jackett(BaseIndexer):
 class Magnator:
     """convert torrent bytes object into magnet link"""
 
-    TRACKER_FALLBACK_URL = "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_best.txt"
-
     def __init__(self, torrent_bytes: bytes):
         self.metadata = bencodepy.bdecode(torrent_bytes)
 
@@ -206,17 +204,8 @@ class Magnator:
                 tracker_list.append(tracker.decode())
 
         if not tracker_list:
-            tracker_list = self._get_fallback()
+            tracker_list = get_tracker_list()
 
         encoded_trackers = "&tr=".join(quote(tracker) for tracker in tracker_list)
 
         return encoded_trackers
-
-    def _get_fallback(self) -> list[str]:
-        """get fallback trackers"""
-        response = requests.get(self.TRACKER_FALLBACK_URL, timeout=300)
-        if not response.ok:
-            logger.error("failed to get tracker fallback: status %s, error: %s", response.status_code, response.text)
-            return []
-
-        return response.text.split()

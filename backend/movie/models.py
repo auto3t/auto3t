@@ -9,6 +9,7 @@ from django.dispatch import receiver
 
 from autot.models import Torrent, log_change
 from autot.src.config import ConfigType, get_config
+from autot.static import MovieStatus
 
 
 class Collection(models.Model):
@@ -61,15 +62,6 @@ class Movie(models.Model):
         ("r", "Released"),
     ]
 
-    MOVIE_STATUS = [
-        ("u", "Upcoming"),
-        ("s", "Searching"),
-        ("d", "Downloading"),
-        ("f", "Finished"),
-        ("a", "Archived"),
-        ("i", "Ignored"),
-    ]
-
     remote_server_id = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     date_added = models.DateTimeField(auto_now_add=True)
@@ -83,7 +75,7 @@ class Movie(models.Model):
     )
     collection = models.ForeignKey(Collection, on_delete=models.PROTECT, null=True, blank=True)
     production_state = models.CharField(choices=PRODUCTION_STATE, max_length=1, null=True, blank=True)
-    status = models.CharField(choices=MOVIE_STATUS, max_length=1, null=True, blank=True)
+    status = models.CharField(choices=MovieStatus.choices(), max_length=1, null=True, blank=True)
     torrent = models.ManyToManyField(Torrent, related_name="torrent")
 
     media_server_id = models.CharField(max_length=255, null=True, blank=True)

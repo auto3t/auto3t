@@ -2,6 +2,8 @@
 
 import json
 
+from django.db.models import F, Value
+from django.db.models.functions import Replace
 from movie.models import Collection, Movie, MovieRelease
 from movie.serializers import CollectionSerializer, MovieReleaseSerializer, MovieSerializer
 from movie.src.movie_search import MovieId
@@ -13,6 +15,7 @@ from rest_framework.views import APIView
 
 from autot.src.redis_con import AutotRedis
 from autot.src.search import Jackett
+from autot.static import MovieStatus
 
 
 class CollectionViewSet(viewsets.ReadOnlyModelViewSet):
@@ -24,6 +27,8 @@ class CollectionViewSet(viewsets.ReadOnlyModelViewSet):
 
 class MovieViewSet(viewsets.ModelViewSet):
     """views for movies"""
+
+    VALID_STATUS = [i.name for i in MovieStatus]
 
     serializer_class = MovieSerializer
     queryset = Movie.objects.all().order_by("name")
@@ -46,6 +51,26 @@ class MovieViewSet(viewsets.ModelViewSet):
         }
 
         return Response(message)
+
+    def get_queryset(self):
+        """get movie queryset"""
+        queryset = queryset = Movie.objects.annotate(name_sort=Replace(F("name"), Value("The "), Value(""))).order_by(
+            "name_sort", "release_date"
+        )
+
+        status = self.request.GET.get("status")
+        if status:
+            if status not in self.VALID_STATUS:
+                message = {"error": f"Invalid status field: {status}."}
+                return Response(message, status=400)
+
+            queryset = queryset.filter(status=status)
+
+        query = self.request.GET.get("q")
+        if query:
+            queryset = queryset.filter(name__icontains=query)
+
+        return queryset
 
     @action(detail=True, methods=["get"])
     def releases(self, request, **kwargs):

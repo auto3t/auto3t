@@ -109,7 +109,7 @@ class TVShow(BaseModel):
     image_show = models.ForeignKey(
         Artwork,
         related_name="image_show",
-        on_delete=models.PROTECT,
+        on_delete=models.SET_NULL,
         null=True,
         blank=True,
         verbose_name="Show Poster",
@@ -117,7 +117,7 @@ class TVShow(BaseModel):
     episode_fallback = models.ForeignKey(
         Artwork,
         related_name="episode_fallback",
-        on_delete=models.PROTECT,
+        on_delete=models.SET_NULL,
         null=True,
         blank=True,
         verbose_name="Episode Fallback Art",
@@ -125,7 +125,7 @@ class TVShow(BaseModel):
     season_fallback = models.ForeignKey(
         Artwork,
         related_name="season_fallback",
-        on_delete=models.PROTECT,
+        on_delete=models.SET_NULL,
         null=True,
         blank=True,
         verbose_name="Season Fallback Art",
@@ -254,7 +254,7 @@ class TVSeason(BaseModel):
     show = models.ForeignKey(TVShow, on_delete=models.CASCADE)
     search_keywords = models.ManyToManyField(SearchWord)
     image_season = models.ForeignKey(
-        Artwork, related_name="image_season", on_delete=models.PROTECT, null=True, blank=True
+        Artwork, related_name="image_season", on_delete=models.SET_NULL, null=True, blank=True
     )
 
     class Meta:
@@ -358,7 +358,7 @@ class TVEpisode(BaseModel):
     torrent = models.ManyToManyField(Torrent, related_name="torrent_tv")
     search_keywords = models.ManyToManyField(SearchWord)
     image_episode = models.ForeignKey(
-        Artwork, related_name="image_episode", on_delete=models.PROTECT, null=True, blank=True
+        Artwork, related_name="image_episode", on_delete=models.SET_NULL, null=True, blank=True
     )
 
     class Meta:

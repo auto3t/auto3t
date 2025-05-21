@@ -20,6 +20,7 @@ export type MovieType = {
   remote_server_id: string
   release_date: string
   status_display: string | null
+  production_state_display: string | null
   image_movie?: ImageType
   torrent: TorrentType[]
   media_server_id: string
@@ -88,6 +89,9 @@ const MovieDetail: React.FC = () => {
                   </span>
                   <span className="tag-item">
                     {movieDetail?.status_display || 'Status: TBD'}
+                  </span>
+                  <span className="tag-item">
+                    {movieDetail?.production_state_display || 'Production: TBD'}
                   </span>
                 </div>
               </div>

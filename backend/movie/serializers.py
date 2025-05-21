@@ -28,6 +28,7 @@ class MovieSerializer(serializers.ModelSerializer):
     collection = CollectionSerializer()
     torrent = TorrentSerializer(many=True)
     media_server_url = serializers.CharField(read_only=True)
+    production_state_display = serializers.CharField(source="get_production_state_display", read_only=True)
 
     class Meta:
         model = Movie

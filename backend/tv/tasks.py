@@ -5,7 +5,7 @@ from datetime import timedelta
 from django_rq import job
 from django_rq.queues import get_queue
 from tv.models import TVShow
-from tv.src.episode import EpisodeStatus
+from tv.src.episode_status import EpisodeStatus
 from tv.src.show import TVMazeShow
 
 from autot.src.download import Transmission

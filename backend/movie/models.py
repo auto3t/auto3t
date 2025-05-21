@@ -9,7 +9,7 @@ from django.dispatch import receiver
 
 from autot.models import Torrent, log_change
 from autot.src.config import ConfigType, get_config
-from autot.static import MovieProductionState, MovieStatus
+from autot.static import MovieProductionState, MovieReleaseType, MovieStatus
 
 
 class Collection(models.Model):
@@ -166,18 +166,10 @@ class MovieRelease(models.Model):
     """track release of movie"""
 
     TRACK_CHANGES = True
-    RELEASE_TYPE = [
-        (1, "Premiere"),
-        (2, "Theatrical (limited)"),
-        (3, "Theatrical"),
-        (4, "Digital"),
-        (5, "Physical"),
-        (6, "TV"),
-    ]
 
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
     country = models.CharField(max_length=2)
-    release_type = models.PositiveIntegerField(choices=RELEASE_TYPE)
+    release_type = models.PositiveIntegerField(choices=MovieReleaseType.choices())
     release_date = models.DateTimeField()
     release_lang = models.CharField(max_length=2, blank=True, null=True)
     note = models.TextField(blank=True, null=True)

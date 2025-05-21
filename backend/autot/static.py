@@ -1,6 +1,6 @@
 """collection of static variables"""
 
-from enum import StrEnum
+from enum import Enum, StrEnum
 from typing import TypedDict
 
 
@@ -59,6 +59,29 @@ class MovieProductionState(StrEnum):
     @classmethod
     def choices(cls):
         return [(i.name, i.value) for i in cls]
+
+
+class MovieReleaseType(Enum):
+    """movie release types"""
+
+    RELEASE_1 = (1, "Premiere")
+    RELEASE_2 = (2, "Theatrical (limited)")
+    RELEASE_3 = (3, "Theatrical")
+    RELEASE_4 = (4, "Digital")
+    RELEASE_5 = (5, "Physical")
+    RELEASE_6 = (6, "TV")
+
+    @property
+    def number(self):
+        return self.value[0]
+
+    @property
+    def label(self):
+        return self.value[1]
+
+    @classmethod
+    def choices(clr):
+        return [i.value for i in MovieReleaseType]
 
 
 class TaskItem(TypedDict):

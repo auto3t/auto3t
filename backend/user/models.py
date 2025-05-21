@@ -5,7 +5,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from autot.static import TvShowStatus
+from autot.static import MovieProductionState, MovieStatus, TvShowStatus
 
 
 class UserProfile(models.Model):
@@ -14,6 +14,10 @@ class UserProfile(models.Model):
     user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
     shows_active_filter = models.BooleanField(null=True, blank=True)
     shows_status_filter = models.CharField(choices=TvShowStatus.choices(), max_length=1, null=True, blank=True)
+    movies_production_filter = models.CharField(
+        choices=MovieProductionState.choices(), max_length=1, null=True, blank=True
+    )
+    movie_status_filter = models.CharField(choices=MovieStatus.choices(), max_length=1, null=True, blank=True)
 
 
 @receiver(post_save, sender=get_user_model())

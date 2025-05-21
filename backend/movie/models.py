@@ -9,7 +9,7 @@ from django.dispatch import receiver
 
 from autot.models import Torrent, log_change
 from autot.src.config import ConfigType, get_config
-from autot.static import MovieStatus
+from autot.static import MovieProductionState, MovieStatus
 
 
 class Collection(models.Model):
@@ -54,13 +54,6 @@ class Movie(models.Model):
 
     TRACK_CHANGES = True
     CONFIG: ConfigType = get_config()
-    PRODUCTION_STATE = [
-        ("r", "Rumored"),
-        ("p", "Planned"),
-        ("i", "In Production"),
-        ("p", "Post Production"),
-        ("r", "Released"),
-    ]
 
     remote_server_id = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
@@ -74,7 +67,7 @@ class Movie(models.Model):
         Artwork, related_name="image_movie", on_delete=models.PROTECT, null=True, blank=True
     )
     collection = models.ForeignKey(Collection, on_delete=models.PROTECT, null=True, blank=True)
-    production_state = models.CharField(choices=PRODUCTION_STATE, max_length=1, null=True, blank=True)
+    production_state = models.CharField(choices=MovieProductionState.choices(), max_length=1, null=True, blank=True)
     status = models.CharField(choices=MovieStatus.choices(), max_length=1, null=True, blank=True)
     torrent = models.ManyToManyField(Torrent, related_name="torrent")
 

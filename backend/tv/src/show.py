@@ -103,7 +103,7 @@ class TVMazeShow:
             "end_date": self._get_date_time(response.get("ended")),
             "description": response["summary"],
             "name": response["name"],
-            "status": self._parse_show_status(response["status"]),
+            "status": self._parse_show_status(response),
             "show_time_zone": self.timezone.zone,
         }
         if len(response["schedule"].get("days", [])) > 2:
@@ -111,13 +111,14 @@ class TVMazeShow:
 
         return show_data
 
-    def _parse_show_status(self, status: str) -> str | None:
-        """get show status"""
-        matches = [i for i in TvShowStatus.choices() if i[1] == status]
-        if not matches:
-            return None
+    @staticmethod
+    def _parse_show_status(response) -> str:
+        """parse status"""
+        for key in TvShowStatus:
+            if key.value == response["status"]:
+                return key.name
 
-        return matches[0][0]
+        raise ValueError("did not find status choice")
 
     def _get_fallback(self, response, art_type) -> str | None:
         """episode fallback"""

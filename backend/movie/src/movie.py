@@ -7,6 +7,7 @@ from movie.models import Collection, Movie, MovieRelease
 from movie.src.movie_db_client import MovieDB
 
 from autot.models import log_change
+from autot.static import MovieProductionState
 
 
 class MovieDBMovie:
@@ -85,12 +86,11 @@ class MovieDBMovie:
     @staticmethod
     def _parse_status(response) -> str:
         """parse status"""
-        production_state = Movie.PRODUCTION_STATE
-        status_found = [i for i in production_state if i[1] == response["status"]]
-        if not status_found:
-            raise ValueError("did not find status choice")
+        for key in MovieProductionState:
+            if key.value == response["status"]:
+                return key.name
 
-        return status_found[0][0]
+        raise ValueError("did not find status choice")
 
     def get_collection(self, collection_id) -> Collection:
         """get collection"""

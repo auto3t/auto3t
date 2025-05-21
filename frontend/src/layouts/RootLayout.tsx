@@ -5,11 +5,27 @@ import NotificationBox from '../components/Notifications'
 import useNotificationStore from '../stores/NotificationStore'
 import logo from '../../assets/logo.png'
 import useApi from '../hooks/api'
+import { useEffect } from 'react'
+import useUserProfileStore from '../stores/UserProfileStore'
 
 export default function RootLayout() {
   const { isLoggedIn } = useAuthStore()
+  const { setUserProfile } = useUserProfileStore()
+  const { get } = useApi()
   const { logoutUser } = useApi()
   const { showNotifications, setShowNotifications } = useNotificationStore()
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const data = await get('user/profile/')
+        setUserProfile(data)
+      } catch (error) {
+        console.error('Error fetching user profile:', error)
+      }
+    }
+    fetchProfile()
+  }, [])
 
   if (!isLoggedIn) {
     return <Login />

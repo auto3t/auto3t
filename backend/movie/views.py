@@ -15,7 +15,7 @@ from rest_framework.views import APIView
 
 from autot.src.redis_con import AutotRedis
 from autot.src.search import Jackett
-from autot.static import MovieStatus
+from autot.static import MovieProductionState, MovieStatus
 
 
 class CollectionViewSet(viewsets.ReadOnlyModelViewSet):
@@ -29,6 +29,7 @@ class MovieViewSet(viewsets.ModelViewSet):
     """views for movies"""
 
     VALID_STATUS = [i.name for i in MovieStatus]
+    VALID_PRODUCTION = [i.name for i in MovieProductionState]
 
     serializer_class = MovieSerializer
     queryset = Movie.objects.all().order_by("name")
@@ -65,6 +66,14 @@ class MovieViewSet(viewsets.ModelViewSet):
                 return Response(message, status=400)
 
             queryset = queryset.filter(status=status)
+
+        production_state = self.request.GET.get("production_state")
+        if production_state:
+            if production_state not in self.VALID_PRODUCTION:
+                message = {"error": f"Invalid production state field: {production_state}."}
+                return Response(message, status=400)
+
+            queryset = queryset.filter(production_state=production_state)
 
         query = self.request.GET.get("q")
         if query:

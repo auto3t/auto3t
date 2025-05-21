@@ -1,4 +1,5 @@
-# AUTOT
+![AutoT](assets/autot-banner.jpg?raw=true "AutoT Banner")  
+
 Auto Tape, Track, Torrent
 
 ## Dev Setup

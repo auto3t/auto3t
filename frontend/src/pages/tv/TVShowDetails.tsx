@@ -42,7 +42,7 @@ const TVShowDetail: React.FC = () => {
 
   const fetchShow = useCallback(async () => {
     try {
-      const data = await get(`tv/show/${id}`)
+      const data = await get(`tv/show/${id}/`)
       setShowDetail(data)
     } catch (error) {
       console.error('error fetching show: ', id, error)

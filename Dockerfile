@@ -22,23 +22,15 @@ RUN npm run build
 FROM python:3.11.3-slim-bullseye AS autot
 ARG INSTALL_DEBUG
 ENV PYTHONUNBUFFERED=1
+ENV PATH=/applib/bin:$PATH
 
 RUN mkdir -p /data/static /downloads /media/tv
 
 RUN apt-get clean && apt-get -y update && apt-get -y install --no-install-recommends \
-    nginx \
     curl && rm -rf /var/lib/apt/lists/*
-
-RUN for dir in uwsgi body proxy fastcgi scgi; do \
-        mkdir -p /var/lib/nginx/$dir && \
-        chown www-data:www-data /var/lib/nginx/$dir; \
-    done
-
-COPY nginx.conf /etc/nginx/nginx.conf
 
 # copy build requirements
 COPY --from=python-builder /applib /applib
-ENV PATH=/applib/bin:$PATH
 
 # install debug tools for testing environment
 RUN if [ "$INSTALL_DEBUG" ] ; then \
@@ -52,9 +44,7 @@ COPY ./backend /app
 
 # copy compiled js
 COPY --from=js-builder /app/frontend/build/ /app/static/
-RUN chown -R www-data:www-data /app/static /var/log/nginx \
-    && chmod -R 755 /app/static \
-    && chmod -R 750 /var/log/nginx
+COPY --from=js-builder /app/frontend/build/index.html /app/templates/index.html
 
 COPY ./run.sh /app
 COPY ./backend_start.py /app

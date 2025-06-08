@@ -52,7 +52,9 @@ COPY ./backend /app
 
 # copy compiled js
 COPY --from=js-builder /app/frontend/build/ /app/static/
-RUN chmod 777 -R /app/static /var/log/nginx/
+RUN chown -R www-data:www-data /app/static /var/log/nginx \
+    && chmod -R 755 /app/static \
+    && chmod -R 750 /var/log/nginx
 
 COPY ./run.sh /app
 COPY ./backend_start.py /app

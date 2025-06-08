@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
 import Login from '../pages/Login'
 import useAuthStore from '../stores/AuthStore'
 import NotificationBox from '../components/Notifications'
@@ -7,6 +7,7 @@ import logo from '../../assets/logo.png'
 import useApi from '../hooks/api'
 import { useEffect } from 'react'
 import useUserProfileStore from '../stores/UserProfileStore'
+import { Button, P, StyledNavLink } from '../components/Typography'
 
 export default function RootLayout() {
   const { isLoggedIn } = useAuthStore()
@@ -43,43 +44,35 @@ export default function RootLayout() {
 
   return (
     <>
-      <div className="main">
-        <header className="boxed-content">
-          <nav className="main-nav">
-            <div className="nav-items">
-              <img src={logo} />
-              <NavLink className="nav-item" to="/">
-                Home
-              </NavLink>
-              <NavLink className="nav-item" to="tv">
-                TV
-              </NavLink>
-              <NavLink className="nav-item" to="movie">
-                Movie
-              </NavLink>
-              <NavLink className="nav-item" to="settings">
-                Settings
-              </NavLink>
+      <div className="grow my-2 mx-5">
+        <header className="max-w-7xl m-auto">
+          <nav className="flex justify-between items-center">
+            <div className="flex gap-2 items-center">
+              <img className="w-[180px]" src={logo} />
+              <StyledNavLink to="/">Home</StyledNavLink>
+              <StyledNavLink to="tv">TV</StyledNavLink>
+              <StyledNavLink to="movie">Movie</StyledNavLink>
+              <StyledNavLink to="settings">Settings</StyledNavLink>
             </div>
-            <div>
-              <button onClick={handleShowNotifications}>
+            <div className="flex gap-2">
+              <Button onClick={handleShowNotifications}>
                 Show Notifications
-              </button>
-              {isLoggedIn && <button onClick={handleLogout}>Logout</button>}
+              </Button>
+              {isLoggedIn && <Button onClick={handleLogout}>Logout</Button>}
             </div>
           </nav>
         </header>
-        <main className="boxed-content">
+        <main className="max-w-7xl m-auto">
           <Outlet />
           <NotificationBox />
         </main>
       </div>
-      <footer>
-        <div className="boxed-content">
-          <p>
+      <footer className="bg-accent-3 py-4 text-center shrink">
+        <div className="max-w-7xl m-auto">
+          <P>
             © AutoT {new Date().getFullYear()} - v0.0.1{' '}
             {commitHash && `- ${commitHash.substring(0, 7)}`}
-          </p>
+          </P>
         </div>
       </footer>
     </>

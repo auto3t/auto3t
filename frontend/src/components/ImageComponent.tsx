@@ -10,9 +10,14 @@ export type ImageType = {
 interface ImageComponentInterface {
   image: ImageType
   alt: string
+  className?: string
 }
 
-const ImageComponent: React.FC<ImageComponentInterface> = ({ image, alt }) => {
+const ImageComponent: React.FC<ImageComponentInterface> = ({
+  image,
+  alt,
+  className = '',
+}) => {
   const { getImage } = useApi()
   const [imageUrl, setImageUrl] = useState(image.image_blur)
 
@@ -33,7 +38,11 @@ const ImageComponent: React.FC<ImageComponentInterface> = ({ image, alt }) => {
     }
   }, [image.image])
 
-  return <div>{imageUrl && <img src={imageUrl} alt={alt} />}</div>
+  return (
+    <div className={className}>
+      {imageUrl && <img className="w-full" src={imageUrl} alt={alt} />}
+    </div>
+  )
 }
 
 export default ImageComponent

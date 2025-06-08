@@ -8,6 +8,7 @@ import KeywordTableCompnent from './KeywordTableComponent'
 import { KeywordType } from './Keywords'
 import posterDefault from '../../assets/poster-default.jpg'
 import ToggleSwitch from './ConfigToggle'
+import { Button, H1, Input, P, StyledLink, Table, TagItem } from './Typography'
 
 export type ShowType = {
   id: number
@@ -96,106 +97,102 @@ const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
   }
 
   return (
-    <div className="show-detail">
-      <div className="show-detail-header">
-        <div className="show-poster">
+    <div className="p-1 my-1 border border-accent-2">
+      <div className="flex items-center ">
+        <div className="p-4 flex-1">
           <ImageComponent image={getShowPoster(showDetail)} alt="show-poster" />
         </div>
-        <div className="show-description">
-          <h1>{showDetail.name}</h1>
-          <span className="smaller">
+        <div className="m-2 flex-3">
+          <H1>{showDetail.name}</H1>
+          <P variant="smaller">
             ID:{' '}
-            <a
-              href={showDetail.remote_server_url}
+            <StyledLink
+              to={showDetail.remote_server_url}
               target="_blank"
               rel="noreferrer"
             >
               {showDetail.remote_server_id}
-            </a>
-          </span>
-          <p dangerouslySetInnerHTML={{ __html: showDetail.description }} />
-          <div className="tag-group">
-            <span className="tag-item">
-              Status: {showDetail.status_display}
-            </span>
+            </StyledLink>
+          </P>
+          <P dangerouslySetInnerHTML={{ __html: showDetail.description }} />
+          <div className="flex gap-2 my-2">
+            <TagItem>Status: {showDetail.status_display}</TagItem>
             {showDetail.release_date && (
-              <span className="tag-item">
+              <TagItem>
                 Start: <TimeComponent timestamp={showDetail.release_date} />
-              </span>
+              </TagItem>
             )}
             {showDetail.end_date && (
-              <span className="tag-item">
+              <TagItem>
                 End: <TimeComponent timestamp={showDetail.end_date} />
-              </span>
+              </TagItem>
             )}
           </div>
         </div>
       </div>
-      <button onClick={toggleShowDetails}>
-        {showDetails ? 'Hide Details' : 'Show Details'}
-      </button>
-      {showDetails && (
-        <>
-          <button onClick={toggleShowConfirm}>Remove Show</button>
-          {showDelete && (
-            <>
-              <p>
-                Remove &apos;{showDetail.name}&apos; from AutoT?
-                <button onClick={handleShowDelete}>Confirm</button>
-                <button onClick={toggleShowConfirm}>Cancel</button>
-              </p>
-            </>
-          )}
-          <table className="keyword-table">
-            <tbody>
-              <tr>
-                <td>Active</td>
-                <td>
+      <div className="p-4">
+        <Button onClick={toggleShowDetails}>
+          {showDetails ? 'Hide Details' : 'Show Details'}
+        </Button>
+        {showDetails && (
+          <>
+            <Button className="ml-2" onClick={toggleShowConfirm}>
+              Remove Show
+            </Button>
+            {showDelete && (
+              <div className="flex gap-2 items-center">
+                <P>Remove &apos;{showDetail.name}&apos; from AutoT?</P>
+                <Button onClick={handleShowDelete}>Confirm</Button>
+                <Button onClick={toggleShowConfirm}>Cancel</Button>
+              </div>
+            )}
+            <Table
+              rows={[
+                [
+                  'Active',
                   <ToggleSwitch
+                    key="show-is-active"
                     value={showDetail.is_active}
                     onChange={handleActiveToggle}
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td>Search Name</td>
-                <td>
-                  {editMode ? (
-                    <>
-                      <input
+                  />,
+                ],
+                [
+                  'Search Name',
+                  editMode ? (
+                    <div className="flex gap-2">
+                      <Input
                         type="text"
                         value={editedSearchName || ''}
                         onChange={handleSearchNameChange}
                       />
-                      <button onClick={handleSearchNameSubmit}>Submit</button>
-                      <button onClick={handleSearchNameCancel}>Cancel</button>
-                    </>
+                      <Button onClick={handleSearchNameSubmit}>Submit</Button>
+                      <Button onClick={handleSearchNameCancel}>Cancel</Button>
+                    </div>
                   ) : (
                     <>
                       <span>{showDetail.search_name || ''} </span>
-                      <button onClick={() => setEditMode(true)}>Edit</button>
+                      <Button onClick={() => setEditMode(true)}>Edit</Button>
                     </>
-                  )}
-                </td>
-              </tr>
-              <tr>
-                <td>Add Keyword</td>
-                <td>
+                  ),
+                ],
+                [
+                  'Add Keyword',
                   <AddKeywordComponent
+                    key="add-keyword"
                     patchURL={`tv/show/${showDetail.id}/?direction=add`}
                     refreshCallback={fetchShow}
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <KeywordTableCompnent
-            all_keywords={showDetail.all_keywords}
-            patchURL={`tv/show/${showDetail.id}/?direction=remove`}
-            refreshCallback={fetchShow}
-          />
-        </>
-      )}
+                  />,
+                ],
+              ]}
+            />
+            <KeywordTableCompnent
+              all_keywords={showDetail.all_keywords}
+              patchURL={`tv/show/${showDetail.id}/?direction=remove`}
+              refreshCallback={fetchShow}
+            />
+          </>
+        )}
+      </div>
     </div>
   )
 }

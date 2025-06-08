@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef } from 'react'
 import useNotificationStore from '../stores/NotificationStore'
 import useApi from '../hooks/api'
 import TimeComponent from './TimeComponent'
-import { Link } from 'react-router-dom'
+import { Button, P, StyledLink, TagItem } from './Typography'
 
 type NotificationParsedType = {
   action: string
@@ -68,40 +68,43 @@ export default function NotificationBox() {
   return (
     <div>
       {showNotifications && (
-        <div className="notifications-outer">
-          <div className="notifactions-content">
-            <button onClick={handleHideNotifications}>X</button>
+        <div className="fixed right-0 bottom-0 z-10 h-100 bg-main-fg overflow-scroll p-2">
+          <>
+            <Button onClick={handleHideNotifications}>X</Button>
             {notifications.map((notification) => (
               <div
                 key={notification.id.toString()}
-                className="notification-item"
+                className="bg-main-bg p-2 mt-2 flex items-center"
               >
-                <div className="notification-meta">
-                  <span className="tag-item" title={notification.parsed.action}>
-                    {notification.action || '-'}
-                  </span>
-                </div>
+                <TagItem className="mr-2" title={notification.parsed.action}>
+                  {notification.action || '-'}
+                </TagItem>
                 <div>
                   {notification.parsed.url ? (
-                    <Link to={notification.parsed.url}>
-                      <p>
+                    <>
+                      <StyledLink to={notification.parsed.url}>
                         {notification.parsed.content_type}:{' '}
                         {notification.parsed.content_item_name}
-                      </p>
-                    </Link>
+                      </StyledLink>
+                      <br />
+                    </>
                   ) : (
-                    <p>
+                    <P>
                       {notification.parsed.content_type}:{' '}
                       {notification.parsed.content_item_name || 'Unavailable'}
-                    </p>
+                    </P>
                   )}
-                  <TimeComponent timestamp={notification.timestamp} />
-                  <p>{notification.parsed.message}</p>
-                  {notification.comment && <p>{notification.comment}</p>}
+                  <P>
+                    <TimeComponent timestamp={notification.timestamp} />
+                  </P>
+                  {notification.parsed.message && (
+                    <P>{notification.parsed.message}</P>
+                  )}
+                  {notification.comment && <P>{notification.comment}</P>}
                 </div>
               </div>
             ))}
-          </div>
+          </>
         </div>
       )}
     </div>

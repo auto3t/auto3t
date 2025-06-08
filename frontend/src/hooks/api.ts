@@ -49,7 +49,7 @@ const useApi = () => {
 
     try {
       const fullURL = concat ? `${API_BASE}${url}` : url
-      let response = await fetch(fullURL, options)
+      const response = await fetch(fullURL, options)
 
       if (!response.ok) {
         const errorResponse = JSON.stringify(await response.json())
@@ -92,9 +92,9 @@ const useApi = () => {
         credentials: 'include',
       })
       if (!response.ok) {
-        if (response.status === 403) {
+        if (response.status === 403 || response.status === 400) {
           const errorResponse = await response.json()
-          setError(errorResponse.detail || 'Failed to login')
+          setError(errorResponse.error || 'Failed to login')
         }
       } else {
         setIsLoggedIn(true)

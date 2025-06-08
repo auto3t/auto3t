@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import useApi from '../hooks/api'
 import { EpisodeType } from './Episode'
+import { P, StyledLink } from './Typography'
 
 interface EpisodeNavInterface {
   currentEpisodeId: number
@@ -48,11 +48,10 @@ const EpisodeNav: React.FC<EpisodeNavInterface> = ({ currentEpisodeId }) => {
   }, [currentEpisodeId])
 
   return (
-    <div className="episode-nav-container">
-      <div className="episode-nav">
+    <div className="grid grid-cols-9 text-sm py-2">
+      <div className="text-right col-span-4">
         {previousEpisode ? (
-          <Link
-            className="first-nav"
+          <StyledLink
             title="previous episode"
             to={`/tv/episode/${previousEpisode.id}`}
           >
@@ -62,24 +61,24 @@ const EpisodeNav: React.FC<EpisodeNavInterface> = ({ currentEpisodeId }) => {
             </span>
             <span>E{String(previousEpisode.number).padStart(2, '0')}</span>
             <span> - {previousEpisode.title}</span>
-          </Link>
+          </StyledLink>
         ) : (
-          <span className="first-nav">First Episode</span>
+          <P className="first-nav">First Episode</P>
         )}
-        <span className="separator"> | </span>
+      </div>
+      <div className="text-center text-gray-400 col-span-1">
+        <P> | </P>
+      </div>
+      <div className="text-left col-span-4">
         {nextEpisode ? (
-          <Link
-            className="next-nav"
-            title="next episode"
-            to={`/tv/episode/${nextEpisode.id}`}
-          >
+          <StyledLink title="next episode" to={`/tv/episode/${nextEpisode.id}`}>
             <span>S{String(nextEpisode.season.number).padStart(2, '0')}</span>
             <span>E{String(nextEpisode.number).padStart(2, '0')}</span>
             <span> - {nextEpisode.title}</span>
             <span> &#65310;</span>
-          </Link>
+          </StyledLink>
         ) : (
-          <span className="next-nav">Last Episode</span>
+          <P>Last Episode</P>
         )}
       </div>
     </div>

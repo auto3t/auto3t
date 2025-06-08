@@ -15,9 +15,12 @@ const ProgressBar: React.FC<TorrentBarInterface> = ({ torrents }) => {
   if (!validatedProgress) return
 
   return (
-    <div className="progress-bar-background">
-      <div className="progress-bar" style={{ width: `${validatedProgress}%` }}>
-        <span className="smaller">{validatedProgress}%</span>
+    <div className="absolute w-full bg-accent-1 bottom-0">
+      <div
+        className="text-center bg-accent-2 text-main-fg"
+        style={{ width: `${validatedProgress}%` }}
+      >
+        <span>{validatedProgress}%</span>
       </div>
     </div>
   )

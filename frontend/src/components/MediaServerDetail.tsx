@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { formatBitrate, formatBytes, formatDuration } from '../utils'
 import { MediaServerMetaType } from './Episode'
+import { Button, H2, Table } from './Typography'
 
 interface MediaServerDetailInterface {
   mediaServerDetail: MediaServerMetaType
@@ -11,43 +12,22 @@ const MediaServerDetail: React.FC<MediaServerDetailInterface> = ({
   mediaServerDetail,
   mediaServerURL,
 }) => {
+  const rows = [
+    ['Codec', mediaServerDetail.codec],
+    ['Width', mediaServerDetail.width],
+    ['Height', mediaServerDetail.height],
+    ['Duration', formatDuration(mediaServerDetail.duration)],
+    ['Size', formatBytes(mediaServerDetail.size)],
+    ['Bitrate', formatBitrate(mediaServerDetail.bitrate)],
+    ['FPS', mediaServerDetail.fps.toFixed(2)],
+  ]
+
   return (
     <>
-      <h2>File Meta Data</h2>
-      <table>
-        <tbody>
-          <tr>
-            <td>Codec</td>
-            <td>{mediaServerDetail.codec}</td>
-          </tr>
-          <tr>
-            <td>Width</td>
-            <td>{mediaServerDetail.width}</td>
-          </tr>
-          <tr>
-            <td>Height</td>
-            <td>{mediaServerDetail.height}</td>
-          </tr>
-          <tr>
-            <td>Duration</td>
-            <td>{formatDuration(mediaServerDetail.duration)}</td>
-          </tr>
-          <tr>
-            <td>Size</td>
-            <td>{formatBytes(mediaServerDetail.size)}</td>
-          </tr>
-          <tr>
-            <td>Bitrate</td>
-            <td>{formatBitrate(mediaServerDetail.bitrate)}</td>
-          </tr>
-          <tr>
-            <td>FPS</td>
-            <td>{mediaServerDetail.fps.toFixed(2)}</td>
-          </tr>
-        </tbody>
-      </table>
+      <H2>File Meta Data</H2>
+      <Table rows={rows} />
       <Link to={mediaServerURL} target="_blank">
-        Open
+        <Button>Open</Button>
       </Link>
     </>
   )

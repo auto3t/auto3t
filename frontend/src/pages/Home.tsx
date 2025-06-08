@@ -4,6 +4,7 @@ import useProcessingEpisodeStore from '../stores/processingEpisodesStore'
 import useUpcomingEpisodeStore from '../stores/UpcomingEpisodesStore'
 import useApi from '../hooks/api'
 import usePolling from '../hooks/usePolling'
+import { H2, P } from '../components/Typography'
 
 const Home: React.FC = () => {
   const { error, get } = useApi()
@@ -48,27 +49,27 @@ const Home: React.FC = () => {
   }
 
   return (
-    <div className="movies">
-      <h2>Processing Episodes</h2>
-      <div className="episode-items">
+    <>
+      <H2>Processing Episodes</H2>
+      <div className="grid grid-cols-3 gap-2">
         {isLoadingProcessingEpisodes ? (
-          <p>Loading...</p>
+          <P>Loading...</P>
         ) : error ? (
-          <p>Error: {error}</p>
+          <P>Error: {error}</P>
         ) : processingEpisodes?.length > 0 ? (
           processingEpisodes.map((episode) => (
             <Episode key={episode.id} episode={episode} showShow={true} />
           ))
         ) : (
-          <p>No episodes are processing.</p>
+          <P>No episodes are processing.</P>
         )}
       </div>
-      <h2>Upcoming Episodes</h2>
-      <div className="episode-items">
+      <H2>Upcoming Episodes</H2>
+      <div className="grid grid-cols-3 gap-2">
         {isLoadingUpcomingEpisodes ? (
-          <p>Loading...</p>
+          <P>Loading...</P>
         ) : error ? (
-          <p>Error: {error}</p>
+          <P>Error: {error}</P>
         ) : upcomingEpisodes?.length > 0 ? (
           <>
             {upcomingEpisodes.map((episode) => (
@@ -76,13 +77,13 @@ const Home: React.FC = () => {
             ))}
           </>
         ) : (
-          <p>No upcoming episodes found.</p>
+          <P>No upcoming episodes found.</P>
         )}
       </div>
       {hasMoreUpcoming && (
         <button onClick={handleLoadMoreUpcomingEpisodes}>Load More</button>
       )}
-    </div>
+    </>
   )
 }
 

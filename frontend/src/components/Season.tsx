@@ -3,6 +3,7 @@ import ImageComponent, { ImageType } from './ImageComponent'
 import { KeywordType } from './Keywords'
 import { ShowType } from './ShowDetail'
 import posterDefault from '../../assets/poster-default.jpg'
+import { H3 } from './Typography'
 
 export type SeasonType = {
   id: number
@@ -34,15 +35,15 @@ const Season: React.FC<SeasonComponent> = ({ season, onClick }) => {
   }
 
   return (
-    <div className="season-item pointer" onClick={() => onClick(season.id)}>
+    <div className="cursor-pointer" onClick={() => onClick(season.id)}>
       <ImageComponent
         image={getSeasonPoster(season)}
         alt={'season-poster-' + season.number}
       />
       <div
-        className={`tile-description ${selectedSeason?.id === season.id ? 'active' : ''}`}
+        className={`text-center ${selectedSeason?.id === season.id ? 'bg-accent-3' : ''}`}
       >
-        <h3>Season {season.number.toString()}</h3>
+        <H3>Season {season.number.toString()}</H3>
       </div>
     </div>
   )

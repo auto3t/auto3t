@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import useApi from '../hooks/api'
 import useScheduleStore from '../stores/ScheduleStore'
 import TimeComponent from './TimeComponent'
+import { Button, H2, Input, Select, Table } from './Typography'
 
 export type SchedulerType = {
   id: number
@@ -17,41 +18,13 @@ type TaskType = {
   queue: string
 }
 
-const TaskTableRow = function ({ task }: { task: TaskType }) {
-  const { post } = useApi()
-  const [taskMessage, setTaskMessage] = useState('')
-
-  const handleRunTask = async () => {
-    try {
-      const body = { job: task.job }
-      const data = await post('tasks/', body)
-      if (data) {
-        setTaskMessage('new task started')
-      } else {
-        console.error('Failed to create task')
-      }
-    } catch (err) {
-      if (err instanceof Error) {
-        console.error('Error creating keyword:', err.message)
-      } else {
-        console.error('An unknown error creating keyword')
-      }
-    }
-  }
-
-  return (
-    <tr key={task.id}>
-      <td>{task.name}</td>
-      <td>{taskMessage}</td>
-      <td>
-        <button onClick={handleRunTask}>Run</button>
-      </td>
-    </tr>
-  )
+type taskMessageType = {
+  [key: string]: string
 }
 
 export default function Schedule() {
   const { error, get, post, del } = useApi()
+  const [taskMessage, setTaskMessage] = useState<taskMessageType>({})
 
   const {
     schedules,
@@ -141,94 +114,110 @@ export default function Schedule() {
     }
   }
 
+  const handleRunTask = async (task: TaskType) => {
+    try {
+      const body = { job: task.job }
+      const data = await post('tasks/', body)
+      if (data) {
+        setTaskMessage({ [task.job]: 'new task started' })
+      } else {
+        console.error('Failed to create task')
+      }
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error('Error creating keyword:', err.message)
+      } else {
+        console.error('An unknown error creating keyword')
+      }
+    }
+  }
+
+  const scheduleHeaders = [
+    'Name',
+    'Schedule',
+    'Next Execution',
+    createSchedule === true ? (
+      <Button onClick={handleCancleCreate}>Cancel</Button>
+    ) : (
+      <Button onClick={handleShowAddForm}>Add</Button>
+    ),
+  ]
+
+  const scheduleRowsHead: (string | number | React.ReactNode)[][] = []
+  if (createSchedule === true) {
+    scheduleRowsHead.push([
+      <Select
+        value={selectedSchedule}
+        onChange={(e) => setSelectedSchedule(e.target.value)}
+        key="create-schedule-select"
+      >
+        <option value="">Select Schedule</option>
+        {tasks.length > 0 &&
+          tasks.map((task) => (
+            <option value={task.job} key={task.id}>
+              {task.name}
+            </option>
+          ))}
+      </Select>,
+      <Input
+        type="text"
+        value={newSchedule}
+        onChange={(e) => setNewSchedule(e.target.value)}
+        placeholder="Enter Cron Schedule"
+        key="create-schedule-cron"
+      />,
+      '',
+      <>
+        <Button onClick={handleCreateSchedule}>Create Schedule</Button>
+        <Button className="ml-2" onClick={handleCancleCreate}>
+          Cancel
+        </Button>
+      </>,
+    ])
+  }
+
+  const scheduleRows = scheduleRowsHead.concat(
+    schedules.map((schedule) => [
+      schedule.job_display,
+      schedule.cron_schedule,
+      <TimeComponent
+        timestamp={schedule.next_execution}
+        key={`schedule-next-exec-${schedule.id}`}
+      />,
+      deletingSchedule === schedule ? (
+        <>
+          <Button onClick={handleDeleteScheduleConfirm}>Confirm</Button>
+          <Button className="ml-2" onClick={handleCancleDeleteSchedule}>
+            Cancel
+          </Button>
+        </>
+      ) : (
+        <>
+          <Button onClick={() => handleDeleteSchedule(schedule)}>Delete</Button>
+        </>
+      ),
+    ]),
+  )
+
+  const taskHeaders = ['Task', 'Message', '']
+
+  const taskRows = tasks.map((task) => [
+    task.name,
+    taskMessage[task.job] ? taskMessage[task.job] : '',
+    <Button onClick={() => handleRunTask(task)} key={`task-run-${task.id}`}>
+      Run
+    </Button>,
+  ])
+
   return (
     <>
-      <h2>Schedule</h2>
+      <H2>Schedule</H2>
       {error && <p>Error: {error}</p>}
-      <table className="keyword-table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Schedule</th>
-            <th>Next Execution</th>
-            <th>
-              {createSchedule === false && (
-                <button onClick={handleShowAddForm}>Add</button>
-              )}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {createSchedule === true && (
-            <tr>
-              <td>
-                <select
-                  value={selectedSchedule}
-                  onChange={(e) => setSelectedSchedule(e.target.value)}
-                >
-                  <option value="">Select Schedule</option>
-                  {tasks.length > 0 &&
-                    tasks.map((task) => (
-                      <option value={task.job} key={task.id}>
-                        {task.name}
-                      </option>
-                    ))}
-                </select>
-              </td>
-              <td>
-                <input
-                  type="text"
-                  value={newSchedule}
-                  onChange={(e) => setNewSchedule(e.target.value)}
-                  placeholder="Enter Cron Schedule"
-                />
-              </td>
-              <td></td>
-              <td>
-                <button onClick={handleCreateSchedule}>Create Schedule</button>
-                <button onClick={handleCancleCreate}>Cancel</button>
-              </td>
-            </tr>
-          )}
-          {schedules.map((schedule) => (
-            <tr key={schedule.id.toString()}>
-              <td>{schedule.job_display}</td>
-              <td>{schedule.cron_schedule}</td>
-              <td>{<TimeComponent timestamp={schedule.next_execution} />}</td>
-              <td>
-                {deletingSchedule === schedule ? (
-                  <>
-                    <button onClick={handleDeleteScheduleConfirm}>
-                      Confirm
-                    </button>
-                    <button onClick={handleCancleDeleteSchedule}>Cancel</button>
-                  </>
-                ) : (
-                  <>
-                    <button onClick={() => handleDeleteSchedule(schedule)}>
-                      Delete
-                    </button>
-                  </>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <h2>Tasks</h2>
-      <table className="keyword-table">
-        <thead>
-          <tr>
-            <th>Task</th>
-            <th>Message</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {tasks.length > 0 &&
-            tasks.map((task) => <TaskTableRow task={task} key={task.id} />)}
-        </tbody>
-      </table>
+      <Table rows={scheduleRows} headers={scheduleHeaders} />
+      <div className="pt-4">
+        <H2>Tasks</H2>
+        <Table rows={taskRows} headers={taskHeaders} />
+      </div>
     </>
   )
 }

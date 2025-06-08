@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import ImageComponent from './ImageComponent'
 import { ShowType } from './ShowDetail'
 import posterDefault from '../../assets/poster-default.jpg'
+import { H2 } from './Typography'
 
 interface ShowTileInterface {
   show: ShowType
@@ -17,13 +18,13 @@ const ShowTile: React.FC<ShowTileInterface> = ({ show }) => {
 
   return (
     <Link to={`show/${show.id}`}>
-      <div className="show-item">
+      <div>
         <ImageComponent
           image={getShowPoster(show)}
           alt={'show-poster-' + show.name}
         />
-        <div className="tile-description">
-          <h2>{show.name}</h2>
+        <div className="text-center">
+          <H2>{show.name}</H2>
         </div>
       </div>
     </Link>

@@ -1,6 +1,7 @@
 import { useEffect, useCallback } from 'react'
 import useCategoryFormStore from '../stores/CategoryFormStore'
 import useApi from '../hooks/api'
+import { Button, H2, Input, Table } from './Typography'
 
 export type KeyWordCategoryType = {
   id: number
@@ -109,81 +110,84 @@ export default function KeywordCategories() {
     setCreateCategory(false)
   }
 
+  const headers = [
+    'Name',
+    createCategory === false ? (
+      <Button onClick={handleShowCreateForm}>Add</Button>
+    ) : (
+      <Button className="ml-2" onClick={handleCancelCreate}>
+        Cancel
+      </Button>
+    ),
+  ]
+
+  const rowsHead: (string | number | React.ReactNode)[][] = []
+
+  if (createCategory === true) {
+    rowsHead.push([
+      <Input
+        type="text"
+        value={newCategoryName}
+        onChange={(e) => setNewCategoryName(e.target.value)}
+        placeholder="Enter category name"
+        key="new-category-input"
+      />,
+      <Button onClick={handleNewCategorySubmit} key="new-category-button">
+        Create Category
+      </Button>,
+    ])
+  }
+
+  const rows = rowsHead.concat(
+    categories.map((category) => {
+      const isEditing = category === editingCategory
+
+      if (isEditing) {
+        return [
+          <Input
+            type="text"
+            value={editedCategoryName}
+            onChange={(e) => setEditedCategoryName(e.target.value)}
+            key={`editing-category-${category.id}`}
+          />,
+          <>
+            <Button onClick={handleCancelEdit}>Cancel</Button>
+            <Button className="ml-2" onClick={handleUpdateCategory}>
+              Update
+            </Button>
+          </>,
+        ]
+      }
+
+      // is not editiong
+      return [
+        category.name,
+        deletingCategory === category ? (
+          <>
+            <Button onClick={handleDeleteConfirm}>Confirm</Button>
+            <Button className="ml-2" onClick={handleCancelDelete}>
+              Cancel
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button onClick={() => handleEditCategory(category)}>Edit</Button>
+            <Button
+              className="ml-2"
+              onClick={() => handleDeleteCategory(category)}
+            >
+              Delete
+            </Button>
+          </>
+        ),
+      ]
+    }),
+  )
+
   return (
     <>
-      <h2>Categories</h2>
-      <table className="keyword-table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>
-              {createCategory === false && (
-                <button onClick={handleShowCreateForm}>Add</button>
-              )}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {createCategory === true && (
-            <tr>
-              <td>
-                <input
-                  type="text"
-                  value={newCategoryName}
-                  onChange={(e) => setNewCategoryName(e.target.value)}
-                  placeholder="Enter category name"
-                />
-              </td>
-              <td>
-                <button onClick={handleNewCategorySubmit}>
-                  Create Category
-                </button>
-                <button onClick={handleCancelCreate}>Cancel</button>
-              </td>
-            </tr>
-          )}
-          {categories.map((category) => (
-            <tr key={category.id}>
-              {editingCategory === category ? (
-                <>
-                  <td>
-                    <input
-                      type="text"
-                      value={editedCategoryName}
-                      onChange={(e) => setEditedCategoryName(e.target.value)}
-                    />
-                  </td>
-                  <td>
-                    <button onClick={handleUpdateCategory}>Update</button>
-                    <button onClick={handleCancelEdit}>Cancel</button>
-                  </td>
-                </>
-              ) : (
-                <>
-                  <td>{category.name}</td>
-                  <td>
-                    {deletingCategory === category ? (
-                      <>
-                        <button onClick={handleDeleteConfirm}>Confirm</button>
-                        <button onClick={handleCancelDelete}>Cancel</button>
-                      </>
-                    ) : (
-                      <>
-                        <button onClick={() => handleEditCategory(category)}>
-                          Edit
-                        </button>
-                        <button onClick={() => handleDeleteCategory(category)}>
-                          Delete
-                        </button>
-                      </>
-                    )}
-                  </td>
-                </>
-              )}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <H2>Categories</H2>
+      <Table headers={headers} rows={rows} />
     </>
   )
 }

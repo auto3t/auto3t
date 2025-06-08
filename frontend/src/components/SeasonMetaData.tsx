@@ -7,6 +7,7 @@ import AddKeywordComponent from './AddKeywordComponent'
 import KeywordTableCompnent from './KeywordTableComponent'
 import ManualSearch from './ManualSearch'
 import SeasonEpisodeSummary from './SeasonEpisodeSummary'
+import { Button, H2, P, Select, StyledLink, Table, TagItem } from './Typography'
 
 interface SeasonMetaDataInterface {
   fetchEpisodes: (seasonId: number) => void
@@ -41,63 +42,64 @@ const SeasonMetaData: React.FC<SeasonMetaDataInterface> = ({
 
   return (
     <>
-      <div className="season-detail">
-        <h2>Season {selectedSeason.number.toString()}</h2>
-        <span className="smaller">
+      <div className="p-4 my-4 border border-accent-2">
+        <H2>Season {selectedSeason.number.toString()}</H2>
+        <P variant="smaller">
           ID:{' '}
-          <a
-            href={selectedSeason.remote_server_url}
+          <StyledLink
+            to={selectedSeason.remote_server_url}
             target="_blank"
             rel="noreferrer"
           >
             {selectedSeason.remote_server_id}
-          </a>
-        </span>
-        <p dangerouslySetInnerHTML={{ __html: selectedSeason.description }} />
-        <div className="tag-group">
+          </StyledLink>
+        </P>
+        <P dangerouslySetInnerHTML={{ __html: selectedSeason.description }} />
+        <div className="flex gap-2 my-2">
           {selectedSeason.release_date && (
-            <span className="tag-item">
+            <TagItem>
               Start: <TimeComponent timestamp={selectedSeason.release_date} />
-            </span>
+            </TagItem>
           )}
           {selectedSeason.end_date && (
-            <span className="tag-item">
+            <TagItem>
               End: <TimeComponent timestamp={selectedSeason.end_date} />
-            </span>
+            </TagItem>
           )}
         </div>
-        <button onClick={toggleShowSeasonDetails}>
+        <Button onClick={toggleShowSeasonDetails}>
           {showSeasonDetails ? 'Hide Details' : 'Season Details'}
-        </button>
+        </Button>
         {showSeasonDetails && (
           <>
-            <table className="keyword-table">
-              <tbody>
-                <tr>
-                  <td>Update Status</td>
-                  <td>
-                    <select defaultValue={''} onChange={handleStatusChange}>
+            <Table
+              rows={[
+                [
+                  'Update Status',
+                  <>
+                    <Select defaultValue={''} onChange={handleStatusChange}>
                       <option value="">---</option>
                       <option value="u">Upcoming</option>
                       <option value="s">Searching</option>
                       <option value="i">Ignored</option>
-                    </select>
+                    </Select>
                     {status && (
-                      <button onClick={handleBulkUpdate}>Update</button>
+                      <Button className="ml-2" onClick={handleBulkUpdate}>
+                        Update
+                      </Button>
                     )}
-                  </td>
-                </tr>
-                <tr>
-                  <td>Add Keyword</td>
-                  <td>
-                    <AddKeywordComponent
-                      patchURL={`tv/season/${selectedSeason.id}/?direction=add`}
-                      refreshCallback={() => fetchEpisodes(selectedSeason.id)}
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                  </>,
+                ],
+                [
+                  'Add Keyword',
+                  <AddKeywordComponent
+                    key={`add-keword-form`}
+                    patchURL={`tv/season/${selectedSeason.id}/?direction=add`}
+                    refreshCallback={() => fetchEpisodes(selectedSeason.id)}
+                  />,
+                ],
+              ]}
+            />
             <KeywordTableCompnent
               all_keywords={selectedSeason.all_keywords}
               patchURL={`tv/season/${selectedSeason.id}/?direction=remove`}

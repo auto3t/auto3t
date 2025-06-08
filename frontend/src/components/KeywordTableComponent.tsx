@@ -1,5 +1,6 @@
 import useApi from '../hooks/api'
 import { KeywordType } from './Keywords'
+import { Table } from './Typography'
 
 interface KeywortTableComponentInterface {
   all_keywords: KeywordType[]
@@ -19,35 +20,19 @@ const KeywordTableCompnent: React.FC<KeywortTableComponentInterface> = ({
     refreshCallback()
   }
 
+  const rows = all_keywords.map((keyword) => [
+    keyword.category_name,
+    keyword.word,
+    keyword.direction_display,
+    keyword.tv_default ? (
+      'default'
+    ) : (
+      <button onClick={() => handleKeywordRemove(keyword.id)}>remove</button>
+    ),
+  ])
+
   return (
-    <table className="keyword-table">
-      <thead>
-        <tr>
-          <th>Category</th>
-          <th>Keyword</th>
-          <th>Direction</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {all_keywords.map((keyword) => (
-          <tr key={keyword.id.toString()}>
-            <td>{keyword.category_name}</td>
-            <td>{keyword.word}</td>
-            <td>{keyword.direction_display}</td>
-            <td>
-              {keyword.tv_default ? (
-                'default'
-              ) : (
-                <button onClick={() => handleKeywordRemove(keyword.id)}>
-                  remove
-                </button>
-              )}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <Table headers={['Category', 'Keyword', 'Direction', '']} rows={rows} />
   )
 }
 

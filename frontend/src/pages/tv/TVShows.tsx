@@ -4,6 +4,7 @@ import ShowTile from '../../components/ShowTile'
 import useApi from '../../hooks/api'
 import { Link } from 'react-router-dom'
 import useUserProfileStore from '../../stores/UserProfileStore'
+import { Button, H1, Input, P, Select } from '../../components/Typography'
 
 export default function TVShows() {
   const { userProfile, setUserProfile } = useUserProfileStore()
@@ -94,17 +95,17 @@ export default function TVShows() {
   }
 
   return (
-    <div className="tvshows">
-      <h1>TV Shows</h1>
+    <>
+      <H1>TV Shows</H1>
       <div className="filter-bar">
         <Link to={'search'}>
-          <button>Add</button>
+          <Button>Add</Button>
         </Link>
-        <button onClick={handleShowSearchInput}>
+        <Button onClick={handleShowSearchInput}>
           {showSearchInput ? 'Cancel' : 'Search'}
-        </button>
+        </Button>
         {showSearchInput && (
-          <input
+          <Input
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             autoFocus
@@ -112,7 +113,7 @@ export default function TVShows() {
         )}
         {userProfile && (
           <>
-            <select
+            <Select
               defaultValue={userProfile.shows_status_filter}
               onChange={handleStatusFilterUpdate}
             >
@@ -121,8 +122,8 @@ export default function TVShows() {
               <option value="e">Ended</option>
               <option value="d">In Development</option>
               <option value="t">To Be Determined</option>
-            </select>
-            <select
+            </Select>
+            <Select
               defaultValue={
                 userProfile.shows_active_filter === null
                   ? ''
@@ -135,27 +136,27 @@ export default function TVShows() {
               <option value={''}>--- all ---</option>
               <option value="1">Active</option>
               <option value="0">Inactive</option>
-            </select>
+            </Select>
           </>
         )}
       </div>
-      <div className="show-items">
+      <div className="grid grid-cols-4 gap-2">
         {isLoadingShows ? (
-          <p>Loading...</p>
+          <P>Loading...</P>
         ) : error ? (
-          <p>Error: {error}</p>
+          <P>Error: {error}</P>
         ) : shows.length > 0 ? (
           shows.map((show) => <ShowTile key={show.id.toString()} show={show} />)
         ) : (
           <>
             {searchTerm ? (
-              <p>No Shows matching search query.</p>
+              <P>No Shows matching search query.</P>
             ) : (
-              <p>No Shows found.</p>
+              <P>No Shows found.</P>
             )}
           </>
         )}
       </div>
-    </div>
+    </>
   )
 }

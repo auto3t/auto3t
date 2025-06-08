@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import useApi from '../hooks/api'
 import TimeComponent from './TimeComponent'
+import { H2, P, Table } from './Typography'
 
 interface MovieReleasesInterface {
   movie_id: number
@@ -36,34 +37,25 @@ const MovieReleases: React.FC<MovieReleasesInterface> = ({ movie_id }) => {
     fetchReleases(movie_id)
   }, [movie_id])
 
+  const headers = ['Country', 'Medium', 'Date', 'Language', 'Note']
+  const rows = releases.map((release) => [
+    release.country,
+    release.release_type_display,
+    <TimeComponent
+      timestamp={release.release_date}
+      key={`release-date-${release.id}`}
+    />,
+    release.release_lang,
+    release.note,
+  ])
+
   return (
     <>
-      <h2>Releases</h2>
+      <H2>Releases</H2>
       {releases ? (
-        <div className="movie-release-table">
-          <div className="movie-release-row row-title">
-            <span className="movie-release-cell">Country</span>
-            <span className="movie-release-cell">Medium</span>
-            <span className="movie-release-cell">Date</span>
-            <span className="movie-release-cell">Language</span>
-            <span className="movie-release-cell">Note</span>
-          </div>
-          {releases.map((release) => (
-            <div key={release.id} className="movie-release-row">
-              <span className="movie-release-cell">{release.country}</span>
-              <span className="movie-release-cell">
-                {release.release_type_display}
-              </span>
-              <span className="movie-release-cell">
-                <TimeComponent timestamp={release.release_date} />
-              </span>
-              <span className="movie-release-cell">{release.release_lang}</span>
-              <span className="movie-release-cell">{release.note}</span>
-            </div>
-          ))}
-        </div>
+        <Table headers={headers} rows={rows} className="w-full" />
       ) : (
-        <p>No release found.</p>
+        <P>No release found.</P>
       )}
     </>
   )

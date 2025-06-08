@@ -4,6 +4,7 @@ import useApi from '../../hooks/api'
 import useMovieStore from '../../stores/MovieStore'
 import MovieTile from '../../components/MovieTile'
 import useUserProfileStore from '../../stores/UserProfileStore'
+import { Button, H1, P, Select } from '../../components/Typography'
 
 export default function Movies() {
   const { userProfile, setUserProfile } = useUserProfileStore()
@@ -62,15 +63,15 @@ export default function Movies() {
   }
 
   return (
-    <div className="movies">
-      <h1>Movies</h1>
+    <>
+      <H1>Movies</H1>
       <div className="filter-bar">
         <Link to={'search'}>
-          <button>Add</button>
+          <Button>Add</Button>
         </Link>
         {userProfile && (
           <>
-            <select
+            <Select
               defaultValue={userProfile.movies_production_filter}
               onChange={handleProductionFilterUpdate}
             >
@@ -80,8 +81,8 @@ export default function Movies() {
               <option value="i">In Production</option>
               <option value="o">Post Production</option>
               <option value="e">Released</option>
-            </select>
-            <select
+            </Select>
+            <Select
               defaultValue={userProfile.movie_status_filter}
               onChange={handleStatusFilterUpdate}
             >
@@ -92,21 +93,21 @@ export default function Movies() {
               <option value="f">Finished</option>
               <option value="a">Archived</option>
               <option value="i">Ignored</option>
-            </select>
+            </Select>
           </>
         )}
       </div>
-      <div className="movie-items">
+      <div className="grid grid-cols-4 gap-2">
         {isLoadingMovies ? (
-          <p>Loading...</p>
+          <P>Loading...</P>
         ) : error ? (
-          <p>Error: {error}</p>
+          <P>Error: {error}</P>
         ) : movies.length > 0 ? (
           movies.map((movie) => <MovieTile key={movie.id} movie={movie} />)
         ) : (
-          <p>No Movies found.</p>
+          <P>No Movies found.</P>
         )}
       </div>
-    </div>
+    </>
   )
 }

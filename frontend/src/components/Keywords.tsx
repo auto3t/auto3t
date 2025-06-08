@@ -2,6 +2,7 @@ import { useEffect, useCallback, useState } from 'react'
 import useCategoryFormStore from '../stores/CategoryFormStore'
 import useSearchKeyWordStore from '../stores/SearchKeyWordsStore'
 import useApi from '../hooks/api'
+import { Button, H2, Input, Select, Table } from './Typography'
 
 export type KeywordType = {
   id: number
@@ -170,168 +171,161 @@ export default function Keywords() {
     resetFormDefaults()
   }
 
+  const headers = [
+    'Category',
+    'Keyword',
+    'Direction',
+    'Default TV',
+    'Default Movie',
+    createKeyword === true ? (
+      <Button onClick={handleCancelCreate}>Cancel</Button>
+    ) : (
+      <Button onClick={handleShowAddForm}>Add</Button>
+    ),
+  ]
+
+  const rowsHead: (string | number | React.ReactNode)[][] = []
+  if (createKeyword === true) {
+    rowsHead.push([
+      <Select
+        value={selectedCategory}
+        onChange={(e) => setSelectedCategory(e.target.value)}
+        key="keyword-create-category-select"
+      >
+        <option value="">Select Category</option>
+        {categories.map((category) => (
+          <option key={category.id} value={category.id}>
+            {category.name}
+          </option>
+        ))}
+      </Select>,
+      <Input
+        type="text"
+        value={newKeyword}
+        onChange={(e) => setNewKeyword(e.target.value)}
+        placeholder="Enter keyword"
+        key="keyword-create-keyword-input"
+      />,
+      <Select
+        value={direction}
+        onChange={(e) => setDirection(e.target.value)}
+        key="keyword-create-direction-select"
+      >
+        <option value="i">Include</option>
+        <option value="e">Exclude</option>
+      </Select>,
+      <Input
+        type="checkbox"
+        checked={isDefaultTV}
+        onChange={(e) => setIsDefaultTV(e.target.checked)}
+        key="keyword-create-default-tv-input"
+      />,
+      <Input
+        type="checkbox"
+        checked={isDefaultMovie}
+        onChange={(e) => setIsDefaultMovie(e.target.checked)}
+        key="keyword-create-default-movie-input"
+      />,
+      <Button onClick={handleNewKeywordSubmit} key="keyword-create-button">
+        Create Keyword
+      </Button>,
+    ])
+  }
+
+  const rows = rowsHead.concat(
+    keywords.map((keyword) => {
+      const isEditing = keyword === editingKeyword
+
+      if (isEditing) {
+        return [
+          <Select
+            name="category"
+            value={editedKeyword.category}
+            onChange={handleSelectChange}
+            key={`editing-category-${keyword.id}`}
+          >
+            <option value="">Select Category</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </Select>,
+          <Input
+            type="text"
+            name="word"
+            value={editedKeyword.word}
+            onChange={handleInputChange}
+            key={`editing-word-${keyword.id}`}
+          />,
+          <Select
+            name="direction"
+            value={editedKeyword.direction}
+            onChange={handleSelectChange}
+            key={`editing-direction-${keyword.id}`}
+          >
+            <option value="i">Include</option>
+            <option value="e">Exclude</option>
+          </Select>,
+          <Input
+            type="checkbox"
+            name="tv_default"
+            checked={editedKeyword.tv_default}
+            onChange={handleInputChange}
+            key={`editing-default-tv-${keyword.id}`}
+          />,
+          <Input
+            type="checkbox"
+            name="movie_default"
+            checked={editedKeyword.movie_default}
+            onChange={handleInputChange}
+            key={`editing-default-movie-${keyword.id}`}
+          />,
+          <>
+            <Button type="button" onClick={handleEditSubmit}>
+              Update
+            </Button>
+            <Button className="ml-2" type="button" onClick={handleEditCancel}>
+              Cancel
+            </Button>
+          </>,
+        ]
+      }
+
+      // is not editing
+      return [
+        keyword.category_name,
+        keyword.word,
+        keyword.direction_display,
+        keyword.tv_default ? '✅' : '-',
+        keyword.movie_default ? '✅' : '-',
+
+        deletingKeyword === keyword ? (
+          <>
+            <Button onClick={handleDeleteConfirm}>Confirm</Button>
+            <Button className="ml-2" onClick={handleCancelDelete}>
+              Cancel
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button onClick={() => handleEditKeyword(keyword)}>Edit</Button>
+            <Button
+              className="ml-2"
+              onClick={() => handleDeleteKeyword(keyword)}
+            >
+              Delete
+            </Button>
+          </>
+        ),
+      ]
+    }),
+  )
+
   return (
     <>
-      <h2>Search Key Words</h2>
-      <table className="keyword-table">
-        <thead>
-          <tr>
-            <th>Category</th>
-            <th>Keyword</th>
-            <th>Direction</th>
-            <th>Default TV</th>
-            <th>Default Movie</th>
-            <th>
-              {createKeyword == false && (
-                <button onClick={handleShowAddForm}>Add</button>
-              )}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {createKeyword === true && (
-            <tr>
-              <td>
-                <select
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                >
-                  <option value="">Select Category</option>
-                  {categories.map((category) => (
-                    <option key={category.id} value={category.id}>
-                      {category.name}
-                    </option>
-                  ))}
-                </select>
-              </td>
-              <td>
-                <input
-                  type="text"
-                  value={newKeyword}
-                  onChange={(e) => setNewKeyword(e.target.value)}
-                  placeholder="Enter keyword"
-                />
-              </td>
-              <td>
-                <select
-                  value={direction}
-                  onChange={(e) => setDirection(e.target.value)}
-                >
-                  <option value="i">Include</option>
-                  <option value="e">Exclude</option>
-                </select>
-              </td>
-              <td>
-                <input
-                  type="checkbox"
-                  checked={isDefaultTV}
-                  onChange={(e) => setIsDefaultTV(e.target.checked)}
-                />
-              </td>
-              <td>
-                <input
-                  type="checkbox"
-                  checked={isDefaultMovie}
-                  onChange={(e) => setIsDefaultMovie(e.target.checked)}
-                />
-              </td>
-              <td>
-                <button onClick={handleNewKeywordSubmit}>Create Keyword</button>
-                <button onClick={handleCancelCreate}>Cancel</button>
-              </td>
-            </tr>
-          )}
-          {keywords.map((keyword) => (
-            <tr key={keyword.id?.toString()}>
-              {editingKeyword === keyword ? (
-                <>
-                  <td>
-                    <select
-                      name="category"
-                      value={editedKeyword.category}
-                      onChange={handleSelectChange}
-                    >
-                      <option value="">Select Category</option>
-                      {categories.map((category) => (
-                        <option key={category.id} value={category.id}>
-                          {category.name}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      name="word"
-                      value={editedKeyword.word}
-                      onChange={handleInputChange}
-                    />
-                  </td>
-                  <td>
-                    <select
-                      name="direction"
-                      value={editedKeyword.direction}
-                      onChange={handleSelectChange}
-                    >
-                      <option value="i">Include</option>
-                      <option value="e">Exclude</option>
-                    </select>
-                  </td>
-                  <td>
-                    <input
-                      type="checkbox"
-                      name="tv_default"
-                      checked={editedKeyword.tv_default}
-                      onChange={handleInputChange}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="checkbox"
-                      name="movie_default"
-                      checked={editedKeyword.movie_default}
-                      onChange={handleInputChange}
-                    />
-                  </td>
-                  <td>
-                    <button type="button" onClick={handleEditSubmit}>
-                      Update
-                    </button>
-                    <button type="button" onClick={handleEditCancel}>
-                      Cancel
-                    </button>
-                  </td>
-                </>
-              ) : (
-                <>
-                  <td>{keyword.category_name}</td>
-                  <td>{keyword.word} </td>
-                  <td>{keyword.direction_display}</td>
-                  <td>{keyword.tv_default ? '✅' : '-'}</td>
-                  <td>{keyword.movie_default ? '✅' : '-'}</td>
-                  <td>
-                    {deletingKeyword === keyword ? (
-                      <>
-                        <button onClick={handleDeleteConfirm}>Confirm</button>
-                        <button onClick={handleCancelDelete}>Cancel</button>
-                      </>
-                    ) : (
-                      <>
-                        <button onClick={() => handleEditKeyword(keyword)}>
-                          Edit
-                        </button>
-                        <button onClick={() => handleDeleteKeyword(keyword)}>
-                          Delete
-                        </button>
-                      </>
-                    )}
-                  </td>
-                </>
-              )}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <H2>Search Key Words</H2>
+      <Table headers={headers} rows={rows} className="w-full" />
     </>
   )
 }

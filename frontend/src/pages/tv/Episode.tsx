@@ -10,6 +10,7 @@ import ManualSearch from '../../components/ManualSearch'
 import { EpisodeType } from '../../components/Episode'
 import MediaServerDetail from '../../components/MediaServerDetail'
 import episodeLogoDefault from '../../../assets/episode-default.jpg'
+import { H1, H2, P, TagItem } from '../../components/Typography'
 
 const TVEpisode: React.FC = () => {
   const { id } = useParams()
@@ -39,42 +40,42 @@ const TVEpisode: React.FC = () => {
   }, [id, episodeRefresh])
 
   return (
-    <div>
+    <div className="mb-10">
       {episodeDetail && (
         <>
-          <div className="episode-detail-header">
+          <div className="w-[75%] mx-auto py-6">
             {episodeImage && (
               <ImageComponent image={episodeImage} alt="episode-poster" />
             )}
-            <div className="episode-description">
-              <h1>{episodeDetail.title}</h1>
-              <Link to={`/tv/show/${episodeDetail.season.show.id}`}>
-                <h2>{episodeDetail.season.show.name}</h2>
-              </Link>
-              <p>
-                S{String(episodeDetail.season.number).padStart(2, '0')}E
-                {String(episodeDetail.number).padStart(2, '0')}
-              </p>
-              <p
-                dangerouslySetInnerHTML={{ __html: episodeDetail.description }}
-              />
-              <div className="tag-group">
-                {episodeDetail.release_date && (
-                  <span className="tag-item">
-                    Release:{' '}
-                    <TimeComponent timestamp={episodeDetail.release_date} />
-                  </span>
-                )}
-                <span className="tag-item">
-                  Status: {episodeDetail.status_display || 'undefined'}
-                </span>
-              </div>
+          </div>
+          <div className="text-center py-4">
+            <H1>{episodeDetail.title}</H1>
+            <Link to={`/tv/show/${episodeDetail.season.show.id}`}>
+              <H2>{episodeDetail.season.show.name}</H2>
+            </Link>
+            <P>
+              S{String(episodeDetail.season.number).padStart(2, '0')}E
+              {String(episodeDetail.number).padStart(2, '0')}
+            </P>
+            <P
+              dangerouslySetInnerHTML={{ __html: episodeDetail.description }}
+            />
+            <div className="flex gap-2 justify-center py-4">
+              {episodeDetail.release_date && (
+                <TagItem>
+                  Release:{' '}
+                  <TimeComponent timestamp={episodeDetail.release_date} />
+                </TagItem>
+              )}
+              <TagItem>
+                Status: {episodeDetail.status_display || 'undefined'}
+              </TagItem>
             </div>
           </div>
           <EpisodeNav currentEpisodeId={episodeDetail.id} />
           {episodeDetail.torrent.length > 0 && (
             <>
-              <h2>Torrents</h2>
+              <H2>Torrents</H2>
               {episodeDetail.torrent?.map((torrent) => (
                 <Torrent
                   key={torrent.id}
@@ -85,10 +86,12 @@ const TVEpisode: React.FC = () => {
             </>
           )}
           {episodeDetail?.media_server_id && (
-            <MediaServerDetail
-              mediaServerDetail={episodeDetail.media_server_meta}
-              mediaServerURL={episodeDetail.media_server_url}
-            />
+            <div className="py-6">
+              <MediaServerDetail
+                mediaServerDetail={episodeDetail.media_server_meta}
+                mediaServerURL={episodeDetail.media_server_url}
+              />
+            </div>
           )}
           <ManualSearch
             searchType="episode"

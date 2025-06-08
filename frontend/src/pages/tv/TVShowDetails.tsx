@@ -9,6 +9,7 @@ import ShowDetail from '../../components/ShowDetail'
 import useApi from '../../hooks/api'
 import SeasonMetaData from '../../components/SeasonMetaData'
 import { useParams } from 'react-router-dom'
+import { Button, P } from '../../components/Typography'
 
 const TVShowDetail: React.FC = () => {
   const { id } = useParams()
@@ -90,9 +91,9 @@ const TVShowDetail: React.FC = () => {
         <ShowDetail showDetail={showDetail} fetchShow={fetchShow} />
       )}
       <div>
-        <div className="season-items">
+        <div className="grid grid-cols-6 gap-2 my-4">
           {isLoadingSeasons ? (
-            <p>Loading...</p>
+            <P>Loading...</P>
           ) : Array.isArray(seasons) && seasons.length > 0 ? (
             showAllSeasons ? (
               seasons.map((season) => (
@@ -114,21 +115,21 @@ const TVShowDetail: React.FC = () => {
                 ))
             )
           ) : (
-            <p>No Seasons found.</p>
+            <P>No Seasons found.</P>
           )}
         </div>
         {seasons.length > 6 && (
-          <button onClick={toggleShowAllSeasons}>
+          <Button onClick={toggleShowAllSeasons}>
             {showAllSeasons ? 'Show Less' : 'Show More'}
-          </button>
+          </Button>
         )}
       </div>
       {selectedSeason ? (
         <>
           <SeasonMetaData fetchEpisodes={fetchEpisodes} />
-          <div className="episode-items">
+          <div className="grid grid-cols-3 gap-2">
             {isLoadingEpisodes ? (
-              <p>Loading...</p>
+              <P>Loading...</P>
             ) : (
               episodes?.length > 0 &&
               episodes.map((episode) => (
@@ -138,7 +139,7 @@ const TVShowDetail: React.FC = () => {
           </div>
         </>
       ) : (
-        <p>No episodes in season.</p>
+        <P>No episodes in season.</P>
       )}
     </>
   )

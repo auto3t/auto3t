@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import useApi from '../hooks/api'
 import TimeComponent from './TimeComponent'
 import { formatBytes } from '../utils'
+import { Button, H2, Input, P, TagItem } from './Typography'
 
 export type ManualSearchType = {
   Id: string
@@ -60,24 +61,24 @@ const ManualSearchResult: React.FC<ManualSearchResultInterface> = ({
   }
 
   return (
-    <div key={result.Id} className="manual-search-item">
-      <p>{result.Title}</p>
-      <div className="tag-group">
-        <span className="tag-item">{result.Tracker}</span>
-        <span className="tag-item">{formatBytes(result.Size)}</span>
-        <span className="tag-item">
+    <div key={result.Id} className="border border-accent-1 mb-2 p-2">
+      <P>{result.Title}</P>
+      <div className="flex gap-2 my-2">
+        <TagItem>{result.Tracker}</TagItem>
+        <TagItem>{formatBytes(result.Size)}</TagItem>
+        <TagItem>
           Published: <TimeComponent timestamp={result.PublishDate} />
-        </span>
-        <span className="tag-item" title="Seeders / Leechers / Gain">
+        </TagItem>
+        <TagItem title="Seeders / Leechers / Gain">
           {result.Seeders} / {result.Peers} / {result.Gain.toFixed(2)}
-        </span>
+        </TagItem>
       </div>
       {addDownloadLoading === null && (
-        <button onClick={() => handleDownload(result.Id)}>Download</button>
+        <Button onClick={() => handleDownload(result.Id)}>Download</Button>
       )}
-      {addDownloadLoading === true && <p>Loading...</p>}
-      {addDownloadLoading === false && !error && <p>Done</p>}
-      {error && <span>Failed to add: {error}</span>}
+      {addDownloadLoading === true && <P>Loading...</P>}
+      {addDownloadLoading === false && !error && <P>Done</P>}
+      {error && <P>Failed to add: {error}</P>}
     </div>
   )
 }
@@ -119,21 +120,23 @@ const ManualSearch: React.FC<ManualSearchInterface> = ({
 
   return (
     <div className="manual-search">
-      <h2>Manual Search</h2>
-      <input
-        type="text"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-      />
-      <button onClick={handleSearch}>Search</button>
-      {searchResults !== null && <button onClick={handleClear}>Clear</button>}
+      <H2>Manual Search</H2>
+      <div className="flex gap-2">
+        <Input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <Button onClick={handleSearch}>Search</Button>
+        {searchResults !== null && <Button onClick={handleClear}>Clear</Button>}
+      </div>
       {isSearching ? (
-        <span>Searching...</span>
+        <P>Searching...</P>
       ) : searchResults !== null ? (
         searchResults.length > 0 ? (
           <>
-            <p>{searchResults.length} results found</p>
-            <div className="manual-search-results">
+            <P className="mb-2">{searchResults.length} results found</P>
+            <div className="max-h-[50vh] overflow-scroll">
               {searchResults.map((result) => (
                 <ManualSearchResult
                   key={result.Id}
@@ -145,7 +148,7 @@ const ManualSearch: React.FC<ManualSearchInterface> = ({
             </div>
           </>
         ) : (
-          <p>No results found</p>
+          <P>No results found</P>
         )
       ) : null}
     </div>

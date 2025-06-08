@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import useApi from '../hooks/api'
 import logo from '../../assets/logo.png'
+import { Button, Input, P } from '../components/Typography'
 
 export default function Login() {
   const { error, loginUser } = useApi()
@@ -13,28 +14,26 @@ export default function Login() {
   }
 
   return (
-    <div className="login-wrapper">
-      <div className="login-elements">
-        <img src={logo} />
+    <div className="flex justify-center items-center h-[100vh] text-center">
+      <div className="w-[200px] max-w-[80%]">
+        <img className="w-full" src={logo} />
         <form onSubmit={handleSubmit}>
-          {error && <div>{error}</div>}
+          {error && <P variant="alert">{error}</P>}
           <div>
-            <input
+            <Input
               type="text"
               placeholder="username"
               onChange={(e) => setUserName(e.target.value)}
             />
           </div>
           <div>
-            <input
+            <Input
               type="password"
               placeholder="password"
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <div>
-            <button type="submit">Login</button>
-          </div>
+          <Button type="submit">Login</Button>
         </form>
       </div>
     </div>

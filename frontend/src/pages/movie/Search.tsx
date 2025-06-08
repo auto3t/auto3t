@@ -3,6 +3,7 @@ import useApi from '../../hooks/api'
 import useMovieSearchStore from '../../stores/MovieSearchStore'
 import MovieSearchResult from '../../components/MovieSearchResult'
 import { Link } from 'react-router-dom'
+import { Button, H1, Input, P } from '../../components/Typography'
 
 export type MovieSearchResultType = {
   id: string
@@ -56,27 +57,29 @@ const MovieSearch = () => {
   if (!results) return <></>
   return (
     <div>
-      <h1>Start track a new Movie</h1>
+      <H1>Start track a new Movie</H1>
       <div className="filter-bar">
         <Link to={'/movie'}>
-          <button>Back</button>
+          <Button>Back</Button>
         </Link>
       </div>
-      <input
-        type="text"
-        value={query}
-        onChange={handleInputChange}
-        placeholder="Search..."
-      />
-      <button onClick={handleClear}>Clear</button>
+      <div className="flex gap-2">
+        <Input
+          type="text"
+          value={query}
+          onChange={handleInputChange}
+          placeholder="Search..."
+        />
+        <Button onClick={handleClear}>Clear</Button>
+      </div>
       {isLoading ? (
-        <p>Loading...</p>
+        <P>Loading...</P>
       ) : results?.length > 0 ? (
         results.map((result) => (
           <MovieSearchResult key={result.id} result={result} />
         ))
       ) : (
-        <p>Search query did not return any results.</p>
+        <P>Search query did not return any results.</P>
       )}
     </div>
   )

@@ -3,6 +3,7 @@ import ImageComponent from './ImageComponent'
 import { MovieType } from '../pages/movie/MovieDetails'
 import posterDefault from '../../assets/poster-default.jpg'
 import ProgressBar from './ProgressBar'
+import { H2 } from './Typography'
 
 interface MovieTileInterface {
   movie: MovieType
@@ -16,16 +17,16 @@ const MovieTile: React.FC<MovieTileInterface> = ({ movie }) => {
 
   return (
     <Link to={`movie/${movie.id}`}>
-      <div className="movie-item">
-        <div className="image-wrap">
+      <div>
+        <div>
           <ImageComponent
             image={getMoviePoster(movie)}
             alt={'movie-poster-' + movie.name}
           />
           <ProgressBar torrents={movie?.torrent} />
         </div>
-        <div className="tile-description">
-          <h2>{movie.name_display}</h2>
+        <div className="text-center">
+          <H2>{movie.name_display}</H2>
         </div>
       </div>
     </Link>

@@ -3,6 +3,7 @@ import TimeComponent from './TimeComponent'
 import { ShowSearchResultType } from '../pages/tv/Search'
 import useApi from '../hooks/api'
 import { useState } from 'react'
+import { Button, H2, P, StyledLink, TagItem } from './Typography'
 
 interface ShowSearchResultInterface {
   result: ShowSearchResultType
@@ -25,52 +26,54 @@ const ShowSearchResult: React.FC<ShowSearchResultInterface> = ({ result }) => {
   }
 
   return (
-    <div className="show-detail">
-      <div className="show-detail-header">
-        <div className="show-poster">
-          {result.image && <img src={result.image} alt="show-poster" />}
+    <div className="p-1 my-1">
+      <div className="flex items-center border border-accent-2">
+        <div className="p-4 flex-1">
+          {result.image && (
+            <img className="w-full" src={result.image} alt="show-poster" />
+          )}
         </div>
-        <div className="show-description">
-          <h2>{result.name}</h2>
-          <span className="smaller">
+        <div className="m-2 flex-3">
+          <H2>{result.name}</H2>
+          <P variant="smaller">
             ID:{' '}
-            <a href={result.url} target="_blank" rel="noreferrer">
+            <StyledLink to={result.url} target="_blank" rel="noreferrer">
               {result.id}
-            </a>
-          </span>
-          <p dangerouslySetInnerHTML={{ __html: result.summary }} />
-          <div className="tag-group">
-            <span className="tag-item">Status: {result.status}</span>
+            </StyledLink>
+          </P>
+          <P dangerouslySetInnerHTML={{ __html: result.summary }} />
+          <div className="flex gap-2 my-2">
+            <TagItem>{`Status: ${result.status}`}</TagItem>
             {result.premiered && (
-              <span className="tag-item">
-                Start: <TimeComponent timestamp={result.premiered} />
-              </span>
+              <TagItem>
+                Start: {<TimeComponent timestamp={result.premiered} />}
+              </TagItem>
             )}
             {result.ended && (
-              <span className="tag-item">
-                End: <TimeComponent timestamp={result.ended} />
-              </span>
+              <TagItem>
+                End: {<TimeComponent timestamp={result.ended} />}
+              </TagItem>
             )}
             {result.local_id ? (
               <Link to={`/tv/show/${result.local_id}/`}>Open</Link>
             ) : (
               <>
                 {addingShow === null && (
-                  <button
+                  <Button
                     className="pointer"
                     onClick={() => handleAddShow(result.id)}
                   >
                     Add
-                  </button>
+                  </Button>
                 )}
-                {addingShow === true && <p>Loading...</p>}
-                {addingShow === false && !error && <p>Done</p>}
-                {error && <span>Failed to add: {error}</span>}
+                {addingShow === true && <P>Loading...</P>}
+                {addingShow === false && !error && <P>Done</P>}
+                {error && <P>Failed to add: {error}</P>}
               </>
             )}
           </div>
           {result.genres.length > 0 && (
-            <p>Genres: {result.genres.join(', ')}</p>
+            <P>Genres: {result.genres.join(', ')}</P>
           )}
         </div>
       </div>

@@ -5,6 +5,7 @@ import { TorrentType } from './Torrent'
 import { SeasonType } from './Season'
 import ProgressBar from './ProgressBar'
 import episodeLogoDefault from '../../assets/episode-default.jpg'
+import { P, StyledLink, TagItem } from './Typography'
 
 export type MediaServerMetaType = {
   width: number
@@ -52,34 +53,40 @@ const Episode: React.FC<EpisodeComponent> = ({ episode, showShow = false }) => {
   }
 
   return (
-    <div className="episode-item">
+    <div>
       <Link to={`/tv/episode/${episode.id}`}>
-        <div className="image-wrap">
+        <div className="relative">
           <ImageComponent
             image={getEpisodeImage(episode)}
             alt={'episode-poster-' + episode.number}
           />
-          <span className="tag-item" title={episode.status_display}>
+          <TagItem
+            title={episode.status_display}
+            className="absolute top-0 right-0 m-4"
+          >
             {episode.status || '-'}
-          </span>
+          </TagItem>
           <ProgressBar torrents={episode?.torrent} />
         </div>
       </Link>
-      <div className="tile-description">
+      <div className="text-center p-2">
         {showShow && (
           <>
-            <Link to={`tv/show/${episode.season.show.id}`}>
+            <StyledLink to={`tv/show/${episode.season.show.id}`}>
               {episode.season.show.name}
-            </Link>
-            <br />
+            </StyledLink>
           </>
         )}
-        <span>S{String(episode.season.number).padStart(2, '0')}</span>
-        <span>E{String(episode.number).padStart(2, '0')}</span>
-        <span> - {episode.title}</span>
-        <br />
+        <P>
+          <span>S{String(episode.season.number).padStart(2, '0')}</span>
+          <span>E{String(episode.number).padStart(2, '0')}</span>
+          <span> - {episode.title}</span>
+        </P>
+
         {episode.status === 'u' && (
-          <TimeComponent timestamp={episode.release_date} />
+          <P>
+            <TimeComponent timestamp={episode.release_date} />
+          </P>
         )}
       </div>
     </div>

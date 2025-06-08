@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import useApi from '../hooks/api'
+import { Button, P, TagItem } from './Typography'
 
 export type TorrentType = {
   id: number
@@ -38,37 +39,37 @@ const Torrent: React.FC<TorrentInterface> = ({ torrent, setRefresh }) => {
   }
 
   return (
-    <div className="torrent-detail">
-      <div className="tag-group">
-        <span className="tag-item">Type: {torrent.torrent_type_display}</span>
-        <span className="tag-item">State: {torrent.torrent_state_display}</span>
+    <div className="p-4 my-4 border border-accent-1">
+      <div className="flex gap-2">
+        <TagItem>Type: {torrent.torrent_type_display}</TagItem>
+        <TagItem>State: {torrent.torrent_state_display}</TagItem>
       </div>
       {validatedProgress && validatedProgress > 0 && (
-        <div className="progress-wrap">
-          <div className="progress-bar-background">
+        <div className="relative h-10">
+          <div className="absolute w-full bg-accent-1 bottom-0">
             <div
-              className="progress-bar"
+              className="text-center bg-accent-2 text-main-fg"
               style={{ width: `${validatedProgress}%` }}
             >
-              <span className="smaller">{validatedProgress}%</span>
+              <span>{validatedProgress}%</span>
             </div>
           </div>
         </div>
       )}
-      <div>
-        <p className="text-blob">
+      <div className="pt-4">
+        <P className="bg-accent-3 p-2 mb-2 break-words">
           {isExpanded ? torrent.magnet : torrent.magnet_hash}
-        </p>
-        <button onClick={() => setIsExpanded(!isExpanded)}>
+        </P>
+        <Button onClick={() => setIsExpanded(!isExpanded)}>
           {isExpanded ? 'Show hash' : 'Show Magnet'}
-        </button>
+        </Button>
         {torrent.torrent_state === 'i' && (
           <>
-            <button onClick={() => setDeleteConfirm(true)}>Delete</button>
+            <Button onClick={() => setDeleteConfirm(true)}>Delete</Button>
             {deleteConfirm && (
               <>
-                <button onClick={handleDelete}>Confirm</button>
-                <button onClick={() => setDeleteConfirm(false)}>Cancel</button>
+                <Button onClick={handleDelete}>Confirm</Button>
+                <Button onClick={() => setDeleteConfirm(false)}>Cancel</Button>
               </>
             )}
           </>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import useApi from '../hooks/api'
 import { KeywordType } from './Keywords'
+import { Button, Select } from './Typography'
 
 interface AddKeywordComponentInterface {
   patchURL: string
@@ -40,15 +41,19 @@ const AddKeywordComponent: React.FC<AddKeywordComponentInterface> = ({
     <>
       {allKeywords && (
         <>
-          <select onChange={handleOptionSelect} defaultValue={''}>
+          <Select onChange={handleOptionSelect} defaultValue={''}>
             <option value="">---</option>
             {allKeywords.map((keyword) => (
               <option key={keyword.id} value={keyword.id}>
                 {keyword.category_name} [{keyword.direction}] {keyword.word}
               </option>
             ))}
-          </select>
-          {selectedOption && <button onClick={handleOptionUpdate}>Add</button>}
+          </Select>
+          {selectedOption && (
+            <Button className="ml-2" onClick={handleOptionUpdate}>
+              Add
+            </Button>
+          )}
         </>
       )}
     </>

@@ -9,6 +9,7 @@ import ManualSearch from '../../components/ManualSearch'
 import Torrent, { TorrentType } from '../../components/Torrent'
 import { MediaServerMetaType } from '../../components/Episode'
 import MediaServerDetail from '../../components/MediaServerDetail'
+import { H1, H2, H3, P, StyledLink, TagItem } from '../../components/Typography'
 
 export type MovieType = {
   id: number
@@ -57,50 +58,50 @@ const MovieDetail: React.FC = () => {
   }
 
   return (
-    <div>
+    <div className="mb-10">
       {movieDetail && (
         <>
-          <div className="movie-detail">
-            <div className="movie-detail-header">
-              <div className="movie-poster">
-                <ImageComponent
-                  image={getMoviePoster(movieDetail)}
-                  alt="movie-poster"
-                />
-              </div>
-              <div className="movie-description">
-                <h1>{movieDetail.name_display}</h1>
-                <h3>{movieDetail.tagline}</h3>
-                <span className="smaller">
-                  ID:{' '}
-                  <a
-                    href={movieDetail.remote_server_url}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    {movieDetail.remote_server_id}
-                  </a>
-                </span>
-                <p>{movieDetail.description}</p>
-                <div className="tag-group">
-                  <span className="tag-item">
-                    Release:{' '}
-                    <TimeComponent timestamp={movieDetail.release_date} />
-                  </span>
-                  <span className="tag-item">
-                    {movieDetail?.status_display || 'Status: TBD'}
-                  </span>
-                  <span className="tag-item">
-                    {movieDetail?.production_state_display || 'Production: TBD'}
-                  </span>
-                </div>
+          <div className="grid grid-cols-2 items-center">
+            <div className="w-100 mx-auto py-6">
+              <ImageComponent
+                image={getMoviePoster(movieDetail)}
+                alt="movie-poster"
+              />
+            </div>
+            <div>
+              <H1>{movieDetail.name_display}</H1>
+              <H3>{movieDetail.tagline}</H3>
+              <P>
+                ID:{' '}
+                <StyledLink
+                  to={movieDetail.remote_server_url}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {movieDetail.remote_server_id}
+                </StyledLink>
+              </P>
+              <P>{movieDetail.description}</P>
+              <div className="flex gap-2 py-4">
+                <TagItem>
+                  Release:{' '}
+                  <TimeComponent timestamp={movieDetail.release_date} />
+                </TagItem>
+                <TagItem className="tag-item">
+                  {movieDetail?.status_display || 'Status: TBD'}
+                </TagItem>
+                <TagItem>
+                  {movieDetail?.production_state_display || 'Production: TBD'}
+                </TagItem>
               </div>
             </div>
           </div>
-          <MovieReleases movie_id={movieDetail.id} />
+          <div className="py-4">
+            <MovieReleases movie_id={movieDetail.id} />
+          </div>
           {movieDetail.torrent.length > 0 && (
-            <>
-              <h2>Torrents</h2>
+            <div className="py-4">
+              <H2>Torrents</H2>
               {movieDetail.torrent?.map((torrent) => (
                 <Torrent
                   key={torrent.id}
@@ -108,19 +109,23 @@ const MovieDetail: React.FC = () => {
                   setRefresh={setMovieRefresh}
                 />
               ))}
-            </>
+            </div>
           )}
           {movieDetail?.media_server_id && (
-            <MediaServerDetail
-              mediaServerDetail={movieDetail.media_server_meta}
-              mediaServerURL={movieDetail.media_server_url}
-            />
+            <div className="py-4">
+              <MediaServerDetail
+                mediaServerDetail={movieDetail.media_server_meta}
+                mediaServerURL={movieDetail.media_server_url}
+              />
+            </div>
           )}
-          <ManualSearch
-            searchType="movie"
-            searchTypeId={movieDetail.id}
-            searchDefault={movieDetail.name_display}
-          />
+          <div className="pt-4 pb-8">
+            <ManualSearch
+              searchType="movie"
+              searchTypeId={movieDetail.id}
+              searchDefault={movieDetail.name_display}
+            />
+          </div>
         </>
       )}
     </div>

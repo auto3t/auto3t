@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom'
 import { MovieSearchResultType } from '../pages/movie/Search'
 import useApi from '../hooks/api'
 import { useState } from 'react'
+import { Button, H2, P, StyledLink, TagItem } from './Typography'
+import TimeComponent from './TimeComponent'
 
 interface MovieSearchResultInterface {
   result: MovieSearchResultType
@@ -26,43 +28,44 @@ const MovieSearchResult: React.FC<MovieSearchResultInterface> = ({
   }
 
   return (
-    <div className="movie-detail">
-      <div className="movie-detail-header">
-        <div className="movie-poster">
-          {result.image && <img src={result.image} alt="movie-poster" />}
+    <div className="p-1 my-1">
+      <div className="flex items-center border border-accent-2">
+        <div className="p-4 flex-1">
+          {result.image && (
+            <img className="w-full" src={result.image} alt="movie-poster" />
+          )}
         </div>
-        <div className="movie-description">
-          <h2>
+        <div className="m-2 flex-3">
+          <H2>
             {result.name}{' '}
             {result.release_date &&
               `(${new Date(result.release_date).getFullYear()})`}
-          </h2>
-          <span className="smaller">
+          </H2>
+          <P variant="smaller">
             ID:{' '}
-            <a href={result.url} target="_blank" rel="noreferrer">
+            <StyledLink to={result.url} target="_blank" rel="noreferrer">
               {result.id}
-            </a>
-          </span>
-          <p dangerouslySetInnerHTML={{ __html: result.summary }} />
-          <div className="tag-group">
+            </StyledLink>
+          </P>
+          <P dangerouslySetInnerHTML={{ __html: result.summary }} />
+          <div className="flex gap-2 my-2">
             {result.release_date && (
-              <span className="tag-item">Released: {result.release_date}</span>
+              <TagItem>
+                Released: {<TimeComponent timestamp={result.release_date} />}
+              </TagItem>
             )}
             {result.local_id ? (
-              <Link to={`/tv/show/${result.local_id}/`}>Open</Link>
+              <Link to={`/tv/show/${result.local_id}/`}>
+                <Button>Open</Button>
+              </Link>
             ) : (
               <>
                 {addingMovie === null && (
-                  <button
-                    className="pointer"
-                    onClick={() => handleAddMovie(result.id)}
-                  >
-                    Add
-                  </button>
+                  <Button onClick={() => handleAddMovie(result.id)}>Add</Button>
                 )}
-                {addingMovie === true && <p>Loading...</p>}
-                {addingMovie === false && !error && <p>Done</p>}
-                {error && <span>Failed to add: {error}</span>}
+                {addingMovie === true && <P>Loading...</P>}
+                {addingMovie === false && !error && <P>Done</P>}
+                {error && <P>Failed to add: {error}</P>}
               </>
             )}
           </div>

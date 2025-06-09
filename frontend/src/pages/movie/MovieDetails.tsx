@@ -38,7 +38,7 @@ const MovieDetail: React.FC = () => {
   const fetchMovie = useCallback(
     async (id: number) => {
       try {
-        const data = await get(`movie/movie/${id}`)
+        const data = await get(`movie/movie/${id}/`)
         setMovieDetail(data)
       } catch {
         console.error('error fetching movie detail')

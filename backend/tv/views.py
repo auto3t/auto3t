@@ -236,7 +236,7 @@ class EpisodeViewSet(viewsets.ModelViewSet):
         queryset = TVEpisode.objects.all()
         order_by = self.request.GET.get("order-by")
         if order_by:
-            queryset = queryset.order_by(F(order_by).desc(nulls_last=True))
+            queryset = queryset.order_by(F(f"-{order_by}").desc(nulls_last=True))
         else:
             queryset = queryset.order_by("-number")
 

@@ -4,7 +4,7 @@ import useProcessingEpisodeStore from '../stores/processingEpisodesStore'
 import useUpcomingEpisodeStore from '../stores/UpcomingEpisodesStore'
 import useApi from '../hooks/api'
 import usePolling from '../hooks/usePolling'
-import { H2, P } from '../components/Typography'
+import { Button, H2, P } from '../components/Typography'
 
 const Home: React.FC = () => {
   const { error, get } = useApi()
@@ -81,7 +81,7 @@ const Home: React.FC = () => {
         )}
       </div>
       {hasMoreUpcoming && (
-        <button onClick={handleLoadMoreUpcomingEpisodes}>Load More</button>
+        <Button onClick={handleLoadMoreUpcomingEpisodes}>Load More</Button>
       )}
     </>
   )

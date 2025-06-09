@@ -2,7 +2,7 @@
 
 import json
 
-from django.db.models import F, Value
+from django.db.models import F, OrderBy, Value
 from django.db.models.functions import Replace
 from rest_framework import viewsets
 from rest_framework.decorators import action
@@ -236,7 +236,7 @@ class EpisodeViewSet(viewsets.ModelViewSet):
         queryset = TVEpisode.objects.all()
         order_by = self.request.GET.get("order-by")
         if order_by:
-            queryset = queryset.order_by(F(f"-{order_by}").desc(nulls_last=True))
+            queryset = queryset.order_by(OrderBy(F(order_by), descending=False, nulls_last=True))
         else:
             queryset = queryset.order_by("-number")
 

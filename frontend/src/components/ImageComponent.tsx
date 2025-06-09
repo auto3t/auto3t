@@ -24,7 +24,10 @@ const ImageComponent: React.FC<ImageComponentInterface> = ({
   useEffect(() => {
     const fetchImage = async () => {
       let newImageUrl
-      if (image.image.startsWith('/assets')) {
+      if (
+        image.image.startsWith('/static') ||
+        image.image.startsWith('/assets')
+      ) {
         newImageUrl = image.image
       } else {
         newImageUrl = await getImage(image.image)

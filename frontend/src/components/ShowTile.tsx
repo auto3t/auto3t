@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import ImageComponent from './ImageComponent'
 import { ShowType } from './ShowDetail'
 import posterDefault from '../../assets/poster-default.jpg'
-import { H2 } from './Typography'
+import { H3 } from './Typography'
 
 interface ShowTileInterface {
   show: ShowType
@@ -24,7 +24,7 @@ const ShowTile: React.FC<ShowTileInterface> = ({ show }) => {
           alt={'show-poster-' + show.name}
         />
         <div className="text-center">
-          <H2>{show.name}</H2>
+          <H3>{show.name}</H3>
         </div>
       </div>
     </Link>

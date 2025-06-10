@@ -67,7 +67,7 @@ export default function RootLayout() {
           <NotificationBox />
         </main>
       </div>
-      <footer className="bg-accent-3 py-4 text-center shrink">
+      <footer className="bg-accent-3 py-4 text-center shrink mt-15">
         <div className="max-w-7xl m-auto">
           <P>
             © AutoT {new Date().getFullYear()} - v0.0.1{' '}

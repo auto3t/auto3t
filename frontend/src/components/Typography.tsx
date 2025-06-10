@@ -90,7 +90,7 @@ export function H2({
   return (
     <h2
       {...props}
-      className={`text-3xl text-main-fg my-2 font-heading uppercase`}
+      className={`text-3xl text-accent-2 my-2 font-heading uppercase`}
     />
   )
 }

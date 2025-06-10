@@ -61,7 +61,7 @@ const Torrent: React.FC<TorrentInterface> = ({ torrent, setRefresh }) => {
           {isExpanded ? torrent.magnet : torrent.magnet_hash}
         </P>
         <Button onClick={() => setIsExpanded(!isExpanded)}>
-          {isExpanded ? 'Show hash' : 'Show Magnet'}
+          {isExpanded ? 'Show Hash' : 'Show Magnet'}
         </Button>
         {torrent.torrent_state === 'i' && (
           <>

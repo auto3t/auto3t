@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import useTVSearchStore from '../../stores/TVSearchStore'
 import useApi from '../../hooks/api'
 import ShowSearchResult from '../../components/ShowSearchResult'
 import { Link } from 'react-router-dom'
 import { Button, H1, Input, P } from '../../components/Typography'
+import Spinner from '../../components/Spinner'
 
 export type ShowSearchResultType = {
   id: number
@@ -22,7 +22,8 @@ const TVSearch = () => {
   const { get } = useApi()
   const [isLoading, setIsLoading] = useState(false)
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null)
-  const { query, results, setQuery, setResults } = useTVSearchStore()
+  const [query, setQuery] = useState('')
+  const [results, setResults] = useState<ShowSearchResultType[] | null>(null)
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newQuery = event.target.value
@@ -59,7 +60,7 @@ const TVSearch = () => {
 
   return (
     <div>
-      <H1>Start tracking new TV Show</H1>
+      <H1>Start tracking a new TV Show</H1>
       <div className="filter-bar">
         <Link to={'/tv'}>
           <Button>Back</Button>
@@ -74,7 +75,7 @@ const TVSearch = () => {
         />
         <Button onClick={handleClear}>Clear</Button>
       </div>
-      {isLoading ? (
+      {/* {isLoading ? (
         <P>Loading...</P>
       ) : results?.length > 0 ? (
         results.map((result) => (
@@ -82,6 +83,21 @@ const TVSearch = () => {
         ))
       ) : (
         <P>Search query did not return any results.</P>
+      )} */}
+      {isLoading ? (
+        <Spinner />
+      ) : query === '' || query.length < 2 ? (
+        <div className="text-center py-6">
+          <P>Enter a search query.</P>
+        </div>
+      ) : results && results.length > 0 ? (
+        results.map((result) => (
+          <ShowSearchResult key={result.id} result={result} />
+        ))
+      ) : (
+        <div className="text-center py-6">
+          <P>Search query did not return any results.</P>
+        </div>
       )}
     </div>
   )

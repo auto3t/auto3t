@@ -33,7 +33,7 @@ const ShowSearchResult: React.FC<ShowSearchResultInterface> = ({ result }) => {
             <img className="w-full" src={result.image} alt="show-poster" />
           )}
         </div>
-        <div className="m-2 flex-3">
+        <div className="m-2 p-2 flex-3">
           <H2>{result.name}</H2>
           <P variant="smaller">
             ID:{' '}
@@ -42,7 +42,7 @@ const ShowSearchResult: React.FC<ShowSearchResultInterface> = ({ result }) => {
             </StyledLink>
           </P>
           <P dangerouslySetInnerHTML={{ __html: result.summary }} />
-          <div className="flex gap-2 my-2">
+          <div className="flex gap-2 py-6">
             <TagItem>{`Status: ${result.status}`}</TagItem>
             {result.premiered && (
               <TagItem>

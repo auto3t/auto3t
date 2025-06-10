@@ -3,6 +3,7 @@ import useApi from '../hooks/api'
 import TimeComponent from './TimeComponent'
 import { formatBytes } from '../utils'
 import { Button, H2, Input, P, TagItem } from './Typography'
+import Spinner from './Spinner'
 
 export type ManualSearchType = {
   Id: string
@@ -131,7 +132,7 @@ const ManualSearch: React.FC<ManualSearchInterface> = ({
         {searchResults !== null && <Button onClick={handleClear}>Clear</Button>}
       </div>
       {isSearching ? (
-        <P>Searching...</P>
+        <Spinner />
       ) : searchResults !== null ? (
         searchResults.length > 0 ? (
           <>

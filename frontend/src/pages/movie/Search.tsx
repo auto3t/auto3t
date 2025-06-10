@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import useApi from '../../hooks/api'
-import useMovieSearchStore from '../../stores/MovieSearchStore'
 import MovieSearchResult from '../../components/MovieSearchResult'
 import { Link } from 'react-router-dom'
 import { Button, H1, Input, P } from '../../components/Typography'
+import Spinner from '../../components/Spinner'
 
 export type MovieSearchResultType = {
   id: string
@@ -19,7 +19,8 @@ const MovieSearch = () => {
   const { get } = useApi()
   const [isLoading, setIsLoading] = useState(false)
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null)
-  const { query, results, setQuery, setResults } = useMovieSearchStore()
+  const [query, setQuery] = useState('')
+  const [results, setResults] = useState<MovieSearchResultType[] | null>(null)
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newQuery = event.target.value
@@ -54,7 +55,6 @@ const MovieSearch = () => {
     setResults([])
   }
 
-  if (!results) return <></>
   return (
     <div>
       <H1>Start track a new Movie</H1>
@@ -73,13 +73,19 @@ const MovieSearch = () => {
         <Button onClick={handleClear}>Clear</Button>
       </div>
       {isLoading ? (
-        <P>Loading...</P>
-      ) : results?.length > 0 ? (
+        <Spinner />
+      ) : query === '' || query.length < 2 ? (
+        <div className="text-center py-6">
+          <P>Enter a search query.</P>
+        </div>
+      ) : results && results?.length > 0 ? (
         results.map((result) => (
           <MovieSearchResult key={result.id} result={result} />
         ))
       ) : (
-        <P>Search query did not return any results.</P>
+        <div className="text-center py-6">
+          <P>Search query did not return any results.</P>
+        </div>
       )}
     </div>
   )

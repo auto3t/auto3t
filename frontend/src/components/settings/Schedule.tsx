@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
-import useApi from '../hooks/api'
-import useScheduleStore from '../stores/ScheduleStore'
-import TimeComponent from './TimeComponent'
-import { Button, H2, Input, Select, Table } from './Typography'
+import useApi from '../../hooks/api'
+import useScheduleStore from '../../stores/ScheduleStore'
+import TimeComponent from '../TimeComponent'
+import { Button, H2, Input, Select, Table } from '../Typography'
 
 export type SchedulerType = {
   id: number

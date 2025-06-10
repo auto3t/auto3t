@@ -1,8 +1,8 @@
 import { useEffect, useCallback, useState } from 'react'
-import useCategoryFormStore from '../stores/CategoryFormStore'
-import useSearchKeyWordStore from '../stores/SearchKeyWordsStore'
-import useApi from '../hooks/api'
-import { Button, H2, Input, Select, Table } from './Typography'
+import useCategoryFormStore from '../../stores/CategoryFormStore'
+import useSearchKeyWordStore from '../../stores/SearchKeyWordsStore'
+import useApi from '../../hooks/api'
+import { Button, H2, Input, Select, Table } from '../Typography'
 
 export type KeywordType = {
   id: number

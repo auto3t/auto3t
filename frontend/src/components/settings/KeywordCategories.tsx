@@ -1,7 +1,7 @@
 import { useEffect, useCallback } from 'react'
-import useCategoryFormStore from '../stores/CategoryFormStore'
-import useApi from '../hooks/api'
-import { Button, H2, Input, Table } from './Typography'
+import useCategoryFormStore from '../../stores/CategoryFormStore'
+import useApi from '../../hooks/api'
+import { Button, H2, Input, Table } from '../Typography'
 
 export type KeyWordCategoryType = {
   id: number

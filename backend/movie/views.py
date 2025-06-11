@@ -4,8 +4,12 @@ import json
 
 from django.db.models import F, Value
 from django.db.models.functions import Replace
-from movie.models import Collection, Movie, MovieRelease
-from movie.serializers import CollectionSerializer, MovieReleaseSerializer, MovieSerializer
+from movie.models import Collection, Movie, MovieRelease, MovieReleaseTarget
+from movie.serializers import (
+    CollectionSerializer,
+    MovieReleaseSerializer,
+    MovieSerializer,
+)
 from movie.src.movie_search import MovieId
 from movie.tasks import import_movie, refresh_status
 from rest_framework import viewsets
@@ -15,7 +19,7 @@ from rest_framework.views import APIView
 
 from autot.src.redis_con import AutotRedis
 from autot.src.search import Jackett
-from autot.static import MovieProductionState, MovieStatus
+from autot.static import MovieProductionState, MovieReleaseType, MovieStatus
 
 
 class CollectionViewSet(viewsets.ReadOnlyModelViewSet):
@@ -116,6 +120,48 @@ class MovieViewSet(viewsets.ModelViewSet):
         refresh_status.delay()
 
         return Response(result)
+
+
+class MovieReleaseTargetView(APIView):
+    """handle movie release targets"""
+
+    def get(self, request):
+        """get targets, fallback to default"""
+
+        config = MovieReleaseTarget.objects.first()
+        if config:
+            tracked = set(config.target or [])
+        else:
+            tracked = set()
+
+        data = [{"id": rt.number, "name": rt.label, "tracking": rt.number in tracked} for rt in MovieReleaseType]
+        return Response(data)
+
+    def post(self, request):
+        """update target"""
+
+        valid_ids = {rt.number for rt in MovieReleaseType}
+        data = request.data.get("target", [])
+
+        if not isinstance(data, list) or not all(isinstance(i, int) for i in data):
+            return Response({"error": "Expected a list of integers."}, status=400)
+
+        if not set(data).issubset(valid_ids):
+            return Response({"error": "One or more invalid release type IDs."}, status=400)
+
+        config = MovieReleaseTarget.objects.first()
+        if config:
+            config.target = data
+            config.save()
+        else:
+            config = MovieReleaseTarget.objects.create(target=data)
+
+        tracked_set = set(config.target)
+        response_data = [
+            {"id": rt.number, "name": rt.label, "tracking": rt.number in tracked_set} for rt in MovieReleaseType
+        ]
+
+        return Response(response_data, status=200)
 
 
 class MovieRemoteSearch(APIView):

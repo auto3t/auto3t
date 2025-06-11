@@ -83,6 +83,14 @@ class MovieReleaseType(Enum):
     def choices(clr):
         return [i.value for i in MovieReleaseType]
 
+    @classmethod
+    def all(cls):
+        return list(cls)
+
+    @classmethod
+    def as_list(cls):
+        return [{"id": m.value[0], "name": m.value[1]} for m in cls]
+
 
 class TaskItem(TypedDict):
     """describe a task"""

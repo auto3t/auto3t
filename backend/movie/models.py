@@ -182,6 +182,12 @@ class MovieRelease(models.Model):
         return f"{self.movie.name_display} - {release_str}"
 
 
+class MovieReleaseTarget(models.Model):
+    """movie release target config"""
+
+    target = models.JSONField(default=[])
+
+
 @receiver(post_delete, sender=Movie)
 def delete_movie_image(sender, instance, **kwargs):  # pylint: disable=unused-argument
     """signal for deleting movie image"""

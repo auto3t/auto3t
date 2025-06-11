@@ -20,7 +20,8 @@ export type MovieType = {
   remote_server_url: string
   remote_server_id: string
   release_date: string
-  status_display: string | null
+  status: string
+  status_display: string
   production_state_display: string | null
   image_movie?: ImageType
   torrent: TorrentType[]

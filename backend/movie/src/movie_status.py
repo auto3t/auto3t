@@ -2,6 +2,7 @@
 
 import logging
 
+from django.utils import timezone
 from movie.models import Movie, MovieReleaseTarget
 
 from autot.models import Torrent, log_change
@@ -41,7 +42,11 @@ class MovieStatus:
         if not target_object:
             return
 
-        to_update = Movie.objects.filter(status="u", movierelease__release_type__in=target_object.target).distinct()
+        to_update = Movie.objects.filter(
+            status="u",
+            movierelease__release_type__in=target_object.target,
+            movierelease__release_date__lte=timezone.now(),
+        ).distinct()
         if not to_update:
             return
 

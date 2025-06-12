@@ -88,11 +88,11 @@ const MovieDetail: React.FC = () => {
                   Release:{' '}
                   <TimeComponent timestamp={movieDetail.release_date} />
                 </TagItem>
-                <TagItem className="tag-item">
-                  {movieDetail?.status_display || 'Status: TBD'}
-                </TagItem>
                 <TagItem>
-                  {movieDetail?.production_state_display || 'Production: TBD'}
+                  {`Production: ${movieDetail?.production_state_display || 'TBD'}`}
+                </TagItem>
+                <TagItem className="tag-item">
+                  {`Status: ${movieDetail?.status_display || 'TBD'}`}
                 </TagItem>
               </div>
             </div>

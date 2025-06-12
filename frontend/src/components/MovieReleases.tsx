@@ -52,7 +52,7 @@ const MovieReleases: React.FC<MovieReleasesInterface> = ({ movie_id }) => {
   return (
     <>
       <H2>Releases</H2>
-      {releases ? (
+      {releases.length > 0 ? (
         <Table headers={headers} rows={rows} className="w-full" />
       ) : (
         <P>No release found.</P>

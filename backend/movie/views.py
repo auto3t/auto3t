@@ -69,7 +69,10 @@ class MovieViewSet(viewsets.ModelViewSet):
                 message = {"error": f"Invalid status field: {status}."}
                 return Response(message, status=400)
 
-            queryset = queryset.filter(status=status)
+            if status == "n":
+                queryset = queryset.filter(status__isnull=True)
+            else:
+                queryset = queryset.filter(status=status)
 
         production_state = self.request.GET.get("production_state")
         if production_state:

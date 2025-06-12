@@ -35,6 +35,7 @@ class TvEpisodeStatus(StrEnum):
 class MovieStatus(StrEnum):
     """possible movie status choices"""
 
+    n = "None"
     u = "Upcoming"
     s = "Searching"
     d = "Downloading"

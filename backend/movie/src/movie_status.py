@@ -17,7 +17,7 @@ class MovieStatus:
 
     def set_upcoming(self):
         """set upcoming movie state"""
-        to_update = Movie.objects.filter(status__isnull=True)
+        to_update = Movie.objects.filter(status__isnull=True, release_date__isnull=False)
         if not to_update:
             return
 

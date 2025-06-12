@@ -5,6 +5,7 @@ import useUpcomingEpisodeStore from '../stores/UpcomingEpisodesStore'
 import useApi from '../hooks/api'
 import usePolling from '../hooks/usePolling'
 import { Button, H2, P } from '../components/Typography'
+import Spinner from '../components/Spinner'
 
 const Home: React.FC = () => {
   const { error, get } = useApi()
@@ -50,36 +51,38 @@ const Home: React.FC = () => {
 
   return (
     <>
-      <H2>Processing Episodes</H2>
-      <div className="grid grid-cols-3 gap-2">
-        {isLoadingProcessingEpisodes ? (
-          <P>Loading...</P>
-        ) : error ? (
-          <P>Error: {error}</P>
-        ) : processingEpisodes?.length > 0 ? (
-          processingEpisodes.map((episode) => (
+      <H2>Processing</H2>
+      {isLoadingProcessingEpisodes ? (
+        <div className="flex justify-center">
+          <Spinner />
+        </div>
+      ) : error ? (
+        <P>Error: {error}</P>
+      ) : processingEpisodes?.length > 0 ? (
+        <div className="grid grid-cols-3 gap-2">
+          {processingEpisodes.map((episode) => (
             <Episode key={episode.id} episode={episode} showShow={true} />
-          ))
-        ) : (
-          <P>No episodes are processing.</P>
-        )}
-      </div>
-      <H2>Upcoming Episodes</H2>
-      <div className="grid grid-cols-3 gap-2">
-        {isLoadingUpcomingEpisodes ? (
-          <P>Loading...</P>
-        ) : error ? (
-          <P>Error: {error}</P>
-        ) : upcomingEpisodes?.length > 0 ? (
-          <>
-            {upcomingEpisodes.map((episode) => (
-              <Episode key={episode.id} episode={episode} showShow={true} />
-            ))}
-          </>
-        ) : (
-          <P>No upcoming episodes found.</P>
-        )}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <P>No episodes are processing.</P>
+      )}
+      <H2>Upcoming</H2>
+      {isLoadingUpcomingEpisodes ? (
+        <div className="flex justify-center">
+          <Spinner />
+        </div>
+      ) : error ? (
+        <P>Error: {error}</P>
+      ) : upcomingEpisodes?.length > 0 ? (
+        <div className="grid grid-cols-3 gap-2">
+          {upcomingEpisodes.map((episode) => (
+            <Episode key={episode.id} episode={episode} showShow={true} />
+          ))}
+        </div>
+      ) : (
+        <P>No upcoming episodes found.</P>
+      )}
       {hasMoreUpcoming && (
         <Button onClick={handleLoadMoreUpcomingEpisodes}>Load More</Button>
       )}

@@ -87,6 +87,7 @@ export default function Movies() {
               onChange={handleStatusFilterUpdate}
             >
               <option value={''}>--- all movie status ---</option>
+              <option value="n">None</option>
               <option value="u">Upcoming</option>
               <option value="s">Searching</option>
               <option value="d">Downloading</option>

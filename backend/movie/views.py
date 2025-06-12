@@ -123,11 +123,11 @@ class MovieViewSet(viewsets.ModelViewSet):
             return Response({"message": "did not find search result"}, status=404)
 
         result = json.loads(search_result)
-        magnet = Jackett().extract_magnet(result)
+        magnet, title = Jackett().extract_magnet(result)
         if not magnet:
             return Response({"message": "failed to extract magnet url"}, status=400)
 
-        movie.add_magnet(magnet)
+        movie.add_magnet(magnet, title)
         refresh_status.delay()
 
         return Response(result)

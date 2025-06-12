@@ -78,6 +78,7 @@ class Torrent(models.Model):
     ]
 
     magnet = models.TextField()
+    title = models.CharField(max_length=255, null=True, blank=True)
     torrent_type = models.CharField(choices=TORRENT_TYPE, max_length=1)
     torrent_state = models.CharField(choices=TORRENT_STATE, max_length=1, default="u")
     progress = models.IntegerField(null=True, blank=True)

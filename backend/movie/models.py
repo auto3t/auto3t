@@ -127,7 +127,7 @@ class Movie(models.Model):
             self.image_movie.update(image_url)
             log_change(self, "u", "image_movie", new_value=image_url, comment="Updated new image")
 
-    def add_magnet(self, magnet: str) -> None:
+    def add_magnet(self, magnet: str, title: str | None) -> None:
         """add magnet to movie"""
         from autot.src.download import Transmission
 
@@ -136,6 +136,10 @@ class Movie(models.Model):
             Transmission().cancel(torrent)
 
         torrent, _ = Torrent.objects.get_or_create(magnet=magnet, torrent_type="m")
+        if title:
+            torrent.title = title
+            torrent.save()
+
         self.torrent.add(torrent)
         self.status = "d"
         self.media_server_id = None

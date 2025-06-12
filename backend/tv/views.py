@@ -191,11 +191,11 @@ class SeasonViewSet(viewsets.ModelViewSet):
             return Response({"message": "did not find search result"}, status=404)
 
         result = json.loads(search_result)
-        magnet = Jackett().extract_magnet(result)
+        magnet, title = Jackett().extract_magnet(result)
         if not magnet:
             return Response({"message": "failed to extract magnet url"}, status=400)
 
-        season.add_magnet(magnet)
+        season.add_magnet(magnet, title)
         refresh_status.delay()
 
         return Response(result)
@@ -317,11 +317,11 @@ class EpisodeViewSet(viewsets.ModelViewSet):
             return Response({"message": "did not find search result"}, status=404)
 
         result = json.loads(search_result)
-        magnet = Jackett().extract_magnet(result)
+        magnet, title = Jackett().extract_magnet(result)
         if not magnet:
             return Response({"message": "failed to extract magnet url"}, status=400)
 
-        episode.add_magnet(magnet)
+        episode.add_magnet(magnet, title)
         refresh_status.delay()
 
         return Response(result)

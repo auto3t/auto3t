@@ -51,7 +51,7 @@ class Jackett:
         messages = {"search:" + i["Id"]: json.dumps(i) for i in results}
         AutotRedis().set_messages(messages, expire=3600)
 
-    def get_magnet(self, to_search: TVEpisode | TVSeason | Movie) -> str | bytes | None:
+    def get_magnet(self, to_search: TVEpisode | TVSeason | Movie) -> tuple[str | None, str | None]:
         """get episode magnet link"""
         to_ignore = []
         if isinstance(to_search, (TVEpisode, Movie)):
@@ -65,22 +65,22 @@ class Jackett:
         valid_results = self.validate_links(results, to_search)
         if not valid_results:
             log_change(to_search, "u", comment="No valid magnet option found.")
-            return None
+            return None, None
 
         for result in valid_results:
             try:
-                magnet = self.extract_magnet(result)
+                magnet, title = self.extract_magnet(result)
                 if not magnet:
                     continue
 
                 if get_magnet_hash(magnet) in to_ignore:
                     continue
 
-                return magnet
+                return magnet, title
             except ValueError:
                 continue
 
-        return magnet
+        return magnet, title
 
     def build_url(self, to_search: TVEpisode | TVSeason) -> str:
         """build jacket search url"""
@@ -122,11 +122,11 @@ class Jackett:
 
         return results_sorted
 
-    def extract_magnet(self, result: dict) -> str | None:
+    def extract_magnet(self, result: dict) -> tuple[str | None, str | None]:
         """extract magnet from list or results"""
         magnet_link = result.get("MagnetUri")
         if magnet_link:
-            return magnet_link
+            return magnet_link, result.get("Title")
 
         torrent_link = result.get("Link")
         if not torrent_link:
@@ -137,11 +137,11 @@ class Jackett:
             is_torrent = response.headers.get("Content-Type") == "application/x-bittorrent"
             if is_torrent:
                 magnet_link = Magnator(response.content).get_magnet()
-                return magnet_link
+                return magnet_link, result.get("Title")
 
         location = response.headers.get("Location")
         if location and location.startswith("magnet:?"):
-            return location
+            return location, result.get("Title")
 
         raise ValueError("failed to extract magnet")
 

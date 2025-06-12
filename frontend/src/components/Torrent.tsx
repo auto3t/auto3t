@@ -7,6 +7,7 @@ export type TorrentType = {
   torrent_type_display: string
   torrent_state_display: string
   magnet: string
+  title?: string
   magnet_hash: string
   torrent_type: string
   torrent_state: string
@@ -40,6 +41,7 @@ const Torrent: React.FC<TorrentInterface> = ({ torrent, setRefresh }) => {
 
   return (
     <div className="p-4 my-4 border border-accent-1">
+      {torrent.title && <P className="mb-2">{torrent.title}</P>}
       <div className="flex gap-2">
         <TagItem>Type: {torrent.torrent_type_display}</TagItem>
         <TagItem>State: {torrent.torrent_state_display}</TagItem>
@@ -65,12 +67,22 @@ const Torrent: React.FC<TorrentInterface> = ({ torrent, setRefresh }) => {
         </Button>
         {torrent.torrent_state === 'i' && (
           <>
-            <Button onClick={() => setDeleteConfirm(true)}>Delete</Button>
-            {deleteConfirm && (
+            {deleteConfirm ? (
               <>
-                <Button onClick={handleDelete}>Confirm</Button>
-                <Button onClick={() => setDeleteConfirm(false)}>Cancel</Button>
+                <Button className="ml-2" onClick={handleDelete}>
+                  Confirm
+                </Button>
+                <Button
+                  className="ml-2"
+                  onClick={() => setDeleteConfirm(false)}
+                >
+                  Cancel
+                </Button>
               </>
+            ) : (
+              <Button className="ml-2" onClick={() => setDeleteConfirm(true)}>
+                Delete
+              </Button>
             )}
           </>
         )}

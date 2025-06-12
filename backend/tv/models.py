@@ -312,12 +312,12 @@ class TVSeason(BaseModel):
 
         return f"{show_name} S{str(self.number).zfill(2)} COMPLETE"
 
-    def add_magnet(self, magnet: str) -> None:
+    def add_magnet(self, magnet: str, title: str | None) -> None:
         """add magnet to all episodes in season"""
         episodes = TVEpisode.objects.filter(season=self)
 
         for episode in episodes:
-            episode.add_magnet(magnet, torrent_type="s")
+            episode.add_magnet(magnet, title, torrent_type="s")
 
         episodes.update(status="d", media_server_id=None, media_server_meta=None)
         log_change(self, "c", comment="Added season Torrent.")
@@ -479,7 +479,7 @@ class TVEpisode(BaseModel):
         self.media_server_meta = None
         self.save()
 
-    def add_magnet(self, magnet, torrent_type="e") -> None:
+    def add_magnet(self, magnet, title, torrent_type="e") -> None:
         """add magnet to episode"""
         from autot.src.download import Transmission
 
@@ -489,6 +489,7 @@ class TVEpisode(BaseModel):
 
         torrent, _ = Torrent.objects.get_or_create(magnet=magnet, torrent_type=torrent_type)
         torrent.torrent_state = "u"
+        torrent.title = title
         torrent.save()
         self.torrent.add(torrent)
         self.status = "d"

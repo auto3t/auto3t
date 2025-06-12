@@ -63,13 +63,13 @@ class EpisodeStatus:
             return found_magnets
 
         for season in searching_seasons:
-            magnet = Jackett().get_magnet(season)
+            magnet, title = Jackett().get_magnet(season)
             if not magnet:
                 continue
 
             season_episodes = TVEpisode.objects.filter(season=season)
             for episode in season_episodes:
-                episode.add_magnet(magnet, torrent_type="s")
+                episode.add_magnet(magnet, title, torrent_type="s")
 
             found_magnets = True
             log_change(season, "c", comment="Added magnet for season episodes")
@@ -85,11 +85,11 @@ class EpisodeStatus:
 
         logger.info("Searching for %s magnet(s)", to_search.count())
         for episode in to_search:
-            magnet = Jackett().get_magnet(episode)
+            magnet, title = Jackett().get_magnet(episode)
             if not magnet:
                 continue
 
-            episode.add_magnet(magnet)
+            episode.add_magnet(magnet, title)
             found_magnets = True
 
         return found_magnets

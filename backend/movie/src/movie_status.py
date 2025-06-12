@@ -61,11 +61,11 @@ class MovieStatus:
         logger.info("Searching for %s magnet(s)", to_search.count())
 
         for movie in to_search:
-            magnet = Jackett().get_magnet(movie)
+            magnet, title = Jackett().get_magnet(movie)
             if not magnet:
                 continue
 
-            movie.add_magnet(magnet)
+            movie.add_magnet(magnet, title)
             found_magnets = True
 
         return found_magnets

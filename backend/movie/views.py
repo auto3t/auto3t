@@ -65,7 +65,6 @@ class MovieViewSet(viewsets.ModelViewSet):
         )
 
         status_query = self.request.GET.get("status")
-        print(status_query)
         if status_query:
             query = Q()
             status_list = status_query.split(",")

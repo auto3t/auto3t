@@ -10,6 +10,7 @@ import useApi from '../../hooks/api'
 import SeasonMetaData from '../../components/SeasonMetaData'
 import { useParams } from 'react-router-dom'
 import { Button, P } from '../../components/Typography'
+import Spinner from '../../components/Spinner'
 
 const TVShowDetail: React.FC = () => {
   const { id } = useParams()
@@ -78,6 +79,7 @@ const TVShowDetail: React.FC = () => {
   }, [id, seasons, fetchEpisodes])
 
   const handleSeasonClick = (seasonId: number) => {
+    setIsLoadingEpisodes(true)
     fetchEpisodes(seasonId)
   }
 
@@ -91,52 +93,60 @@ const TVShowDetail: React.FC = () => {
         <ShowDetail showDetail={showDetail} fetchShow={fetchShow} />
       )}
       <div>
-        <div className="grid grid-cols-6 gap-2 my-4">
-          {isLoadingSeasons ? (
-            <P>Loading...</P>
-          ) : Array.isArray(seasons) && seasons.length > 0 ? (
-            showAllSeasons ? (
-              seasons.map((season) => (
-                <Season
-                  key={season.id.toString()}
-                  season={season}
-                  onClick={handleSeasonClick}
-                />
-              ))
-            ) : (
-              seasons
-                .slice(0, 6)
-                .map((season) => (
-                  <Season
-                    key={season.id.toString()}
-                    season={season}
-                    onClick={handleSeasonClick}
-                  />
-                ))
-            )
-          ) : (
-            <P>No Seasons found.</P>
-          )}
-        </div>
-        {seasons.length > 6 && (
-          <Button onClick={toggleShowAllSeasons}>
-            {showAllSeasons ? 'Show Less' : 'Show More'}
-          </Button>
+        {isLoadingSeasons ? (
+          <div className="flex justify-center">
+            <Spinner />
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-6 gap-2 my-4">
+              {Array.isArray(seasons) && seasons.length > 0 ? (
+                showAllSeasons ? (
+                  seasons.map((season) => (
+                    <Season
+                      key={season.id.toString()}
+                      season={season}
+                      onClick={handleSeasonClick}
+                    />
+                  ))
+                ) : (
+                  seasons
+                    .slice(0, 6)
+                    .map((season) => (
+                      <Season
+                        key={season.id.toString()}
+                        season={season}
+                        onClick={handleSeasonClick}
+                      />
+                    ))
+                )
+              ) : (
+                <P>No Seasons found.</P>
+              )}
+            </div>
+            {seasons.length > 6 && (
+              <Button onClick={toggleShowAllSeasons}>
+                {showAllSeasons ? 'Show Less' : 'Show More'}
+              </Button>
+            )}
+          </>
         )}
       </div>
       {selectedSeason ? (
         <>
           <SeasonMetaData fetchEpisodes={fetchEpisodes} />
-          <div className="grid grid-cols-3 gap-2">
-            {isLoadingEpisodes ? (
-              <P>Loading...</P>
-            ) : (
-              episodes?.length > 0 &&
-              episodes.map((episode) => (
-                <Episode key={episode.id} episode={episode} />
-              ))
-            )}
-          </div>
+          {isLoadingEpisodes ? (
+            <div className="flex justify-center">
+              <Spinner />
+            </div>
+          ) : (
+            <div className="grid grid-cols-3 gap-2">
+              {episodes?.length > 0 &&
+                episodes.map((episode) => (
+                  <Episode key={episode.id} episode={episode} />
+                ))}
+            </div>
+          )}
         </>
       ) : (
         <P>No episodes in season.</P>

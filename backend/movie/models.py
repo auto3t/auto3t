@@ -185,7 +185,7 @@ class MovieRelease(models.Model):
 class MovieReleaseTarget(models.Model):
     """movie release target config"""
 
-    target = models.JSONField(default=[])
+    target = models.JSONField(default=list)
 
 
 @receiver(post_delete, sender=Movie)

@@ -79,7 +79,7 @@ export default function MovieReleaseTarget() {
     ),
   ]
   const rows = releaseTargets.map((releaseTarget) => [
-    <P>{releaseTarget.name}</P>,
+    <P key={releaseTarget.id}>{releaseTarget.name}</P>,
     isEditing ? (
       <Input
         type="checkbox"

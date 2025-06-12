@@ -2,7 +2,7 @@
 
 from movie.models import Movie, MovieReleaseTarget
 
-from autot.models import log_change
+from autot.models import Torrent, log_change
 
 
 class MovieStatus:
@@ -13,7 +13,9 @@ class MovieStatus:
         self.set_upcoming()
         self.set_searching()
 
-        return False
+        plain_torrents = Torrent.objects.filter(torrent_state="u", torrent_type="m").exists()
+
+        return any([plain_torrents])
 
     def set_upcoming(self):
         """set upcoming movie state"""

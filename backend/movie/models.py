@@ -119,21 +119,11 @@ class Movie(models.Model):
 
     def add_magnet(self, magnet: str) -> None:
         """add magnet to movie"""
-        if self.torrent.exists():
-            to_ignore = self.torrent.exclude(torrent_state__in=["u", "i"])
-            for torrent_to_ignore in to_ignore:
-                old_value = torrent_to_ignore.torrent_state
-                torrent_to_ignore.torrent_state = "i"
-                torrent_to_ignore.progress = None
-                torrent_to_ignore.save()
-                log_change(
-                    self,
-                    action="u",
-                    field_name="torrent",
-                    old_value=old_value,
-                    new_value="i",
-                    comment="Ignored previous torrent.",
-                )
+        from autot.src.download import Transmission
+
+        to_cancel = self.torrent.exclude(torrent_state="i")
+        for torrent in to_cancel:
+            Transmission().cancel(torrent)
 
         torrent, _ = Torrent.objects.get_or_create(magnet=magnet, torrent_type="m")
         self.torrent.add(torrent)

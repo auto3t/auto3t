@@ -3,6 +3,7 @@
 from math import ceil
 
 from django.utils import timezone
+from movie.models import Movie
 from transmission_rpc import Client
 from transmission_rpc.torrent import Torrent as TransmissionTorrent
 from tv.models import Torrent, TVEpisode
@@ -89,6 +90,18 @@ class Transmission(DownloaderBase):
             episode.media_server_id = None
             episode.save()
             log_change(episode, "u", comment=f"Cancel Torrent Download: {torrent.magnet_hash}")
+
+    def _cancel_movie(self, torrent) -> None:
+        """cancel movie torrents"""
+        torrent.torrent_state = "i"
+        torrent.progress = None
+        torrent.save()
+        movies = Movie.objects.filter(torrent=torrent)
+        for movie in movies:
+            movie.status = None
+            movie.media_server_id = None
+            movie.save()
+            log_change(movie, "u", comment=f"Cancel Torrent Download: {torrent.magnet_hash}")
 
     def delete(self, torrent: TransmissionTorrent) -> None:
         """delete torrent"""

@@ -8,6 +8,7 @@ from urllib.parse import quote
 import bencodepy
 import requests
 from django.db.models import QuerySet
+from movie.models import Movie
 from tv.models import TVEpisode, TVSeason
 
 from autot.models import Torrent, log_change
@@ -18,27 +19,10 @@ from autot.src.redis_con import AutotRedis
 logger = logging.getLogger("django")
 
 
-class BaseIndexer:
-    """base class implementing indexer search"""
-
-    TIMEOUT: int = 300
-
-    def get_magnet(self, to_search: TVEpisode | TVSeason) -> str | bytes | None:
-        """get magnet link"""
-        raise NotImplementedError
-
-    def make_request(self, url: str) -> list[dict]:
-        """make request against indexed, return list of results"""
-        raise NotImplementedError
-
-    def parse_keywords(self, keywords: QuerySet) -> str | None:
-        """join keywords from query set"""
-        return " ".join([i.word for i in keywords if i.direction == "i"])
-
-
-class Jackett(BaseIndexer):
+class Jackett:
     """implement jackett indexer"""
 
+    TIMEOUT: int = 300
     CONFIG: ConfigType = get_config()
     CATEGORY_MAP: dict[str, int] = {
         "episode": 5000,
@@ -67,10 +51,10 @@ class Jackett(BaseIndexer):
         messages = {"search:" + i["Id"]: json.dumps(i) for i in results}
         AutotRedis().set_messages(messages, expire=3600)
 
-    def get_magnet(self, to_search: TVEpisode | TVSeason) -> str | bytes | None:
+    def get_magnet(self, to_search: TVEpisode | TVSeason | Movie) -> str | bytes | None:
         """get episode magnet link"""
         to_ignore = []
-        if isinstance(to_search, TVEpisode):
+        if isinstance(to_search, (TVEpisode, Movie)):
             to_ignore = [i.magnet_hash for i in to_search.torrent.filter(torrent_state="i")]
         elif isinstance(to_search, TVSeason):
             torrents = Torrent.objects.filter(torrent_state="i", torrent_type="s", torrent_tv__season=to_search)
@@ -102,11 +86,25 @@ class Jackett(BaseIndexer):
         """build jacket search url"""
         base = self.CONFIG["JK_URL"]
         key = self.CONFIG["JK_API_KEY"]
-        key_words = self.parse_keywords(to_search.get_keywords())
+        key_words = self._parse_keywords(to_search.get_keywords())
         query = quote(f"{to_search.search_query} {key_words}")
-        url = f"{base}/api/v2.0/indexers/all/results?apikey={key}&Query={query}&Category[]=5000"
+        category = self._get_category(to_search)
+        url = f"{base}/api/v2.0/indexers/all/results?apikey={key}&Query={query}&Category[]={category}"
 
         return url
+
+    def _parse_keywords(self, keywords: QuerySet) -> str | None:
+        """join keywords from query set"""
+        return " ".join([i.word for i in keywords if i.direction == "i"])
+
+    def _get_category(self, to_search: TVEpisode | TVSeason | Movie) -> int:
+        """get category for jackett"""
+        if isinstance(to_search, (TVEpisode, TVSeason)):
+            return 5000
+        if isinstance(to_search, Movie):
+            return 2000
+
+        raise NotImplementedError
 
     def make_request(self, url) -> list[dict]:
         """make request against jackett api"""
@@ -156,7 +154,7 @@ class Jackett(BaseIndexer):
         return valid_magnets
 
     @staticmethod
-    def _filter_magnets(result_item: dict, to_search: TVEpisode | TVSeason) -> bool:
+    def _filter_magnets(result_item: dict, to_search: TVEpisode | TVSeason | Movie) -> bool:
         """filter function to remove poor results"""
         has_link = result_item.get("MagnetUri") or result_item.get("Link")
         has_seeders = result_item.get("Seeders", 0) > 2

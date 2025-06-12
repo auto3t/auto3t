@@ -1,13 +1,14 @@
 """all move models"""
 
 from pathlib import Path
+from typing import Self
 
 from artwork.models import Artwork
 from django.db import models
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
 
-from autot.models import Torrent, log_change
+from autot.models import SearchWord, SearchWordCategory, Torrent, log_change
 from autot.src.config import ConfigType, get_config
 from autot.static import MovieProductionState, MovieReleaseType, MovieStatus
 
@@ -70,6 +71,7 @@ class Movie(models.Model):
     production_state = models.CharField(choices=MovieProductionState.choices(), max_length=1, null=True, blank=True)
     status = models.CharField(choices=MovieStatus.choices(), max_length=1, null=True, blank=True)
     torrent = models.ManyToManyField(Torrent, related_name="torrent")
+    search_keywords = models.ManyToManyField(SearchWord)
 
     media_server_id = models.CharField(max_length=255, null=True, blank=True)
     media_server_meta = models.JSONField(null=True, blank=True)
@@ -100,6 +102,14 @@ class Movie(models.Model):
 
         base_url = self.CONFIG["JF_PROXY_URL"]
         return f"{base_url}/web/#/details?id={self.media_server_id}"
+
+    @property
+    def search_query(self) -> str:
+        """build search query"""
+        search_query = self.name
+        if self.release_date:
+            search_query += f" {self.release_date.year}"
+        return search_query
 
     def update_image_movie(self, image_url: str | None) -> None:
         """handle update with or without existing"""
@@ -146,10 +156,22 @@ class Movie(models.Model):
         movie_search = self.name.lower().replace(".", "").replace(":", "")
         year_str = str(self.release_date.year)
 
-        if movie_search in path and year_str in path:
+        path_lower = path.lower()
+        if movie_search in path_lower and year_str in path_lower:
             return True
 
         return False
+
+    def get_keywords(self: Self):
+        """build keywords for movie"""
+        keywords = SearchWord.objects.none()
+        for category in SearchWordCategory.objects.all():
+            if self.search_keywords.filter(category=category).exists():
+                keywords |= self.search_keywords.filter(category=category)
+            else:
+                keywords |= SearchWord.objects.filter(category=category, movie_default=True)
+
+        return keywords.distinct()
 
 
 class MovieRelease(models.Model):

@@ -16,7 +16,7 @@ const MovieTile: React.FC<MovieTileInterface> = ({ movie }) => {
   }
 
   return (
-    <Link to={`movie/${movie.id}`}>
+    <Link to={`/movie/movie/${movie.id}`}>
       <div>
         <div className="relative">
           <ImageComponent

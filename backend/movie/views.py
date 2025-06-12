@@ -2,7 +2,7 @@
 
 import json
 
-from django.db.models import F, Value
+from django.db.models import F, Q, Value
 from django.db.models.functions import Replace
 from movie.models import Collection, Movie, MovieRelease, MovieReleaseTarget
 from movie.serializers import (
@@ -14,6 +14,7 @@ from movie.src.movie_search import MovieId
 from movie.tasks import import_movie, refresh_status
 from rest_framework import viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -59,26 +60,33 @@ class MovieViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """get movie queryset"""
-        queryset = queryset = Movie.objects.annotate(name_sort=Replace(F("name"), Value("The "), Value(""))).order_by(
+        queryset = Movie.objects.annotate(name_sort=Replace(F("name"), Value("The "), Value(""))).order_by(
             "name_sort", "release_date"
         )
 
-        status = self.request.GET.get("status")
-        if status:
-            if status not in self.VALID_STATUS:
-                message = {"error": f"Invalid status field: {status}."}
-                return Response(message, status=400)
+        status_query = self.request.GET.get("status")
+        print(status_query)
+        if status_query:
+            query = Q()
+            status_list = status_query.split(",")
 
-            if status == "n":
-                queryset = queryset.filter(status__isnull=True)
-            else:
-                queryset = queryset.filter(status=status)
+            for status_item in status_list:
+                if status_item not in self.VALID_STATUS:
+                    message = {"error": f"Invalid status field: {status_item}."}
+                    raise ValidationError(message)
+
+                if status_item == "n":
+                    query |= Q(status__isnull=True)
+                else:
+                    query |= Q(status=status_item)
+
+            queryset = queryset.filter(query)
 
         production_state = self.request.GET.get("production_state")
         if production_state:
             if production_state not in self.VALID_PRODUCTION:
                 message = {"error": f"Invalid production state field: {production_state}."}
-                return Response(message, status=400)
+                raise ValidationError(message)
 
             queryset = queryset.filter(production_state=production_state)
 

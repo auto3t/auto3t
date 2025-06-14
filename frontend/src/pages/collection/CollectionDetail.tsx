@@ -87,6 +87,7 @@ export default function CollectionDetail() {
   const [isLoadingCollection, setIsLoadingCollection] = useState(true)
   const [isLoadingCollectionMovies, setIsLoadingCollectionMovies] =
     useState(true)
+  const [isLoadingMissing, setIsLoadingMissing] = useState(true)
   const [collection, setCollection] = useState<CollectionType | null>(null)
   const [collectionMovies, setCollectionMovies] = useState<MovieType[]>([])
   const [missingCollectionMovies, setMissingCollectionMovies] = useState<
@@ -133,6 +134,8 @@ export default function CollectionDetail() {
         setMissingCollectionMovies(data)
       } catch (error) {
         console.error('failed to load missing videos of collection: ', error)
+      } finally {
+        setIsLoadingMissing(false)
       }
     }
     fetchMissingInCollection()
@@ -186,12 +189,16 @@ export default function CollectionDetail() {
                 {collectionMovies.map((movie) => (
                   <MovieTile key={movie.id} movie={movie} />
                 ))}
-                {missingCollectionMovies.map((missingMovie) => (
-                  <MissingMovieTile
-                    key={missingMovie.remote_server_id}
-                    missingMovie={missingMovie}
-                  />
-                ))}
+                {isLoadingMissing ? (
+                  <Spinner />
+                ) : (
+                  missingCollectionMovies.map((missingMovie) => (
+                    <MissingMovieTile
+                      key={missingMovie.remote_server_id}
+                      missingMovie={missingMovie}
+                    />
+                  ))
+                )}
               </div>
             ) : (
               <P>No movies in Collection.</P>

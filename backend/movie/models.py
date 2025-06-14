@@ -23,6 +23,7 @@ class Collection(models.Model):
     image_collection = models.ForeignKey(
         Artwork, related_name="image_collection", on_delete=models.PROTECT, null=True, blank=True
     )
+    movie_ids = models.JSONField(default=list)
 
     def __str__(self):
         """collection string representation"""

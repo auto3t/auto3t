@@ -15,15 +15,14 @@ class MovieDBCollection:
 
     def validate(self):
         """validate collection"""
-        collection, movie_ids = self.get_collection()
-        self.add_movies(collection, movie_ids)
+        collection = self.get_collection()
+        self.add_movies(collection)
 
-    def get_collection(self) -> tuple[Collection, list[int]]:
+    def get_collection(self) -> Collection:
         """get collection"""
         response = self._get_remote_collection()
         collection_data = self._parse_collection(response)
         poster_path = response.get("poster_path")
-        movie_ids = [i["id"] for i in response["parts"]]
 
         try:
             collection = Collection.objects.get(remote_server_id=self.collection_id)
@@ -35,7 +34,7 @@ class MovieDBCollection:
                 collection.image_collection.save()
 
             collection.save()
-            return collection, movie_ids
+            return collection
 
         fields_changed = False
         for key, value in collection_data.items():
@@ -52,11 +51,11 @@ class MovieDBCollection:
             image_collection = self._get_image_url(poster_path)
             collection.update_image_collection(image_collection)
 
-        return collection, movie_ids
+        return collection
 
-    def add_movies(self, collection, movie_ids: list[int]) -> None:
+    def add_movies(self, collection) -> None:
         """add movies to collection"""
-        Movie.objects.filter(remote_server_id__in=movie_ids).update(collection=collection)
+        Movie.objects.filter(remote_server_id__in=collection.movie_ids).update(collection=collection)
 
     def _get_remote_collection(self) -> dict:
         """get collection"""
@@ -73,6 +72,7 @@ class MovieDBCollection:
             "remote_server_id": str(response["id"]),
             "name": response["name"],
             "description": response["overview"],
+            "movie_ids": [str(i["id"]) for i in response["parts"]],
         }
         return collection_data
 

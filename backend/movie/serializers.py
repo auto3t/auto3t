@@ -12,6 +12,7 @@ class CollectionSerializer(serializers.ModelSerializer):
 
     image_collection = ArtworkSerializer(read_only=True)
     remote_server_url = serializers.CharField(read_only=True)
+    movie_ids = serializers.ListField(child=serializers.CharField())
 
     class Meta:
         model = Collection

@@ -61,6 +61,10 @@ class MovieProductionState(StrEnum):
     def choices(cls):
         return [(i.name, i.value) for i in cls]
 
+    @classmethod
+    def names(cls):
+        return [i.name for i in cls]
+
 
 class MovieReleaseType(Enum):
     """movie release types"""

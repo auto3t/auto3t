@@ -10,6 +10,7 @@ from movie.serializers import (
     MovieReleaseSerializer,
     MovieSerializer,
 )
+from movie.src.collection import CollectionMissing
 from movie.src.movie_search import MovieId
 from movie.tasks import import_movie, refresh_status
 from rest_framework import viewsets
@@ -28,6 +29,13 @@ class CollectionViewSet(viewsets.ReadOnlyModelViewSet):
 
     serializer_class = CollectionSerializer
     queryset = Collection.objects.all().order_by("name")
+
+    @action(detail=True, methods=["get"])
+    def missing(self, request, **kwargs):
+        """get missing from collection"""
+        collection = self.get_object()
+        missing = CollectionMissing(collection).get_missing()
+        return Response(missing)
 
 
 class MovieViewSet(viewsets.ModelViewSet):

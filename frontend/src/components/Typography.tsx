@@ -162,19 +162,30 @@ export const Table: React.FC<TableProps> = ({
   )
 }
 
+type tagItemVariants = 'default' | 'alert'
+
 export function TagItem({
   children,
   title = '',
+  variant = 'default',
   className = '',
 }: {
   children: React.ReactNode
   title?: string
+  variant?: tagItemVariants
   className?: string
 }) {
+  let bgCol
+  if (variant === 'default') {
+    bgCol = 'bg-accent-3'
+  } else if (variant === 'alert') {
+    bgCol = 'bg-accent-1'
+  }
+
   return (
     <span
       title={title}
-      className={`bg-accent-3 text-main-fg py-1 px-3 text-center rounded-lg content-center ${className}`}
+      className={`${bgCol} text-main-fg py-1 px-3 text-center rounded-lg content-center ${className}`}
     >
       {children}
     </span>

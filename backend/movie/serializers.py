@@ -5,6 +5,7 @@ from movie.models import Collection, Movie, MovieRelease
 from rest_framework import serializers
 
 from autot.serializers import TorrentSerializer
+from autot.static import MovieProductionState
 
 
 class CollectionSerializer(serializers.ModelSerializer):
@@ -34,6 +35,18 @@ class MovieSerializer(serializers.ModelSerializer):
     class Meta:
         model = Movie
         fields = "__all__"
+
+
+class MovieMissingSerializer(serializers.Serializer):
+    """free serialize missing movie response"""
+
+    remote_server_id = serializers.CharField()
+    name = serializers.CharField()
+    description = serializers.CharField(required=False, allow_null=True)
+    tagline = serializers.CharField(allow_blank=True)
+    release_date = serializers.DateField(required=False, allow_null=True)
+    production_state = serializers.ChoiceField(choices=MovieProductionState.names())
+    image_url = serializers.CharField(required=False, allow_null=True)
 
 
 class MovieReleaseSerializer(serializers.ModelSerializer):

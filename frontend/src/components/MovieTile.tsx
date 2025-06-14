@@ -17,23 +17,21 @@ const MovieTile: React.FC<MovieTileInterface> = ({ movie }) => {
 
   return (
     <Link to={`/movie/movie/${movie.id}`}>
-      <div>
-        <div className="relative">
-          <ImageComponent
-            image={getMoviePoster(movie)}
-            alt={'movie-poster-' + movie.name}
-          />
-          <TagItem
-            title={movie.status_display}
-            className="absolute top-0 right-0 m-4"
-          >
-            {movie.status || '-'}
-          </TagItem>
-          <ProgressBar torrents={movie?.torrent} />
-        </div>
-        <div className="text-center">
-          <H3>{movie.name_display}</H3>
-        </div>
+      <div className="relative">
+        <ImageComponent
+          image={getMoviePoster(movie)}
+          alt={'movie-poster-' + movie.name}
+        />
+        <TagItem
+          title={movie.status_display}
+          className="absolute top-0 right-0 m-4"
+        >
+          {movie.status || '-'}
+        </TagItem>
+        <ProgressBar torrents={movie?.torrent} />
+      </div>
+      <div className="text-center">
+        <H3>{movie.name_display}</H3>
       </div>
     </Link>
   )

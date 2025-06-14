@@ -72,7 +72,7 @@ const MovieDetail: React.FC = () => {
             <div>
               <H1>{movieDetail.name_display}</H1>
               <H3>{movieDetail.tagline}</H3>
-              <P>
+              <P variant="smaller">
                 ID:{' '}
                 <StyledLink
                   to={movieDetail.remote_server_url}

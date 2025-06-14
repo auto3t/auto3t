@@ -14,11 +14,13 @@ import TVShowDetail from './pages/tv/TVShowDetails'
 import TVSearch from './pages/tv/Search'
 import TVEpisode from './pages/tv/Episode'
 import MovieSearch from './pages/movie/Search'
+import MovieDetail from './pages/movie/MovieDetails'
+import Collections from './pages/collection/Collections'
+import CollectionDetail from './pages/collection/CollectionDetail'
 
 // layouts
 import RootLayout from './layouts/RootLayout'
 import NotFound from './pages/404'
-import MovieDetail from './pages/movie/MovieDetails'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -34,6 +36,10 @@ const router = createBrowserRouter(
         <Route index element={<Movies />} />
         <Route path="movie/:id" element={<MovieDetail />} />
         <Route path="search" element={<MovieSearch />} />
+      </Route>
+      <Route path="collection">
+        <Route index element={<Collections />} />
+        <Route path=":id" element={<CollectionDetail />} />
       </Route>
       <Route path="settings" element={<Settings />} />
       <Route path="*" element={<NotFound />} />

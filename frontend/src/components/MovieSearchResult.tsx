@@ -55,7 +55,7 @@ const MovieSearchResult: React.FC<MovieSearchResultInterface> = ({
               </TagItem>
             )}
             {result.local_id ? (
-              <Link to={`/tv/show/${result.local_id}/`}>
+              <Link to={`/movie/movie/${result.local_id}`}>
                 <Button>Open</Button>
               </Link>
             ) : (

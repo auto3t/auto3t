@@ -17,6 +17,7 @@ import MovieSearch from './pages/movie/Search'
 import MovieDetail from './pages/movie/MovieDetails'
 import Collections from './pages/collection/Collections'
 import CollectionDetail from './pages/collection/CollectionDetail'
+import CollectionSearch from './pages/collection/Search'
 
 // layouts
 import RootLayout from './layouts/RootLayout'
@@ -40,6 +41,7 @@ const router = createBrowserRouter(
       <Route path="collection">
         <Route index element={<Collections />} />
         <Route path=":id" element={<CollectionDetail />} />
+        <Route path="search" element={<CollectionSearch />} />
       </Route>
       <Route path="settings" element={<Settings />} />
       <Route path="*" element={<NotFound />} />

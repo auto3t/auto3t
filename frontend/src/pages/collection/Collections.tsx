@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
-import { H1, P } from '../../components/Typography'
+import { Button, H1, P } from '../../components/Typography'
 import useApi from '../../hooks/api'
 import { ImageType } from '../../components/ImageComponent'
 import Spinner from '../../components/Spinner'
 import CollectionTile from '../../components/CollectionTile'
+import { Link } from 'react-router-dom'
 
 export type CollectionType = {
   id: number
@@ -38,6 +39,11 @@ export default function Collections() {
   return (
     <>
       <H1>Movie Collections</H1>
+      <div className="filter-bar">
+        <Link to={'search'}>
+          <Button>Add</Button>
+        </Link>
+      </div>
       {isLoading ? (
         <div className="flex justify-center">
           <Spinner />

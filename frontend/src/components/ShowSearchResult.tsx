@@ -55,7 +55,9 @@ const ShowSearchResult: React.FC<ShowSearchResultInterface> = ({ result }) => {
               </TagItem>
             )}
             {result.local_id ? (
-              <Link to={`/tv/show/${result.local_id}/`}>Open</Link>
+              <Link to={`/tv/show/${result.local_id}`}>
+                <Button>Open</Button>
+              </Link>
             ) : (
               <>
                 {addingShow === null && (

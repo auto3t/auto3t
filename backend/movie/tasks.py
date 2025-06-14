@@ -44,6 +44,14 @@ def refresh_movie(remote_server_id: str) -> None:
 
 
 @job("movie")
+def import_collection(remote_server_id: str) -> None:
+    """import new collection"""
+    refresh_job = refresh_collection.delay(remote_server_id=remote_server_id)
+    queue = get_queue("thumbnails")
+    queue.enqueue(download_thumbnails, depends_on=refresh_job)
+
+
+@job("movie")
 def refresh_collection(remote_server_id: str) -> None:
     """refresh collection"""
     MovieDBCollection(collection_id=remote_server_id).validate()

@@ -1,26 +1,27 @@
-import { useState } from 'react'
-import useApi from '../../hooks/api'
-import MovieSearchResult from '../../components/MovieSearchResult'
 import { Link } from 'react-router-dom'
 import { Button, H1, Input, P } from '../../components/Typography'
+import { useState } from 'react'
+import useApi from '../../hooks/api'
 import Spinner from '../../components/Spinner'
+import CollectionSearchResult from '../../components/CollectionSearchResult'
 
-export type MovieSearchResultType = {
-  id: string
+export type CollectionSearchResultType = {
+  id: number
+  local_id: number
   name: string
-  release_date: string
   summary: string
   url: string
-  local_id?: number
-  image?: string
+  image: string
 }
 
-const MovieSearch = () => {
+export default function CollectionSearch() {
   const { get } = useApi()
-  const [isLoading, setIsLoading] = useState(false)
-  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null)
   const [query, setQuery] = useState('')
-  const [results, setResults] = useState<MovieSearchResultType[] | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [results, setResults] = useState<CollectionSearchResultType[] | null>(
+    null,
+  )
+  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null)
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newQuery = event.target.value
@@ -34,7 +35,7 @@ const MovieSearch = () => {
       setIsLoading(true)
       // Set a new timer for search
       const newTimer = setTimeout(() => {
-        get(`movie/movie-search/?q=${encodeURIComponent(newQuery)}`)
+        get(`movie/collection-search/?q=${encodeURIComponent(newQuery)}`)
           .then((data) => {
             setResults(data)
             setIsLoading(false)
@@ -56,10 +57,10 @@ const MovieSearch = () => {
   }
 
   return (
-    <div>
-      <H1>Start track a new Movie</H1>
+    <>
+      <H1>Start tracking a new Movie Collection</H1>
       <div className="filter-bar">
-        <Link to={'/movie'}>
+        <Link to={'/collection'}>
           <Button>Back</Button>
         </Link>
       </div>
@@ -78,17 +79,15 @@ const MovieSearch = () => {
         <div className="text-center py-6">
           <P>Enter a search query.</P>
         </div>
-      ) : results && results?.length > 0 ? (
+      ) : results && results.length > 0 ? (
         results.map((result) => (
-          <MovieSearchResult key={result.id} result={result} />
+          <CollectionSearchResult key={result.id} result={result} />
         ))
       ) : (
         <div className="text-center py-6">
           <P>Search query did not return any results.</P>
         </div>
       )}
-    </div>
+    </>
   )
 }
-
-export default MovieSearch

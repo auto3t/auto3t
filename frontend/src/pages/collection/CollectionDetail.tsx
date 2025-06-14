@@ -184,7 +184,8 @@ export default function CollectionDetail() {
               <div className="flex justify-center">
                 <Spinner />
               </div>
-            ) : collectionMovies.length > 0 ? (
+            ) : collectionMovies.length > 0 ||
+              missingCollectionMovies.length > 0 ? (
               <div className="grid grid-cols-4 gap-2">
                 {collectionMovies.map((movie) => (
                   <MovieTile key={movie.id} movie={movie} />

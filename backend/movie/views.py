@@ -11,8 +11,8 @@ from movie.serializers import (
     MovieSerializer,
 )
 from movie.src.collection import CollectionMissing
-from movie.src.movie_search import MovieId
-from movie.tasks import import_movie, refresh_status
+from movie.src.movie_search import CollectionId, MovieId
+from movie.tasks import import_collection, import_movie, refresh_status
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
@@ -29,6 +29,25 @@ class CollectionViewSet(viewsets.ReadOnlyModelViewSet):
 
     serializer_class = CollectionSerializer
     queryset = Collection.objects.all().order_by("name")
+
+    def create(self, request, *args, **kwargs):
+        """import show"""
+        data = request.data
+        if not data:
+            return Response({"message": "missing request body"}, status=400)
+
+        remote_server_id = data.get("remote_server_id")
+        if not remote_server_id:
+            return Response({"message": "missing remote_server_id key"}, status=400)
+
+        job = import_collection.delay(remote_server_id=remote_server_id)
+        message = {
+            "id": job.id,
+            "message": f"collection import task started: {remote_server_id}",
+            "time": job.enqueued_at.isoformat(),
+        }
+
+        return Response(message)
 
     @action(detail=True, methods=["get"])
     def missing(self, request, **kwargs):
@@ -196,5 +215,19 @@ class MovieRemoteSearch(APIView):
             return Response({"message": "missing query string"}, status=400)
 
         response = MovieId().search(query)
+
+        return Response(response)
+
+
+class CollectionRemoteSearch(APIView):
+    """search for collections"""
+
+    def get(self, request):
+        """make get request"""
+        query = request.GET.get("q")
+        if not query:
+            return Response({"message": "missing query string"}, status=400)
+
+        response = CollectionId().search(query)
 
         return Response(response)

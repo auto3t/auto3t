@@ -12,7 +12,8 @@ urlpatterns = router.urls
 
 urlpatterns.extend(
     [
-        path("remote-search", views.MovieRemoteSearch.as_view(), name="movie-remote-search"),
+        path("movie-search/", views.MovieRemoteSearch.as_view(), name="movie-remote-search"),
         path("release-target/", views.MovieReleaseTargetView.as_view(), name="movie-release-target"),
+        path("collection-search/", views.CollectionRemoteSearch.as_view(), name="collection-remote-search"),
     ]
 )

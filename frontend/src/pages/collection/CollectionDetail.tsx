@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import {
   Button,
   H1,
@@ -83,7 +83,7 @@ const MissingMovieTile = function ({
 
 export default function CollectionDetail() {
   const { id } = useParams()
-  const { get } = useApi()
+  const { get, del } = useApi()
   const [isLoadingCollection, setIsLoadingCollection] = useState(true)
   const [isLoadingCollectionMovies, setIsLoadingCollectionMovies] =
     useState(true)
@@ -93,6 +93,8 @@ export default function CollectionDetail() {
   const [missingCollectionMovies, setMissingCollectionMovies] = useState<
     MissingMovieType[]
   >([])
+  const [deleteConfirm, setDeleteConfirm] = useState(false)
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchCollection = async () => {
@@ -141,6 +143,12 @@ export default function CollectionDetail() {
     fetchMissingInCollection()
   }, [collection])
 
+  const handleCollectionDelete = () => {
+    del(`movie/collection/${id}/`).then(() => {
+      navigate('/collection')
+    })
+  }
+
   const getCollectionPoster = (collection: CollectionType) => {
     if (collection.image_collection?.image) return collection.image_collection
     return { image: posterDefault }
@@ -175,6 +183,20 @@ export default function CollectionDetail() {
                   </StyledLink>
                 </P>
                 <P>{collection.description}</P>
+                <div className="flex gap-2 py-4">
+                  {deleteConfirm ? (
+                    <>
+                      <Button onClick={() => setDeleteConfirm(false)}>
+                        Cancel
+                      </Button>
+                      <Button onClick={handleCollectionDelete}>Confirm</Button>
+                    </>
+                  ) : (
+                    <Button onClick={() => setDeleteConfirm(!deleteConfirm)}>
+                      Delete
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
           )}

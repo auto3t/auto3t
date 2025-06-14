@@ -24,7 +24,7 @@ from autot.src.search import Jackett
 from autot.static import MovieProductionState, MovieReleaseType, MovieStatus
 
 
-class CollectionViewSet(viewsets.ReadOnlyModelViewSet):
+class CollectionViewSet(viewsets.ModelViewSet):
     """views for collection"""
 
     serializer_class = CollectionSerializer

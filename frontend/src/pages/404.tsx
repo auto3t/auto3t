@@ -1,12 +1,14 @@
-import { Link } from 'react-router-dom'
+import { H2, P, StyledLink } from '../components/Typography'
 
 export default function NotFound() {
   return (
-    <div>
-      <h2>Page Not Found.</h2>
-      <p>
-        Go <Link to="/">Home</Link>
-      </p>
+    <div className="flex justify-center items-center h-[70vh] text-center">
+      <div>
+        <H2>Page Not Found</H2>
+        <P>
+          Go <StyledLink to="/">Home</StyledLink>
+        </P>
+      </div>
     </div>
   )
 }

@@ -2,14 +2,23 @@ import { useCallback, useEffect, useState } from 'react'
 import useApi from '../../hooks/api'
 import ImageComponent, { ImageType } from '../../components/ImageComponent'
 import TimeComponent from '../../components/TimeComponent'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import posterDefault from '../../../assets/poster-default.jpg'
 import MovieReleases from '../../components/MovieReleases'
 import ManualSearch from '../../components/ManualSearch'
 import Torrent, { TorrentType } from '../../components/Torrent'
 import { MediaServerMetaType } from '../../components/Episode'
 import MediaServerDetail from '../../components/MediaServerDetail'
-import { H1, H2, H3, P, StyledLink, TagItem } from '../../components/Typography'
+import {
+  Button,
+  H1,
+  H2,
+  H3,
+  P,
+  StyledLink,
+  TagItem,
+} from '../../components/Typography'
+import { CollectionType } from '../collection/Collections'
 
 export type MovieType = {
   id: number
@@ -28,6 +37,7 @@ export type MovieType = {
   media_server_id: string
   media_server_meta: MediaServerMetaType
   media_server_url: string
+  collection?: CollectionType
 }
 
 const MovieDetail: React.FC = () => {
@@ -55,6 +65,11 @@ const MovieDetail: React.FC = () => {
 
   const getMoviePoster = (movieDetail: MovieType) => {
     if (movieDetail.image_movie?.image) return movieDetail.image_movie
+    return { image: posterDefault }
+  }
+
+  const getCollectionPoster = (collection: CollectionType) => {
+    if (collection.image_collection?.image) return collection.image_collection
     return { image: posterDefault }
   }
 
@@ -97,6 +112,36 @@ const MovieDetail: React.FC = () => {
               </div>
             </div>
           </div>
+          {movieDetail.collection && (
+            <>
+              <H2>Part of Collection</H2>
+              <div className="flex gap-4 items-center p-4 my-4 border border-accent-1">
+                <div className="w-50">
+                  <ImageComponent
+                    alt={`collection-poster-${movieDetail.collection.name}`}
+                    image={getCollectionPoster(movieDetail.collection)}
+                  />
+                </div>
+                <div>
+                  <H3>{movieDetail.collection.name}</H3>
+                  <P variant="smaller">
+                    ID:{' '}
+                    <StyledLink
+                      to={movieDetail.collection.remote_server_url}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {movieDetail.collection.remote_server_id}
+                    </StyledLink>
+                  </P>
+                  <P className="mb-2">{movieDetail.collection.description}</P>
+                  <Link to={`/collection/${movieDetail.collection.id}`}>
+                    <Button>Details</Button>
+                  </Link>
+                </div>
+              </div>
+            </>
+          )}
           <div className="py-4">
             <MovieReleases movie_id={movieDetail.id} />
           </div>

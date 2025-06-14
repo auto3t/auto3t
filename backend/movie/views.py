@@ -93,6 +93,10 @@ class MovieViewSet(viewsets.ModelViewSet):
         if query:
             queryset = queryset.filter(name__icontains=query)
 
+        collection = self.request.GET.get("collection")
+        if collection:
+            queryset = queryset.filter(collection=collection)
+
         return queryset
 
     @action(detail=True, methods=["get"])

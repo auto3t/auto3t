@@ -2,8 +2,9 @@
 
 from datetime import date, datetime
 
+import django_rq
 from artwork.models import Artwork
-from movie.models import Collection, Movie, MovieRelease
+from movie.models import Movie, MovieRelease
 from movie.src.movie_db_client import MovieDB
 
 from autot.models import log_change
@@ -18,15 +19,23 @@ class MovieDBMovie:
 
     def validate(self) -> None:
         """import movie as needed"""
-        movie = self.get_movie()
+        from movie.tasks import refresh_collection
+
+        movie, collection_id = self.get_movie()
         self.get_releases(movie)
 
-    def get_movie(self) -> Movie:
+        if collection_id:
+            movie_queue = django_rq.get_queue("movie")
+            queued = {i.kwargs.get("remote_server_id") for i in movie_queue.get_jobs()}
+            if collection_id not in queued:
+                refresh_collection.delay(remote_server_id=str(collection_id))
+
+    def get_movie(self) -> tuple[Movie, int | None]:
         """get or create moview"""
         response = self._get_remote_movie()
         movie_data = self._parse_movie(response)
         poster_path = response.get("poster_path")
-        collection_id = (response.get("belongs_to_collection") or {}).get("id")
+        collection_id: int | None = (response.get("belongs_to_collection") or {}).get("id")
 
         try:
             movie = Movie.objects.get(remote_server_id=response["id"])
@@ -37,12 +46,8 @@ class MovieDBMovie:
                 movie.image_movie = Artwork(image_url=image_url)
                 movie.image_movie.save()
 
-            if collection_id:
-                collection = self.get_collection(collection_id)
-                movie.collection = collection
-
             movie.save()
-            return movie
+            return movie, collection_id
 
         fields_changed = False
         for key, value in movie_data.items():
@@ -59,7 +64,7 @@ class MovieDBMovie:
             image_url = self._get_image_url(poster_path)
             movie.update_image_movie(image_url)
 
-        return movie
+        return movie, collection_id
 
     def _get_remote_movie(self) -> dict:
         """get movie from api"""
@@ -91,59 +96,6 @@ class MovieDBMovie:
                 return key.name
 
         raise ValueError("did not find status choice")
-
-    def get_collection(self, collection_id) -> Collection:
-        """get collection"""
-        response = self._get_remote_collection(collection_id)
-        collection_data = self._parse_collection(response)
-        poster_path = response.get("poster_path")
-
-        try:
-            collection = Collection.objects.get(remote_server_id=collection_id)
-        except Collection.DoesNotExist:
-            collection = Collection.objects.create(**collection_data)
-            if poster_path:
-                image_url = self._get_image_url(poster_path)
-                collection.image_collection = Artwork(image_url=image_url)
-                collection.image_collection.save()
-
-            collection.save()
-            return collection
-
-        fields_changed = False
-        for key, value in collection_data.items():
-            old_value = getattr(collection, key)
-            if old_value != value:
-                log_change(collection, "u", field_name=key, old_value=old_value, new_value=value)
-                setattr(collection, key, value)
-                fields_changed = True
-
-        if fields_changed:
-            collection.save()
-
-        if poster_path:
-            image_collection = self._get_image_url(poster_path)
-            collection.update_image_collection(image_collection)
-
-        return collection
-
-    def _get_remote_collection(self, collection_id) -> dict:
-        """get collection"""
-        url = f"collection/{collection_id}"
-        response = MovieDB().get(url)
-        if not response:
-            raise ValueError
-
-        return response
-
-    def _parse_collection(self, response: dict) -> dict:
-        """parse API response for collection"""
-        collection_data = {
-            "remote_server_id": str(response["id"]),
-            "name": response["name"],
-            "description": response["overview"],
-        }
-        return collection_data
 
     def _get_image_url(self, moviedb_file_path: str) -> str:
         """build URL from snipped"""

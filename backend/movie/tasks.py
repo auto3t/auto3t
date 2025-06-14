@@ -5,6 +5,7 @@ from datetime import timedelta
 from django_rq import job
 from django_rq.queues import get_queue
 from movie.models import Movie
+from movie.src.collection import MovieDBCollection
 from movie.src.movie import MovieDBMovie
 from movie.src.movie_status import MovieStatus
 
@@ -40,6 +41,12 @@ def import_movie(remote_server_id: str) -> None:
 def refresh_movie(remote_server_id: str) -> None:
     """job to refresh a single movie"""
     MovieDBMovie(remote_server_id).validate()
+
+
+@job("movie")
+def refresh_collection(remote_server_id: str) -> None:
+    """refresh collection"""
+    MovieDBCollection(collection_id=remote_server_id).validate()
 
 
 @job("movie")

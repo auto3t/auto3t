@@ -4,17 +4,37 @@ import useApi from '../../hooks/api'
 import useMovieStore from '../../stores/MovieStore'
 import MovieTile from '../../components/MovieTile'
 import useUserProfileStore from '../../stores/UserProfileStore'
-import { Button, H1, P, Select } from '../../components/Typography'
+import { Button, H1, Input, P, Select } from '../../components/Typography'
 
 export default function Movies() {
   const { userProfile, setUserProfile } = useUserProfileStore()
   const [isLoadingMovies, setIsLoadingMovies] = useState(true)
+  const [movieSearchInput, setMovieSearchInput] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('')
   const { error, get, post } = useApi()
   const { movies, setMovies } = useMovieStore()
 
   useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === '/') {
+        event.preventDefault()
+        setMovieSearchInput(true)
+      } else if (event.key === 'Escape') {
+        setMovieSearchInput(false)
+        setSearchTerm('')
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
+
+  useEffect(() => {
     const fetchMovies = async () => {
       const params = new URLSearchParams()
+      if (movieSearchInput) {
+        params.append('q', searchTerm)
+      }
       if (userProfile?.movie_status_filter) {
         params.append('status', userProfile.movie_status_filter)
       }
@@ -32,6 +52,7 @@ export default function Movies() {
     fetchMovies()
   }, [
     setMovies,
+    searchTerm,
     userProfile?.movies_production_filter,
     userProfile?.movie_status_filter,
   ])
@@ -62,6 +83,15 @@ export default function Movies() {
       })
   }
 
+  const handleMovieSearchInput = async () => {
+    if (movieSearchInput) {
+      setMovieSearchInput(false)
+      setSearchTerm('')
+    } else {
+      setMovieSearchInput(true)
+    }
+  }
+
   return (
     <>
       <H1>Movies</H1>
@@ -69,6 +99,16 @@ export default function Movies() {
         <Link to={'search'}>
           <Button>Add</Button>
         </Link>
+        <Button onClick={handleMovieSearchInput}>
+          {movieSearchInput ? 'Cancel' : 'Search'}
+        </Button>
+        {movieSearchInput && (
+          <Input
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            autoFocus
+          />
+        )}
         {userProfile && (
           <>
             <Select

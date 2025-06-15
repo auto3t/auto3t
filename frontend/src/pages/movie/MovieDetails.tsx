@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import useApi from '../../hooks/api'
 import ImageComponent, { ImageType } from '../../components/ImageComponent'
 import TimeComponent from '../../components/TimeComponent'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import posterDefault from '../../../assets/poster-default.jpg'
 import MovieReleases from '../../components/MovieReleases'
 import ManualSearch from '../../components/ManualSearch'
@@ -42,9 +42,11 @@ export type MovieType = {
 
 const MovieDetail: React.FC = () => {
   const { id } = useParams()
-  const { get } = useApi()
+  const navigate = useNavigate()
+  const { get, del } = useApi()
   const [movieDetail, setMovieDetail] = useState<MovieType | null>(null)
   const [movieRefresh, setMovieRefresh] = useState(false)
+  const [movieDelete, setMovieDelete] = useState(false)
 
   const fetchMovie = useCallback(
     async (id: number) => {
@@ -62,6 +64,12 @@ const MovieDetail: React.FC = () => {
     fetchMovie(parseInt(id || '0'))
     setMovieRefresh(false)
   }, [id, movieRefresh])
+
+  const handleMovieDelete = () => {
+    del(`movie/movie/${id}/`).then(() => {
+      navigate('/movie')
+    })
+  }
 
   const getMoviePoster = (movieDetail: MovieType) => {
     if (movieDetail.image_movie?.image) return movieDetail.image_movie
@@ -110,6 +118,20 @@ const MovieDetail: React.FC = () => {
                   {`Status: ${movieDetail?.status_display || 'TBD'}`}
                 </TagItem>
               </div>
+              {movieDelete ? (
+                <>
+                  <Button onClick={() => setMovieDelete(!movieDelete)}>
+                    Cancel
+                  </Button>
+                  <Button className="ml-2" onClick={handleMovieDelete}>
+                    Confirm
+                  </Button>
+                </>
+              ) : (
+                <Button onClick={() => setMovieDelete(!movieDelete)}>
+                  Remove Movie
+                </Button>
+              )}
             </div>
           </div>
           {movieDetail.collection && (

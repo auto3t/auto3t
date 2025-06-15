@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom'
 import { formatBitrate, formatBytes, formatDuration } from '../utils'
 import { MediaServerMetaType } from './Episode'
-import { Button, H2, Table } from './Typography'
+import { H2, P, Table } from './Typography'
+import PlayIcon from './PlayIcon'
 
 interface MediaServerDetailInterface {
   mediaServerDetail: MediaServerMetaType
@@ -25,10 +26,14 @@ const MediaServerDetail: React.FC<MediaServerDetailInterface> = ({
   return (
     <>
       <H2>File Meta Data</H2>
-      <Table rows={rows} />
-      <Link to={mediaServerURL} target="_blank">
-        <Button>Open</Button>
-      </Link>
+      <div className="grid grid-cols-2">
+        <Table rows={rows} />
+        <div className="flex justify-center items-center">
+          <Link to={mediaServerURL} target="_blank">
+            <PlayIcon />
+          </Link>
+        </div>
+      </div>
     </>
   )
 }

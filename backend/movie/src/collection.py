@@ -18,12 +18,14 @@ class MovieDBCollection:
     def __init__(self, collection_id: str):
         self.collection_id = collection_id
 
-    def validate(self):
+    def validate(self, tracking: bool):
         """validate collection"""
-        collection = self.get_collection()
+        collection = self.get_collection(tracking)
         self.add_movies(collection)
+        if collection.tracking:
+            self.track_movies(collection)
 
-    def get_collection(self) -> Collection:
+    def get_collection(self, tracking: bool) -> Collection:
         """get collection"""
         response = self._get_remote_collection()
         collection_data = self._parse_collection(response)
@@ -38,6 +40,7 @@ class MovieDBCollection:
                 collection.image_collection = Artwork(image_url=image_url)
                 collection.image_collection.save()
 
+            collection.tracking = tracking
             collection.save()
             return collection
 
@@ -85,6 +88,14 @@ class MovieDBCollection:
         """build URL from snipped"""
         return f"https://image.tmdb.org/t/p/original{moviedb_file_path}"
 
+    def track_movies(self, collection):
+        """add missing movies in collection"""
+        from movie.tasks import import_movie
+
+        missing_ids = CollectionMissing(collection).get_missing_ids()
+        for remote_server_id in missing_ids:
+            import_movie.delay(remote_server_id=remote_server_id)
+
 
 class CollectionMissing:
     """missing lookup from collection"""
@@ -95,10 +106,16 @@ class CollectionMissing:
     def __init__(self, collection: Collection):
         self.collection = collection
 
+    def get_missing_ids(self):
+        """get missing ids in collection"""
+        have = set(Movie.objects.filter(collection=self.collection).values_list("remote_server_id", flat=True))
+        missing_ids = set(self.collection.movie_ids) - have
+
+        return missing_ids
+
     def get_missing(self):
         """get missing"""
-        have = self.get_have()
-        missing_ids = set(self.collection.movie_ids) - have
+        missing_ids = self.get_missing_ids()
 
         missing = []
 
@@ -148,7 +165,3 @@ class CollectionMissing:
         serializer.is_valid(raise_exception=True)
 
         return serializer.data
-
-    def get_have(self) -> set[str]:
-        """get ids local"""
-        return set(Movie.objects.filter(collection=self.collection).values_list("remote_server_id", flat=True))

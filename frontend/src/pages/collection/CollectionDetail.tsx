@@ -4,8 +4,10 @@ import {
   H1,
   H2,
   H3,
+  Input,
   P,
   StyledLink,
+  Table,
   TagItem,
 } from '../../components/Typography'
 import { useEffect, useState } from 'react'
@@ -16,6 +18,7 @@ import Spinner from '../../components/Spinner'
 import ImageComponent from '../../components/ImageComponent'
 import { MovieType } from '../movie/MovieDetails'
 import MovieTile from '../../components/MovieTile'
+import ToggleSwitch from '../../components/ConfigToggle'
 
 type MissingMovieType = {
   remote_server_id: string
@@ -83,7 +86,7 @@ const MissingMovieTile = function ({
 
 export default function CollectionDetail() {
   const { id } = useParams()
-  const { get, del } = useApi()
+  const { get, put, del } = useApi()
   const [isLoadingCollection, setIsLoadingCollection] = useState(true)
   const [isLoadingCollectionMovies, setIsLoadingCollectionMovies] =
     useState(true)
@@ -94,6 +97,7 @@ export default function CollectionDetail() {
     MissingMovieType[]
   >([])
   const [deleteConfirm, setDeleteConfirm] = useState(false)
+  const [refreshCollection, setRefreshCollection] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -105,10 +109,11 @@ export default function CollectionDetail() {
         console.error('error fetching collection')
       } finally {
         setIsLoadingCollection(false)
+        setRefreshCollection(false)
       }
     }
     fetchCollection()
-  }, [id])
+  }, [id, refreshCollection])
 
   useEffect(() => {
     const fetchCollectionMovies = async () => {
@@ -149,10 +154,32 @@ export default function CollectionDetail() {
     })
   }
 
+  const handleTrackingToggle = async () => {
+    try {
+      const response = (await put(`movie/collection/${id}/`, {
+        tracking: !collection?.tracking,
+      })) as CollectionType
+      setCollection(response)
+    } catch (error) {
+      console.error('failed to update tracking state: ', error)
+    }
+  }
+
   const getCollectionPoster = (collection: CollectionType) => {
     if (collection.image_collection?.image) return collection.image_collection
     return { image: posterDefault }
   }
+
+  const tableRows = [
+    [
+      'Auto add movies',
+      <ToggleSwitch
+        key="tracking"
+        value={collection?.tracking || false}
+        onChange={handleTrackingToggle}
+      />,
+    ],
+  ]
 
   return (
     <div className="mb-10">
@@ -183,7 +210,8 @@ export default function CollectionDetail() {
                   </StyledLink>
                 </P>
                 <P>{collection.description}</P>
-                <div className="flex gap-2 py-4">
+                <Table rows={tableRows} />
+                <div className="flex gap-2">
                   {deleteConfirm ? (
                     <>
                       <Button onClick={() => setDeleteConfirm(false)}>
@@ -213,7 +241,9 @@ export default function CollectionDetail() {
                   <MovieTile key={movie.id} movie={movie} />
                 ))}
                 {isLoadingMissing ? (
-                  <Spinner />
+                  <div className="flex justify-center items-center">
+                    <Spinner />
+                  </div>
                 ) : (
                   missingCollectionMovies.map((missingMovie) => (
                     <MissingMovieTile

@@ -40,7 +40,7 @@ class CollectionViewSet(viewsets.ModelViewSet):
         if not remote_server_id:
             return Response({"message": "missing remote_server_id key"}, status=400)
 
-        job = import_collection.delay(remote_server_id=remote_server_id)
+        job = import_collection.delay(remote_server_id=remote_server_id, tracking=True)
         message = {
             "id": job.id,
             "message": f"collection import task started: {remote_server_id}",

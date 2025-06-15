@@ -13,6 +13,7 @@ export type CollectionType = {
   remote_server_id: string
   name: string
   description: string
+  tracking: boolean
 }
 
 export default function Collections() {

@@ -24,6 +24,7 @@ class Collection(models.Model):
         Artwork, related_name="image_collection", on_delete=models.PROTECT, null=True, blank=True
     )
     movie_ids = models.JSONField(default=list)
+    tracking = models.BooleanField(default=False)
 
     def __str__(self):
         """collection string representation"""

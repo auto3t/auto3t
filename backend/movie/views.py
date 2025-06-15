@@ -49,6 +49,25 @@ class CollectionViewSet(viewsets.ModelViewSet):
 
         return Response(message)
 
+    def get_queryset(self):
+        """implement filters"""
+        queryset = queryset = Collection.objects.annotate(
+            name_sort=Replace(F("name"), Value("The "), Value(""))
+        ).order_by("name_sort")
+
+        tracking = self.request.GET.get("tracking")
+        if tracking:
+            if tracking.lower() == "true":
+                queryset = queryset.filter(tracking=True)
+            elif tracking.lower() == "false":
+                queryset = queryset.filter(tracking=False)
+
+        query = self.request.GET.get("q")
+        if query:
+            queryset = queryset.filter(name__icontains=query)
+
+        return queryset
+
     @action(detail=True, methods=["get"])
     def missing(self, request, **kwargs):
         """get missing from collection"""

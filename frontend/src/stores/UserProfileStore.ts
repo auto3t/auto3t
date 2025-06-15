@@ -5,6 +5,7 @@ type UserProfileType = {
   shows_status_filter: string
   movies_production_filter: string
   movie_status_filter: string
+  collection_tracking_filter: string
 }
 
 interface UserProfileInterface {

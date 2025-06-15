@@ -18,6 +18,7 @@ class UserProfile(models.Model):
         choices=MovieProductionState.choices(), max_length=1, null=True, blank=True
     )
     movie_status_filter = models.CharField(choices=MovieStatus.choices(), max_length=1, null=True, blank=True)
+    collection_tracking_filter = models.BooleanField(null=True, blank=True)
 
 
 @receiver(post_save, sender=get_user_model())

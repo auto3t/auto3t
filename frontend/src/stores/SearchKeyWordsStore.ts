@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { KeywordType } from '../components/Keywords'
+import { KeywordType } from '../components/settings/Keywords'
 
 interface SearchKeyWordStoreInterface {
   keywords: KeywordType[]

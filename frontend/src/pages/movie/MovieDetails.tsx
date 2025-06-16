@@ -19,6 +19,7 @@ import {
   TagItem,
 } from '../../components/Typography'
 import { CollectionType } from '../collection/Collections'
+import { formatDuration } from '../../utils'
 
 export type MovieType = {
   id: number
@@ -26,6 +27,7 @@ export type MovieType = {
   name_display: string
   tagline: string
   description: string
+  runtime: number | null
   remote_server_url: string
   remote_server_id: string
   release_date: string
@@ -106,7 +108,12 @@ const MovieDetail: React.FC = () => {
                 </StyledLink>
               </P>
               <P>{movieDetail.description}</P>
-              <div className="flex gap-2 py-4">
+              <div className="flex flex-wrap justify-center gap-2 py-4">
+                {movieDetail.runtime && (
+                  <TagItem>
+                    {`Runtime: ${formatDuration(movieDetail.runtime * 60)}`}
+                  </TagItem>
+                )}
                 <TagItem>
                   Release:{' '}
                   <TimeComponent timestamp={movieDetail.release_date} />

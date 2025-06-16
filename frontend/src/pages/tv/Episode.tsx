@@ -11,6 +11,7 @@ import { EpisodeType } from '../../components/Episode'
 import MediaServerDetail from '../../components/MediaServerDetail'
 import episodeLogoDefault from '../../../assets/episode-default.jpg'
 import { H1, H2, P, TagItem } from '../../components/Typography'
+import { formatDuration } from '../../utils'
 
 const TVEpisode: React.FC = () => {
   const { id } = useParams()
@@ -61,6 +62,11 @@ const TVEpisode: React.FC = () => {
               dangerouslySetInnerHTML={{ __html: episodeDetail.description }}
             />
             <div className="flex gap-2 justify-center py-4">
+              {episodeDetail.runtime && (
+                <TagItem>
+                  {`Runtime: ${formatDuration(episodeDetail.runtime * 60)}`}
+                </TagItem>
+              )}
               {episodeDetail.release_date && (
                 <TagItem>
                   Release:{' '}

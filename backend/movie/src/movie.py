@@ -85,6 +85,7 @@ class MovieDBMovie:
             "tagline": response["tagline"],
             "release_date": release_date,
             "production_state": self._parse_status(response),
+            "runtime": response.get("runtime"),
         }
         return movie_data
 

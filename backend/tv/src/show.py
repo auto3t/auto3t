@@ -253,6 +253,7 @@ class TVMazeShow:
             "remote_server_id": str(episode_response["id"]),
             "remote_server_url": episode_response["url"],
             "release_date": self._get_date_time(episode_response.get("airstamp")),
+            "runtime": episode_response.get("runtime"),
             "description": episode_response["summary"],
             "number": episode_response["number"],
             "title": episode_response["name"],

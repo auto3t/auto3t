@@ -23,6 +23,7 @@ export type EpisodeType = {
   image_episode?: ImageType
   status_display: string
   description: string
+  runtime: number | null
   status?: string
   torrent: TorrentType[]
   release_date: string

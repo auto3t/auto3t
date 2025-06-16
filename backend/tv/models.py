@@ -351,6 +351,7 @@ class TVEpisode(BaseModel):
 
     number = models.IntegerField()
     title = models.CharField(max_length=255)
+    runtime = models.PositiveIntegerField(null=True, blank=True)
     season = models.ForeignKey(TVSeason, on_delete=models.CASCADE)
     media_server_id = models.CharField(max_length=255, null=True, blank=True)
     media_server_meta = models.JSONField(null=True, blank=True)

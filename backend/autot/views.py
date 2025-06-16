@@ -7,12 +7,13 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from autot.models import ActionLog, AutotScheduler, SearchWord, SearchWordCategory, Torrent, get_logs
+from autot.models import ActionLog, AutotScheduler, SearchWord, SearchWordCategory, TargetBitrate, Torrent, get_logs
 from autot.serializers import (
     ActionLogSerializer,
     SchedulerSeralizer,
     SearchWordCategorySerializer,
     SearchWordSerializer,
+    TargetBitrateSerializer,
     TorrentSerializer,
 )
 from autot.src.search import Jackett
@@ -47,6 +48,13 @@ class SearchWordView(viewsets.ModelViewSet):
 
     serializer_class = SearchWordSerializer
     queryset = SearchWord.objects.all().order_by("category__name")
+
+
+class TargetBitrateView(viewsets.ModelViewSet):
+    """target bitrate"""
+
+    serializer_class = TargetBitrateSerializer
+    queryset = TargetBitrate.objects.all().order_by("bitrate")
 
 
 class TorrentViewSet(

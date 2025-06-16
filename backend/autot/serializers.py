@@ -2,7 +2,7 @@
 
 from rest_framework import serializers
 
-from autot.models import ActionLog, AutotScheduler, SearchWord, SearchWordCategory, Torrent
+from autot.models import ActionLog, AutotScheduler, SearchWord, SearchWordCategory, TargetBitrate, Torrent
 
 
 class SearchWordCategorySerializer(serializers.ModelSerializer):
@@ -27,6 +27,14 @@ class SearchWordSerializer(serializers.ModelSerializer):
     def get_category_name(self, obj):
         """category for get request"""
         return obj.category.name if obj.category else None
+
+
+class TargetBitrateSerializer(serializers.ModelSerializer):
+    """serialize target bitrate"""
+
+    class Meta:
+        model = TargetBitrate
+        fields = "__all__"
 
 
 class TorrentSerializer(serializers.ModelSerializer):

@@ -60,6 +60,29 @@ class SearchWord(models.Model):
         return f"{self.category.name}: {self.word} [{self.direction}]"
 
 
+class TargetBitrate(models.Model):
+    """target bitrate"""
+
+    TRACK_CHANGES = True
+    bitrate = models.FloatField()
+    plusminus = models.PositiveIntegerField()
+    movie_default = models.BooleanField(default=False)
+    tv_default = models.BooleanField(default=False)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["movie_default"], condition=models.Q(movie_default=True), name="only_one_movie_default"
+            ),
+            models.UniqueConstraint(
+                fields=["tv_default"], condition=models.Q(tv_default=True), name="only_one_tv_default"
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.bitrate} +/- {self.plusminus}%"
+
+
 class Torrent(models.Model):
     """torrent representation"""
 

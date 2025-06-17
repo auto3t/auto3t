@@ -140,7 +140,7 @@ const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
               Remove Show
             </Button>
             {showDelete && (
-              <div className="flex gap-2 items-center">
+              <div className="flex gap-2 items-center mt-4">
                 <P>Remove &apos;{showDetail.name}&apos; from AutoT?</P>
                 <Button onClick={handleShowDelete}>Confirm</Button>
                 <Button onClick={toggleShowConfirm}>Cancel</Button>

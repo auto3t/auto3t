@@ -4,7 +4,7 @@ from artwork.serializers import ArtworkSerializer
 from movie.models import Collection, Movie, MovieRelease
 from rest_framework import serializers
 
-from autot.serializers import TorrentSerializer
+from autot.serializers import SearchWordSerializer, TorrentSerializer
 from autot.static import MovieProductionState
 
 
@@ -32,6 +32,7 @@ class CollectionSerializer(serializers.ModelSerializer):
 class MovieSerializer(serializers.ModelSerializer):
     """serialize movie"""
 
+    all_keywords = SearchWordSerializer(source="get_keywords", many=True)
     image_movie = ArtworkSerializer(read_only=True)
     remote_server_url = serializers.CharField(read_only=True)
     status_display = serializers.CharField(source="get_status_display", read_only=True)

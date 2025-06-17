@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import useApi from '../hooks/api'
-import { KeywordType } from './Keywords'
+import { KeywordType } from './settings/Keywords'
 import { Button, Select } from './Typography'
 
 interface AddKeywordComponentInterface {

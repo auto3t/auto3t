@@ -14,7 +14,7 @@ import TVShowDetail from './pages/tv/TVShowDetails'
 import TVSearch from './pages/tv/Search'
 import TVEpisode from './pages/tv/Episode'
 import MovieSearch from './pages/movie/Search'
-import MovieDetail from './pages/movie/MovieDetails'
+import MovieDetails from './pages/movie/MovieDetails'
 import Collections from './pages/collection/Collections'
 import CollectionDetail from './pages/collection/CollectionDetail'
 import CollectionSearch from './pages/collection/Search'
@@ -35,7 +35,7 @@ const router = createBrowserRouter(
       </Route>
       <Route path="movie">
         <Route index element={<Movies />} />
-        <Route path="movie/:id" element={<MovieDetail />} />
+        <Route path="movie/:id" element={<MovieDetails />} />
         <Route path="search" element={<MovieSearch />} />
       </Route>
       <Route path="collection">

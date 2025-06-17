@@ -1,25 +1,17 @@
 import { useCallback, useEffect, useState } from 'react'
 import useApi from '../../hooks/api'
 import ImageComponent, { ImageType } from '../../components/ImageComponent'
-import TimeComponent from '../../components/TimeComponent'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import posterDefault from '../../../assets/poster-default.jpg'
 import MovieReleases from '../../components/MovieReleases'
 import ManualSearch from '../../components/ManualSearch'
 import Torrent, { TorrentType } from '../../components/Torrent'
 import { MediaServerMetaType } from '../../components/Episode'
 import MediaServerDetail from '../../components/MediaServerDetail'
-import {
-  Button,
-  H1,
-  H2,
-  H3,
-  P,
-  StyledLink,
-  TagItem,
-} from '../../components/Typography'
+import { Button, H1, H2, H3, P, StyledLink } from '../../components/Typography'
 import { CollectionType } from '../collection/Collections'
-import { formatDuration } from '../../utils'
+import MovieDetail from '../../components/settings/movie/MovieDetail'
+import { KeywordType } from '../../components/settings/Keywords'
 
 export type MovieType = {
   id: number
@@ -34,49 +26,35 @@ export type MovieType = {
   status: string
   status_display: string
   production_state_display: string | null
+  is_active: boolean
   image_movie?: ImageType
   torrent: TorrentType[]
   media_server_id: string
   media_server_meta: MediaServerMetaType
   media_server_url: string
   collection?: CollectionType
+  all_keywords: KeywordType[]
 }
 
-const MovieDetail: React.FC = () => {
+const MovieDetails: React.FC = () => {
   const { id } = useParams()
-  const navigate = useNavigate()
-  const { get, del } = useApi()
+  const { get } = useApi()
   const [movieDetail, setMovieDetail] = useState<MovieType | null>(null)
   const [movieRefresh, setMovieRefresh] = useState(false)
-  const [movieDelete, setMovieDelete] = useState(false)
 
-  const fetchMovie = useCallback(
-    async (id: number) => {
-      try {
-        const data = await get(`movie/movie/${id}/`)
-        setMovieDetail(data)
-      } catch {
-        console.error('error fetching movie detail')
-      }
-    },
-    [id],
-  )
+  const fetchMovie = useCallback(async () => {
+    try {
+      const data = await get(`movie/movie/${id}/`)
+      setMovieDetail(data)
+    } catch {
+      console.error('error fetching movie detail')
+    }
+  }, [id])
 
   useEffect(() => {
-    fetchMovie(parseInt(id || '0'))
+    fetchMovie()
     setMovieRefresh(false)
   }, [id, movieRefresh])
-
-  const handleMovieDelete = () => {
-    del(`movie/movie/${id}/`).then(() => {
-      navigate('/movie')
-    })
-  }
-
-  const getMoviePoster = (movieDetail: MovieType) => {
-    if (movieDetail.image_movie?.image) return movieDetail.image_movie
-    return { image: posterDefault }
-  }
 
   const getCollectionPoster = (collection: CollectionType) => {
     if (collection.image_collection?.image) return collection.image_collection
@@ -87,59 +65,9 @@ const MovieDetail: React.FC = () => {
     <div className="mb-10">
       {movieDetail && (
         <>
-          <div className="grid grid-cols-2 items-center">
-            <div className="w-100 mx-auto py-6">
-              <ImageComponent
-                image={getMoviePoster(movieDetail)}
-                alt="movie-poster"
-              />
-            </div>
-            <div>
-              <H1>{movieDetail.name_display}</H1>
-              <H3>{movieDetail.tagline}</H3>
-              <P variant="smaller">
-                ID:{' '}
-                <StyledLink
-                  to={movieDetail.remote_server_url}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {movieDetail.remote_server_id}
-                </StyledLink>
-              </P>
-              <P>{movieDetail.description}</P>
-              <div className="flex flex-wrap justify-center gap-2 py-4">
-                {movieDetail.runtime && (
-                  <TagItem>
-                    {`Runtime: ${formatDuration(movieDetail.runtime * 60)}`}
-                  </TagItem>
-                )}
-                <TagItem>
-                  Release:{' '}
-                  <TimeComponent timestamp={movieDetail.release_date} />
-                </TagItem>
-                <TagItem>
-                  {`Production: ${movieDetail?.production_state_display || 'TBD'}`}
-                </TagItem>
-                <TagItem className="tag-item">
-                  {`Status: ${movieDetail?.status_display || 'TBD'}`}
-                </TagItem>
-              </div>
-              {movieDelete ? (
-                <>
-                  <Button onClick={() => setMovieDelete(!movieDelete)}>
-                    Cancel
-                  </Button>
-                  <Button className="ml-2" onClick={handleMovieDelete}>
-                    Confirm
-                  </Button>
-                </>
-              ) : (
-                <Button onClick={() => setMovieDelete(!movieDelete)}>
-                  Remove Movie
-                </Button>
-              )}
-            </div>
+          <MovieDetail movieDetail={movieDetail} fetchMovie={fetchMovie} />
+          <div className="py-4">
+            <MovieReleases movie_id={movieDetail.id} />
           </div>
           {movieDetail.collection && (
             <>
@@ -171,9 +99,6 @@ const MovieDetail: React.FC = () => {
               </div>
             </>
           )}
-          <div className="py-4">
-            <MovieReleases movie_id={movieDetail.id} />
-          </div>
           {movieDetail.torrent.length > 0 && (
             <div className="py-4">
               <H2>Torrents</H2>
@@ -207,4 +132,4 @@ const MovieDetail: React.FC = () => {
   )
 }
 
-export default MovieDetail
+export default MovieDetails

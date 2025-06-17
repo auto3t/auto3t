@@ -1,17 +1,19 @@
 import useApi from '../hooks/api'
-import { KeywordType } from './Keywords'
-import { Table } from './Typography'
+import { KeywordType } from './settings/Keywords'
+import { Button, Table } from './Typography'
 
 interface KeywortTableComponentInterface {
   all_keywords: KeywordType[]
   patchURL: string
   refreshCallback: () => void
+  objectType?: 'tv_default' | 'movie_default'
 }
 
 const KeywordTableCompnent: React.FC<KeywortTableComponentInterface> = ({
   all_keywords,
   patchURL,
   refreshCallback,
+  objectType = 'tv_default',
 }) => {
   const { patch } = useApi()
 
@@ -24,10 +26,10 @@ const KeywordTableCompnent: React.FC<KeywortTableComponentInterface> = ({
     keyword.category_name,
     keyword.word,
     keyword.direction_display,
-    keyword.tv_default ? (
+    keyword[objectType] ? (
       'default'
     ) : (
-      <button onClick={() => handleKeywordRemove(keyword.id)}>remove</button>
+      <Button onClick={() => handleKeywordRemove(keyword.id)}>remove</Button>
     ),
   ])
 

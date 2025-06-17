@@ -231,7 +231,7 @@ export default function TargetBitrate() {
       // is not editing
       return [
         targetBitrate.bitrate,
-        targetBitrate.plusminus,
+        `${targetBitrate.plusminus}%`,
         targetBitrate.tv_default ? '✅' : '-',
         targetBitrate.movie_default ? '✅' : '-',
         deletingTarget === targetBitrate ? (

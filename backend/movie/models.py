@@ -13,7 +13,28 @@ from autot.src.config import ConfigType, get_config
 from autot.static import MovieProductionState, MovieReleaseType, MovieStatus
 
 
-class Collection(models.Model):
+class BaseModel(models.Model):
+    """base model to enherit from"""
+
+    class Meta:
+        """set abstract to not create db relations"""
+
+        abstract = True
+
+    def add_keyword(self, instance, to_add) -> None:
+        """add keyword or overwrite"""
+        existing = instance.search_keywords.all()
+        extend_by = SearchWord.objects.filter(id=to_add.id)
+        words = existing.exclude(category_id=to_add.category_id).union(extend_by)
+        instance.search_keywords.set(words)
+        instance.save()
+
+    def remove_keyword(self, instance, to_remove) -> None:
+        """remove keyword if existing"""
+        instance.search_keywords.remove(to_remove)
+
+
+class Collection(BaseModel):
     """describes a movie collection"""
 
     TRACK_CHANGES = True
@@ -52,7 +73,7 @@ class Collection(models.Model):
             self.image_collection.update(image_url)
 
 
-class Movie(models.Model):
+class Movie(BaseModel):
     """describes a movie"""
 
     TRACK_CHANGES = True

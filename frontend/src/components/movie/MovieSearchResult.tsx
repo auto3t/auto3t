@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom'
-import { MovieSearchResultType } from '../pages/movie/Search'
-import useApi from '../hooks/api'
+import { MovieSearchResultType } from '../../pages/movie/Search'
+import useApi from '../../hooks/api'
 import { useState } from 'react'
-import { Button, H2, P, StyledLink, TagItem } from './Typography'
-import TimeComponent from './TimeComponent'
+import { Button, H2, P, StyledLink, TagItem } from '../Typography'
+import TimeComponent from '../TimeComponent'
 
 interface MovieSearchResultInterface {
   result: MovieSearchResultType

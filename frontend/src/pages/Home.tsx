@@ -5,7 +5,7 @@ import usePolling from '../hooks/usePolling'
 import { Button, H2, H3, P } from '../components/Typography'
 import Spinner from '../components/Spinner'
 import { MovieType } from './movie/MovieDetails'
-import MovieTile from '../components/MovieTile'
+import MovieTile from '../components/movie/MovieTile'
 
 const Home: React.FC = () => {
   const { error, get } = useApi()

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
-import useApi from '../hooks/api'
-import TimeComponent from './TimeComponent'
-import { H2, P, Table } from './Typography'
+import useApi from '../../hooks/api'
+import TimeComponent from '../TimeComponent'
+import { H2, P, Table } from '../Typography'
 
 interface MovieReleasesInterface {
   movie_id: number

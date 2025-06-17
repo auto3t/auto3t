@@ -17,7 +17,7 @@ import useApi from '../../hooks/api'
 import Spinner from '../../components/Spinner'
 import ImageComponent from '../../components/ImageComponent'
 import { MovieType } from '../movie/MovieDetails'
-import MovieTile from '../../components/MovieTile'
+import MovieTile from '../../components/movie/MovieTile'
 import ToggleSwitch from '../../components/ConfigToggle'
 
 type MissingMovieType = {

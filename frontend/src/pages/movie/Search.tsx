@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import useApi from '../../hooks/api'
-import MovieSearchResult from '../../components/MovieSearchResult'
+import MovieSearchResult from '../../components/movie/MovieSearchResult'
 import { Link } from 'react-router-dom'
 import { Button, H1, Input, P } from '../../components/Typography'
 import Spinner from '../../components/Spinner'

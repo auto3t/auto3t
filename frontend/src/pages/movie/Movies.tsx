@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import useApi from '../../hooks/api'
 import useMovieStore from '../../stores/MovieStore'
-import MovieTile from '../../components/MovieTile'
+import MovieTile from '../../components/movie/MovieTile'
 import useUserProfileStore from '../../stores/UserProfileStore'
 import { Button, H1, Input, P, Select } from '../../components/Typography'
 

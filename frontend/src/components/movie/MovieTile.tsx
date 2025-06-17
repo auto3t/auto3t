@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import ImageComponent from '../ImageComponent'
 import { MovieType } from '../../pages/movie/MovieDetails'
-import posterDefault from '../../assets/poster-default.jpg'
+import posterDefault from '../../../assets/poster-default.jpg'
 import ProgressBar from '../ProgressBar'
 import { H3, TagItem } from '../Typography'
 

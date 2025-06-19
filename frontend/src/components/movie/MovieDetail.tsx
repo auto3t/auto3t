@@ -10,6 +10,7 @@ import posterDefault from '../../../assets/poster-default.jpg'
 import ToggleSwitch from '../ConfigToggle'
 import AddKeywordComponent from '../AddKeywordComponent'
 import KeywordTableCompnent from '../KeywordTableComponent'
+import AddTargetBitrateComponent from '../AddTargetBitrateComponent'
 
 interface MovieInterface {
   movieDetail: MovieType
@@ -78,6 +79,11 @@ const MovieDetail: React.FC<MovieInterface> = ({ movieDetail, fetchMovie }) => {
             <TagItem className="tag-item">
               {`Status: ${movieDetail?.status_display || 'TBD'}`}
             </TagItem>
+            {movieDetail.target_file_size_str && (
+              <TagItem>
+                {`Target Filesize: ${movieDetail.target_file_size_str}`}
+              </TagItem>
+            )}
           </div>
         </div>
       </div>
@@ -108,6 +114,19 @@ const MovieDetail: React.FC<MovieInterface> = ({ movieDetail, fetchMovie }) => {
                     key="movie-is-active"
                     value={movieDetail.is_active}
                     onChange={handleActiveToggle}
+                  />,
+                ],
+                [
+                  'Target Bitrate',
+                  <AddTargetBitrateComponent
+                    key="movie-target-bitrate"
+                    patchURL={`movie/movie/${movieDetail.id}/`}
+                    refreshCallback={fetchMovie}
+                    defaultTarget={
+                      movieDetail?.get_target_bitrate
+                        ? movieDetail.get_target_bitrate
+                        : null
+                    }
                   />,
                 ],
                 [

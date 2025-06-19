@@ -4,7 +4,8 @@ from artwork.serializers import ArtworkSerializer
 from movie.models import Collection, Movie, MovieRelease
 from rest_framework import serializers
 
-from autot.serializers import SearchWordSerializer, TorrentSerializer
+from autot.models import TargetBitrate
+from autot.serializers import SearchWordSerializer, TargetBitrateSerializer, TorrentSerializer
 from autot.static import MovieProductionState
 
 
@@ -33,6 +34,9 @@ class MovieSerializer(serializers.ModelSerializer):
     """serialize movie"""
 
     all_keywords = SearchWordSerializer(source="get_keywords", many=True)
+    target_bitrate = serializers.PrimaryKeyRelatedField(queryset=TargetBitrate.objects.all(), allow_null=True)
+    target_file_size_str = serializers.CharField(read_only=True, allow_null=True)
+    get_target_bitrate = TargetBitrateSerializer(read_only=True)
     image_movie = ArtworkSerializer(read_only=True)
     remote_server_url = serializers.CharField(read_only=True)
     status_display = serializers.CharField(source="get_status_display", read_only=True)

@@ -8,7 +8,7 @@ from django.db import models
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
 
-from autot.models import SearchWord, SearchWordCategory, Torrent, log_change
+from autot.models import SearchWord, SearchWordCategory, TargetBitrate, Torrent, log_change
 from autot.src.config import ConfigType, get_config
 from autot.static import MovieProductionState, MovieReleaseType, MovieStatus
 
@@ -96,6 +96,7 @@ class Movie(BaseModel):
     status = models.CharField(choices=MovieStatus.choices(), max_length=1, null=True, blank=True)
     torrent = models.ManyToManyField(Torrent, related_name="torrent")
     search_keywords = models.ManyToManyField(SearchWord)
+    target_bitrate = models.ForeignKey(TargetBitrate, null=True, blank=True, on_delete=models.SET_NULL)
 
     media_server_id = models.CharField(max_length=255, null=True, blank=True)
     media_server_meta = models.JSONField(null=True, blank=True)
@@ -134,6 +135,30 @@ class Movie(BaseModel):
         if self.release_date:
             search_query += f" {self.release_date.year}"
         return search_query
+
+    @property
+    def target_file_size(self) -> tuple[float | None, float | None]:
+        """target filesize based on runtime and target bitrate"""
+        target_bitrate = self.get_target_bitrate()
+        if not target_bitrate:
+            return None, None
+
+        if not self.runtime:
+            return None, None
+
+        lower = self.runtime * 60 * (target_bitrate.bitrate * 100 - target_bitrate.plusminus)
+        upper = self.runtime * 60 * (target_bitrate.bitrate * 100 + target_bitrate.plusminus)
+
+        return lower, upper
+
+    @property
+    def target_file_size_str(self) -> None | str:
+        """target filesize in str for UI"""
+        lower, upper = self.target_file_size
+        if not lower or not upper:
+            return None
+
+        return f"{round(lower / 1000000, 2)} - {round(upper / 1000000, 2)}GB"
 
     def update_image_movie(self, image_url: str | None) -> None:
         """handle update with or without existing"""
@@ -200,6 +225,18 @@ class Movie(BaseModel):
                 keywords |= SearchWord.objects.filter(category=category, movie_default=True)
 
         return keywords.distinct()
+
+    def get_target_bitrate(self: Self) -> TargetBitrate | None:
+        """target bitrate"""
+        if self.target_bitrate:
+            return self.target_bitrate
+
+        try:
+            return TargetBitrate.objects.get(movie_default=True)
+        except TargetBitrate.DoesNotExist:
+            pass
+
+        return None
 
 
 class MovieRelease(models.Model):

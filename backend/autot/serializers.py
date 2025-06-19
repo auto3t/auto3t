@@ -32,6 +32,8 @@ class SearchWordSerializer(serializers.ModelSerializer):
 class TargetBitrateSerializer(serializers.ModelSerializer):
     """serialize target bitrate"""
 
+    bitrate_str = serializers.CharField(read_only=True)
+
     class Meta:
         model = TargetBitrate
         fields = "__all__"

@@ -12,6 +12,7 @@ import { Button, H2, H3, P, StyledLink } from '../../components/Typography'
 import { CollectionType } from '../collection/Collections'
 import MovieDetail from '../../components/movie/MovieDetail'
 import { KeywordType } from '../../components/settings/Keywords'
+import { TargetBitrateType } from '../../components/settings/TargetBitrate'
 
 export type MovieType = {
   id: number
@@ -34,6 +35,8 @@ export type MovieType = {
   media_server_url: string
   collection?: CollectionType
   all_keywords: KeywordType[]
+  get_target_bitrate: TargetBitrateType | null
+  target_file_size_str: string | null
 }
 
 const MovieDetails: React.FC = () => {

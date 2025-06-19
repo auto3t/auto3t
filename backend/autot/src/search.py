@@ -161,10 +161,17 @@ class Jackett:
         has_gain = result_item.get("Gain", 0) > 1
         is_valid_path = to_search.is_valid_path(result_item["Title"])
 
+        is_filesize_target = True
+        if hasattr(to_search, "target_file_size"):
+            lower, upper = to_search.target_file_size
+            if lower and upper and result_item.get("Size"):
+                size_is = result_item["Size"]
+                is_filesize_target = size_is >= lower * 1000 and size_is <= upper * 1000
+
         to_exclude = [i.word for i in to_search.get_keywords().filter(direction="e")]
         is_not_excluded = not any(i for i in to_exclude if i in result_item["Title"])
 
-        return all([has_link, has_seeders, has_gain, is_valid_path, is_not_excluded])
+        return all([has_link, has_seeders, has_gain, is_valid_path, is_not_excluded, is_filesize_target])
 
 
 class Magnator:

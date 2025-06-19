@@ -2,9 +2,10 @@ import { useCallback, useEffect, useState } from 'react'
 import { Button, H2, Input, P, Table } from '../Typography'
 import useApi from '../../hooks/api'
 
-type TargetBitrateType = {
+export type TargetBitrateType = {
   id: number
   bitrate: number
+  bitrate_str?: string
   plusminus: number
   tv_default: boolean
   movie_default: boolean
@@ -140,7 +141,7 @@ export default function TargetBitrate() {
   }
 
   const headers = [
-    'Bitrate',
+    'Bitrate Mbps',
     '+/- %',
     'Default TV',
     'Default Movie',

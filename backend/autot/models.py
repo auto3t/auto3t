@@ -79,8 +79,18 @@ class TargetBitrate(models.Model):
             ),
         ]
 
+    @property
+    def bitrate_str(self):
+        return str(self)
+
     def __str__(self):
-        return f"{self.bitrate} +/- {self.plusminus}%"
+        default = ""
+        if self.movie_default:
+            default = " - Default Movie"
+        elif self.tv_default:
+            default = " - Default TV"
+
+        return f"{self.bitrate}Mbps +/- {self.plusminus}%{default}"
 
 
 class Torrent(models.Model):

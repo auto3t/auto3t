@@ -37,7 +37,12 @@ class Archiver:
         """run archiver"""
         tm = Transmission()
         tm_torrent = tm.get_single(torrent)
-        if not tm_torrent or not tm_torrent.is_finished:
+        if not tm_torrent:
+            torrent.torrent_state = "i"
+            torrent.save()
+            return
+
+        if not tm_torrent.is_finished:
             return
 
         if torrent.torrent_type in ["e", "s"]:

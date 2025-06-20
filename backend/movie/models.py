@@ -7,6 +7,7 @@ from artwork.models import Artwork
 from django.db import models
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
+from rapidfuzz import fuzz
 
 from autot.models import SearchWord, SearchWordCategory, TargetBitrate, Torrent, log_change
 from autot.src.config import ConfigType, get_config
@@ -78,6 +79,7 @@ class Movie(BaseModel):
 
     TRACK_CHANGES = True
     CONFIG: ConfigType = get_config()
+    FUZZY_RATIO = 95
 
     remote_server_id = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
@@ -206,11 +208,11 @@ class Movie(BaseModel):
 
     def is_valid_path(self, path: str) -> bool:
         """check if path is valid"""
-        movie_search = self.name.lower().replace(".", "").replace(":", "")
+        movie_search = self.name.lower().replace(".", "").replace(":", "").replace(" & ", " ")
         year_str = str(self.release_date.year)
-
         path_lower = path.lower()
-        if movie_search in path_lower and year_str in path_lower:
+        close_enough = fuzz.partial_ratio(movie_search, path_lower) > self.FUZZY_RATIO
+        if close_enough and year_str in path_lower:
             return True
 
         return False

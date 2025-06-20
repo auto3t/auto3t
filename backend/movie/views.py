@@ -2,6 +2,7 @@
 
 import json
 
+from django.core.exceptions import FieldError
 from django.db.models import F, Q, Value
 from django.db.models.functions import Replace
 from movie.models import Collection, Movie, MovieRelease, MovieReleaseTarget
@@ -177,9 +178,19 @@ class MovieViewSet(viewsets.ModelViewSet):
         if collection:
             queryset = queryset.filter(collection=collection)
 
+        queryset = self._handle_order_by(queryset)
+
+        return queryset
+
+    def _handle_order_by(self, queryset):
+        """handle orderby"""
         order_by = self.request.GET.get("order-by")
         if order_by:
-            queryset = queryset.order_by(order_by)
+            try:
+                queryset = queryset.order_by(order_by)
+            except FieldError:
+                message = {"error": f"Invalid order-by field: {order_by}."}
+                raise ValidationError(message)
         else:
             queryset = queryset.annotate(name_sort=Replace(F("name"), Value("The "), Value(""))).order_by(
                 "name_sort", "release_date"

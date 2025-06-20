@@ -43,7 +43,7 @@ const MovieDetail: React.FC<MovieInterface> = ({ movieDetail, fetchMovie }) => {
 
   return (
     <div className="border border-accent-1">
-      <div className="flex gap-2 items-center ">
+      <div className="flex gap-2 items-center">
         <div className="flex-1 mx-auto p-6">
           <ImageComponent
             image={getMoviePoster(movieDetail)}

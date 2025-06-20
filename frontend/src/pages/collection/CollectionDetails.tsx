@@ -1,24 +1,13 @@
-import { useNavigate, useParams } from 'react-router-dom'
-import {
-  Button,
-  H1,
-  H2,
-  H3,
-  Input,
-  P,
-  StyledLink,
-  Table,
-  TagItem,
-} from '../../components/Typography'
-import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { Button, H2, H3, P, TagItem } from '../../components/Typography'
+import { useCallback, useEffect, useState } from 'react'
 import { CollectionType } from './Collections'
 import posterDefault from '../../../assets/poster-default.jpg'
 import useApi from '../../hooks/api'
 import Spinner from '../../components/Spinner'
-import ImageComponent from '../../components/ImageComponent'
 import { MovieType } from '../movie/MovieDetails'
 import MovieTile from '../../components/movie/MovieTile'
-import ToggleSwitch from '../../components/ConfigToggle'
+import CollectionDetail from '../../components/collection/CollectionDetail'
 
 type MissingMovieType = {
   remote_server_id: string
@@ -84,9 +73,9 @@ const MissingMovieTile = function ({
   )
 }
 
-export default function CollectionDetail() {
+export default function CollectionDetails() {
   const { id } = useParams()
-  const { get, put, del } = useApi()
+  const { get } = useApi()
   const [isLoadingCollection, setIsLoadingCollection] = useState(true)
   const [isLoadingCollectionMovies, setIsLoadingCollectionMovies] =
     useState(true)
@@ -96,22 +85,21 @@ export default function CollectionDetail() {
   const [missingCollectionMovies, setMissingCollectionMovies] = useState<
     MissingMovieType[]
   >([])
-  const [deleteConfirm, setDeleteConfirm] = useState(false)
   const [refreshCollection, setRefreshCollection] = useState(false)
-  const navigate = useNavigate()
+
+  const fetchCollection = useCallback(async () => {
+    try {
+      const data = (await get(`movie/collection/${id}/`)) as CollectionType
+      setCollection(data)
+    } catch {
+      console.error('error fetching collection')
+    } finally {
+      setIsLoadingCollection(false)
+      setRefreshCollection(false)
+    }
+  }, [id])
 
   useEffect(() => {
-    const fetchCollection = async () => {
-      try {
-        const data = (await get(`movie/collection/${id}/`)) as CollectionType
-        setCollection(data)
-      } catch {
-        console.error('error fetching collection')
-      } finally {
-        setIsLoadingCollection(false)
-        setRefreshCollection(false)
-      }
-    }
     fetchCollection()
   }, [id, refreshCollection])
 
@@ -148,39 +136,6 @@ export default function CollectionDetail() {
     fetchMissingInCollection()
   }, [collection])
 
-  const handleCollectionDelete = () => {
-    del(`movie/collection/${id}/`).then(() => {
-      navigate('/collection')
-    })
-  }
-
-  const handleTrackingToggle = async () => {
-    try {
-      const response = (await put(`movie/collection/${id}/`, {
-        tracking: !collection?.tracking,
-      })) as CollectionType
-      setCollection(response)
-    } catch (error) {
-      console.error('failed to update tracking state: ', error)
-    }
-  }
-
-  const getCollectionPoster = (collection: CollectionType) => {
-    if (collection.image_collection?.image) return collection.image_collection
-    return { image: posterDefault }
-  }
-
-  const tableRows = [
-    [
-      'Auto add movies',
-      <ToggleSwitch
-        key="tracking"
-        value={collection?.tracking || false}
-        onChange={handleTrackingToggle}
-      />,
-    ],
-  ]
-
   return (
     <div className="mb-10">
       {collection && (
@@ -190,43 +145,10 @@ export default function CollectionDetail() {
               <Spinner />
             </div>
           ) : (
-            <div className="grid grid-cols-2 items-center">
-              <div className="w-100 mx-auto py-6">
-                <ImageComponent
-                  alt="collection-poster"
-                  image={getCollectionPoster(collection)}
-                />
-              </div>
-              <div>
-                <H1>{collection?.name}</H1>
-                <P variant="smaller">
-                  ID:{' '}
-                  <StyledLink
-                    to={collection.remote_server_url}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    {collection.remote_server_id}
-                  </StyledLink>
-                </P>
-                <P>{collection.description}</P>
-                <Table rows={tableRows} />
-                <div className="flex gap-2">
-                  {deleteConfirm ? (
-                    <>
-                      <Button onClick={() => setDeleteConfirm(false)}>
-                        Cancel
-                      </Button>
-                      <Button onClick={handleCollectionDelete}>Confirm</Button>
-                    </>
-                  ) : (
-                    <Button onClick={() => setDeleteConfirm(!deleteConfirm)}>
-                      Delete
-                    </Button>
-                  )}
-                </div>
-              </div>
-            </div>
+            <CollectionDetail
+              collectionDetail={collection}
+              fetchCollection={fetchCollection}
+            />
           )}
           <div className="pt-6">
             <H2>Movies in Collection</H2>

@@ -16,7 +16,7 @@ import TVEpisode from './pages/tv/Episode'
 import MovieSearch from './pages/movie/Search'
 import MovieDetails from './pages/movie/MovieDetails'
 import Collections from './pages/collection/Collections'
-import CollectionDetail from './pages/collection/CollectionDetail'
+import CollectionDetail from './pages/collection/CollectionDetails'
 import CollectionSearch from './pages/collection/Search'
 
 // layouts

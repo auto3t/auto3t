@@ -142,9 +142,7 @@ class MovieViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """get movie queryset"""
-        queryset = Movie.objects.annotate(name_sort=Replace(F("name"), Value("The "), Value(""))).order_by(
-            "name_sort", "release_date"
-        )
+        queryset = Movie.objects.all()
 
         status_query = self.request.GET.get("status")
         if status_query:
@@ -178,6 +176,14 @@ class MovieViewSet(viewsets.ModelViewSet):
         collection = self.request.GET.get("collection")
         if collection:
             queryset = queryset.filter(collection=collection)
+
+        order_by = self.request.GET.get("order-by")
+        if order_by:
+            queryset = queryset.order_by(order_by)
+        else:
+            queryset = queryset.annotate(name_sort=Replace(F("name"), Value("The "), Value(""))).order_by(
+                "name_sort", "release_date"
+            )
 
         return queryset
 

@@ -73,7 +73,7 @@ class Transmission(DownloaderBase):
         if torrent.torrent_type in ["e", "s"]:
             self._cancel_episode(torrent)
         elif torrent.torrent_type == "m":
-            raise NotImplementedError
+            self._cancel_movie(torrent)
 
         to_delete = self.get_single(torrent)
         if to_delete:

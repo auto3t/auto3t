@@ -92,7 +92,10 @@ const CollectionDetail: React.FC<CollectionInterface> = ({
             </Button>
             {deleteConfirm && (
               <div className="flex gap-2 items-center mt-4">
-                <P>Remove &apos;{collectionDetail.name}&apos; from AutoT?</P>
+                <P>
+                  Remove &apos;{collectionDetail.name}&apos; including connected
+                  movies from AutoT?
+                </P>
                 <Button onClick={handleCollectionDelete}>Confirm</Button>
                 <Button onClick={() => setDeleteConfirm(false)}>Cancel</Button>
               </div>

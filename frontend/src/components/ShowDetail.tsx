@@ -34,7 +34,7 @@ interface ShowInterface {
 
 const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
   const navigate = useNavigate()
-  const { put, del } = useApi()
+  const { put, patch, del } = useApi()
   const [showDetails, setShowDetails] = useState(false)
   const [editedSearchName, setEditedSearchName] = useState('')
   const [editMode, setEditMode] = useState(false)
@@ -72,11 +72,9 @@ const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
     setEditMode(false)
   }
 
-  const handleActiveToggle = () => {
-    put(`tv/show/${showDetail.id}/`, {
+  const handleActiveToggle = async () => {
+    await patch(`tv/show/${showDetail.id}/`, {
       is_active: !showDetail.is_active,
-    }).catch((error) => {
-      console.error('Error:', error)
     })
     fetchShow()
   }

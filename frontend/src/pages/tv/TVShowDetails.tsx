@@ -48,11 +48,11 @@ const TVShowDetail: React.FC = () => {
     } catch (error) {
       console.error('error fetching show: ', id, error)
     }
-  }, [])
+  }, [id])
 
   useEffect(() => {
     fetchShow()
-  }, [id])
+  }, [id, fetchShow])
 
   useEffect(() => {
     const fetchSeasons = async () => {

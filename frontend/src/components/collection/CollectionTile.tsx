@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
-import { CollectionType } from '../pages/collection/Collections'
-import posterDefault from '../../assets/poster-default.jpg'
-import { H3 } from './Typography'
-import ImageComponent from './ImageComponent'
+import { CollectionType } from '../../pages/collection/Collections'
+import posterDefault from '../../../assets/poster-default.jpg'
+import { H3 } from '../Typography'
+import ImageComponent from '../ImageComponent'
 
 interface CollectionTileInterface {
   collection: CollectionType

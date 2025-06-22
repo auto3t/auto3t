@@ -3,7 +3,7 @@ import { Button, H1, Input, P, Select } from '../../components/Typography'
 import useApi from '../../hooks/api'
 import { ImageType } from '../../components/ImageComponent'
 import Spinner from '../../components/Spinner'
-import CollectionTile from '../../components/CollectionTile'
+import CollectionTile from '../../components/collection/CollectionTile'
 import { Link } from 'react-router-dom'
 import useUserProfileStore from '../../stores/UserProfileStore'
 

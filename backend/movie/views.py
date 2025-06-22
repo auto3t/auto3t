@@ -11,7 +11,8 @@ from movie.serializers import (
     MovieReleaseSerializer,
     MovieSerializer,
 )
-from movie.src.collection import CollectionMissing
+from movie.src.collection import CollectionMissing, MovieDBCollection
+from movie.src.movie import MovieDBMovie
 from movie.src.movie_search import CollectionId, MovieId
 from movie.tasks import import_collection, import_movie, refresh_status
 from rest_framework import viewsets
@@ -42,14 +43,11 @@ class CollectionViewSet(viewsets.ModelViewSet):
         if not remote_server_id:
             return Response({"message": "missing remote_server_id key"}, status=400)
 
-        job = import_collection.delay(remote_server_id=remote_server_id, tracking=True)
-        message = {
-            "id": job.id,
-            "message": f"collection import task started: {remote_server_id}",
-            "time": job.enqueued_at.isoformat(),
-        }
+        collection = MovieDBCollection(collection_id=remote_server_id).get_collection(tracking=True)
+        import_collection.delay(remote_server_id=remote_server_id, tracking=True)
+        serializer = CollectionSerializer(collection)
 
-        return Response(message)
+        return Response(serializer.data)
 
     def get_queryset(self):
         """implement filters"""
@@ -98,14 +96,11 @@ class MovieViewSet(viewsets.ModelViewSet):
         if not remote_server_id:
             return Response({"message": "missing remote_server_id key"}, status=400)
 
-        job = import_movie.delay(remote_server_id)
-        message = {
-            "id": job.id,
-            "message": f"movie import task started: {remote_server_id}",
-            "time": job.enqueued_at.isoformat(),
-        }
+        movie, _ = MovieDBMovie(movie_id=remote_server_id).get_movie()
+        serializer = MovieSerializer(movie)
+        import_movie.delay(remote_server_id)
 
-        return Response(message)
+        return Response(serializer.data)
 
     def update(self, request, *args, **kwargs):
         """handle update"""

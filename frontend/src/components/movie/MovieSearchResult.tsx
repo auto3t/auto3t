@@ -4,6 +4,7 @@ import useApi from '../../hooks/api'
 import { useState } from 'react'
 import { Button, H2, P, StyledLink, TagItem } from '../Typography'
 import TimeComponent from '../TimeComponent'
+import { MovieType } from '../../pages/movie/MovieDetails'
 
 interface MovieSearchResultInterface {
   result: MovieSearchResultType
@@ -14,16 +15,16 @@ const MovieSearchResult: React.FC<MovieSearchResultInterface> = ({
 }) => {
   const { post, error } = useApi()
   const [addingMovie, setAddingMovie] = useState<null | boolean>(null)
+  const [newMovieAddedID, setNewMovieAddedID] = useState<number | null>(null)
 
-  const handleAddMovie = (remoteServerId: string) => {
+  const handleAddMovie = async (remoteServerId: string) => {
     setAddingMovie(true)
-    post('movie/movie/', { remote_server_id: remoteServerId })
-      .then((data) => {
-        console.log('Movie added successfully: ', JSON.stringify(data))
-      })
-      .catch((error) => {
-        console.error('Error adding movie: ', error)
-      })
+    const newMovie = (await post('movie/movie/', {
+      remote_server_id: remoteServerId,
+    })) as MovieType
+    if (newMovie) {
+      setNewMovieAddedID(newMovie.id)
+    }
     setAddingMovie(false)
   }
 
@@ -64,7 +65,11 @@ const MovieSearchResult: React.FC<MovieSearchResultInterface> = ({
                   <Button onClick={() => handleAddMovie(result.id)}>Add</Button>
                 )}
                 {addingMovie === true && <P>Loading...</P>}
-                {addingMovie === false && !error && <P>Done</P>}
+                {addingMovie === false && !error && newMovieAddedID && (
+                  <Link to={`/movie/movie/${newMovieAddedID}`}>
+                    <Button>Open</Button>
+                  </Link>
+                )}
                 {error && <P>Failed to add: {error}</P>}
               </>
             )}

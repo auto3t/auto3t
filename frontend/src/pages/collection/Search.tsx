@@ -3,7 +3,7 @@ import { Button, H1, Input, P } from '../../components/Typography'
 import { useState } from 'react'
 import useApi from '../../hooks/api'
 import Spinner from '../../components/Spinner'
-import CollectionSearchResult from '../../components/CollectionSearchResult'
+import CollectionSearchResult from '../../components/collection/CollectionSearchResult'
 
 export type CollectionSearchResultType = {
   id: number

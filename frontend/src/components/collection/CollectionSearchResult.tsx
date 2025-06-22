@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom'
-import { CollectionSearchResultType } from '../pages/collection/Search'
-import { Button, H2, P, StyledLink } from './Typography'
+import { CollectionSearchResultType } from '../../pages/collection/Search'
+import { Button, H2, P, StyledLink } from '../Typography'
 import { useState } from 'react'
-import Spinner from './Spinner'
-import useApi from '../hooks/api'
+import useApi from '../../hooks/api'
+import { CollectionType } from '../../pages/collection/Collections'
 
 interface CollectionSearchResultInterface {
   result: CollectionSearchResultType
@@ -14,16 +14,18 @@ const CollectionSearchResult: React.FC<CollectionSearchResultInterface> = ({
 }) => {
   const { post, error } = useApi()
   const [addingCollection, setAddingCollection] = useState<boolean | null>(null)
+  const [newCollectionAddedID, setNewCollectionAddedId] = useState<
+    number | null
+  >(null)
 
-  const handleAddCollection = (remoteServerId: number) => {
+  const handleAddCollection = async (remoteServerId: number) => {
     setAddingCollection(true)
-    post('movie/collection/', { remote_server_id: remoteServerId })
-      .then((data) => {
-        console.log('Collection added successfully: ', JSON.stringify(data))
-      })
-      .catch((error) => {
-        console.error('Error adding collection: ', error)
-      })
+    const newCollection = (await post('movie/collection/', {
+      remote_server_id: remoteServerId,
+    })) as CollectionType
+    if (newCollection) {
+      setNewCollectionAddedId(newCollection.id)
+    }
     setAddingCollection(false)
   }
 
@@ -56,8 +58,14 @@ const CollectionSearchResult: React.FC<CollectionSearchResultInterface> = ({
                     Add
                   </Button>
                 )}
-                {addingCollection === true && <Spinner />}
-                {addingCollection === false && !error && <P>Done</P>}
+                {addingCollection === true && <P>Loading...</P>}
+                {addingCollection === false &&
+                  !error &&
+                  newCollectionAddedID && (
+                    <Link to={`/collection/${newCollectionAddedID}`}>
+                      <Button>Open</Button>
+                    </Link>
+                  )}
                 {error && <P>Failed to add: {error}</P>}
               </>
             )}

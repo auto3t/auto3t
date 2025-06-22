@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from tv.models import TVEpisode, TVSeason, TVShow
 from tv.serializers import TVEpisodeBulkUpdateSerializer, TVEpisodeSerializer, TVSeasonSerializer, TVShowSerializer
+from tv.src.show import TVMazeShow
 from tv.src.show_search import ShowId
 from tv.tasks import import_show, refresh_status
 
@@ -38,14 +39,11 @@ class ShowViewSet(viewsets.ModelViewSet):
         if not remote_server_id:
             return Response({"message": "missing remote_server_id key"}, status=400)
 
-        job = import_show.delay(remote_server_id)
-        message = {
-            "id": job.id,
-            "message": f"show import task started: {remote_server_id}",
-            "time": job.enqueued_at.isoformat(),
-        }
+        show = TVMazeShow(show_id=remote_server_id).get_show()
+        import_show.delay(remote_server_id)
+        serializer = TVShowSerializer(show)
 
-        return Response(message)
+        return Response(serializer.data)
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()

@@ -4,6 +4,7 @@ import { ShowSearchResultType } from '../pages/tv/Search'
 import useApi from '../hooks/api'
 import { useState } from 'react'
 import { Button, H2, P, StyledLink, TagItem } from './Typography'
+import { ShowType } from './ShowDetail'
 
 interface ShowSearchResultInterface {
   result: ShowSearchResultType
@@ -12,16 +13,16 @@ interface ShowSearchResultInterface {
 const ShowSearchResult: React.FC<ShowSearchResultInterface> = ({ result }) => {
   const { post, error } = useApi()
   const [addingShow, setAddingShow] = useState<null | boolean>(null)
+  const [newAddedShowID, setNewAddedShowID] = useState<number | null>(null)
 
-  const handleAddShow = (remoteServerId: number) => {
+  const handleAddShow = async (remoteServerId: number) => {
     setAddingShow(true)
-    post('tv/show/', { remote_server_id: remoteServerId })
-      .then((data) => {
-        console.log('Show added successfully: ', JSON.stringify(data))
-      })
-      .catch((error) => {
-        console.error('Error adding show:', error)
-      })
+    const response = (await post('tv/show/', {
+      remote_server_id: remoteServerId,
+    })) as ShowType
+    if (response) {
+      setNewAddedShowID(response.id)
+    }
     setAddingShow(false)
   }
 
@@ -69,7 +70,11 @@ const ShowSearchResult: React.FC<ShowSearchResultInterface> = ({ result }) => {
                   </Button>
                 )}
                 {addingShow === true && <P>Loading...</P>}
-                {addingShow === false && !error && <P>Done</P>}
+                {addingShow === false && !error && newAddedShowID && (
+                  <Link to={`/tv/show/${newAddedShowID}`}>
+                    <Button>Open</Button>
+                  </Link>
+                )}
                 {error && <P>Failed to add: {error}</P>}
               </>
             )}

@@ -26,9 +26,9 @@ const MissingMovieTile = function ({
 }) {
   const { post } = useApi()
 
-  const year = missingMovie.release_date
-    ? `(${new Date('2024-07-24').getFullYear()})`
-    : ''
+  const year: number | null = missingMovie.release_date
+    ? new Date(missingMovie.release_date).getFullYear()
+    : null
   const [addingMovie, setAddingMovie] = useState<boolean | null>(null)
 
   const handleAddMovie = async (remoteServerId: string) => {
@@ -66,7 +66,8 @@ const MissingMovieTile = function ({
       </div>
       <div className="text-center">
         <H3>
-          {missingMovie.name} {year}
+          {missingMovie.name}
+          {year ? ` (${year})` : ''}
         </H3>
       </div>
     </div>

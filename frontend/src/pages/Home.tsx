@@ -142,7 +142,9 @@ const Home: React.FC = () => {
         <P>No upcoming episodes found.</P>
       )}
       {hasMoreUpcomingEpisodes && (
-        <Button onClick={handleLoadMoreUpcomingEpisodes}>Load More</Button>
+        <div className="py-4 flex justify-center">
+          <Button onClick={handleLoadMoreUpcomingEpisodes}>Load More</Button>
+        </div>
       )}
       <H3>Movies</H3>
       {isLoadingUpcomingMovies ? (
@@ -161,7 +163,9 @@ const Home: React.FC = () => {
         <P>No upcoming movies found.</P>
       )}
       {hasMoreUpcomingMovies && (
-        <Button onClick={handleLoadMoreUpcomingMovies}>Load More</Button>
+        <div className="py-4 flex justify-center">
+          <Button onClick={handleLoadMoreUpcomingMovies}>Load More</Button>
+        </div>
       )}
     </>
   )

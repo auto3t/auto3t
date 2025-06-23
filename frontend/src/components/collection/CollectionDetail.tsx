@@ -45,7 +45,7 @@ const CollectionDetail: React.FC<CollectionInterface> = ({
 
   const tableRows = [
     [
-      'Auto add movies',
+      'Track movies in collection',
       <ToggleSwitch
         key="tracking"
         value={collectionDetail?.tracking || false}

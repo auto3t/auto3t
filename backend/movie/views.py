@@ -43,7 +43,11 @@ class CollectionViewSet(viewsets.ModelViewSet):
         if not remote_server_id:
             return Response({"message": "missing remote_server_id key"}, status=400)
 
-        collection = MovieDBCollection(collection_id=remote_server_id).get_collection(tracking=True)
+        tracking = data.get("tracking")
+        if tracking is None:
+            return Response({"message": "missing tracking key"}, status=400)
+
+        collection = MovieDBCollection(collection_id=remote_server_id).get_collection(tracking=tracking)
         import_collection.delay(remote_server_id=remote_server_id, tracking=True)
         serializer = CollectionSerializer(collection)
 

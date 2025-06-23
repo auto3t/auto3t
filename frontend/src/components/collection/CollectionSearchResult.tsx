@@ -4,6 +4,7 @@ import { Button, H2, P, StyledLink } from '../Typography'
 import { useState } from 'react'
 import useApi from '../../hooks/api'
 import { CollectionType } from '../../pages/collection/Collections'
+import ToggleSwitch from '../ConfigToggle'
 
 interface CollectionSearchResultInterface {
   result: CollectionSearchResultType
@@ -14,6 +15,7 @@ const CollectionSearchResult: React.FC<CollectionSearchResultInterface> = ({
 }) => {
   const { post, error } = useApi()
   const [addingCollection, setAddingCollection] = useState<boolean | null>(null)
+  const [addAsTracking, setAddAsTracking] = useState(true)
   const [newCollectionAddedID, setNewCollectionAddedId] = useState<
     number | null
   >(null)
@@ -22,6 +24,7 @@ const CollectionSearchResult: React.FC<CollectionSearchResultInterface> = ({
     setAddingCollection(true)
     const newCollection = (await post('movie/collection/', {
       remote_server_id: remoteServerId,
+      tracking: addAsTracking,
     })) as CollectionType
     if (newCollection) {
       setNewCollectionAddedId(newCollection.id)
@@ -46,7 +49,7 @@ const CollectionSearchResult: React.FC<CollectionSearchResultInterface> = ({
             </StyledLink>
           </P>
           <P>{result.summary}</P>
-          <div className="flex gap-2 my-2">
+          <div className="flex flex-col gap-2 my-2">
             {result.local_id ? (
               <Link to={`collection/${result.local_id}`}>
                 <Button>Open</Button>
@@ -54,9 +57,21 @@ const CollectionSearchResult: React.FC<CollectionSearchResultInterface> = ({
             ) : (
               <>
                 {addingCollection === null && (
-                  <Button onClick={() => handleAddCollection(result.id)}>
-                    Add
-                  </Button>
+                  <>
+                    <div className="flex gap-2">
+                      <P>Tracking: </P>
+                      <ToggleSwitch
+                        key="tracking"
+                        value={addAsTracking}
+                        onChange={() => setAddAsTracking(!addAsTracking)}
+                      />
+                    </div>
+                    <div className="mt-2">
+                      <Button onClick={() => handleAddCollection(result.id)}>
+                        Add
+                      </Button>
+                    </div>
+                  </>
                 )}
                 {addingCollection === true && <P>Loading...</P>}
                 {addingCollection === false &&

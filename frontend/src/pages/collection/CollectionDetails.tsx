@@ -60,8 +60,9 @@ const MissingMovieTile = function ({
               Add
             </Button>
           )}
-          {addingMovie === true && <Spinner />}
-          <TagItem variant="alert">missing</TagItem>
+          <TagItem variant="alert">
+            {addingMovie === true ? 'adding...' : 'missing'}
+          </TagItem>
         </div>
       </div>
       <div className="text-center">

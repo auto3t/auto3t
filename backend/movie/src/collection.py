@@ -129,7 +129,9 @@ class CollectionMissing:
             self.set_cache(movie_data)
             missing.append(movie_data)
 
-        return missing
+        missing_sorted = sorted(missing, key=lambda d: d.get("release_date"))
+
+        return missing_sorted
 
     def get_cached(self, remote_server_id: str) -> dict | None:
         """get cached"""

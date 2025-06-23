@@ -34,7 +34,7 @@ const MissingMovieTile = function ({
   const handleAddMovie = async (remoteServerId: string) => {
     setAddingMovie(true)
     try {
-      const response = await post('movie/movie/', {
+      await post('movie/movie/', {
         remote_server_id: remoteServerId,
       })
     } catch (error) {

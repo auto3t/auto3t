@@ -28,9 +28,9 @@ const CollectionDetail: React.FC<CollectionInterface> = ({
 
   const handleTrackingToggle = async () => {
     try {
-      const response = (await put(`movie/collection/${collectionDetail.id}/`, {
+      await put(`movie/collection/${collectionDetail.id}/`, {
         tracking: !collectionDetail?.tracking,
-      })) as CollectionType
+      })
       fetchCollection()
     } catch (error) {
       console.error('failed to update tracking state: ', error)

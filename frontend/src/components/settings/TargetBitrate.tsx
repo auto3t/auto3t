@@ -181,7 +181,9 @@ export default function TargetBitrate() {
         onChange={(e) => setNewDefaultMovie(e.target.checked)}
         key="new-default-movie"
       />,
-      <Button onClick={handleNewTargetSubmit}>Save</Button>,
+      <Button onClick={handleNewTargetSubmit} key="new-button-submit">
+        Save
+      </Button>,
     ])
   }
   const rows = rowsHead.concat(

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { formatBitrate, formatBytes, formatDuration } from '../utils'
 import { MediaServerMetaType } from './Episode'
-import { H2, P, Table } from './Typography'
+import { H2, Table } from './Typography'
 import PlayIcon from './PlayIcon'
 
 interface MediaServerDetailInterface {

@@ -30,7 +30,11 @@ export default function MovieReleaseTarget() {
   const handleCheckboxUpdate = (id: number, checked: boolean) => {
     setSelectedTargets((prev) => {
       const updated = new Set(prev)
-      checked ? updated.add(id) : updated.delete(id)
+      if (checked) {
+        updated.add(id)
+      } else {
+        updated.delete(id)
+      }
       return updated
     })
   }

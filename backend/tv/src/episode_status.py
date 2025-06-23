@@ -22,7 +22,7 @@ class EpisodeStatus:
         self.set_searching()
         found_season_magnets = self.find_seasons_magnets()
         found_episode_magnets = self.find_episode_magnets()
-        plain_torrents = Torrent.objects.filter(torrent_state="u", torrent_type__in=["e", "s"]).exists()
+        plain_torrents = Torrent.objects.filter(torrent_state="u", torrent_type__in=["e", "s", "w"]).exists()
 
         return any([found_episode_magnets, found_season_magnets, plain_torrents])
 

@@ -45,7 +45,7 @@ class Archiver:
         if not tm_torrent.is_finished:
             return
 
-        if torrent.torrent_type in ["e", "s"]:
+        if torrent.torrent_type in ["e", "s", "w"]:
             episodes = TVEpisode.objects.filter(torrent=torrent).exclude(status="f")
             for episode in episodes:
                 self._archive_episode(tm_torrent, episode)

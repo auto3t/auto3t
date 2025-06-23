@@ -9,6 +9,7 @@ import { KeywordType } from './settings/Keywords'
 import posterDefault from '../../assets/poster-default.jpg'
 import ToggleSwitch from './ConfigToggle'
 import { Button, H1, Input, P, StyledLink, Table, TagItem } from './Typography'
+import ManualSearch from './ManualSearch'
 
 export type ShowType = {
   id: number
@@ -20,6 +21,7 @@ export type ShowType = {
   remote_server_url: string
   is_active: boolean
   remote_server_id: string
+  search_query: string
   search_name?: string
   image_show?: ImageType
   season_fallback?: ImageType
@@ -187,6 +189,11 @@ const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
               all_keywords={showDetail.all_keywords}
               patchURL={`tv/show/${showDetail.id}/?direction=remove`}
               refreshCallback={fetchShow}
+            />
+            <ManualSearch
+              searchType="show"
+              searchTypeId={showDetail.id}
+              searchDefault={showDetail.search_query}
             />
           </>
         )}

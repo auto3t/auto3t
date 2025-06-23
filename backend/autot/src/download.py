@@ -170,6 +170,7 @@ class Transmission(DownloaderBase):
         from autot.src.archive import Archiver
 
         if local_torrent.torrent_type == "e":
+            # single episode check
             episode = TVEpisode.objects.get(torrent=local_torrent)
             try:
                 Archiver().get_valid_media_file(remote_torrent, episode)
@@ -183,11 +184,15 @@ class Transmission(DownloaderBase):
                 local_torrent.save()
             return
 
-        if local_torrent.torrent_type == "s":
+        if local_torrent.torrent_type in ["s", "w"]:
+            # multiple episodes check
             episodes = TVEpisode.objects.filter(torrent=local_torrent)
             try:
                 for episode in episodes:
                     Archiver().get_valid_media_file(remote_torrent, episode)
+
+                local_torrent.has_expected_files = True
+                local_torrent.save()
 
             except FileNotFoundError:
                 self.cancel(local_torrent)

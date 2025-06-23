@@ -99,6 +99,7 @@ class Torrent(models.Model):
     TORRENT_TYPE = [
         ("e", "Episode"),
         ("s", "Season"),
+        ("w", "Show"),
         ("m", "Movie"),
     ]
     TORRENT_STATE = [

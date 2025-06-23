@@ -135,6 +135,13 @@ class TVShow(BaseModel):
         """set string representation"""
         return f"{self.name}"
 
+    @property
+    def search_query(self) -> str:
+        """search for season"""
+        show_name = self.search_name or self.name
+
+        return f"{show_name} COMPLETE"
+
     def delete(self, *args, **kwargs):
         """overwrite to delete image foreign keys"""
         try:
@@ -224,6 +231,19 @@ class TVShow(BaseModel):
     def get_all_episodes(self):
         """get all episodes of show reverse lookup"""
         return TVEpisode.objects.filter(season__show=self)
+
+    def add_magnet(self, magnet: str, title: str | None) -> None:
+        """add magnet to all episodes in season"""
+        if not self.status == "e":
+            raise ValueError("can't add show torrent for show not ended")
+
+        episodes = TVEpisode.objects.filter(season__show=self)
+
+        for episode in episodes:
+            episode.add_magnet(magnet, title, torrent_type="w")
+
+        episodes.update(status="d", media_server_id=None, media_server_meta=None)
+        log_change(self, "c", comment="Added Show Torrent.")
 
     def get_logs_related(self) -> QuerySet[ActionLog]:
         """get related log instances of show"""

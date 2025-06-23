@@ -121,7 +121,7 @@ const ManualSearch: React.FC<ManualSearchInterface> = ({
 
   return (
     <div className="manual-search">
-      <H2>Manual Search</H2>
+      <H2>Manual Search for {searchType}</H2>
       <div className="flex gap-2">
         <Input
           type="text"

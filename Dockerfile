@@ -1,4 +1,4 @@
-FROM python:3.11.3-slim-bullseye AS python-builder
+FROM python:3.11.13-slim-bullseye AS python-builder
 
 # install requirements
 RUN python -m venv /applib
@@ -7,7 +7,7 @@ COPY ./requirements.txt /requirements.txt
 RUN pip install -r requirements.txt
 
 # build main.js
-FROM node:22.10 AS js-builder
+FROM node:24 AS js-builder
 
 ARG GIT_COMMIT
 ENV VITE_GIT_COMMIT=$GIT_COMMIT
@@ -19,7 +19,7 @@ COPY frontend/ .
 RUN npm run build
 
 # build final image
-FROM python:3.11.3-slim-bullseye AS autot
+FROM python:3.11.13-slim-bullseye AS autot
 ARG INSTALL_DEBUG
 ENV PYTHONUNBUFFERED=1
 ENV PATH=/applib/bin:$PATH

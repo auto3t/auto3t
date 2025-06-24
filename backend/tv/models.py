@@ -61,9 +61,9 @@ class BaseModel(models.Model):
             to_crop = int((img.width - img.height * target_aspect) / 2)
             borders = (to_crop, 0, img.width - to_crop, img.height)
 
-        img = img.crop(borders)
+        img_file = img.crop(borders)
         buffer = BytesIO()
-        img.save(buffer, format="JPEG")
+        img_file.save(buffer, format="JPEG")
         buffer.seek(0)
 
         return buffer.getvalue()

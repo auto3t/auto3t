@@ -16,6 +16,7 @@ export type ShowType = {
   name: string
   description: string
   status_display: string
+  status: string
   release_date: string
   end_date: string
   remote_server_url: string
@@ -190,11 +191,13 @@ const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
               patchURL={`tv/show/${showDetail.id}/?direction=remove`}
               refreshCallback={fetchShow}
             />
-            <ManualSearch
-              searchType="show"
-              searchTypeId={showDetail.id}
-              searchDefault={showDetail.search_query}
-            />
+            {showDetail.status === 'e' && (
+              <ManualSearch
+                searchType="show"
+                searchTypeId={showDetail.id}
+                searchDefault={showDetail.search_query}
+              />
+            )}
           </>
         )}
       </div>

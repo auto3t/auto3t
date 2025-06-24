@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { SchedulerType } from '../components/Schedule'
+import { SchedulerType } from '../components/settings/Schedule'
 
 interface ScheduleStoreInterface {
   schedules: SchedulerType[]

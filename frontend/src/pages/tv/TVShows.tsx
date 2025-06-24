@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import useTVShowsStore from '../../stores/ShowsStore'
-import ShowTile from '../../components/ShowTile'
+import ShowTile from '../../components/tv/ShowTile'
 import useApi from '../../hooks/api'
 import { Link } from 'react-router-dom'
 import useUserProfileStore from '../../stores/UserProfileStore'

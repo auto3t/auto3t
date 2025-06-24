@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom'
-import ImageComponent, { ImageType } from './ImageComponent'
-import TimeComponent from './TimeComponent'
-import { TorrentType } from './Torrent'
+import ImageComponent, { ImageType } from '../ImageComponent'
+import TimeComponent from '../TimeComponent'
+import { TorrentType } from '../Torrent'
 import { SeasonType } from './Season'
-import ProgressBar from './ProgressBar'
-import episodeLogoDefault from '../../assets/episode-default.jpg'
-import { P, StyledLink, TagItem } from './Typography'
+import ProgressBar from '../ProgressBar'
+import episodeLogoDefault from '../../../assets/episode-default.jpg'
+import { P, StyledLink, TagItem } from '../Typography'
 
 export type MediaServerMetaType = {
   width: number

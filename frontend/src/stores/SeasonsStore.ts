@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { SeasonType } from '../components/Season'
+import { SeasonType } from '../components/tv/Season'
 
 interface TVSeasonsStoreInterface {
   seasons: SeasonType[]

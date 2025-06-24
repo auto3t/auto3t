@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom'
-import TimeComponent from './TimeComponent'
-import { ShowSearchResultType } from '../pages/tv/Search'
-import useApi from '../hooks/api'
+import TimeComponent from '../TimeComponent'
+import { ShowSearchResultType } from '../../pages/tv/Search'
+import useApi from '../../hooks/api'
 import { useState } from 'react'
-import { Button, H2, P, StyledLink, TagItem } from './Typography'
+import { Button, H2, P, StyledLink, TagItem } from '../Typography'
 import { ShowType } from './ShowDetail'
 
 interface ShowSearchResultInterface {

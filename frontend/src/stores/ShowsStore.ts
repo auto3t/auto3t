@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { ShowType } from '../components/ShowDetail'
+import { ShowType } from '../components/tv/ShowDetail'
 
 interface TVShowStoreInterface {
   shows: ShowType[]

@@ -1,10 +1,10 @@
 // show tile for show grid
 
 import { Link } from 'react-router-dom'
-import ImageComponent from './ImageComponent'
+import ImageComponent from '../ImageComponent'
 import { ShowType } from './ShowDetail'
-import posterDefault from '../../assets/poster-default.jpg'
-import { H3 } from './Typography'
+import posterDefault from '../../../assets/poster-default.jpg'
+import { H3 } from '../Typography'
 
 interface ShowTileInterface {
   show: ShowType

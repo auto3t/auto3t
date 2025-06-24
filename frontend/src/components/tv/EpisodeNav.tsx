@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
-import useApi from '../hooks/api'
+import useApi from '../../hooks/api'
 import { EpisodeType } from './Episode'
-import { P, StyledLink } from './Typography'
+import { P, StyledLink } from '../Typography'
 
 interface EpisodeNavInterface {
   currentEpisodeId: number

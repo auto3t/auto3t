@@ -1,6 +1,6 @@
-import useTVEpisodeStore from '../stores/EpisodesStore'
-import { formatBitrate, formatBytes } from '../utils'
-import { H3, Table } from './Typography'
+import useTVEpisodeStore from '../../stores/EpisodesStore'
+import { formatBitrate, formatBytes } from '../../utils'
+import { H3, Table } from '../Typography'
 
 const SeasonEpisodeSummary = () => {
   const { episodes } = useTVEpisodeStore()

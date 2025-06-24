@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import Episode, { EpisodeType } from '../components/Episode'
+import Episode, { EpisodeType } from '../components/tv/Episode'
 import useApi from '../hooks/api'
 import usePolling from '../hooks/usePolling'
 import { Button, H2, H3, P } from '../components/Typography'

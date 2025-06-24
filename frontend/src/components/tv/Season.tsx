@@ -1,9 +1,9 @@
-import useSelectedSeasonStore from '../stores/SeasonSelectedStore'
-import ImageComponent, { ImageType } from './ImageComponent'
-import { KeywordType } from './settings/Keywords'
+import useSelectedSeasonStore from '../../stores/SeasonSelectedStore'
+import ImageComponent, { ImageType } from '../ImageComponent'
+import { KeywordType } from '../settings/Keywords'
 import { ShowType } from './ShowDetail'
-import posterDefault from '../../assets/poster-default.jpg'
-import { H3 } from './Typography'
+import posterDefault from '../../../assets/poster-default.jpg'
+import { H3 } from '../Typography'
 
 export type SeasonType = {
   id: number

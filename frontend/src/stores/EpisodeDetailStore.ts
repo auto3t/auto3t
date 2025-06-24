@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { EpisodeType } from '../components/Episode'
+import { EpisodeType } from '../components/tv/Episode'
 import { ImageType } from '../components/ImageComponent'
 
 interface EpisodeDetailStoreInterface {

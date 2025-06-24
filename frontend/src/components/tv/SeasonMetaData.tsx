@@ -1,13 +1,21 @@
 import { useState } from 'react'
-import useApi from '../hooks/api'
-import TimeComponent from './TimeComponent'
-import useBulkUpdateStore from '../stores/EpisodeBulkUpdateStore'
-import useSelectedSeasonStore from '../stores/SeasonSelectedStore'
-import AddKeywordComponent from './AddKeywordComponent'
-import KeywordTableCompnent from './KeywordTableComponent'
-import ManualSearch from './ManualSearch'
+import useApi from '../../hooks/api'
+import TimeComponent from '../TimeComponent'
+import useBulkUpdateStore from '../../stores/EpisodeBulkUpdateStore'
+import useSelectedSeasonStore from '../../stores/SeasonSelectedStore'
+import AddKeywordComponent from '../AddKeywordComponent'
+import KeywordTableCompnent from '../KeywordTableComponent'
+import ManualSearch from '../ManualSearch'
 import SeasonEpisodeSummary from './SeasonEpisodeSummary'
-import { Button, H2, P, Select, StyledLink, Table, TagItem } from './Typography'
+import {
+  Button,
+  H2,
+  P,
+  Select,
+  StyledLink,
+  Table,
+  TagItem,
+} from '../Typography'
 
 interface SeasonMetaDataInterface {
   fetchEpisodes: (seasonId: number) => void

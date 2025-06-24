@@ -17,10 +17,10 @@ const MovieSearchResult: React.FC<MovieSearchResultInterface> = ({
   const [addingMovie, setAddingMovie] = useState<null | boolean>(null)
   const [newMovieAddedID, setNewMovieAddedID] = useState<number | null>(null)
 
-  const handleAddMovie = async (remoteServerId: string) => {
+  const handleAddMovie = async (theMoviedbId: string) => {
     setAddingMovie(true)
     const newMovie = (await post('movie/movie/', {
-      remote_server_id: remoteServerId,
+      the_moviedb_id: theMoviedbId,
     })) as MovieType
     if (newMovie) {
       setNewMovieAddedID(newMovie.id)

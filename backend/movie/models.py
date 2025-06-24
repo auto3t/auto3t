@@ -39,13 +39,13 @@ class Collection(BaseModel):
     """describes a movie collection"""
 
     TRACK_CHANGES = True
-    remote_server_id = models.CharField(max_length=255, unique=True)
+    the_moviedb_id = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
     image_collection = models.ForeignKey(
         Artwork, related_name="image_collection", on_delete=models.PROTECT, null=True, blank=True
     )
-    movie_ids = models.JSONField(default=list)
+    the_moviedb_ids = models.JSONField(default=list)
     tracking = models.BooleanField(default=False)
 
     def __str__(self):
@@ -55,7 +55,7 @@ class Collection(BaseModel):
     @property
     def remote_server_url(self) -> str:
         """concat url"""
-        return f"https://www.themoviedb.org/collection/{self.remote_server_id}"
+        return f"https://www.themoviedb.org/collection/{self.the_moviedb_id}"
 
     def update_image_collection(self, image_url: str | None) -> None:
         """handle update with or without existing"""
@@ -81,7 +81,7 @@ class Movie(BaseModel):
     CONFIG: ConfigType = get_config()
     FUZZY_RATIO = 95
 
-    remote_server_id = models.CharField(max_length=255, unique=True)
+    the_moviedb_id = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     date_added = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
@@ -110,7 +110,7 @@ class Movie(BaseModel):
     @property
     def remote_server_url(self) -> str:
         """concat url"""
-        return f"https://www.themoviedb.org/movie/{self.remote_server_id}"
+        return f"https://www.themoviedb.org/movie/{self.the_moviedb_id}"
 
     @property
     def name_display(self) -> str:

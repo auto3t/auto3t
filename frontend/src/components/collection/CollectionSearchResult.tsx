@@ -20,10 +20,10 @@ const CollectionSearchResult: React.FC<CollectionSearchResultInterface> = ({
     number | null
   >(null)
 
-  const handleAddCollection = async (remoteServerId: number) => {
+  const handleAddCollection = async (theMoviedbId: number) => {
     setAddingCollection(true)
     const newCollection = (await post('movie/collection/', {
-      remote_server_id: remoteServerId,
+      the_moviedb_id: theMoviedbId,
       tracking: addAsTracking,
     })) as CollectionType
     if (newCollection) {

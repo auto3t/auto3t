@@ -35,12 +35,12 @@ class ShowViewSet(viewsets.ModelViewSet):
         if not data:
             return Response({"message": "missing request body"}, status=400)
 
-        remote_server_id = data.get("remote_server_id")
-        if not remote_server_id:
-            return Response({"message": "missing remote_server_id key"}, status=400)
+        tvmaze_id = data.get("tvmaze_id")
+        if not tvmaze_id:
+            return Response({"message": "missing tvmaze_id key"}, status=400)
 
-        show = TVMazeShow(show_id=remote_server_id).get_show()
-        import_show.delay(remote_server_id)
+        show = TVMazeShow(tvmaze_id=tvmaze_id).get_show()
+        import_show.delay(tvmaze_id)
         serializer = TVShowSerializer(show)
 
         return Response(serializer.data)

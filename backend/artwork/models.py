@@ -94,7 +94,7 @@ class Artwork(models.Model):
 
     @property
     def id_hash(self) -> str:
-        """hash of remote_server_id"""
+        """hash of url"""
         return md5(self.image_url.encode()).hexdigest()  # pylint: disable=no-member
 
     @property

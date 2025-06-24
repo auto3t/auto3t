@@ -22,7 +22,7 @@ export type MovieType = {
   description: string
   runtime: number | null
   remote_server_url: string
-  remote_server_id: string
+  the_moviedb_id: string
   release_date: string
   status: string
   status_display: string
@@ -91,7 +91,7 @@ const MovieDetails: React.FC = () => {
                       target="_blank"
                       rel="noreferrer"
                     >
-                      {movieDetail.collection.remote_server_id}
+                      {movieDetail.collection.the_moviedb_id}
                     </StyledLink>
                   </P>
                   <P className="mb-2">{movieDetail.collection.description}</P>

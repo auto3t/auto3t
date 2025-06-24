@@ -20,7 +20,7 @@ def refresh_all_movies() -> None:
     jobs = []
     queue = get_queue("movie")
     for movie in to_refresh:
-        refresh_job = queue.enqueue(refresh_movie, args=(movie.remote_server_id,))
+        refresh_job = queue.enqueue(refresh_movie, args=(movie.the_moviedb_id,))
         jobs.append(refresh_job)
 
     if jobs:
@@ -29,32 +29,32 @@ def refresh_all_movies() -> None:
 
 
 @job("movie")
-def import_movie(remote_server_id: str) -> None:
+def import_movie(the_moviedb_id: str) -> None:
     """import new movie"""
     queue = get_queue("default")
-    refresh_job = refresh_movie.delay(remote_server_id)
+    refresh_job = refresh_movie.delay(the_moviedb_id)
     queue.enqueue(media_server_identify, depends_on=refresh_job)
     download_thumbnails.delay()
 
 
 @job("movie")
-def refresh_movie(remote_server_id: str) -> None:
+def refresh_movie(the_moviedb_id: str) -> None:
     """job to refresh a single movie"""
-    MovieDBMovie(remote_server_id).validate()
+    MovieDBMovie(the_moviedb_id).validate()
 
 
 @job("movie")
-def import_collection(remote_server_id: str, tracking: bool = False) -> None:
+def import_collection(the_moviedb_id: str, tracking: bool = False) -> None:
     """import new collection"""
-    refresh_job = refresh_collection.delay(remote_server_id=remote_server_id, tracking=tracking)
+    refresh_job = refresh_collection.delay(the_moviedb_id=the_moviedb_id, tracking=tracking)
     queue = get_queue("thumbnails")
     queue.enqueue(download_thumbnails, depends_on=refresh_job)
 
 
 @job("movie")
-def refresh_collection(remote_server_id: str, tracking: bool = False) -> None:
+def refresh_collection(the_moviedb_id: str, tracking: bool = False) -> None:
     """refresh collection"""
-    MovieDBCollection(collection_id=remote_server_id).validate(tracking=tracking)
+    MovieDBCollection(the_moviedb_id=the_moviedb_id).validate(tracking=tracking)
 
 
 @job("movie")

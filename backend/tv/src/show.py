@@ -17,8 +17,8 @@ from autot.static import TvShowStatus
 class TVMazeShow:
     """tvmaze remote implementation"""
 
-    def __init__(self, show_id: str):
-        self.show_id = show_id
+    def __init__(self, tvmaze_id: str):
+        self.tvmaze_id = tvmaze_id
         self.timezone = pytz.timezone("UTC")
 
     def validate(self) -> None:
@@ -34,7 +34,7 @@ class TVMazeShow:
         show_data = self._parse_show(response)
 
         try:
-            show = TVShow.objects.get(remote_server_id=self.show_id)
+            show = TVShow.objects.get(tvmaze_id=self.tvmaze_id)
         except TVShow.DoesNotExist:
             show = TVShow.objects.create(**show_data)
             image_show = self._get_image_url(response)
@@ -79,7 +79,7 @@ class TVMazeShow:
 
     def _get_remote_show(self) -> dict:
         """get show from tvmaze api"""
-        url = f"shows/{self.show_id}?embed=images"
+        url = f"shows/{self.tvmaze_id}?embed=images"
 
         response = TVMaze().get(url)
         if not response:
@@ -97,7 +97,7 @@ class TVMazeShow:
     def _parse_show(self, response: dict) -> dict:
         """parse API response to model"""
         show_data = {
-            "remote_server_id": str(response["id"]),
+            "tvmaze_id": str(response["id"]),
             "remote_server_url": response["url"],
             "release_date": self._get_date_time(response.get("premiered")),
             "end_date": self._get_date_time(response.get("ended")),
@@ -172,7 +172,7 @@ class TVMazeShow:
 
     def _get_remote_seasons(self) -> dict:
         """get season of show"""
-        url = f"shows/{self.show_id}/seasons"
+        url = f"shows/{self.tvmaze_id}/seasons"
         response = TVMaze().get(url)
 
         if not response:
@@ -183,7 +183,7 @@ class TVMazeShow:
     def _parse_season(self, season_response: dict, show: TVShow) -> dict:
         """parse seasons"""
         season_data = {
-            "remote_server_id": str(season_response["id"]),
+            "tvmaze_id": str(season_response["id"]),
             "remote_server_url": season_response["url"],
             "release_date": self._get_date_time(season_response.get("premiereDate")),
             "end_date": self._get_date_time(season_response.get("endDate")),
@@ -239,7 +239,7 @@ class TVMazeShow:
 
     def _get_remote_episodes(self) -> dict | None:
         """get episodes of show"""
-        url = f"shows/{self.show_id}/episodes"
+        url = f"shows/{self.tvmaze_id}/episodes"
         response = TVMaze().get(url)
 
         if not response:
@@ -250,7 +250,7 @@ class TVMazeShow:
     def _parse_episode(self, episode_response: dict, season: TVSeason) -> dict:
         """parse episodes"""
         episode_data = {
-            "remote_server_id": str(episode_response["id"]),
+            "tvmaze_id": str(episode_response["id"]),
             "remote_server_url": episode_response["url"],
             "release_date": self._get_date_time(episode_response.get("airstamp")),
             "runtime": episode_response.get("runtime"),

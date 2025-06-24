@@ -19,27 +19,28 @@ def refresh_all_shows() -> None:
     jobs = []
     queue = get_queue("show")
     for show in to_refresh:
-        refresh_job = queue.enqueue(refresh_show, args=(show.remote_server_id,))
+        refresh_job = queue.enqueue(refresh_show, args=(show.tvmaze_id,))
         jobs.append(refresh_job)
 
     if jobs:
         queue.enqueue(refresh_status, depends_on=jobs)
-        download_thumbnails.delay(depends_on=jobs)
+        thumb_queue = get_queue("thumbnails")
+        thumb_queue.enqueue(download_thumbnails, depends_on=jobs)
 
 
 @job("show")
-def import_show(remote_server_id: str) -> None:
+def import_show(tvmaze_id: str) -> None:
     """import new show"""
     queue = get_queue("default")
-    refresh_job = refresh_show.delay(remote_server_id)
+    refresh_job = refresh_show.delay(tvmaze_id)
     queue.enqueue(media_server_identify, depends_on=refresh_job)
     download_thumbnails.delay()
 
 
 @job("show")
-def refresh_show(remote_server_id: str) -> None:
+def refresh_show(tvmaze_id: str) -> None:
     """job to refresh a single show"""
-    TVMazeShow(show_id=remote_server_id).validate()
+    TVMazeShow(tvmaze_id=tvmaze_id).validate()
 
 
 @job("show")

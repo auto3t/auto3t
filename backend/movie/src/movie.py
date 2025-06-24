@@ -14,8 +14,8 @@ from autot.static import MovieProductionState
 class MovieDBMovie:
     """moviedb remote implementation"""
 
-    def __init__(self, movie_id: str):
-        self.movie_id = movie_id
+    def __init__(self, the_moviedb_id: str):
+        self.the_moviedb_id = the_moviedb_id
 
     def validate(self) -> None:
         """import movie as needed"""
@@ -26,9 +26,9 @@ class MovieDBMovie:
 
         if collection_id:
             movie_queue = django_rq.get_queue("movie")
-            queued = {i.kwargs.get("remote_server_id") for i in movie_queue.get_jobs()}
+            queued = {i.kwargs.get("the_moviedb_id") for i in movie_queue.get_jobs()}
             if collection_id not in queued:
-                refresh_collection.delay(remote_server_id=str(collection_id))
+                refresh_collection.delay(the_moviedb_id=str(collection_id))
 
     def get_movie(self) -> tuple[Movie, int | None]:
         """get or create moview"""
@@ -38,7 +38,7 @@ class MovieDBMovie:
         collection_id: int | None = (response.get("belongs_to_collection") or {}).get("id")
 
         try:
-            movie = Movie.objects.get(remote_server_id=response["id"])
+            movie = Movie.objects.get(the_moviedb_id=response["id"])
         except Movie.DoesNotExist:
             movie = Movie.objects.create(**movie_data)
             if poster_path:
@@ -68,7 +68,7 @@ class MovieDBMovie:
 
     def _get_remote_movie(self) -> dict:
         """get movie from api"""
-        url = f"movie/{self.movie_id}"
+        url = f"movie/{self.the_moviedb_id}"
         response = MovieDB().get(url)
         if not response:
             raise ValueError
@@ -79,7 +79,7 @@ class MovieDBMovie:
         """parse API response for model"""
         release_date = date.fromisoformat(response["release_date"]) if response["release_date"] else None
         movie_data = {
-            "remote_server_id": str(response["id"]),
+            "the_moviedb_id": str(response["id"]),
             "name": response["original_title"],
             "description": response["overview"],
             "tagline": response["tagline"],
@@ -110,7 +110,7 @@ class MovieDBMovie:
             try:
                 release_type = release_data["release_type"]
                 movie_release = MovieRelease.objects.get(
-                    movie__remote_server_id=self.movie_id, release_type=release_type
+                    movie__the_moviedb_id=self.the_moviedb_id, release_type=release_type
                 )
             except MovieRelease.DoesNotExist:
                 movie_release = MovieRelease.objects.create(**release_data)
@@ -129,7 +129,7 @@ class MovieDBMovie:
 
     def _get_remote_releases(self) -> dict:
         """get remote releases"""
-        url = f"movie/{self.movie_id}/release_dates"
+        url = f"movie/{self.the_moviedb_id}/release_dates"
         response = MovieDB().get(url)
         if not response:
             raise ValueError

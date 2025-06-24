@@ -106,7 +106,13 @@ class MediaServerIdentify:
         to_id = self.get_unidentified()
 
         for media_item in to_id:
-            jf_data = jf_items.get(media_item.remote_server_id)
+            if hasattr(media_item, "the_moviedb_id"):
+                jf_data = jf_items.get(media_item.the_moviedb_id)
+            elif hasattr(media_item, "tvmaze_id"):
+                jf_data = jf_items.get(media_item.tvmaze_id)
+            else:
+                raise NotImplementedError("did not find expected remote ID")
+
             if not jf_data:
                 continue
 

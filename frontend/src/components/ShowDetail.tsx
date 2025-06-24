@@ -21,7 +21,7 @@ export type ShowType = {
   end_date: string
   remote_server_url: string
   is_active: boolean
-  remote_server_id: string
+  tvmaze_id: string
   search_query: string
   search_name?: string
   image_show?: ImageType
@@ -112,7 +112,7 @@ const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
               target="_blank"
               rel="noreferrer"
             >
-              {showDetail.remote_server_id}
+              {showDetail.tvmaze_id}
             </StyledLink>
           </P>
           <P dangerouslySetInnerHTML={{ __html: showDetail.description }} />

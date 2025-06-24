@@ -23,7 +23,7 @@ class MovieId:
         if not response:
             return None
 
-        local_ids = {i.remote_server_id: i.id for i in Movie.objects.all()}
+        local_ids = {i.the_moviedb_id: i.id for i in Movie.objects.all()}
         options = [self._parse_result(result, local_ids) for result in response["results"]]
 
         return options
@@ -66,7 +66,7 @@ class CollectionId:
         if not response:
             return None
 
-        local_ids = {i.remote_server_id: i.id for i in Collection.objects.all()}
+        local_ids = {i.the_moviedb_id: i.id for i in Collection.objects.all()}
         options = [self._parse_result(result, local_ids) for result in response["results"]]
 
         return options

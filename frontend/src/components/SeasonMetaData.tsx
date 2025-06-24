@@ -51,7 +51,7 @@ const SeasonMetaData: React.FC<SeasonMetaDataInterface> = ({
             target="_blank"
             rel="noreferrer"
           >
-            {selectedSeason.remote_server_id}
+            {selectedSeason.tvmaze_id}
           </StyledLink>
         </P>
         <P dangerouslySetInnerHTML={{ __html: selectedSeason.description }} />

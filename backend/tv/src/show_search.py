@@ -23,7 +23,7 @@ class ShowId:
         if not response:
             return None
 
-        local_ids = {i.remote_server_id: i.id for i in TVShow.objects.all()}
+        local_ids = {i.tvmaze_id: i.id for i in TVShow.objects.all()}
         options = [self.parse_result(result, local_ids) for result in response]
 
         return options

@@ -72,7 +72,7 @@ const CollectionDetail: React.FC<CollectionInterface> = ({
               target="_blank"
               rel="noreferrer"
             >
-              {collectionDetail.remote_server_id}
+              {collectionDetail.the_moviedb_id}
             </StyledLink>
           </P>
           <P>{collectionDetail.description}</P>

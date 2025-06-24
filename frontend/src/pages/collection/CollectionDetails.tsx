@@ -10,7 +10,7 @@ import MovieTile from '../../components/movie/MovieTile'
 import CollectionDetail from '../../components/collection/CollectionDetail'
 
 type MissingMovieType = {
-  remote_server_id: string
+  the_moviedb_id: string
   name: string
   description: string
   tagline: string
@@ -31,11 +31,11 @@ const MissingMovieTile = function ({
     : null
   const [addingMovie, setAddingMovie] = useState<boolean | null>(null)
 
-  const handleAddMovie = async (remoteServerId: string) => {
+  const handleAddMovie = async (theMoviedbId: string) => {
     setAddingMovie(true)
     try {
       await post('movie/movie/', {
-        remote_server_id: remoteServerId,
+        the_moviedb_id: theMoviedbId,
       })
     } catch (error) {
       console.error('failed to add movie: ', error)
@@ -54,7 +54,7 @@ const MissingMovieTile = function ({
         <div className="absolute top-0 right-0 m-4">
           {addingMovie === null && (
             <Button
-              onClick={() => handleAddMovie(missingMovie.remote_server_id)}
+              onClick={() => handleAddMovie(missingMovie.the_moviedb_id)}
               className="mr-2"
             >
               Add
@@ -171,7 +171,7 @@ export default function CollectionDetails() {
                 ) : (
                   missingCollectionMovies.map((missingMovie) => (
                     <MissingMovieTile
-                      key={missingMovie.remote_server_id}
+                      key={missingMovie.the_moviedb_id}
                       missingMovie={missingMovie}
                     />
                   ))

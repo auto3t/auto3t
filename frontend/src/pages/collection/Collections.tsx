@@ -11,7 +11,7 @@ export type CollectionType = {
   id: number
   image_collection: ImageType
   remote_server_url: string
-  remote_server_id: string
+  the_moviedb_id: string
   name: string
   description: string
   tracking: boolean

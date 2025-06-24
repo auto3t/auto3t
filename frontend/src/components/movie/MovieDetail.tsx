@@ -60,7 +60,7 @@ const MovieDetail: React.FC<MovieInterface> = ({ movieDetail, fetchMovie }) => {
               target="_blank"
               rel="noreferrer"
             >
-              {movieDetail.remote_server_id}
+              {movieDetail.the_moviedb_id}
             </StyledLink>
           </P>
           <P>{movieDetail.description}</P>

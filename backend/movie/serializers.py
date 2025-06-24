@@ -23,7 +23,7 @@ class CollectionSerializer(serializers.ModelSerializer):
             "image_collection",
             "remote_server_url",
             "movie_ids",
-            "remote_server_id",
+            "the_moviedb_id",
             "name",
             "description",
         )
@@ -54,7 +54,7 @@ class MovieSerializer(serializers.ModelSerializer):
 class MovieMissingSerializer(serializers.Serializer):
     """free serialize missing movie response"""
 
-    remote_server_id = serializers.CharField()
+    the_moviedb_id = serializers.CharField()
     name = serializers.CharField()
     description = serializers.CharField(required=False, allow_null=True)
     tagline = serializers.CharField(allow_blank=True)

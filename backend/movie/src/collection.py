@@ -15,8 +15,8 @@ from autot.src.redis_con import AutotRedis
 class MovieDBCollection:
     """interact with movie DB collections"""
 
-    def __init__(self, collection_id: str):
-        self.collection_id = collection_id
+    def __init__(self, the_moviedb_id: str):
+        self.the_moviedb_id = the_moviedb_id
 
     def validate(self, tracking: bool):
         """validate collection"""
@@ -32,7 +32,7 @@ class MovieDBCollection:
         poster_path = response.get("poster_path")
 
         try:
-            collection = Collection.objects.get(remote_server_id=self.collection_id)
+            collection = Collection.objects.get(the_moviedb_id=self.the_moviedb_id)
         except Collection.DoesNotExist:
             collection = Collection.objects.create(**collection_data)
             if poster_path:
@@ -63,11 +63,11 @@ class MovieDBCollection:
 
     def add_movies(self, collection) -> None:
         """add movies to collection"""
-        Movie.objects.filter(remote_server_id__in=collection.movie_ids).update(collection=collection)
+        Movie.objects.filter(the_moviedb_id__in=collection.the_moviedb_ids).update(collection=collection)
 
     def _get_remote_collection(self) -> dict:
         """get collection"""
-        url = f"collection/{self.collection_id}"
+        url = f"collection/{self.the_moviedb_id}"
         response = MovieDB().get(url)
         if not response:
             raise ValueError
@@ -77,10 +77,10 @@ class MovieDBCollection:
     def _parse_collection(self, response: dict) -> dict:
         """parse API response for collection"""
         collection_data = {
-            "remote_server_id": str(response["id"]),
+            "the_moviedb_id": str(response["id"]),
             "name": response["name"],
             "description": response["overview"],
-            "movie_ids": [str(i["id"]) for i in response["parts"]],
+            "the_moviedb_ids": [str(i["id"]) for i in response["parts"]],
         }
         return collection_data
 
@@ -93,8 +93,8 @@ class MovieDBCollection:
         from movie.tasks import import_movie
 
         missing_ids = CollectionMissing(collection).get_missing_ids()
-        for remote_server_id in missing_ids:
-            import_movie.delay(remote_server_id=remote_server_id)
+        for the_moviedb_id in missing_ids:
+            import_movie.delay(the_moviedb_id=the_moviedb_id)
 
 
 class CollectionMissing:
@@ -108,7 +108,7 @@ class CollectionMissing:
 
     def get_missing_ids(self):
         """get missing ids in collection"""
-        have = set(Movie.objects.filter(collection=self.collection).values_list("remote_server_id", flat=True))
+        have = set(Movie.objects.filter(collection=self.collection).values_list("the_moviedb_id", flat=True))
         missing_ids = set(self.collection.movie_ids) - have
 
         return missing_ids
@@ -119,13 +119,13 @@ class CollectionMissing:
 
         missing = []
 
-        for remote_server_id in missing_ids:
-            movie_data = self.get_cached(remote_server_id)
+        for the_moviedb_id in missing_ids:
+            movie_data = self.get_cached(the_moviedb_id)
             if movie_data:
                 missing.append(movie_data)
                 continue
 
-            movie_data = self.get_remote(remote_server_id)
+            movie_data = self.get_remote(the_moviedb_id)
             self.set_cache(movie_data)
             missing.append(movie_data)
 
@@ -133,9 +133,9 @@ class CollectionMissing:
 
         return missing_sorted
 
-    def get_cached(self, remote_server_id: str) -> dict | None:
+    def get_cached(self, the_moviedb_id: str) -> dict | None:
         """get cached"""
-        key = f"{self.REDIS_PREFIX}:{remote_server_id}"
+        key = f"{self.REDIS_PREFIX}:{the_moviedb_id}"
         cached = AutotRedis().get_message(key)
         if not cached:
             return None
@@ -145,15 +145,15 @@ class CollectionMissing:
 
     def set_cache(self, movie_data: dict) -> None:
         """set cached"""
-        key = f"{self.REDIS_PREFIX}:{movie_data['remote_server_id']}"
+        key = f"{self.REDIS_PREFIX}:{movie_data['the_moviedb_id']}"
         messages = {}
         messages[key] = json.dumps(movie_data)
         AutotRedis().set_messages(messages, expire=self.REDIS_EXPIRE)
 
-    def get_remote(self, remote_server_id: str):
+    def get_remote(self, the_moviedb_id: str):
         """get from remote"""
 
-        handler = MovieDBMovie(remote_server_id)
+        handler = MovieDBMovie(the_moviedb_id)
         response = handler._get_remote_movie()
         movie_data = handler._parse_movie(response)
 

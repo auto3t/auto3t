@@ -1,6 +1,6 @@
 import useSelectedSeasonStore from '../stores/SeasonSelectedStore'
 import ImageComponent, { ImageType } from './ImageComponent'
-import { KeywordType } from './Keywords'
+import { KeywordType } from './settings/Keywords'
 import { ShowType } from './ShowDetail'
 import posterDefault from '../../assets/poster-default.jpg'
 import { H3 } from './Typography'
@@ -11,7 +11,7 @@ export type SeasonType = {
   image_season?: ImageType
   season_fallback?: ImageType
   description: string
-  remote_server_id: string
+  tvmaze_id: string
   remote_server_url: string
   release_date: string
   end_date: string

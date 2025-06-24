@@ -28,7 +28,7 @@ class BaseModel(models.Model):
     CONFIG: ConfigType = get_config()
     IMAGE_SIZE: None | tuple[int, int] = None
 
-    remote_server_id = models.CharField(max_length=255, verbose_name="ID on remote server")
+    tvmaze_id = models.CharField(max_length=255, verbose_name="ID on remote server")
     remote_server_url = models.URLField(null=True, blank=True, verbose_name="URL on remote server")
     date_added = models.DateTimeField(auto_now_add=True, verbose_name="Date added")
     date_modified = models.DateTimeField(auto_now=True, verbose_name="Date modified")

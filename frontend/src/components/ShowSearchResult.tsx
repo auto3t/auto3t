@@ -15,10 +15,10 @@ const ShowSearchResult: React.FC<ShowSearchResultInterface> = ({ result }) => {
   const [addingShow, setAddingShow] = useState<null | boolean>(null)
   const [newAddedShowID, setNewAddedShowID] = useState<number | null>(null)
 
-  const handleAddShow = async (remoteServerId: number) => {
+  const handleAddShow = async (tvmazeId: number) => {
     setAddingShow(true)
     const response = (await post('tv/show/', {
-      remote_server_id: remoteServerId,
+      tvmaze_id: tvmazeId,
     })) as ShowType
     if (response) {
       setNewAddedShowID(response.id)

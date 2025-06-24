@@ -39,16 +39,16 @@ class CollectionViewSet(viewsets.ModelViewSet):
         if not data:
             return Response({"message": "missing request body"}, status=400)
 
-        remote_server_id = data.get("remote_server_id")
-        if not remote_server_id:
-            return Response({"message": "missing remote_server_id key"}, status=400)
+        the_moviedb_id = data.get("the_moviedb_id")
+        if not the_moviedb_id:
+            return Response({"message": "missing the_moviedb_id key"}, status=400)
 
         tracking = data.get("tracking")
         if tracking is None:
             return Response({"message": "missing tracking key"}, status=400)
 
-        collection = MovieDBCollection(collection_id=remote_server_id).get_collection(tracking=tracking)
-        import_collection.delay(remote_server_id=remote_server_id, tracking=True)
+        collection = MovieDBCollection(the_moviedb_id=the_moviedb_id).get_collection(tracking=tracking)
+        import_collection.delay(the_moviedb_id=the_moviedb_id, tracking=True)
         serializer = CollectionSerializer(collection)
 
         return Response(serializer.data)
@@ -96,13 +96,13 @@ class MovieViewSet(viewsets.ModelViewSet):
         if not data:
             return Response({"message": "missing request body"}, status=400)
 
-        remote_server_id = data.get("remote_server_id")
-        if not remote_server_id:
-            return Response({"message": "missing remote_server_id key"}, status=400)
+        the_moviedb_id = data.get("the_moviedb_id")
+        if not the_moviedb_id:
+            return Response({"message": "missing the_moviedb_id key"}, status=400)
 
-        movie, _ = MovieDBMovie(movie_id=remote_server_id).get_movie()
+        movie, _ = MovieDBMovie(the_moviedb_id=the_moviedb_id).get_movie()
         serializer = MovieSerializer(movie)
-        import_movie.delay(remote_server_id)
+        import_movie.delay(the_moviedb_id)
 
         return Response(serializer.data)
 

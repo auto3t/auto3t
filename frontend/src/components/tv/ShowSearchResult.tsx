@@ -5,6 +5,7 @@ import useApi from '../../hooks/api'
 import { useState } from 'react'
 import { Button, H2, P, StyledLink, TagItem } from '../Typography'
 import { ShowType } from './ShowDetail'
+import ToggleSwitch from '../ConfigToggle'
 
 interface ShowSearchResultInterface {
   result: ShowSearchResultType
@@ -14,11 +15,13 @@ const ShowSearchResult: React.FC<ShowSearchResultInterface> = ({ result }) => {
   const { post, error } = useApi()
   const [addingShow, setAddingShow] = useState<null | boolean>(null)
   const [newAddedShowID, setNewAddedShowID] = useState<number | null>(null)
+  const [isActive, setIsActive] = useState(true)
 
   const handleAddShow = async (tvmazeId: number) => {
     setAddingShow(true)
     const response = (await post('tv/show/', {
       tvmaze_id: tvmazeId,
+      is_active: isActive,
     })) as ShowType
     if (response) {
       setNewAddedShowID(response.id)
@@ -55,29 +58,41 @@ const ShowSearchResult: React.FC<ShowSearchResultInterface> = ({ result }) => {
                 End: {<TimeComponent timestamp={result.ended} />}
               </TagItem>
             )}
-            {result.local_id ? (
-              <Link to={`/tv/show/${result.local_id}`}>
-                <Button>Open</Button>
-              </Link>
-            ) : (
-              <>
-                {addingShow === null && (
-                  <Button
-                    className="pointer"
-                    onClick={() => handleAddShow(result.id)}
-                  >
-                    Add
-                  </Button>
-                )}
-                {addingShow === true && <P>Loading...</P>}
-                {addingShow === false && !error && newAddedShowID && (
-                  <Link to={`/tv/show/${newAddedShowID}`}>
-                    <Button>Open</Button>
-                  </Link>
-                )}
-                {error && <P>Failed to add: {error}</P>}
-              </>
-            )}
+          </div>
+          <div>
+            <div className="mb-4">
+              {result.local_id ? (
+                <Link to={`/tv/show/${result.local_id}`}>
+                  <Button>Open</Button>
+                </Link>
+              ) : (
+                <>
+                  {addingShow === null && (
+                    <div className="flex gap-2">
+                      <P>Active:</P>
+                      <ToggleSwitch
+                        key="active"
+                        value={isActive}
+                        onChange={() => setIsActive(!isActive)}
+                      />
+                      <Button
+                        className="pointer"
+                        onClick={() => handleAddShow(result.id)}
+                      >
+                        Add
+                      </Button>
+                    </div>
+                  )}
+                  {addingShow === true && <P>Loading...</P>}
+                  {addingShow === false && !error && newAddedShowID && (
+                    <Link to={`/tv/show/${newAddedShowID}`}>
+                      <Button>Open</Button>
+                    </Link>
+                  )}
+                  {error && <P>Failed to add: {error}</P>}
+                </>
+              )}
+            </div>
           </div>
           {result.genres.length > 0 && (
             <P>Genres: {result.genres.join(', ')}</P>

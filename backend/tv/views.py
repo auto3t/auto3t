@@ -39,7 +39,11 @@ class ShowViewSet(viewsets.ModelViewSet):
         if not tvmaze_id:
             return Response({"message": "missing tvmaze_id key"}, status=400)
 
-        show = TVMazeShow(tvmaze_id=tvmaze_id).get_show()
+        is_active = data.get("is_active")
+        if is_active is None:
+            return Response({"message": "missing is_active key"}, status=400)
+
+        show = TVMazeShow(tvmaze_id=tvmaze_id).get_show(is_active=is_active)
         import_show.delay(tvmaze_id)
         serializer = TVShowSerializer(show)
 

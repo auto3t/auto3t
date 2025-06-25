@@ -27,11 +27,12 @@ class TVMazeShow:
         seasons: QuerySet[TVSeason] = self.check_seasons(show)
         self.check_episodes(seasons)
 
-    def get_show(self) -> TVShow:
+    def get_show(self, is_active: bool = True) -> TVShow:
         """get or create show"""
         response = self._get_remote_show()
         self._get_time_zone(response)
         show_data = self._parse_show(response)
+        show_data.update({"is_active": is_active})
 
         try:
             show = TVShow.objects.get(tvmaze_id=self.tvmaze_id)

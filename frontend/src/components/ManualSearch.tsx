@@ -20,18 +20,21 @@ interface ManualSearchInterface {
   searchType: string
   searchTypeId: number
   searchDefault: string
+  setRefresh?: (toRefresh: boolean) => void
 }
 
 interface ManualSearchResultInterface {
   result: ManualSearchType
   searchType: string
   searchTypeId: number
+  setRefresh?: (toRefresh: boolean) => void
 }
 
 const ManualSearchResult: React.FC<ManualSearchResultInterface> = ({
   result,
   searchType,
   searchTypeId,
+  setRefresh,
 }) => {
   const { post, error } = useApi()
   const [addDownloadLoading, setAddDownloadLoading] = useState<null | boolean>(
@@ -59,6 +62,7 @@ const ManualSearchResult: React.FC<ManualSearchResultInterface> = ({
       console.error('failed to add torrent', error)
     }
     setAddDownloadLoading(false)
+    if (setRefresh) setRefresh(true)
   }
 
   return (
@@ -88,6 +92,7 @@ const ManualSearch: React.FC<ManualSearchInterface> = ({
   searchType,
   searchTypeId,
   searchDefault = '',
+  setRefresh,
 }) => {
   const { post } = useApi()
   const [searchTerm, setSearchTerm] = useState('')
@@ -144,6 +149,7 @@ const ManualSearch: React.FC<ManualSearchInterface> = ({
                   result={result}
                   searchType={searchType}
                   searchTypeId={searchTypeId}
+                  setRefresh={setRefresh}
                 />
               ))}
             </div>

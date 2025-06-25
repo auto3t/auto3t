@@ -198,6 +198,14 @@ class Movie(BaseModel):
         self.save()
         log_change(self, action="c", field_name="torrent", new_value=torrent.magnet_hash)
 
+    def reset_download(self) -> None:
+        """reset torrent and state"""
+        self.torrent.filter(torrent_state__in=["u", "q", "d"]).update(torrent_state="i", progress=None)
+        self.status = None
+        self.media_server_id = None
+        self.save()
+        log_change(self, "u", comment="Cancel Torrent Download")
+
     def get_archive_path(self, suffix: str | None = None) -> Path:
         """build archive path"""
         path = Path(str(self.release_date.year)) / self.name_display / self.name_display

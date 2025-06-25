@@ -3,34 +3,16 @@
 from math import ceil
 
 from django.utils import timezone
-from movie.models import Movie
 from transmission_rpc import Client
 from transmission_rpc.torrent import Torrent as TransmissionTorrent
 from tv.models import Torrent, TVEpisode
 
-from autot.models import log_change
 from autot.src.config import ConfigType, get_config
 from autot.src.helper import get_tracker_list
 from autot.static import TvEpisodeStatus
 
 
-class DownloaderBase:
-    """base class"""
-
-    def add_all(self) -> None:
-        """add item to download"""
-        raise NotImplementedError
-
-    def delete(self, torrent: Torrent) -> None:
-        """delete item from download"""
-        raise NotImplementedError
-
-    def update_state(self):
-        """loop through torrents update model state"""
-        raise NotImplementedError
-
-
-class Transmission(DownloaderBase):
+class Transmission:
     """implement transmission downloader"""
 
     CONFIG: ConfigType = get_config()
@@ -68,40 +50,14 @@ class Transmission(DownloaderBase):
 
         return None
 
-    def cancel(self, torrent: Torrent) -> None:
+    def cancel(self, torrent: Torrent) -> Torrent:
         """cancel and reset torrent"""
-        if torrent.torrent_type in ["e", "s"]:
-            self._cancel_episode(torrent)
-        elif torrent.torrent_type == "m":
-            self._cancel_movie(torrent)
-
+        updated_torrent = torrent.set_to_ignore()
         to_delete = self.get_single(torrent)
         if to_delete:
             self.delete(to_delete)
 
-    def _cancel_episode(self, torrent: Torrent) -> None:
-        """cancel episode torrents"""
-        torrent.torrent_state = "i"
-        torrent.progress = None
-        torrent.save()
-        episodes = TVEpisode.objects.filter(torrent=torrent)
-        for episode in episodes:
-            episode.status = None
-            episode.media_server_id = None
-            episode.save()
-            log_change(episode, "u", comment=f"Cancel Torrent Download: {torrent.magnet_hash}")
-
-    def _cancel_movie(self, torrent) -> None:
-        """cancel movie torrents"""
-        torrent.torrent_state = "i"
-        torrent.progress = None
-        torrent.save()
-        movies = Movie.objects.filter(torrent=torrent)
-        for movie in movies:
-            movie.status = None
-            movie.media_server_id = None
-            movie.save()
-            log_change(movie, "u", comment=f"Cancel Torrent Download: {torrent.magnet_hash}")
+        return updated_torrent
 
     def delete(self, torrent: TransmissionTorrent) -> None:
         """delete torrent"""
@@ -121,6 +77,7 @@ class Transmission(DownloaderBase):
         for local_torrent in to_check:
             remote_torrent = in_queue.get(local_torrent.magnet_hash)
             if not remote_torrent:
+                local_torrent.set_to_ignore()
                 continue
 
             has_files = remote_torrent.get_files()

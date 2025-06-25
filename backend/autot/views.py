@@ -61,12 +61,33 @@ class TorrentViewSet(
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
     mixins.DestroyModelMixin,
+    mixins.UpdateModelMixin,
     viewsets.GenericViewSet,
 ):
     """get torrent/s"""
 
     serializer_class = TorrentSerializer
     queryset = Torrent.objects.all()
+
+    def update(self, request, *args, **kwargs):
+        """handle update"""
+        from autot.src.download import Transmission
+
+        instance = self.get_object()
+        data = request.data
+
+        if "torrent_state" not in data:
+            message = {"error": "One or more fields cannot be updated."}
+            return Response(message, status=400)
+
+        torrent_state = data.get("torrent_state")
+        if torrent_state != "i":
+            message = {"error": "torrent_state can only be changed to 'i'"}
+
+        updated_torrent = Transmission().cancel(instance)
+        serializer = self.get_serializer(updated_torrent)
+
+        return Response(serializer.data)
 
     @action(detail=False, methods=["post"])
     def search(self, request, **kwargs):

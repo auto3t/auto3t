@@ -126,6 +126,23 @@ class Torrent(models.Model):
         """extract magnet hash"""
         return get_magnet_hash(self.magnet)
 
+    def set_to_ignore(self):
+        """set torrent to ignore"""
+        from movie.models import Movie
+        from tv.models import TVEpisode
+
+        if self.torrent_type in ["e", "s", "w"]:
+            episodes = TVEpisode.objects.filter(torrent=self)
+            for episode in episodes:
+                episode.reset_download()
+        elif self.torrent_type == "m":
+            movies = Movie.objects.filter(torrent=self)
+            for movie in movies:
+                movie.reset_download()
+
+        self.refresh_from_db()
+        return self
+
     def __str__(self):
         """describe torrent"""
         torrent_string = f"{self.magnet_hash} [{self.torrent_state}]"

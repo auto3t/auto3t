@@ -103,6 +103,7 @@ const TVEpisode: React.FC = () => {
             searchType="episode"
             searchTypeId={episodeDetail.id}
             searchDefault={episodeDetail.search_query}
+            setRefresh={setEpisodeRefresh}
           />
         </>
       )}

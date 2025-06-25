@@ -20,7 +20,7 @@ interface TorrentInterface {
 }
 
 const Torrent: React.FC<TorrentInterface> = ({ torrent, setRefresh }) => {
-  const { del } = useApi()
+  const { patch, del } = useApi()
   const [isExpanded, setIsExpanded] = useState(false)
   const [deleteConfirm, setDeleteConfirm] = useState(false)
 
@@ -30,6 +30,17 @@ const Torrent: React.FC<TorrentInterface> = ({ torrent, setRefresh }) => {
       setRefresh(true)
     } catch {
       console.error('failed to delete torrent')
+    }
+  }
+
+  const handleIgnore = async () => {
+    try {
+      await patch(`torrent/${torrent.id}/`, {
+        torrent_state: 'i',
+      })
+      setRefresh(true)
+    } catch {
+      console.error('failed to update torrent')
     }
   }
 
@@ -62,6 +73,13 @@ const Torrent: React.FC<TorrentInterface> = ({ torrent, setRefresh }) => {
         <P className="bg-accent-3 p-2 mb-2 break-words">
           {isExpanded ? torrent.magnet : torrent.magnet_hash}
         </P>
+        {(torrent.torrent_state === 'u' ||
+          torrent.torrent_state === 'q' ||
+          torrent.torrent_state === 'd') && (
+          <Button className="mr-2" onClick={handleIgnore}>
+            Ignore
+          </Button>
+        )}
         <Button onClick={() => setIsExpanded(!isExpanded)}>
           {isExpanded ? 'Show Hash' : 'Show Magnet'}
         </Button>

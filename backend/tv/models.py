@@ -494,11 +494,12 @@ class TVEpisode(BaseModel):
 
     def reset_download(self) -> None:
         """reset torrent and state"""
-        self.torrent.update(torrent_state="i")
+        self.torrent.filter(torrent_state__in=["u", "q", "d"]).update(torrent_state="i", progress=None)
         self.status = None
         self.media_server_id = None
         self.media_server_meta = None
         self.save()
+        log_change(self, "u", comment="Cancel Torrent Download")
 
     def add_magnet(self, magnet, title, torrent_type="e") -> None:
         """add magnet to episode"""

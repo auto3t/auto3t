@@ -159,7 +159,7 @@ class Jackett:
         has_link = result_item.get("MagnetUri") or result_item.get("Link")
         has_seeders = result_item.get("Seeders", 0) > 2
         has_gain = result_item.get("Gain", 0) > 1
-        is_valid_path = to_search.is_valid_path(result_item["Title"])
+        is_valid_path = to_search.is_valid_path(result_item["Title"], strict=True)
 
         is_filesize_target = True
         if hasattr(to_search, "target_file_size"):

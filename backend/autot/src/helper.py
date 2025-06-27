@@ -39,3 +39,8 @@ def get_tracker_list() -> list[str]:
         return []
 
     return response.text.split()
+
+
+def title_clean(title) -> str:
+    """clean torrent title string"""
+    return title.lower().replace(".", " ").replace(":", "").replace(" & ", " ")

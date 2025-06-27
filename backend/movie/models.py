@@ -11,6 +11,7 @@ from rapidfuzz import fuzz
 
 from autot.models import SearchWord, SearchWordCategory, TargetBitrate, Torrent, log_change
 from autot.src.config import ConfigType, get_config
+from autot.src.helper import title_clean
 from autot.static import MovieProductionState, MovieReleaseType, MovieStatus
 
 
@@ -214,9 +215,9 @@ class Movie(BaseModel):
 
         return path
 
-    def is_valid_path(self, path: str) -> bool:
+    def is_valid_path(self, path: str, strict: bool = True) -> bool:
         """check if path is valid"""
-        movie_search = self.name.lower().replace(".", "").replace(":", "").replace(" & ", " ")
+        movie_search = title_clean(self.name)
         year_str = str(self.release_date.year)
         path_lower = path.lower()
         close_enough = fuzz.partial_ratio(movie_search, path_lower) > self.FUZZY_RATIO

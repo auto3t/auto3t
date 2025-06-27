@@ -15,10 +15,11 @@ from django.db.models.query import QuerySet
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
 from PIL import Image, ImageFilter
+from rapidfuzz import fuzz
 
 from autot.models import ActionLog, SearchWord, SearchWordCategory, Torrent, log_change
 from autot.src.config import ConfigType, get_config
-from autot.src.helper import sanitize_file_name
+from autot.src.helper import sanitize_file_name, title_clean
 from autot.static import TvEpisodeStatus, TvShowStatus
 
 
@@ -26,6 +27,7 @@ class BaseModel(models.Model):
     """base model to enherit from"""
 
     CONFIG: ConfigType = get_config()
+    FUZZY_RATIO = 95
     IMAGE_SIZE: None | tuple[int, int] = None
 
     tvmaze_id = models.CharField(max_length=255, verbose_name="ID on remote server")
@@ -342,9 +344,15 @@ class TVSeason(BaseModel):
         episodes.update(status="d", media_server_id=None, media_server_meta=None)
         log_change(self, "c", comment="Added season Torrent.")
 
-    def is_valid_path(self, path) -> bool:
+    def is_valid_path(self, path, strict: bool = False) -> bool:
         """check for valid season path"""
-        has_complete = "complete" in path.lower()
+        path_clean = title_clean(path)
+        has_complete = "complete" in path_clean
+
+        if strict:
+            close_enough = fuzz.partial_ratio(self.search_query.lower(), path_clean) > self.FUZZY_RATIO
+            if not close_enough:
+                return False
 
         return has_complete
 
@@ -474,20 +482,27 @@ class TVEpisode(BaseModel):
 
         return path
 
-    def is_valid_path(self, path: str) -> bool:
+    def is_valid_path(self, path: str, strict: bool = False) -> bool:
         """check if path is valid"""
         season_number = self.season.number
         episode_number = self.number
 
-        if self.identifier_date in path:
+        path_clean = title_clean(path)
+
+        if strict:
+            close_enough = fuzz.partial_ratio(self.search_query.lower(), path_clean) > self.FUZZY_RATIO
+            if not close_enough:
+                return False
+
+        if self.identifier_date in path_clean:
             return True
 
         pattern_s = re.compile(rf"s0?{season_number}e0?{episode_number}", re.IGNORECASE)
-        if pattern_s.search(path):
+        if pattern_s.search(path_clean):
             return True
 
         pattern_x = re.compile(rf"0?{season_number}x0?{episode_number}", re.IGNORECASE)
-        if pattern_x.search(path):
+        if pattern_x.search(path_clean):
             return True
 
         return False

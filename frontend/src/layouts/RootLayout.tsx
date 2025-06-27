@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom'
+import { Link, Outlet } from 'react-router-dom'
 import Login from '../pages/Login'
 import useAuthStore from '../stores/AuthStore'
 import NotificationBox from '../components/Notifications'
@@ -48,8 +48,9 @@ export default function RootLayout() {
         <header className="max-w-7xl m-auto">
           <nav className="flex justify-between items-center">
             <div className="flex gap-2 items-center">
-              <img className="w-[180px]" src={logo} />
-              <StyledNavLink to="/">Home</StyledNavLink>
+              <Link to="/">
+                <img className="w-[180px]" src={logo} />
+              </Link>
               <StyledNavLink to="tv">TV</StyledNavLink>
               <StyledNavLink to="movie">Movie</StyledNavLink>
               <StyledNavLink to="collection">Collections</StyledNavLink>

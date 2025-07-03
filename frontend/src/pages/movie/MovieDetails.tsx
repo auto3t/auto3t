@@ -6,7 +6,7 @@ import posterDefault from '../../../assets/poster-default.jpg'
 import MovieReleases from '../../components/movie/MovieReleases'
 import ManualSearch from '../../components/ManualSearch'
 import Torrent, { TorrentType } from '../../components/Torrent'
-import { MediaServerMetaType } from '../../components/Episode'
+import { MediaServerMetaType } from '../../components/tv/Episode'
 import MediaServerDetail from '../../components/MediaServerDetail'
 import { Button, H2, H3, P, StyledLink } from '../../components/Typography'
 import { CollectionType } from '../collection/Collections'
@@ -76,7 +76,7 @@ const MovieDetails: React.FC = () => {
             <>
               <H2>Part of Collection</H2>
               <div className="flex gap-4 items-center p-4 my-4 border border-accent-1">
-                <div className="w-50">
+                <div className="w-50 flex-none">
                   <ImageComponent
                     alt={`collection-poster-${movieDetail.collection.name}`}
                     image={getCollectionPoster(movieDetail.collection)}

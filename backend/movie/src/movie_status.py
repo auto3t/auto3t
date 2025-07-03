@@ -28,7 +28,8 @@ class MovieStatus:
 
     def set_upcoming(self):
         """set upcoming movie state"""
-        to_update = Movie.objects.filter(status__isnull=True, release_date__isnull=False)
+        cutoff = timezone.now() - timedelta(days=7)
+        to_update = Movie.objects.filter(status__isnull=True, release_date__lte=cutoff)
         if not to_update:
             return
 

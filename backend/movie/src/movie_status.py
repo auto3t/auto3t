@@ -1,9 +1,11 @@
 """check movies"""
 
 import logging
+from datetime import timedelta
 
+from django.db.models import Q
 from django.utils import timezone
-from movie.models import Movie, MovieReleaseTarget
+from movie.models import Movie, MovieRelease, MovieReleaseTarget
 
 from autot.models import Torrent, log_change
 from autot.src.search import Jackett
@@ -42,14 +44,27 @@ class MovieStatus:
         if not target_object:
             return
 
-        to_update = Movie.objects.filter(
-            status="u",
-            movierelease__release_type__in=target_object.target,
-            movierelease__release_date__lte=timezone.now(),
-        ).distinct()
-        if not to_update:
+        query = Q()
+        for release_type in target_object.target:
+            if not release_type["tracking"]:
+                continue
+
+            cutoff = timezone.now()
+            if release_type["days_delay"]:
+                cutoff = cutoff - timedelta(days=release_type["days_delay"])
+
+            query |= Q(
+                release_type=release_type["release_target"],
+                release_date__lte=cutoff,
+            )
+
+        query &= Q(movie__status="u")
+
+        movie_ids = MovieRelease.objects.filter(query).values_list("movie_id", flat=True).distinct()
+        if not movie_ids:
             return
 
+        to_update = Movie.objects.filter(id__in=movie_ids)
         for movie in to_update:
             old_status = movie.status
             movie.status = "s"

@@ -3,98 +3,109 @@ import { Button, H2, Input, P, Table } from '../Typography'
 import useApi from '../../hooks/api'
 
 type TargetReleaseType = {
-  id: number
-  name: string
+  release_target: number
+  release_label: string
+  days_delay: number | null
   tracking: boolean
 }
 
 export default function MovieReleaseTarget() {
   const { get, post } = useApi()
   const [releaseTargets, setReleaseTargets] = useState<TargetReleaseType[]>([])
+  const [editingTargets, setEditingTargets] = useState<TargetReleaseType[]>([])
   const [isEditing, setIsEditing] = useState(false)
-  const [selectedTargets, setSelectedTargets] = useState(new Set<number>())
 
   useEffect(() => {
     const fetchTargets = async function () {
       const data = (await get('movie/release-target/')) as TargetReleaseType[]
-      const idSet = new Set(
-        data.filter((release) => release.tracking).map((release) => release.id),
-      )
-
-      setSelectedTargets(idSet)
       setReleaseTargets(data)
+      setEditingTargets(data)
     }
     fetchTargets()
   }, [setReleaseTargets])
 
-  const handleCheckboxUpdate = (id: number, checked: boolean) => {
-    setSelectedTargets((prev) => {
-      const updated = new Set(prev)
-      if (checked) {
-        updated.add(id)
-      } else {
-        updated.delete(id)
-      }
-      return updated
-    })
+  const handleCancelEdit = () => {
+    setIsEditing(false)
+    setEditingTargets(releaseTargets)
   }
 
-  const handleTargetSave = async () => {
-    const body = {
-      target: Array.from(selectedTargets),
-    }
-    const data = (await post(
-      'movie/release-target/',
-      body,
-    )) as TargetReleaseType[]
-    if (data) {
-      setReleaseTargets(data)
-      const idSet = new Set(
-        data.filter((release) => release.tracking).map((release) => release.id),
-      )
-      setSelectedTargets(idSet)
-      setIsEditing(false)
-    } else {
-      console.error('failed to update target release')
-    }
-  }
-
-  const resetSelectedTargets = () => {
-    const resetSet = new Set(
-      releaseTargets.filter((rt) => rt.tracking).map((rt) => rt.id),
+  const handleIsTrackingUpdate = (
+    release_target: number,
+    tracking: boolean,
+  ) => {
+    setEditingTargets((prevItems) =>
+      prevItems.map((releaseTarget) =>
+        releaseTarget.release_target === release_target
+          ? { ...releaseTarget, tracking: tracking }
+          : releaseTarget,
+      ),
     )
-    setSelectedTargets(resetSet)
+  }
+
+  const handleDaysUpdate = (release_target: number, days_delay: number) => {
+    setEditingTargets((prevItems) =>
+      prevItems.map((releaseTarget) =>
+        releaseTarget.release_target === release_target
+          ? { ...releaseTarget, days_delay: days_delay || null }
+          : releaseTarget,
+      ),
+    )
+  }
+
+  const handleSave = async () => {
+    const updatedTargets = await post('movie/release-target/', editingTargets)
+    if (updatedTargets) {
+      setReleaseTargets(updatedTargets)
+      setEditingTargets(updatedTargets)
+    }
     setIsEditing(false)
   }
 
   const headers = [
     'Name',
+    'Tracking',
+    'Days Delay',
     isEditing ? (
-      <div className="flex gap-2 justify-between">
-        <P>Tracking</P>
-        <Button onClick={resetSelectedTargets}>Cancel</Button>
-        <Button onClick={handleTargetSave}>Save</Button>
-      </div>
+      <>
+        <Button onClick={handleCancelEdit}>Cancel</Button>
+        {releaseTargets !== editingTargets && (
+          <Button className="ml-2" onClick={handleSave}>
+            Save
+          </Button>
+        )}
+      </>
     ) : (
-      <div className="flex gap-2 justify-between">
-        <P>Tracking</P>
-        <Button onClick={() => setIsEditing(true)}>Edit</Button>
-      </div>
+      <Button onClick={() => setIsEditing(true)}>Edit</Button>
     ),
   ]
-  const rows = releaseTargets.map((releaseTarget) => [
-    <P key={releaseTarget.id}>{releaseTarget.name}</P>,
+
+  const rows = editingTargets.map((releaseTarget) => [
+    <P key={releaseTarget.release_target}>{releaseTarget.release_label}</P>,
     isEditing ? (
       <Input
         type="checkbox"
-        checked={selectedTargets.has(releaseTarget.id)}
-        key={releaseTarget.id}
+        key={releaseTarget.release_target}
+        checked={releaseTarget.tracking}
         onChange={(e) =>
-          handleCheckboxUpdate(releaseTarget.id, e.target.checked)
+          handleIsTrackingUpdate(releaseTarget.release_target, e.target.checked)
         }
       />
     ) : (
-      <P key={releaseTarget.id}>{releaseTarget.tracking ? '✅' : '-'}</P>
+      <P key={releaseTarget.release_target}>
+        {releaseTarget.tracking ? '✅' : '-'}
+      </P>
+    ),
+    isEditing ? (
+      <Input
+        type="number"
+        key={releaseTarget.release_target}
+        value={releaseTarget.days_delay || 0}
+        onChange={(e) =>
+          handleDaysUpdate(releaseTarget.release_target, Number(e.target.value))
+        }
+      />
+    ) : (
+      <P>{releaseTarget.days_delay ? releaseTarget.days_delay : '-'}</P>
     ),
   ])
 

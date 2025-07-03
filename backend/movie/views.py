@@ -9,6 +9,7 @@ from movie.models import Collection, Movie, MovieRelease, MovieReleaseTarget
 from movie.serializers import (
     CollectionSerializer,
     MovieReleaseSerializer,
+    MovieReleaseTargetSerializer,
     MovieSerializer,
 )
 from movie.src.collection import CollectionMissing, MovieDBCollection
@@ -24,7 +25,7 @@ from rest_framework.views import APIView
 from autot.models import SearchWord
 from autot.src.redis_con import AutotRedis
 from autot.src.search import Jackett
-from autot.static import MovieProductionState, MovieReleaseType, MovieStatus
+from autot.static import MovieProductionState, MovieStatus
 
 
 class CollectionViewSet(viewsets.ModelViewSet):
@@ -241,39 +242,29 @@ class MovieReleaseTargetView(APIView):
         """get targets, fallback to default"""
 
         config = MovieReleaseTarget.objects.first()
-        if config:
-            tracked = set(config.target or [])
-        else:
-            tracked = set()
 
-        data = [{"id": rt.number, "name": rt.label, "tracking": rt.number in tracked} for rt in MovieReleaseType]
-        return Response(data)
+        if config:
+            target = config.target
+        else:
+            target = MovieReleaseTarget.DEFAULT
+
+        serializer = MovieReleaseTargetSerializer(target, many=True)
+        return Response(serializer.data)
 
     def post(self, request):
         """update target"""
 
-        valid_ids = {rt.number for rt in MovieReleaseType}
-        data = request.data.get("target", [])
-
-        if not isinstance(data, list) or not all(isinstance(i, int) for i in data):
-            return Response({"error": "Expected a list of integers."}, status=400)
-
-        if not set(data).issubset(valid_ids):
-            return Response({"error": "One or more invalid release type IDs."}, status=400)
+        serializer = MovieReleaseTargetSerializer(data=request.data, many=True)
+        serializer.is_valid(raise_exception=True)
 
         config = MovieReleaseTarget.objects.first()
         if config:
-            config.target = data
+            config.target = serializer.data
             config.save()
         else:
-            config = MovieReleaseTarget.objects.create(target=data)
+            MovieReleaseTarget.objects.create(target=serializer.data)
 
-        tracked_set = set(config.target)
-        response_data = [
-            {"id": rt.number, "name": rt.label, "tracking": rt.number in tracked_set} for rt in MovieReleaseType
-        ]
-
-        return Response(response_data, status=200)
+        return Response(serializer.data)
 
 
 class MovieRemoteSearch(APIView):

@@ -6,7 +6,7 @@ from rest_framework import serializers
 
 from autot.models import TargetBitrate
 from autot.serializers import SearchWordSerializer, TargetBitrateSerializer, TorrentSerializer
-from autot.static import MovieProductionState
+from autot.static import MovieProductionState, MovieReleaseType
 
 
 class CollectionSerializer(serializers.ModelSerializer):
@@ -71,3 +71,12 @@ class MovieReleaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = MovieRelease
         fields = "__all__"
+
+
+class MovieReleaseTargetSerializer(serializers.Serializer):
+    """serialize json object"""
+
+    release_target = serializers.ChoiceField(choices=[i[0] for i in MovieReleaseType.choices()])
+    release_label = serializers.ChoiceField([i[1] for i in MovieReleaseType.choices()])
+    days_delay = serializers.IntegerField(min_value=0, allow_null=True)
+    tracking = serializers.BooleanField()

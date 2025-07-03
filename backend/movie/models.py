@@ -273,7 +273,20 @@ class MovieRelease(models.Model):
 class MovieReleaseTarget(models.Model):
     """movie release target config"""
 
-    target = models.JSONField(default=list)
+    DEFAULT = [
+        {
+            "tracking": False,
+            "release_target": i[0],
+            "release_label": i[1],
+            "days_delay": None,
+        }
+        for i in MovieReleaseType.choices()
+    ]
+
+    target = models.JSONField(blank=True, null=True)
+
+    def __str__(self):
+        return str(self.target)
 
 
 @receiver(post_delete, sender=Movie)

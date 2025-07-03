@@ -28,14 +28,18 @@ class MovieDBMovie:
             movie_queue = django_rq.get_queue("movie")
             queued = {i.kwargs.get("the_moviedb_id") for i in movie_queue.get_jobs()}
             if collection_id not in queued:
-                refresh_collection.delay(the_moviedb_id=str(collection_id))
+                refresh_collection.delay(the_moviedb_id=collection_id)
 
-    def get_movie(self) -> tuple[Movie, int | None]:
+    def get_movie(self) -> tuple[Movie, str | None]:
         """get or create moview"""
         response = self._get_remote_movie()
         movie_data = self._parse_movie(response)
         poster_path = response.get("poster_path")
-        collection_id: int | None = (response.get("belongs_to_collection") or {}).get("id")
+
+        if response.get("belongs_to_collection"):
+            collection_id = response["belongs_to_collection"]["id"]
+        else:
+            collection_id = None
 
         try:
             movie = Movie.objects.get(the_moviedb_id=response["id"])

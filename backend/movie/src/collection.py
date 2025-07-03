@@ -109,7 +109,7 @@ class CollectionMissing:
     def get_missing_ids(self):
         """get missing ids in collection"""
         have = set(Movie.objects.filter(collection=self.collection).values_list("the_moviedb_id", flat=True))
-        missing_ids = set(self.collection.movie_ids) - have
+        missing_ids = set(self.collection.the_moviedb_ids) - have
 
         return missing_ids
 

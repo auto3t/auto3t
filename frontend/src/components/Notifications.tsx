@@ -68,13 +68,15 @@ export default function NotificationBox() {
   return (
     <div>
       {showNotifications && (
-        <div className="fixed right-0 bottom-0 z-10 h-100 bg-main-fg overflow-scroll p-2">
-          <>
-            <Button onClick={handleHideNotifications}>X</Button>
+        <div className="fixed right-0 bottom-0 z-10 h-120 max-w-300 bg-main-fg p-2">
+          <Button className="mb-2" onClick={handleHideNotifications}>
+            X
+          </Button>
+          <div className="overflow-scroll h-100 pr-2">
             {notifications.map((notification) => (
               <div
                 key={notification.id.toString()}
-                className="bg-main-bg p-2 mt-2 flex items-center"
+                className="bg-main-bg mb-2 p-2 flex items-center"
               >
                 <TagItem className="mr-2" title={notification.parsed.action}>
                   {notification.action || '-'}
@@ -104,7 +106,7 @@ export default function NotificationBox() {
                 </div>
               </div>
             ))}
-          </>
+          </div>
         </div>
       )}
     </div>

@@ -32,8 +32,20 @@ class ActionLogView(viewsets.ReadOnlyModelViewSet):
     """action log views"""
 
     serializer_class = ActionLogSerializer
-    queryset = ActionLog.objects.all().order_by("-timestamp")
+    queryset = ActionLog.objects.none()
     pagination_class = StandardResultsSetPagination
+
+    def get_queryset(self):
+        """get queryset with filters"""
+
+        model_name = self.request.query_params.get("content_type")
+        object_id = self.request.query_params.get("object_id")
+        recursive = self.request.query_params.get("recursive", "false").lower() == "true"
+
+        if model_name and object_id:
+            return ActionLog.get_comments(model_name, object_id, recursive=recursive).order_by("-timestamp")
+
+        return ActionLog.objects.all().order_by("-timestamp")
 
 
 class SearchWordCategoryView(viewsets.ModelViewSet):

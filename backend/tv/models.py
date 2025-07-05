@@ -8,16 +8,13 @@ from typing import Self
 
 import pytz
 from artwork.models import Artwork
-from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.db.models import Q
-from django.db.models.query import QuerySet
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
 from PIL import Image, ImageFilter
 from rapidfuzz import fuzz
 
-from autot.models import ActionLog, SearchWord, SearchWordCategory, Torrent, log_change
+from autot.models import SearchWord, SearchWordCategory, Torrent, log_change
 from autot.src.config import ConfigType, get_config
 from autot.src.helper import sanitize_file_name, title_clean
 from autot.static import TvEpisodeStatus, TvShowStatus
@@ -247,24 +244,6 @@ class TVShow(BaseModel):
         episodes.update(status="d", media_server_id=None, media_server_meta=None)
         log_change(self, "c", comment="Added Show Torrent.")
 
-    def get_logs_related(self) -> QuerySet[ActionLog]:
-        """get related log instances of show"""
-        show_type = ContentType.objects.get_for_model(self)
-        season_type = ContentType.objects.get_for_model(TVSeason)
-        episode_type = ContentType.objects.get_for_model(TVEpisode)
-        seasons = TVSeason.objects.filter(show=self)
-        episodes = TVEpisode.objects.filter(season__show=self)
-
-        show_logs = ActionLog.objects.filter(
-            (
-                Q(content_type=episode_type) & Q(object_id__in=episodes)
-                | Q(content_type=season_type) & Q(object_id__in=seasons)
-                | Q(content_type=show_type) & Q(object_id=self.pk)
-            )
-        ).order_by("-timestamp")
-
-        return show_logs
-
 
 class TVSeason(BaseModel):
     """describes a Season of a Show"""
@@ -355,20 +334,6 @@ class TVSeason(BaseModel):
                 return False
 
         return has_complete
-
-    def get_logs_related(self) -> QuerySet[ActionLog]:
-        """get related log instances of season"""
-        season_type = ContentType.objects.get_for_model(self)
-        episode_type = ContentType.objects.get_for_model(TVEpisode)
-        season_episodes = TVEpisode.objects.filter(season=self)
-        season_logs = ActionLog.objects.filter(
-            (
-                Q(content_type=episode_type) & Q(object_id__in=season_episodes)
-                | Q(content_type=season_type) & Q(object_id=self.pk)
-            )
-        ).order_by("-timestamp")
-
-        return season_logs
 
 
 class TVEpisode(BaseModel):

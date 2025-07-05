@@ -143,16 +143,6 @@ class ShowViewSet(viewsets.ModelViewSet):
             return Response(serializer.data)
         return Response([])
 
-    @action(detail=True, methods=["get"])
-    def actionlog_related(self, request, **kwargs):
-        """get show action logs"""
-        show = self.get_object()
-        action_logs = show.get_logs_related()
-        if action_logs:
-            serializer = ActionLogSerializer(action_logs, many=True)
-            return Response(serializer.data)
-        return Response([])
-
 
 class SeasonViewSet(viewsets.ModelViewSet):
     """get tv seasons/s"""
@@ -233,16 +223,6 @@ class SeasonViewSet(viewsets.ModelViewSet):
         """get season action logs"""
         season = self.get_object()
         action_logs = get_logs(season)
-        if action_logs:
-            serializer = ActionLogSerializer(action_logs, many=True)
-            return Response(serializer.data)
-        return Response([])
-
-    @action(detail=True, methods=["get"])
-    def actionlog_related(self, request, **kwargs):
-        """get show action logs"""
-        season = self.get_object()
-        action_logs = season.get_logs_related()
         if action_logs:
             serializer = ActionLogSerializer(action_logs, many=True)
             return Response(serializer.data)

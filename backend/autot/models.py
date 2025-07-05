@@ -265,6 +265,39 @@ class ActionLog(models.Model):
             "message": self._build_message(),
         }
 
+    @classmethod
+    def get_comments(cls, model_name, object_id, recursive=False):
+        """comment lookup on generic foreign key"""
+        from tv.models import TVEpisode, TVSeason
+
+        content_type = ContentType.objects.get(model=model_name)
+        base_filter = models.Q(content_type=content_type, object_id=object_id)
+
+        if not recursive:
+            return cls.objects.filter(base_filter)
+
+        # Handle recursive lookups
+        if model_name == "tvshow":
+            season_ids = TVSeason.objects.filter(show_id=object_id).values_list("id", flat=True)
+            episode_ids = TVEpisode.objects.filter(season__show_id=object_id).values_list("id", flat=True)
+
+            return cls.objects.filter(
+                base_filter
+                | models.Q(content_type=ContentType.objects.get_for_model(TVSeason), object_id__in=season_ids)
+                | models.Q(content_type=ContentType.objects.get_for_model(TVEpisode), object_id__in=episode_ids)
+            )
+
+        elif model_name == "tvseason":
+            episode_ids = TVEpisode.objects.filter(season_id=object_id).values_list("id", flat=True)
+
+            return cls.objects.filter(
+                base_filter
+                | models.Q(content_type=ContentType.objects.get_for_model(TVEpisode), object_id__in=episode_ids)
+            )
+
+        # Default: no children
+        return cls.objects.filter(base_filter)
+
     def _get_reverse_url(self) -> str | None:
         """get reverse url"""
         if self.action == "d":

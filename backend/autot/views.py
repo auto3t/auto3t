@@ -1,6 +1,7 @@
 """all api views"""
 
 import django_rq
+from django.conf import settings
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
@@ -178,3 +179,19 @@ class TaskView(APIView):
         }
 
         return Response(response)
+
+
+class QueueProgress(APIView):
+    """get backend queue processing state"""
+
+    def get(self, request, *args, **kwargs):
+        """get job count"""
+
+        total_pending = 0
+
+        for queue_name in settings.RQ_QUEUES.keys():
+            queue = django_rq.get_queue(queue_name)
+            pending = queue.count + queue.started_job_registry.count + queue.scheduled_job_registry.count
+            total_pending += pending
+
+        return Response({"pending_jobs": total_pending})

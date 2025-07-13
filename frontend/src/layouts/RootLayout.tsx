@@ -8,6 +8,7 @@ import useApi from '../hooks/api'
 import { useEffect } from 'react'
 import useUserProfileStore from '../stores/UserProfileStore'
 import { Button, P, StyledNavLink } from '../components/Typography'
+import ProgressIndicator from '../components/ProgressIndicator'
 
 export default function RootLayout() {
   const { isLoggedIn } = useAuthStore()
@@ -57,6 +58,7 @@ export default function RootLayout() {
               <StyledNavLink to="settings">Settings</StyledNavLink>
             </div>
             <div className="flex gap-2">
+              <ProgressIndicator />
               <Button onClick={handleShowNotifications}>
                 Show Notifications
               </Button>

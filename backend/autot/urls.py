@@ -14,6 +14,9 @@ router.register(r"scheduler", views.SchedulerViewSet, basename="scheduler")
 router.register(r"actionlog", views.ActionLogView, basename="actionlog")
 urlpatterns = router.urls
 
-urlpatterns.append(
-    path("tasks/", views.TaskView.as_view(), name="tasks"),
+urlpatterns.extend(
+    [
+        path("tasks/", views.TaskView.as_view(), name="tasks"),
+        path("progress/", views.QueueProgress.as_view(), name="queue-progress"),
+    ]
 )

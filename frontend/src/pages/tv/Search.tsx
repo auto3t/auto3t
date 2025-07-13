@@ -75,15 +75,6 @@ const TVSearch = () => {
         />
         <Button onClick={handleClear}>Clear</Button>
       </div>
-      {/* {isLoading ? (
-        <P>Loading...</P>
-      ) : results?.length > 0 ? (
-        results.map((result) => (
-          <ShowSearchResult key={result.id} result={result} />
-        ))
-      ) : (
-        <P>Search query did not return any results.</P>
-      )} */}
       {isLoading ? (
         <Spinner />
       ) : query === '' || query.length < 2 ? (

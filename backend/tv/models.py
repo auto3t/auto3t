@@ -455,7 +455,12 @@ class TVEpisode(BaseModel):
         path_clean = title_clean(path)
 
         if strict:
-            close_enough = fuzz.partial_ratio(self.search_query.lower(), path_clean) > self.FUZZY_RATIO
+            to_search = [
+                self.search_query.lower(),
+                self.search_query.lower().replace(".", " "),
+            ]
+            close_enough = any(fuzz.partial_ratio(i, path_clean) > self.FUZZY_RATIO for i in to_search)
+
             if not close_enough:
                 return False
 

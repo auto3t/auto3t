@@ -32,7 +32,6 @@ class TVMazeShow:
         response = self._get_remote_show()
         self._get_time_zone(response)
         show_data = self._parse_show(response)
-        show_data.update({"is_active": is_active})
 
         try:
             show = TVShow.objects.get(tvmaze_id=self.tvmaze_id)
@@ -50,6 +49,7 @@ class TVMazeShow:
             if season_fallback:
                 show.season_fallback, _ = Artwork.objects.get_or_create(image_url=season_fallback)
 
+            show.is_active = is_active
             show.save()
 
             return show

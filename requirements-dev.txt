@@ -7,6 +7,6 @@ isort==6.0.1
 pre-commit==4.2.0
 pylint-django==2.6.1
 python-dotenv==1.1.1
-requirementscheck==0.0.6
+requirementscheck==0.1.0
 types-pytz==2025.2.0.20250516
 types-requests==2.32.4.20250611

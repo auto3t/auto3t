@@ -54,7 +54,7 @@ const useApi = () => {
       if (!response.ok) {
         const errorResponse = JSON.stringify(await response.json())
         console.log(errorResponse)
-        setIsLoggedIn(false)
+        if (response.status === 403) setIsLoggedIn(false)
         throw new Error(
           `HTTP error! status ${response.status} - ${errorResponse}`,
         )

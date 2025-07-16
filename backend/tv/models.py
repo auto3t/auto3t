@@ -419,16 +419,16 @@ class TVEpisode(BaseModel):
         path_clean = title_clean(path)
 
         if strict:
-            to_search = [
-                self.search_query.lower(),
-                self.search_query.lower().replace(".", " "),
-            ]
-            close_enough = any(fuzz.partial_ratio(i, path_clean) > self.FUZZY_RATIO for i in to_search)
+            if self.season.show.is_daily:
+                to_search = title_clean(self.search_query)
+            else:
+                to_search = self.search_query.lower()
 
+            close_enough = fuzz.partial_ratio(to_search, path_clean) > self.FUZZY_RATIO
             if not close_enough:
                 return False
 
-        if self.identifier_date in path_clean:
+        if title_clean(self.identifier_date) in path_clean:
             return True
 
         pattern_s = re.compile(rf"s0?{season_number}e0?{episode_number}", re.IGNORECASE)

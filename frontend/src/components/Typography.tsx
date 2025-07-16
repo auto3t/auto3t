@@ -50,7 +50,7 @@ export function Button({
   )
 }
 
-type PVariant = 'default' | 'alert' | 'smaller'
+type PVariant = 'default' | 'alert' | 'smaller' | 'larger'
 
 type PProps = React.ParamHTMLAttributes<HTMLParagraphElement> & {
   variant?: PVariant
@@ -67,6 +67,8 @@ export function P({ variant = 'default', className = '', ...props }: PProps) {
     variantClasses = 'text-accent-1 text-lg'
   } else if (variant === 'smaller') {
     variantClasses = 'text-main-fg text-xs'
+  } else if (variant === 'larger') {
+    variantClasses = 'text-main-fg text-2xl'
   }
   return (
     <p {...props} className={`${baseClasses} ${variantClasses} ${className}`} />

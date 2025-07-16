@@ -11,6 +11,7 @@ import SeasonMetaData from '../../components/tv/SeasonMetaData'
 import { useParams } from 'react-router-dom'
 import { Button, P } from '../../components/Typography'
 import Spinner from '../../components/Spinner'
+import { useProgressStore } from '../../stores/ProgressStore'
 
 const TVShowDetail: React.FC = () => {
   const { id } = useParams()
@@ -24,6 +25,7 @@ const TVShowDetail: React.FC = () => {
   const { showDetail, setShowDetail } = useShowDetailStore()
   const { seasons, setSeasons } = useTVSeasonsStore()
   const { episodes, setEpisodes } = useTVEpisodeStore()
+  const { setRefetch } = useProgressStore()
   const [isLoadingSeasons, setIsLoadingSeasons] = useState(true)
   const [isLoadingEpisodes, setIsLoadingEpisodes] = useState(true)
 
@@ -54,16 +56,17 @@ const TVShowDetail: React.FC = () => {
     fetchShow()
   }, [id, fetchShow])
 
-  useEffect(() => {
-    const fetchSeasons = async () => {
-      try {
-        const data = await get(`tv/season/?show=${id}`)
-        setSeasons(data)
-      } catch (error) {
-        console.error('error fetching seasons: ', error)
-      }
-      setIsLoadingSeasons(false)
+  const fetchSeasons = useCallback(async () => {
+    try {
+      const data = await get(`tv/season/?show=${id}`)
+      setSeasons(data)
+    } catch (error) {
+      console.error('error fetching seasons: ', error)
     }
+    setIsLoadingSeasons(false)
+  }, [id])
+
+  useEffect(() => {
     fetchSeasons()
   }, [id, setSeasons, setShowDetail])
 
@@ -77,6 +80,14 @@ const TVShowDetail: React.FC = () => {
       }
     }
   }, [id, seasons, fetchEpisodes])
+
+  useEffect(() => {
+    setRefetch(() => {
+      fetchShow()
+      fetchSeasons()
+      if (selectedSeason !== null) fetchEpisodes(selectedSeason.id)
+    })
+  }, [setRefetch, fetchShow, fetchSeasons, fetchEpisodes])
 
   const handleSeasonClick = (seasonId: number) => {
     setIsLoadingEpisodes(true)

@@ -1,58 +1,100 @@
-import { useEffect, useCallback } from 'react'
+import { useEffect, useRef } from 'react'
+import { useLocation } from 'react-router-dom'
 import { useProgressStore } from '../stores/ProgressStore'
 import useApi from '../hooks/api'
 import { P } from './Typography'
 
-export default function ProgressIndicator({
-  setRefresh,
-}: {
-  setRefresh?: () => void
-}) {
+interface Props {
+  pollingInterval?: number
+}
+
+export default function ProgressIndicator({ pollingInterval = 3000 }: Props) {
   const { get } = useApi()
-  const pendingJobs = useProgressStore((s) => s.pendingJobs)
-  const isProcessing = useProgressStore((s) => s.isProcessing)
-  const setPendingJobs = useProgressStore((s) => s.setPendingJobs)
-  const startPolling = useProgressStore((s) => s.startPolling)
-  const stopPolling = useProgressStore((s) => s.stopPolling)
+  const location = useLocation()
 
-  const fetchProgress = useCallback(async () => {
-    try {
-      const data = await get('progress/')
-      const count = data.pending_jobs ?? 0
-      setPendingJobs(count)
+  const pendingJobs = useProgressStore((state) => state.pendingJobs)
+  const hadPendingJobs = useProgressStore((state) => state.hadPendingJobs)
+  const refetch = useProgressStore((state) => state.refetch)
+  const isPolling = useProgressStore((state) => state.isPolling)
+  const setIsPolling = useProgressStore((state) => state.setIsPolling)
+  const setPendingJobs = useProgressStore((state) => state.setPendingJobs)
+  const resetHadPendingJobs = useProgressStore(
+    (state) => state.resetHadPendingJobs,
+  )
 
-      if (count > 0 && setRefresh) {
-        setRefresh() // optional: trigger custom logic
-      }
-    } catch (err) {
-      console.error('Failed to fetch progress:', err)
-    }
-  }, [setPendingJobs, setRefresh])
+  const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
-    startPolling()
-    fetchProgress() // fetch immediately
+    const checkProgress = async () => {
+      try {
+        const data = await get('progress/')
+        setPendingJobs(data.pending_jobs)
+      } catch (error) {
+        console.error('Error fetching progress on navigation:', error)
+      }
+    }
 
-    const handlePoll = () => fetchProgress()
-    window.addEventListener('progress:poll', handlePoll)
+    checkProgress()
+  }, [location.pathname, setPendingJobs])
+
+  useEffect(() => {
+    const fetchProgress = async () => {
+      try {
+        const data = await get('progress/')
+        setPendingJobs(data.pending_jobs)
+      } catch (error) {
+        console.error('Polling error:', error)
+      }
+    }
+
+    const checkPolling = async () => {
+      await fetchProgress()
+      if (pendingJobs > 0 && !intervalRef.current) {
+        intervalRef.current = setInterval(fetchProgress, pollingInterval)
+      }
+
+      if (pendingJobs === 0 && intervalRef.current) {
+        clearInterval(intervalRef.current)
+        intervalRef.current = null
+      }
+
+      if (isPolling) setIsPolling(false)
+    }
+
+    checkPolling()
 
     return () => {
-      stopPolling()
-      window.removeEventListener('progress:poll', handlePoll)
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+        intervalRef.current = null
+      }
     }
-  }, [fetchProgress, startPolling, stopPolling])
+  }, [pendingJobs, pollingInterval, setPendingJobs, isPolling])
+
+  const showRefresh = pendingJobs === 0 && hadPendingJobs
 
   return (
-    <div className="flex items-center justify-center">
-      {pendingJobs > 0 && <P>{pendingJobs}</P>}
-      <div
-        className={`transition-transform duration-500 ${
-          isProcessing ? 'animate-spin' : ''
-        }`}
-        title={isProcessing ? `${pendingJobs} tasks running` : 'Idle'}
-      >
-        <span className="p-2">⏳</span>
-      </div>
+    <div className="flex items-center">
+      {pendingJobs > 0 ? (
+        <>
+          <P>{pendingJobs}</P>
+          <div className="animate-spin">
+            <span className="p-2">⏳</span>
+          </div>
+        </>
+      ) : showRefresh ? (
+        <div
+          onClick={() => {
+            refetch()
+            resetHadPendingJobs()
+          }}
+          className="cursor-pointer"
+        >
+          <P variant="larger" className="mr-2">
+            &#x21bb;
+          </P>
+        </div>
+      ) : null}
     </div>
   )
 }

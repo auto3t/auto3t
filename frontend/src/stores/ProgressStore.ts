@@ -1,58 +1,30 @@
 import { create } from 'zustand'
 
-interface ProgressStore {
+interface ProgressState {
   pendingJobs: number
-  isProcessing: boolean
-
+  hadPendingJobs: boolean
+  refetch: () => void
   setPendingJobs: (count: number) => void
-  registerRefreshCallback: (fn: () => void) => void
-  unregisterRefreshCallback: (fn: () => void) => void
-  startPolling: () => void
-  stopPolling: () => void
+  setRefetch: (fn: () => void) => void
+  resetHadPendingJobs: () => void
+  isPolling: boolean
+  setIsPolling: (value: boolean) => void
 }
 
-export const useProgressStore = create<ProgressStore>((set, get) => {
-  let interval: NodeJS.Timeout | null = null
-  const callbacks = new Set<() => void>()
-
-  return {
-    pendingJobs: 0,
-    isProcessing: false,
-
-    setPendingJobs: (count) => {
-      set({
-        pendingJobs: count,
-        isProcessing: count > 0,
-      })
-
-      if (count > 0) {
-        callbacks.forEach((cb) => cb())
-      }
-    },
-
-    registerRefreshCallback: (fn) => {
-      callbacks.add(fn)
-    },
-
-    unregisterRefreshCallback: (fn) => {
-      callbacks.delete(fn)
-    },
-
-    startPolling: () => {
-      if (interval) clearInterval(interval)
-
-      const delay = get().isProcessing ? 10000 : 60000
-
-      interval = setInterval(() => {
-        window.dispatchEvent(new Event('progress:poll'))
-      }, delay)
-    },
-
-    stopPolling: () => {
-      if (interval) {
-        clearInterval(interval)
-        interval = null
-      }
-    },
-  }
-})
+export const useProgressStore = create<ProgressState>((set, get) => ({
+  pendingJobs: 0,
+  hadPendingJobs: false,
+  refetch: () => {}, // default no-op
+  setPendingJobs: (count: number) => {
+    const { hadPendingJobs } = get()
+    if (count > 0 && !hadPendingJobs) {
+      set({ pendingJobs: count, hadPendingJobs: true })
+    } else {
+      set({ pendingJobs: count })
+    }
+  },
+  setRefetch: (fn) => set({ refetch: fn }),
+  resetHadPendingJobs: () => set({ hadPendingJobs: false }),
+  isPolling: false,
+  setIsPolling: (value) => set({ isPolling: value }),
+}))

@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { Button, H2, P, StyledLink, TagItem } from '../Typography'
 import { ShowType } from './ShowDetail'
 import ToggleSwitch from '../ConfigToggle'
+import { useProgressStore } from '../../stores/ProgressStore'
 
 interface ShowSearchResultInterface {
   result: ShowSearchResultType
@@ -13,6 +14,7 @@ interface ShowSearchResultInterface {
 
 const ShowSearchResult: React.FC<ShowSearchResultInterface> = ({ result }) => {
   const { post, error } = useApi()
+  const { setIsPolling } = useProgressStore()
   const [addingShow, setAddingShow] = useState<null | boolean>(null)
   const [newAddedShowID, setNewAddedShowID] = useState<number | null>(null)
   const [isActive, setIsActive] = useState(true)
@@ -25,6 +27,7 @@ const ShowSearchResult: React.FC<ShowSearchResultInterface> = ({ result }) => {
     })) as ShowType
     if (response) {
       setNewAddedShowID(response.id)
+      setIsPolling(true)
     }
     setAddingShow(false)
   }

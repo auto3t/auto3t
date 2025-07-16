@@ -2,9 +2,9 @@
 
 import logging
 from datetime import timedelta
-from pathlib import Path
 
 from artwork.models import Artwork
+from artwork.src.cleanup import cleanup_art
 from django_rq import job
 from django_rq.queues import get_queue
 
@@ -78,16 +78,7 @@ def download_thumbnails() -> None:
         queue.enqueue_in(timedelta(seconds=10), download_thumbnails)
 
 
-@job("thumbnails")
-def validate_thumbnails() -> None:
-    """check if thumbs are there"""
-    all_thumbs = Artwork.objects.all()
-    for thumb in all_thumbs:
-        if not thumb.image:
-            continue
-
-        if not Path(thumb.image.path).exists():
-            thumb.image.delete()
-            thumb.save()
-
-    download_thumbnails.delay()
+@job("default")
+def cleanup() -> None:
+    """cleanup task, call periodically"""
+    cleanup_art()

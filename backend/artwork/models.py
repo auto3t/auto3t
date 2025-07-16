@@ -19,9 +19,30 @@ logger = logging.getLogger("django")
 class Artwork(models.Model):
     """represents an artwork instance"""
 
+    RELATED_NAMES = [
+        "image_collection",
+        "image_movie",
+        "image_show",
+        "episode_fallback",
+        "season_fallback",
+        "image_season",
+        "image_episode",
+    ]
+
     image_url = models.URLField(unique=True)
     image = models.ImageField(upload_to="artwork/", null=True, blank=True)
     image_blur = models.TextField(null=True, blank=True)
+
+    def __str__(self) -> str:
+        return self.image_url
+
+    def get_related(self) -> str | None:
+        """get related"""
+        for related in self.RELATED_NAMES:
+            if (getattr(self, related)).exists():
+                return related
+
+        return None
 
     def update(self, image_url: str) -> None:
         """update and replace"""
@@ -104,9 +125,6 @@ class Artwork(models.Model):
         img_path = f"{folder}/{self.id_hash}.jpg"
 
         return img_path
-
-    def __str__(self) -> str:
-        return self.image_url
 
 
 @receiver(post_delete, sender=Artwork)

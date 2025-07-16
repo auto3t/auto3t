@@ -141,28 +141,6 @@ class TVShow(BaseModel):
 
         return f"{show_name} COMPLETE"
 
-    def delete(self, *args, **kwargs):
-        """overwrite to delete image foreign keys"""
-        try:
-            if self.image_show:
-                self.image_show.delete()
-        except Artwork.DoesNotExist:
-            pass
-
-        try:
-            if self.episode_fallback:
-                self.episode_fallback.delete()
-        except Artwork.DoesNotExist:
-            pass
-
-        try:
-            if self.season_fallback:
-                self.season_fallback.delete()
-        except Artwork.DoesNotExist:
-            pass
-
-        super().delete(*args, **kwargs)
-
     def update_image_show(self, image_url: str | None) -> None:
         """handle update with or without existing"""
         if not image_url:
@@ -265,13 +243,6 @@ class TVSeason(BaseModel):
         """set string representation"""
         return f"{self.show.name} S{str(self.number).zfill(2)}"
 
-    def delete(self, *args, **kwargs):
-        """overwrite to delete image foreign keys"""
-        if self.image_season:
-            self.image_season.delete()
-
-        super().delete(*args, **kwargs)
-
     def update_image_season(self, image_url: str | None) -> None:
         """handle update with or without existing"""
         if not image_url:
@@ -361,13 +332,6 @@ class TVEpisode(BaseModel):
     def __str__(self):
         """set string representation"""
         return self.file_name
-
-    def delete(self, *args, **kwargs):
-        """overwrite to delete image foreign keys"""
-        if self.image_episode:
-            self.image_episode.delete()
-
-        super().delete(*args, **kwargs)
 
     def update_image_episode(self, image_url: str | None) -> None:
         """handle update with or without existing"""

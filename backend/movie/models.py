@@ -5,8 +5,6 @@ from typing import Self
 
 from artwork.models import Artwork
 from django.db import models
-from django.db.models.signals import post_delete
-from django.dispatch import receiver
 from rapidfuzz import fuzz
 
 from autot.models import SearchWord, SearchWordCategory, TargetBitrate, Torrent, log_change
@@ -44,7 +42,7 @@ class Collection(BaseModel):
     name = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
     image_collection = models.ForeignKey(
-        Artwork, related_name="image_collection", on_delete=models.PROTECT, null=True, blank=True
+        Artwork, related_name="image_collection", on_delete=models.SET_NULL, null=True, blank=True
     )
     the_moviedb_ids = models.JSONField(default=list)
     tracking = models.BooleanField(default=False)
@@ -92,7 +90,7 @@ class Movie(BaseModel):
     runtime = models.PositiveIntegerField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     image_movie = models.ForeignKey(
-        Artwork, related_name="image_movie", on_delete=models.PROTECT, null=True, blank=True
+        Artwork, related_name="image_movie", on_delete=models.SET_NULL, null=True, blank=True
     )
     collection = models.ForeignKey(Collection, on_delete=models.CASCADE, null=True, blank=True)
     production_state = models.CharField(choices=MovieProductionState.choices(), max_length=1, null=True, blank=True)
@@ -287,17 +285,3 @@ class MovieReleaseTarget(models.Model):
 
     def __str__(self):
         return str(self.target)
-
-
-@receiver(post_delete, sender=Movie)
-def delete_movie_image(sender, instance, **kwargs):  # pylint: disable=unused-argument
-    """signal for deleting movie image"""
-    if instance.image_movie:
-        instance.image_movie.delete()
-
-
-@receiver(post_delete, sender=Collection)
-def delete_collection_image(sender, instance, **kwargs):  # pylint: disable=unused-argument
-    """signal for deleting collection image"""
-    if instance.image_collection:
-        instance.image_collection.delete()

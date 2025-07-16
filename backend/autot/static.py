@@ -111,4 +111,5 @@ TASK_OPTIONS: list[TaskItem] = [
     TaskItem(id=2, job="tv.tasks.refresh_status", name="Refresh Episode Status", queue="show"),
     TaskItem(id=3, job="movie.tasks.refresh_all_movies", name="Refresh all Movies", queue="default"),
     TaskItem(id=4, job="movie.tasks.refresh_status", name="Refresh Movie Status", queue="movie"),
+    TaskItem(id=5, job="autot.tasks.cleanup", name="Cleanup Leftovers", queue="default"),
 ]

@@ -110,7 +110,7 @@ export default function CollectionDetails() {
       if (collection === null) return
       try {
         const data = (await get(
-          `movie/movie/?collection=${collection.id}`,
+          `movie/movie/?collection=${collection.id}&order-by=release_date`,
         )) as MovieType[]
         setCollectionMovies(data)
       } catch {

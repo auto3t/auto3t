@@ -13,8 +13,8 @@ class ConfigType(TypedDict):
     JF_URL: str
     JF_PROXY_URL: str
     JF_API_KEY: str
-    JK_URL: str
-    JK_API_KEY: str
+    PRR_URL: str
+    PRR_KEY: str
     MOVIE_DB_API_KEY: str
     REDIS_CON: str
     REDIS_NAME_SPACE: str
@@ -38,8 +38,8 @@ def get_config() -> ConfigType:
         "JF_URL": environ["JF_URL"],
         "JF_PROXY_URL": environ.get("JF_PROXY_URL") or environ["JF_URL"],
         "JF_API_KEY": environ["JF_API_KEY"],
-        "JK_URL": environ["JK_URL"],
-        "JK_API_KEY": environ["JK_API_KEY"],
+        "PRR_URL": environ["PRR_URL"],
+        "PRR_KEY": environ["PRR_KEY"],
         "MOVIE_DB_API_KEY": environ["MOVIE_DB_API_KEY"],
         "REDIS_CON": environ.get("REDIS_CON") or "redis://localhost:6379",
         "REDIS_NAME_SPACE": "tt:",

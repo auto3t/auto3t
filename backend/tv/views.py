@@ -17,7 +17,7 @@ from tv.tasks import import_show, refresh_status
 from autot.models import SearchWord, get_logs
 from autot.serializers import ActionLogSerializer
 from autot.src.redis_con import AutotRedis
-from autot.src.search import Jackett
+from autot.src.search import SearchIndex
 from autot.static import TvShowStatus
 
 
@@ -124,7 +124,7 @@ class ShowViewSet(viewsets.ModelViewSet):
             return Response({"message": "did not find search result"}, status=404)
 
         result = json.loads(search_result)
-        magnet, title = Jackett().extract_magnet(result)
+        magnet, title = SearchIndex().extract_magnet(result)
         if not magnet:
             return Response({"message": "failed to extract magnet url"}, status=400)
 
@@ -209,7 +209,7 @@ class SeasonViewSet(viewsets.ModelViewSet):
             return Response({"message": "did not find search result"}, status=404)
 
         result = json.loads(search_result)
-        magnet, title = Jackett().extract_magnet(result)
+        magnet, title = SearchIndex().extract_magnet(result)
         if not magnet:
             return Response({"message": "failed to extract magnet url"}, status=400)
 
@@ -325,7 +325,7 @@ class EpisodeViewSet(viewsets.ModelViewSet):
             return Response({"message": "did not find search result"}, status=404)
 
         result = json.loads(search_result)
-        magnet, title = Jackett().extract_magnet(result)
+        magnet, title = SearchIndex().extract_magnet(result)
         if not magnet:
             return Response({"message": "failed to extract magnet url"}, status=400)
 

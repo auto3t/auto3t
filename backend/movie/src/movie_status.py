@@ -8,7 +8,7 @@ from django.utils import timezone
 from movie.models import Movie, MovieRelease, MovieReleaseTarget
 
 from autot.models import Torrent, log_change
-from autot.src.search import Jackett
+from autot.src.search import SearchIndex
 
 logger = logging.getLogger("django")
 
@@ -82,7 +82,7 @@ class MovieStatus:
         logger.info("Searching for %s magnet(s)", to_search.count())
 
         for movie in to_search:
-            magnet, title = Jackett().get_magnet(movie)
+            magnet, title = SearchIndex().get_magnet(movie)
             if not magnet:
                 continue
 

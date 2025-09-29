@@ -17,7 +17,7 @@ from autot.serializers import (
     TargetBitrateSerializer,
     TorrentSerializer,
 )
-from autot.src.search import Jackett
+from autot.src.search import SearchIndex
 from autot.static import TASK_OPTIONS
 
 
@@ -117,7 +117,7 @@ class TorrentViewSet(
         if not category:
             return Response({"message": "missing category"}, status=400)
 
-        results = Jackett().free_search(search_term, category=category)
+        results = SearchIndex().free_search(search_term, category=category)
         return Response(results)
 
     @action(detail=True, methods=["get"])

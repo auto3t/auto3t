@@ -6,14 +6,14 @@ import { Button, H2, Input, P, TagItem } from './Typography'
 import Spinner from './Spinner'
 
 export type ManualSearchType = {
-  Id: string
-  Title: string
-  Tracker: string
-  Size: number
-  Seeders: number
-  Peers: number
-  Gain: number
-  PublishDate: string
+  id: string
+  title: string
+  indexer: string
+  size: number
+  seeders: number
+  leechers: number
+  gain: number
+  publishDate: string
 }
 
 interface ManualSearchInterface {
@@ -66,20 +66,20 @@ const ManualSearchResult: React.FC<ManualSearchResultInterface> = ({
   }
 
   return (
-    <div key={result.Id} className="border border-accent-1 mb-2 p-2">
-      <P>{result.Title}</P>
+    <div key={result.id} className="border border-accent-1 mb-2 p-2">
+      <P>{result.title}</P>
       <div className="flex gap-2 my-2">
-        <TagItem>{result.Tracker}</TagItem>
-        <TagItem>{formatBytes(result.Size)}</TagItem>
+        <TagItem>{result.indexer}</TagItem>
+        <TagItem>{formatBytes(result.size)}</TagItem>
         <TagItem>
-          Published: <TimeComponent timestamp={result.PublishDate} />
+          Published: <TimeComponent timestamp={result.publishDate} />
         </TagItem>
         <TagItem title="Seeders / Leechers / Gain">
-          {result.Seeders} / {result.Peers} / {result.Gain.toFixed(2)}
+          {result.seeders} / {result.leechers} / {result.gain}
         </TagItem>
       </div>
       {addDownloadLoading === null && (
-        <Button onClick={() => handleDownload(result.Id)}>Download</Button>
+        <Button onClick={() => handleDownload(result.id)}>Download</Button>
       )}
       {addDownloadLoading === true && <P>Loading...</P>}
       {addDownloadLoading === false && !error && <P>Done</P>}
@@ -145,7 +145,7 @@ const ManualSearch: React.FC<ManualSearchInterface> = ({
             <div className="max-h-[50vh] overflow-scroll">
               {searchResults.map((result) => (
                 <ManualSearchResult
-                  key={result.Id}
+                  key={result.id}
                   result={result}
                   searchType={searchType}
                   searchTypeId={searchTypeId}

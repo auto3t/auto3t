@@ -1,4 +1,5 @@
 services:
+  # autot services
   autot:
     container_name: autot
     restart: "no"
@@ -17,27 +18,26 @@ services:
       - 127.0.0.1:8000:8000
     depends_on:
       - autot-redis
-      - autot-jackett
   autot-redis:
     image: redis
     container_name: autot-redis
     restart: "no"
     ports:
       - 127.0.0.1:6379:6379
-  autot-jackett:
-    image: lscr.io/linuxserver/jackett
-    container_name: autot-jackett
-    restart: "no"
+
+  # additional services
+  autot-prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: autot_prowlarr
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Europe/Zurich
-      - AUTO_UPDATE=false
+      - TZ=Asia/Vientiane
     volumes:
-      - ./volume/jackett/config:/config
-      - ./volume/jackett/downloads:/downloads
+      - ./volume/prowlarr/data:/config
     ports:
-      - 127.0.0.1:9117:9117
+      - 127.0.0.1:9696:9696
+    restart: "no"
   autot-jellyfin:
     image: jellyfin/jellyfin
     container_name: autot-jellyfin

@@ -8,7 +8,7 @@ from django.utils import timezone
 from tv.models import TVEpisode, TVSeason
 
 from autot.models import Torrent, log_change
-from autot.src.search import Jackett
+from autot.src.search import SearchIndex
 
 logger = logging.getLogger("django")
 
@@ -63,7 +63,7 @@ class EpisodeStatus:
             return found_magnets
 
         for season in searching_seasons:
-            magnet, title = Jackett().get_magnet(season)
+            magnet, title = SearchIndex().get_magnet(season)
             if not magnet:
                 continue
 
@@ -85,7 +85,7 @@ class EpisodeStatus:
 
         logger.info("Searching for %s magnet(s)", to_search.count())
         for episode in to_search:
-            magnet, title = Jackett().get_magnet(episode)
+            magnet, title = SearchIndex().get_magnet(episode)
             if not magnet:
                 continue
 

@@ -55,7 +55,7 @@ const EpisodeNav: React.FC<EpisodeNavInterface> = ({ currentEpisodeId }) => {
             title="previous episode"
             to={`/tv/episode/${previousEpisode.id}`}
           >
-            <span>&#65308; </span>
+            <span>{'<'} </span>
             <span>
               S{String(previousEpisode.season.number).padStart(2, '0')}
             </span>
@@ -75,7 +75,7 @@ const EpisodeNav: React.FC<EpisodeNavInterface> = ({ currentEpisodeId }) => {
             <span>S{String(nextEpisode.season.number).padStart(2, '0')}</span>
             <span>E{String(nextEpisode.number).padStart(2, '0')}</span>
             <span> - {nextEpisode.title}</span>
-            <span> &#65310;</span>
+            <span> {'>'}</span>
           </StyledLink>
         ) : (
           <P>Last Episode</P>

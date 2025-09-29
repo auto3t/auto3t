@@ -43,4 +43,4 @@ def get_tracker_list() -> list[str]:
 
 def title_clean(title) -> str:
     """clean torrent title string"""
-    return title.lower().replace(".", " ").replace(":", "").replace(" & ", " ")
+    return title.lower().replace(".", " ").replace(":", "").replace(" & ", " ").replace("!", "")

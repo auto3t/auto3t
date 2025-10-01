@@ -10,13 +10,14 @@ import ManualSearch from '../../components/ManualSearch'
 import { EpisodeType } from '../../components/tv/Episode'
 import MediaServerDetail from '../../components/MediaServerDetail'
 import episodeLogoDefault from '../../../assets/episode-default.jpg'
-import { H1, H2, P, TagItem } from '../../components/Typography'
+import { Button, H1, H2, P, Select, TagItem } from '../../components/Typography'
 import { formatDuration } from '../../utils'
 
 const TVEpisode: React.FC = () => {
   const { id } = useParams()
-  const { get } = useApi()
+  const { get, patch } = useApi()
   const [episodeRefresh, setEpisodeRefresh] = useState(false)
+  const [editEpisodeStatus, setEditEpisodeStatus] = useState(false)
 
   const { episodeDetail, setEpisodeDetail, episodeImage, setEpisodeImage } =
     useEpsiodeDetailStore()
@@ -39,6 +40,16 @@ const TVEpisode: React.FC = () => {
     }
     fetchEpisode()
   }, [id, episodeRefresh])
+
+  const handleEpisodeStatusUpdate = async (status: string) => {
+    try {
+      const data = await patch(`tv/episode/${id}/`, { status })
+      setEpisodeDetail(data)
+      setEditEpisodeStatus(false)
+    } catch (error) {
+      console.error('error updating status: ', error)
+    }
+  }
 
   return (
     <div className="mb-10">
@@ -74,7 +85,39 @@ const TVEpisode: React.FC = () => {
                 </TagItem>
               )}
               <TagItem>
-                Status: {episodeDetail.status_display || 'undefined'}
+                {editEpisodeStatus ? (
+                  <>
+                    <Select
+                      defaultValue={episodeDetail.status}
+                      onChange={(e) =>
+                        handleEpisodeStatusUpdate(e.target.value)
+                      }
+                    >
+                      <option value="u">Upcoming</option>
+                      <option value="s">Searching</option>
+                      <option value="d">Downloading</option>
+                      <option value="f">Finished</option>
+                      <option value="a">Archived</option>
+                      <option value="i">Ignored</option>
+                    </Select>
+                    <Button
+                      className="ml-2"
+                      onClick={() => setEditEpisodeStatus(false)}
+                    >
+                      Cancel
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    Status: {episodeDetail.status_display || 'undefined'}
+                    <Button
+                      className="ml-2"
+                      onClick={() => setEditEpisodeStatus(true)}
+                    >
+                      Edit
+                    </Button>
+                  </>
+                )}
               </TagItem>
             </div>
           </div>

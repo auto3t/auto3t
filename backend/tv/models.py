@@ -155,6 +155,7 @@ class TVShow(BaseModel):
 
         if not self.image_show.image_url == image_url:
             self.image_show.update(image_url)
+            self.save()
             log_change(self, "u", "image_show", new_value=image_url, comment="Updated image.")
 
     def update_episode_fallback(self, image_url: str | None) -> None:
@@ -171,6 +172,7 @@ class TVShow(BaseModel):
 
         if not self.episode_fallback.image_url == image_url:
             self.episode_fallback.update(image_url)
+            self.save()
             log_change(self, "u", "episode_fallback", new_value=image_url, comment="Updated image.")
 
     def update_season_fallback(self, image_url: str | None) -> None:
@@ -187,6 +189,7 @@ class TVShow(BaseModel):
 
         if not self.season_fallback.image_url == image_url:
             self.season_fallback.update(image_url)
+            self.save()
             log_change(self, "u", "season_fallback", new_value=image_url, comment="Updated image.")
 
     def get_keywords(self: Self):

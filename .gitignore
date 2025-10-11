@@ -12,7 +12,7 @@ db.sqlite3-journal
 backend/artwork/artwork
 
 # docker
-env/autot.env
+env/auto3t.env
 
 # frontend
 node_modules

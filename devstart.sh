@@ -1,10 +1,10 @@
 #!/bin/bash
 
-SESSION_NAME="autot"
+SESSION_NAME="auto3t"
 
 wait_for_redis() {
     echo "Waiting for Redis container to start..."
-    while [ "$(docker inspect -f '{{.State.Running}}' autot-redis)" != "true" ]; do
+    while [ "$(docker inspect -f '{{.State.Running}}' auto3t-redis)" != "true" ]; do
         echo "Redis not running yet, checking again in 5 seconds..."
         sleep 5
     done
@@ -25,7 +25,7 @@ if [ $? != 0 ]; then
 
     # compose
     tmux new-session -d -s $SESSION_NAME -n "dev"
-    tmux send-keys -t $SESSION_NAME:"dev" "docker compose pull && docker compose up -d autot-redis autot-prowlarr autot-jellyfin autot-transmission && docker compose logs -f" C-m
+    tmux send-keys -t $SESSION_NAME:"dev" "docker compose pull && docker compose up -d auto3t-redis auto3t-prowlarr auto3t-jellyfin auto3t-transmission && docker compose logs -f" C-m
     wait_for_redis
 
     # django

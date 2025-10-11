@@ -1,7 +1,7 @@
 services:
-  # autot services
-  autot:
-    container_name: autot
+  # auto3t services
+  auto3t:
+    container_name: auto3t
     restart: "no"
     user: 1000:1000
     build:
@@ -9,26 +9,26 @@ services:
       args:
         - INSTALL_DEBUG=1
     volumes:
-      - ./volume/autot:/data
+      - ./volume/auto3t:/data
       - ./volume/downloads:/downloads
       - ./volume/media:/media
     env_file:
-      - env/autot.env
+      - env/auto3t.env
     ports:
       - 127.0.0.1:8000:8000
     depends_on:
-      - autot-redis
-  autot-redis:
+      - auto3t-redis
+  auto3t-redis:
     image: redis
-    container_name: autot-redis
+    container_name: auto3t-redis
     restart: "no"
     ports:
       - 127.0.0.1:6379:6379
 
   # additional services
-  autot-prowlarr:
+  auto3t-prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
-    container_name: autot_prowlarr
+    container_name: auto3t_prowlarr
     environment:
       - PUID=1000
       - PGID=1000
@@ -38,9 +38,9 @@ services:
     ports:
       - 127.0.0.1:9696:9696
     restart: "no"
-  autot-jellyfin:
+  auto3t-jellyfin:
     image: jellyfin/jellyfin
-    container_name: autot-jellyfin
+    container_name: auto3t-jellyfin
     restart: "no"
     volumes:
       - ./volume/jellyfin/config:/config
@@ -49,9 +49,9 @@ services:
       - ./volume/media/tv/:/media/tv
     ports:
       - 127.0.0.1:8096:8096
-  autot-transmission:
+  auto3t-transmission:
     image: lscr.io/linuxserver/transmission
-    container_name: autot-transmission
+    container_name: auto3t-transmission
     restart: "no"
     environment:
       - PUID=1000

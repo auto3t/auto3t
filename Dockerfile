@@ -19,7 +19,7 @@ COPY frontend/ .
 RUN npm run build
 
 # build final image
-FROM python:3.11.13-slim-bullseye AS autot
+FROM python:3.11.13-slim-bullseye AS auto3t
 ARG INSTALL_DEBUG
 ENV PYTHONUNBUFFERED=1
 ENV PATH=/applib/bin:$PATH

@@ -84,7 +84,7 @@ class CollectionViewSet(viewsets.ModelViewSet):
 class MovieViewSet(viewsets.ModelViewSet):
     """views for movies"""
 
-    UPDATABLE_FIELDS = {"is_active", "search_keywords", "target_bitrate"}
+    UPDATABLE_FIELDS = {"is_active", "search_keywords", "target_bitrate", "status"}
     VALID_STATUS = [i.name for i in MovieStatus]
     VALID_PRODUCTION = [i.name for i in MovieProductionState]
 

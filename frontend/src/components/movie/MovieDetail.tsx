@@ -2,7 +2,16 @@ import { useState } from 'react'
 import { MovieType } from '../../pages/movie/MovieDetails'
 import ImageComponent from '../ImageComponent'
 import TimeComponent from '../TimeComponent'
-import { Button, H1, H3, P, StyledLink, Table, TagItem } from '../Typography'
+import {
+  Button,
+  H1,
+  H3,
+  P,
+  Select,
+  StyledLink,
+  Table,
+  TagItem,
+} from '../Typography'
 import { formatDuration } from '../../utils'
 import useApi from '../../hooks/api'
 import { useNavigate } from 'react-router-dom'
@@ -22,6 +31,7 @@ const MovieDetail: React.FC<MovieInterface> = ({ movieDetail, fetchMovie }) => {
   const navigate = useNavigate()
   const [showMovieDetail, setShowMovieDetail] = useState(false)
   const [movieDelete, setMovieDelete] = useState(false)
+  const [editMovieStatus, setEditMovieStatus] = useState(false)
 
   const handleMovieDelete = () => {
     del(`movie/movie/${movieDetail.id}/`).then(() => {
@@ -39,6 +49,16 @@ const MovieDetail: React.FC<MovieInterface> = ({ movieDetail, fetchMovie }) => {
       is_active: !movieDetail.is_active,
     })
     fetchMovie()
+  }
+
+  const handleMovieStatusUpdate = async (status: string) => {
+    try {
+      await patch(`movie/movie/${movieDetail.id}/`, { status })
+      fetchMovie()
+      setEditMovieStatus(false)
+    } catch (error) {
+      console.error('error updating status: ', error)
+    }
   }
 
   return (
@@ -77,7 +97,37 @@ const MovieDetail: React.FC<MovieInterface> = ({ movieDetail, fetchMovie }) => {
               {`Production: ${movieDetail?.production_state_display || 'TBD'}`}
             </TagItem>
             <TagItem className="tag-item">
-              {`Status: ${movieDetail?.status_display || 'TBD'}`}
+              {editMovieStatus ? (
+                <>
+                  <Select
+                    defaultValue={movieDetail.status}
+                    onChange={(e) => handleMovieStatusUpdate(e.target.value)}
+                  >
+                    <option value="u">Upcoming</option>
+                    <option value="s">Searching</option>
+                    <option value="d">Downloading</option>
+                    <option value="f">Finished</option>
+                    <option value="a">Archived</option>
+                    <option value="i">Ignored</option>
+                  </Select>
+                  <Button
+                    className="ml-2"
+                    onClick={() => setEditMovieStatus(false)}
+                  >
+                    Cancel
+                  </Button>
+                </>
+              ) : (
+                <>
+                  Status: {movieDetail?.status_display || 'undefined'}
+                  <Button
+                    className="ml-2"
+                    onClick={() => setEditMovieStatus(true)}
+                  >
+                    Edit
+                  </Button>
+                </>
+              )}
             </TagItem>
             {movieDetail.target_file_size_str && (
               <TagItem>

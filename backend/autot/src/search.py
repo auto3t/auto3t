@@ -123,11 +123,19 @@ class SearchIndex:
 
     def extract_magnet(self, result: dict) -> tuple[str | None, str | None]:
         """extract magnet from list or results"""
-        magnet_link = result.get("guid")
-        if magnet_link:
-            return magnet_link, result.get("title")
+        magnet_link = result.get("magnetUrl") or result.get("downloadUrl")
+        if not magnet_link:
+            raise ValueError("failed to extract magnet link URL")
 
-        raise ValueError("failed to extract magnet")
+        response = requests.get(magnet_link, allow_redirects=False)
+        if not response.ok:
+            raise ValueError(f"request failed with status {response.status_code}: {response.text}")
+
+        magnet_link = response.headers.get("Location")
+        if not magnet_link.startswith("magnet:"):
+            raise ValueError(f"malformed magnet link found: {magnet_link}")
+
+        return magnet_link, result.get("title")
 
     def validate_links(self, results: list[dict], to_search: TVEpisode | TVSeason) -> list[dict] | None:
         """validate for auto tasks"""

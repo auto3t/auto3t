@@ -4,6 +4,12 @@ import useSearchKeyWordStore from '../../stores/SearchKeyWordsStore'
 import useApi from '../../hooks/api'
 import { Button, H2, Input, Select, Table } from '../Typography'
 
+type KeywordRelated = {
+  movie: number[]
+  show: number[]
+  season: number[]
+}
+
 export type KeywordType = {
   id: number
   category: string
@@ -13,6 +19,7 @@ export type KeywordType = {
   direction: string
   movie_default: boolean
   tv_default: boolean
+  related?: KeywordRelated
 }
 
 export default function Keywords() {

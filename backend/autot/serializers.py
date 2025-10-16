@@ -19,6 +19,7 @@ class SearchWordSerializer(serializers.ModelSerializer):
     category = serializers.PrimaryKeyRelatedField(queryset=SearchWordCategory.objects.all())
     category_name = serializers.SerializerMethodField(read_only=True)
     direction_display = serializers.CharField(source="get_direction_display", read_only=True)
+    related = serializers.JSONField(read_only=True)
 
     class Meta:
         model = SearchWord

@@ -33,6 +33,9 @@ class SearchWordCategory(models.Model):
         self.name = self.name.lower()
         super().save(*args, **kwargs)
 
+    def __str__(self):
+        return self.name
+
 
 class SearchWord(models.Model):
     """all available key words"""
@@ -49,15 +52,25 @@ class SearchWord(models.Model):
     movie_default = models.BooleanField(default=False)
     tv_default = models.BooleanField(default=False)
 
-    class Meta:
-        unique_together = ("direction", "category", "word")
-
     def save(self, *args, **kwargs):
         self.word = self.word.lower()
         super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.category.name}: {self.word} [{self.direction}]"
+
+    @property
+    def related(self):
+        """get related"""
+        return {
+            "movie": self._extract_related("movie_set"),
+            "show": self._extract_related("tvshow_set"),
+            "season": self._extract_related("tvseason_set"),
+        }
+
+    def _extract_related(self, related_field: str):
+        """extract by related field name"""
+        return {i[0] for i in getattr(self, related_field).all().values_list("id")}
 
 
 class TargetBitrate(models.Model):

@@ -112,6 +112,8 @@ const SeasonMetaData: React.FC<SeasonMetaDataInterface> = ({
               all_keywords={selectedSeason.all_keywords}
               patchURL={`tv/season/${selectedSeason.id}/?direction=remove`}
               refreshCallback={() => fetchEpisodes(selectedSeason.id)}
+              inheritKey="show"
+              inheritId={selectedSeason.show.id}
             />
             <SeasonEpisodeSummary />
             <ManualSearch

@@ -18,7 +18,7 @@ const AddKeywordComponent: React.FC<AddKeywordComponentInterface> = ({
 
   useEffect(() => {
     const getKeywords = () => {
-      get('keyword/').then((response) => {
+      get('keyword/?exclude-default=true').then((response) => {
         setAllKeywords(response)
       })
     }

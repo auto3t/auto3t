@@ -60,7 +60,16 @@ class SearchWordView(viewsets.ModelViewSet):
     """search words"""
 
     serializer_class = SearchWordSerializer
-    queryset = SearchWord.objects.all().order_by("category__name")
+    queryset = SearchWord.objects.none().order_by("category__name")
+
+    def get_queryset(self):
+        """filter queryset"""
+        queryset = SearchWord.objects.all().order_by("category__name")
+        exclude_default = self.request.GET.get("exclude-default")
+        if exclude_default == "true":
+            return queryset.filter(movie_default=False, tv_default=False)
+
+        return queryset
 
 
 class TargetBitrateView(viewsets.ModelViewSet):

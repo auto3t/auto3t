@@ -7,6 +7,8 @@ interface KeywortTableComponentInterface {
   patchURL: string
   refreshCallback: () => void
   objectType?: 'tv_default' | 'movie_default'
+  inheritKey?: 'movie' | 'show' | 'season'
+  inheritId?: number
 }
 
 const KeywordTableCompnent: React.FC<KeywortTableComponentInterface> = ({
@@ -14,6 +16,8 @@ const KeywordTableCompnent: React.FC<KeywortTableComponentInterface> = ({
   patchURL,
   refreshCallback,
   objectType = 'tv_default',
+  inheritKey = undefined,
+  inheritId = undefined,
 }) => {
   const { patch } = useApi()
 
@@ -28,6 +32,11 @@ const KeywordTableCompnent: React.FC<KeywortTableComponentInterface> = ({
     keyword.direction_display,
     keyword[objectType] ? (
       'default'
+    ) : inheritKey &&
+      inheritId &&
+      keyword.related &&
+      keyword.related[inheritKey].includes(inheritId) ? (
+      'inherited'
     ) : (
       <Button onClick={() => handleKeywordRemove(keyword.id)}>remove</Button>
     ),

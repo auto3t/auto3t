@@ -177,7 +177,7 @@ class SeasonViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data)
 
-    def _update_m2m(self, instance: TVShow) -> None:
+    def _update_m2m(self, instance: TVSeason) -> None:
         """handle search_keywords"""
         data = self.request.data
         direction = self.request.GET.get("direction")

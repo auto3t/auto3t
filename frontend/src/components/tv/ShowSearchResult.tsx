@@ -49,6 +49,9 @@ const ShowSearchResult: React.FC<ShowSearchResultInterface> = ({ result }) => {
             </StyledLink>
           </P>
           <P dangerouslySetInnerHTML={{ __html: result.summary }} />
+          {result.genres.length > 0 && (
+            <P className="mt-4">Genres: {result.genres.join(', ')}</P>
+          )}
           <div className="flex gap-2 py-6">
             <TagItem>{`Status: ${result.status}`}</TagItem>
             {result.premiered && (
@@ -97,9 +100,6 @@ const ShowSearchResult: React.FC<ShowSearchResultInterface> = ({ result }) => {
               )}
             </div>
           </div>
-          {result.genres.length > 0 && (
-            <P>Genres: {result.genres.join(', ')}</P>
-          )}
         </div>
       </div>
     </div>

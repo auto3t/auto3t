@@ -30,5 +30,7 @@ urlpatterns = [
     path("api/auth/", include("authentication.urls")),
     path("artwork/", include("artwork.urls")),
     re_path(r"^static/(?P<path>.*)$", static_serve, {"document_root": settings.STATIC_ROOT}),
-    re_path(r"^(?:.*)/?$", TemplateView.as_view(template_name="index.html")),
 ]
+
+if not settings.DEBUG:
+    urlpatterns.append(re_path(r"^(?:.*)/?$", TemplateView.as_view(template_name="index.html")))

@@ -51,7 +51,7 @@ const MovieReleases: React.FC<MovieReleasesInterface> = ({ movie_id }) => {
 
   return (
     <>
-      <H2>Releases</H2>
+      <H2>Release Windows</H2>
       {releases.length > 0 ? (
         <Table headers={headers} rows={rows} className="w-full" />
       ) : (

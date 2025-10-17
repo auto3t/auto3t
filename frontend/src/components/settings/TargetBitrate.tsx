@@ -263,7 +263,7 @@ export default function TargetBitrate() {
 
   return (
     <>
-      <H2>Target Bitrate</H2>
+      <H2>Movie Target Bitrate</H2>
       <Table headers={headers} rows={rows} />
       {error && <P>Error: {error}</P>}
     </>

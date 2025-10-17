@@ -111,7 +111,7 @@ export default function MovieReleaseTarget() {
 
   return (
     <>
-      <H2>Movie Release Target</H2>
+      <H2>Movie Release Window Target</H2>
       <Table headers={headers} rows={rows} />
     </>
   )

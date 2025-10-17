@@ -84,6 +84,7 @@ class MovieDBMovie:
         release_date = date.fromisoformat(response["release_date"]) if response["release_date"] else None
         movie_data = {
             "the_moviedb_id": str(response["id"]),
+            "imdb_id": response.get("imdb_id"),
             "name": response["original_title"],
             "description": response["overview"],
             "tagline": response["tagline"],

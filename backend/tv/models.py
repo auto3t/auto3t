@@ -99,6 +99,7 @@ class TVShow(BaseModel):
     IMAGE_SIZE = (2160, 2880)
 
     name = models.CharField(max_length=255)
+    imdb_id = models.CharField(255, unique=True, null=True, blank=True)
     search_name = models.CharField(max_length=255, null=True, blank=True)
     status = models.CharField(choices=TvShowStatus.choices(), max_length=1, null=True, blank=True)
     is_daily = models.BooleanField(default=False)

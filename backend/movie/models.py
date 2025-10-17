@@ -81,6 +81,7 @@ class Movie(BaseModel):
     FUZZY_RATIO = 95
 
     the_moviedb_id = models.CharField(max_length=255, unique=True)
+    imdb_id = models.CharField(255, unique=True, null=True, blank=True)
     name = models.CharField(max_length=255)
     date_added = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)

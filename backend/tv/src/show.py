@@ -99,6 +99,7 @@ class TVMazeShow:
         """parse API response to model"""
         show_data = {
             "tvmaze_id": str(response["id"]),
+            "imdb_id": response.get("externals", {}).get("imdb"),
             "remote_server_url": response["url"],
             "release_date": self._get_date_time(response.get("premiered")),
             "end_date": self._get_date_time(response.get("ended")),

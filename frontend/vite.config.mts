@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => {
     base: isProduction ? '/static/' : '/',
     server: {
       port: 3000,
-      open: true,
+      open: false,
     },
     build: {
       outDir: 'build',

@@ -124,7 +124,7 @@ const TVEpisode: React.FC = () => {
           <EpisodeNav currentEpisodeId={episodeDetail.id} />
           {episodeDetail.torrent.length > 0 && (
             <>
-              <H2>Torrents</H2>
+              <H2>Releases</H2>
               {episodeDetail.torrent?.map((torrent) => (
                 <Torrent
                   key={torrent.id}

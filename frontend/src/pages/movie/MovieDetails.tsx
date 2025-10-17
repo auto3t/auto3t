@@ -104,7 +104,7 @@ const MovieDetails: React.FC = () => {
           )}
           {movieDetail.torrent.length > 0 && (
             <div className="py-4">
-              <H2>Torrents</H2>
+              <H2>Releases</H2>
               {movieDetail.torrent?.map((torrent) => (
                 <Torrent
                   key={torrent.id}

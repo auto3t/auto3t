@@ -147,8 +147,9 @@ class Movie(BaseModel):
         if not self.runtime:
             return None, None
 
-        lower = self.runtime * 60 * (target_bitrate.bitrate * 100 - target_bitrate.plusminus)
-        upper = self.runtime * 60 * (target_bitrate.bitrate * 100 + target_bitrate.plusminus)
+        expected_size_exact = self.runtime * 60 * target_bitrate.bitrate / 8 / 1024
+        lower = expected_size_exact * (target_bitrate.plusminus / 100)
+        upper = expected_size_exact * ((100 + target_bitrate.plusminus) / 100)
 
         return lower, upper
 
@@ -159,7 +160,7 @@ class Movie(BaseModel):
         if not lower or not upper:
             return None
 
-        return f"{round(lower / 1000000, 2)} - {round(upper / 1000000, 2)}GB"
+        return f"{round(lower, 2)} - {round(upper, 2)}GB"
 
     def update_image_movie(self, image_url: str | None) -> None:
         """handle update with or without existing"""

@@ -1,6 +1,7 @@
 """build tv person, expected to be called from async queue"""
 
 from people.models import Person
+from people.src.cross_match import match_t_m
 from tv.src.tv_maze_client import TVMaze
 
 
@@ -12,11 +13,20 @@ class TVPerson:
 
     def get_or_create(self):
         """get person or create"""
+        person = None
         try:
             person = Person.objects.get(tvmaze_id=self.tvmaze_person_id)
         except Person.DoesNotExist:
+            pass
+
+        if not person:
             response = self._fetch_remote_person()
             person_data = self._parse_person(response)
+
+            moviedb_person_id = match_t_m(person_data["name"])
+            if moviedb_person_id:
+                person_data["the_moviedb_id"] = moviedb_person_id
+
             person = Person.objects.create(**person_data)
             image_url = self._get_image_url(response)
             if image_url:

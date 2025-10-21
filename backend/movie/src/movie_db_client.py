@@ -14,7 +14,7 @@ class MovieDB:
 
     def get(self, url: str) -> dict | None:
         """make get request"""
-        sep = "&" if "&" in url else "?"
+        sep = "&" if "?" in url else "?"
         url_full = f"{self.BASE}/{url}{sep}api_key={self.CONFIG['MOVIE_DB_API_KEY']}"
         response = requests.get(url_full, timeout=self.TIMEOUT)
         if not response.ok:

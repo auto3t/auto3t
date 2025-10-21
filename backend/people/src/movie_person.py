@@ -2,6 +2,7 @@
 
 from movie.src.movie_db_client import MovieDB
 from people.models import Person
+from people.src.cross_match import match_m_t
 
 
 class MovieDBPerson:
@@ -12,11 +13,20 @@ class MovieDBPerson:
 
     def get_or_create(self):
         """get or create person"""
+        person = None
         try:
             person = Person.objects.get(the_moviedb_id=self.moviedb_person_id)
         except Person.DoesNotExist:
+            pass
+
+        if not person:
             response = self._fetch_remote_person()
             person_data = self._parse_person(response)
+
+            tvmaze_person_id = match_m_t(person_data["name"])
+            if tvmaze_person_id:
+                person_data["tvmaze_id"] = tvmaze_person_id
+
             person = Person.objects.create(**person_data)
             if response.get("profile_path"):
                 image_url = self._get_image_url(response["profile_path"])

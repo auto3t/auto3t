@@ -19,18 +19,30 @@ class MovieDBPerson:
         except Person.DoesNotExist:
             pass
 
-        if not person:
-            response = self._fetch_remote_person()
-            person_data = self._parse_person(response)
+        if person:
+            return person
 
-            tvmaze_person_id = match_m_t(person_data["name"])
-            if tvmaze_person_id:
-                person_data["tvmaze_id"] = tvmaze_person_id
+        response = self._fetch_remote_person()
+        person_data = self._parse_person(response)
+        tvmaze_person_id = match_m_t(person_data["name"])
 
-            person = Person.objects.create(**person_data)
-            if response.get("profile_path"):
-                image_url = self._get_image_url(response["profile_path"])
-                person.update_image_person(image_url=image_url)
+        if tvmaze_person_id:
+            try:
+                person = Person.objects.get(tvmaze_id=tvmaze_person_id)
+                person.the_moviedb_id = self.moviedb_person_id
+                person.save()
+            except Person.DoesNotExist:
+                pass
+
+            if person:
+                return person
+
+            person_data["tvmaze_id"] = tvmaze_person_id
+
+        person = Person.objects.create(**person_data)
+        if response.get("profile_path"):
+            image_url = self._get_image_url(response["profile_path"])
+            person.update_image_person(image_url=image_url)
 
         return person
 

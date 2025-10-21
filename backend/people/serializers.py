@@ -9,6 +9,9 @@ class PersonSerializer(serializers.ModelSerializer):
     """serialize person"""
 
     image_person = ArtworkSerializer()
+    tvmaze_url = serializers.CharField(required=False)
+    the_moviedb_url = serializers.CharField(required=False)
+    imdb_url = serializers.CharField(required=False)
 
     class Meta:
         model = Person

@@ -55,6 +55,7 @@ export default function RootLayout() {
               <StyledNavLink to="tv">TV</StyledNavLink>
               <StyledNavLink to="movie">Movie</StyledNavLink>
               <StyledNavLink to="collection">Collections</StyledNavLink>
+              <StyledNavLink to="people">People</StyledNavLink>
               <StyledNavLink to="settings">Settings</StyledNavLink>
             </div>
             <div className="flex gap-2">

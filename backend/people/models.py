@@ -27,6 +27,30 @@ class Person(models.Model):
     def __str__(self):
         return str(self.name)
 
+    @property
+    def tvmaze_url(self) -> str | None:
+        """tvmaze url"""
+        if not self.tvmaze_id:
+            return None
+
+        return f"https://api.tvmaze.com/people/{self.tvmaze_id}"
+
+    @property
+    def the_moviedb_url(self) -> str | None:
+        """the moviedb url"""
+        if not self.the_moviedb_id:
+            return None
+
+        return f"https://www.themoviedb.org/person/{self.the_moviedb_id}"
+
+    @property
+    def imdb_url(self) -> str | None:
+        """imdb url"""
+        if not self.imdb_id:
+            return None
+
+        return f"https://www.imdb.com/name/{self.imdb_id}/"
+
     def update_image_person(self, image_url: str | None) -> None:
         """handle update with or without existing"""
         if not image_url:

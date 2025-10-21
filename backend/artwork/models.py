@@ -27,6 +27,7 @@ class Artwork(models.Model):
         "season_fallback",
         "image_season",
         "image_episode",
+        "image_person",
     ]
 
     image_url = models.URLField(unique=True)

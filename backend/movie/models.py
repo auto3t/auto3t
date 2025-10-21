@@ -5,6 +5,7 @@ from typing import Self
 
 from artwork.models import Artwork
 from django.db import models
+from people.models import Credit
 from rapidfuzz import fuzz
 
 from autot.models import SearchWord, SearchWordCategory, TargetBitrate, Torrent, log_change
@@ -89,6 +90,7 @@ class Movie(BaseModel):
     description = models.TextField(null=True, blank=True)
     tagline = models.TextField(null=True, blank=True)
     runtime = models.PositiveIntegerField(null=True, blank=True)
+    credit = models.ManyToManyField(Credit)
     is_active = models.BooleanField(default=True)
     image_movie = models.ForeignKey(
         Artwork, related_name="image_movie", on_delete=models.SET_NULL, null=True, blank=True

@@ -13,7 +13,7 @@ class TVMaze:
     BASE: str = "https://api.tvmaze.com"
     TIMEOUT: int = 60
 
-    def get(self, url: str) -> dict | None:
+    def get(self, url: str) -> dict | list | None:
         """make get request"""
 
         response = requests.get(f"{self.BASE}/{url}", timeout=self.TIMEOUT)

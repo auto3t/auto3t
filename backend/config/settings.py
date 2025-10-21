@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     "autot",
     "tv",
     "movie",
+    "people",
     "authentication",
     "artwork",
     "user",

@@ -4,8 +4,11 @@ from datetime import date, datetime
 
 import django_rq
 from artwork.models import Artwork
+from django.contrib.contenttypes.models import ContentType
 from movie.models import Movie, MovieRelease
 from movie.src.movie_db_client import MovieDB
+from people.models import Credit
+from people.src.movie_person import MovieDBPerson
 
 from autot.models import log_change
 from autot.static import MovieProductionState
@@ -13,6 +16,8 @@ from autot.static import MovieProductionState
 
 class MovieDBMovie:
     """moviedb remote implementation"""
+
+    LIMIT_ACTOR_CREDIT: int = 8
 
     def __init__(self, the_moviedb_id: str):
         self.the_moviedb_id = the_moviedb_id
@@ -29,6 +34,8 @@ class MovieDBMovie:
             queued = {i.kwargs.get("the_moviedb_id") for i in movie_queue.get_jobs()}
             if collection_id not in queued:
                 refresh_collection.delay(the_moviedb_id=collection_id)
+
+        self.get_credits(movie)
 
     def get_movie(self) -> tuple[Movie, str | None]:
         """get or create moview"""
@@ -167,3 +174,46 @@ class MovieDBMovie:
         releases = list(newest_releases.values())
 
         return releases
+
+    def get_credits(self, movie: Movie):
+        """get movie cast"""
+        credit_list = []
+        response = self._get_remote_credits()
+        cast_members = response["cast"][: self.LIMIT_ACTOR_CREDIT]
+        for cast in cast_members:
+            credit = self._build_credit(movie_id=movie.id, member=cast, role="actor")
+            credit_list.append(credit.id)
+
+        departments = {"Directing", "Writing"}
+        jobs = {
+            "Producer",
+        }
+        crew_members = [i for i in response["crew"] if i["department"] in departments or i["job"] in jobs]
+        for crew in crew_members:
+            credit = self._build_credit(movie_id=movie.id, member=crew, role="crew")
+            credit_list.append(credit.id)
+
+        movie.credit.set(credit_list)
+
+    def _get_remote_credits(self) -> dict:
+        """get remote credits"""
+        url = f"movie/{self.the_moviedb_id}/credits"
+        response = MovieDB().get(url)
+        if not response:
+            raise ValueError
+
+        return response
+
+    def _build_credit(self, movie_id, member, role):
+        """build credit from member"""
+        person = MovieDBPerson(moviedb_person_id=member["id"]).get_or_create()
+        credit_data = {
+            "person": person,
+            "role": role,
+            "role_name": member.get("character") or member.get("job"),
+            "content_type": ContentType.objects.get_for_model(Movie),
+            "object_id": movie_id,
+        }
+        credit, _ = Credit.objects.get_or_create(**credit_data)
+
+        return credit

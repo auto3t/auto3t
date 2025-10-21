@@ -11,6 +11,7 @@ from artwork.models import Artwork
 from django.db import models
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
+from people.models import Credit
 from PIL import Image, ImageFilter
 from rapidfuzz import fuzz
 
@@ -104,6 +105,7 @@ class TVShow(BaseModel):
     status = models.CharField(choices=TvShowStatus.choices(), max_length=1, null=True, blank=True)
     is_daily = models.BooleanField(default=False)
     show_time_zone = models.CharField(max_length=255, default="UTC")
+    credit = models.ManyToManyField(Credit)
     search_keywords = models.ManyToManyField(SearchWord)
     is_active = models.BooleanField(default=True)
     image_show = models.ForeignKey(

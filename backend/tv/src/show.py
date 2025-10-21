@@ -1,11 +1,15 @@
 """all show related functionality"""
 
+import re
 from datetime import datetime, timedelta
 
 import pytz
 from artwork.models import Artwork
+from django.contrib.contenttypes.models import ContentType
 from django.db.models import QuerySet
 from django.utils import timezone
+from people.models import Credit
+from people.src.tv_person import TVPerson
 from tv.models import TVEpisode, TVSeason, TVShow
 from tv.src.tv_maze_client import TVMaze
 
@@ -26,6 +30,7 @@ class TVMazeShow:
         show: TVShow = self.get_show()
         seasons: QuerySet[TVSeason] = self.check_seasons(show)
         self.check_episodes(seasons)
+        self.get_show_credits(show)
 
     def get_show(self, is_active: bool = True) -> TVShow:
         """get or create show"""
@@ -83,7 +88,7 @@ class TVMazeShow:
         url = f"shows/{self.tvmaze_id}?embed=images"
 
         response = TVMaze().get(url)
-        if not response:
+        if not response or not isinstance(response, dict):
             raise ValueError
 
         return response
@@ -172,12 +177,12 @@ class TVMazeShow:
 
         return seasons
 
-    def _get_remote_seasons(self) -> dict:
+    def _get_remote_seasons(self) -> list:
         """get season of show"""
         url = f"shows/{self.tvmaze_id}/seasons"
         response = TVMaze().get(url)
 
-        if not response:
+        if not response or not isinstance(response, list):
             raise ValueError
 
         return response
@@ -239,12 +244,12 @@ class TVMazeShow:
 
         MediaServerIdentify().refresh(to_refresh)
 
-    def _get_remote_episodes(self) -> dict | None:
+    def _get_remote_episodes(self) -> list | None:
         """get episodes of show"""
         url = f"shows/{self.tvmaze_id}/episodes"
         response = TVMaze().get(url)
 
-        if not response:
+        if not response or not isinstance(response, list):
             return None
 
         return response
@@ -288,3 +293,69 @@ class TVMazeShow:
             date_time_obj = timezone.make_aware(date_time_obj, timezone=self.timezone)
 
         return date_time_obj
+
+    def get_show_credits(self, show: TVShow):
+        """get show credits"""
+        credit_list = []
+
+        cast_response = self._get_remote_show_cast()
+        for cast_member in cast_response:
+            credit = self._build_cast_credit(show_id=show.id, member=cast_member, role="main_cast")
+            credit_list.append(credit)
+
+        crew_response = self._get_remote_show_crew()
+
+        for crew_member in crew_response:
+            if not re.match(r".*producer.*|.*writer.*|.*director.*", crew_member["type"].lower()):
+                continue
+
+            credit = self._buil_crew_credit(show_id=show.id, member=crew_member)
+            credit_list.append(credit)
+
+        show.credit.set(credit_list)
+
+    def _get_remote_show_cast(self) -> list:
+        """get cast from remote"""
+        url = f"shows/{self.tvmaze_id}/cast"
+        response = TVMaze().get(url)
+        if not response or not isinstance(response, list):
+            return []
+
+        return response
+
+    def _get_remote_show_crew(self) -> list:
+        """get remote show crew"""
+        url = f"shows/{self.tvmaze_id}/crew"
+        response = TVMaze().get(url)
+        if not response or not isinstance(response, list):
+            return []
+
+        return response
+
+    def _build_cast_credit(self, show_id, member, role):
+        """build show cast credit"""
+        person = TVPerson(tvmaze_person_id=member["person"]["id"]).get_or_create()
+        credit_data = {
+            "person": person,
+            "role": role,
+            "role_name": member["character"].get("name"),
+            "content_type": ContentType.objects.get_for_model(TVShow),
+            "object_id": show_id,
+        }
+        credit, _ = Credit.objects.get_or_create(**credit_data)
+
+        return credit
+
+    def _buil_crew_credit(self, show_id, member):
+        """build crew credit"""
+        person = TVPerson(tvmaze_person_id=member["person"]["id"]).get_or_create()
+        credit_data = {
+            "person": person,
+            "role": "crew",
+            "role_name": member.get("type"),
+            "content_type": ContentType.objects.get_for_model(TVShow),
+            "object_id": show_id,
+        }
+        credit, _ = Credit.objects.get_or_create(**credit_data)
+
+        return credit

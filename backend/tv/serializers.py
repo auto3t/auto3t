@@ -20,7 +20,7 @@ class TVShowSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TVShow
-        fields = "__all__"
+        exclude = ("credit",)
 
 
 class TVSeasonSerializer(serializers.ModelSerializer):

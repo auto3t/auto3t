@@ -4,6 +4,8 @@ from people.models import Person
 from people.src.cross_match import match_t_m
 from tv.src.tv_maze_client import TVMaze
 
+from autot.models import log_change
+
 
 class TVPerson:
     """get person from tvmaze"""
@@ -46,6 +48,22 @@ class TVPerson:
 
         return person
 
+    def refresh(self):
+        """refresh tv person"""
+        person = Person.objects.get(tvmaze_id=self.tvmaze_person_id)
+        response = self._fetch_remote_person()
+        person_data = self._parse_person(response)
+
+        if not person.name == person_data["name"]:
+            old_value = person.name
+            person.name = person_data["name"]
+            person.save()
+            log_change(person, "u", field_name="name", old_value=old_value, new_value=person_data["name"])
+
+        image_url = self._get_image_url(response)
+        if image_url:
+            person.update_image_person(image_url=image_url)
+
     def _fetch_remote_person(self):
         """fetch person from tvmaze"""
         url = f"people/{self.tvmaze_person_id}"
@@ -61,6 +79,7 @@ class TVPerson:
         person_data = {
             "name": response["name"],
             "tvmaze_id": response["id"],
+            "metadata_src": "t",
         }
 
         return person_data

@@ -19,4 +19,14 @@ class CreditViewSet(viewsets.ReadOnlyModelViewSet):
     """viewset for credits"""
 
     serializer_class = CreditSerializer
-    queryset = Credit.objects.all()
+    queryset = Credit.objects.none()
+
+    def get_queryset(self):
+        """filter on credit"""
+        queryset = Credit.objects.all()
+
+        person = self.request.GET.get("person")
+        if person:
+            queryset = queryset.filter(person__id=person)
+
+        return queryset

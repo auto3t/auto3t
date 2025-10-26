@@ -33,7 +33,9 @@ export default function Peoples() {
   useEffect(() => {
     const fetchPersons = async () => {
       try {
-        const data = (await get('people/person/')) as PersonResponseType
+        const data = (await get(
+          'people/person/?page_size=60',
+        )) as PersonResponseType
         setPersons(data.results)
       } catch (error) {
         console.error('error fetching people: ', error)

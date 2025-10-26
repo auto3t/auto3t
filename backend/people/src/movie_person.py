@@ -4,6 +4,8 @@ from movie.src.movie_db_client import MovieDB
 from people.models import Person
 from people.src.cross_match import match_m_t
 
+from autot.models import log_change
+
 
 class MovieDBPerson:
     """handle person indexing in movie db"""
@@ -46,6 +48,24 @@ class MovieDBPerson:
 
         return person
 
+    def refresh(self):
+        """refresh movie person"""
+        person = Person.objects.get(the_moviedb_id=self.moviedb_person_id)
+        response = self._fetch_remote_person()
+        person_data = self._parse_person(response)
+
+        if not person.imdb_id:
+            # don't overwrite in refresh
+            if person.imdb_id != person_data["imdb_id"]:
+                person.imdb_id = person_data["imdb_id"]
+                person.save()
+                log_change(person, "u", field_name="imdb_id", new_value=person_data["imdb_id"])
+
+        if person.metadata_src == "m" or not person.image_person:
+            if response.get("profile_path"):
+                image_url = self._get_image_url(response["profile_path"])
+                person.update_image_person(image_url=image_url)
+
     def _fetch_remote_person(self):
         """fetch person from remote"""
         url = f"person/{self.moviedb_person_id}"
@@ -61,6 +81,7 @@ class MovieDBPerson:
             "name": response["name"],
             "the_moviedb_id": self.moviedb_person_id,
             "imdb_id": response.get("imdb_id"),
+            "medatada_src": "m",
         }
 
         return person_data

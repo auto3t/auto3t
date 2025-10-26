@@ -12,6 +12,10 @@ class Person(models.Model):
     """describes a unique person"""
 
     TRACK_CHANGES = True
+    METADATA_SRC_CHOICES = [
+        ("t", "tvmaze"),
+        ("m", "moviedb"),
+    ]
 
     name = models.CharField(max_length=255)
     date_added = models.DateTimeField(auto_now_add=True)
@@ -19,6 +23,8 @@ class Person(models.Model):
     image_person = models.ForeignKey(
         Artwork, related_name="image_person", on_delete=models.SET_NULL, null=True, blank=True
     )
+    last_refresh = models.DateTimeField(null=True, blank=True)
+    metadata_src = models.CharField(max_length=1, choices=METADATA_SRC_CHOICES)
 
     tvmaze_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
     the_moviedb_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
@@ -33,7 +39,7 @@ class Person(models.Model):
         if not self.tvmaze_id:
             return None
 
-        return f"https://api.tvmaze.com/people/{self.tvmaze_id}"
+        return f"https://tvmaze.com/people/{self.tvmaze_id}"
 
     @property
     def the_moviedb_url(self) -> str | None:
@@ -52,7 +58,7 @@ class Person(models.Model):
         return f"https://www.imdb.com/name/{self.imdb_id}/"
 
     def update_image_person(self, image_url: str | None) -> None:
-        """handle update with or without existing"""
+        """handle update with or without existing, noop if identical"""
         if not image_url:
             return
 

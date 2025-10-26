@@ -133,6 +133,10 @@ class TVShow(BaseModel):
         verbose_name="Season Fallback Art",
     )
 
+    class Meta:
+        verbose_name = "TV Show"
+        verbose_name_plural = "TV Shows"
+
     def __str__(self):
         """set string representation"""
         return f"{self.name}"

@@ -51,31 +51,36 @@ export default function PeopleDetail() {
               </div>
               <div className="flex-3">
                 <H1>{peopleDetail.name}</H1>
-                {peopleDetail.tvmaze_id && peopleDetail.tvmaze_url && (
-                  <P>
-                    tvmaze:{' '}
-                    <StyledLink to={peopleDetail.tvmaze_url}>
-                      {peopleDetail.tvmaze_id}
-                    </StyledLink>
-                  </P>
-                )}
-                {peopleDetail.the_moviedb_id &&
-                  peopleDetail.the_moviedb_url && (
-                    <P>
-                      themoviedb:{' '}
-                      <StyledLink to={peopleDetail.the_moviedb_url}>
-                        {peopleDetail.the_moviedb_id}
+                <div className="inline-grid grid-cols-2 gap-2">
+                  {peopleDetail.tvmaze_id && peopleDetail.tvmaze_url && (
+                    <>
+                      <P>tvmaze</P>
+                      <StyledLink target="_blank" to={peopleDetail.tvmaze_url}>
+                        {peopleDetail.tvmaze_id}
                       </StyledLink>
-                    </P>
+                    </>
                   )}
-                {peopleDetail.imdb_id && peopleDetail.imdb_url && (
-                  <P>
-                    imdb:{' '}
-                    <StyledLink to={peopleDetail.imdb_url}>
-                      {peopleDetail.imdb_id}
-                    </StyledLink>
-                  </P>
-                )}
+                  {peopleDetail.the_moviedb_id &&
+                    peopleDetail.the_moviedb_url && (
+                      <>
+                        <P>themoviedb</P>
+                        <StyledLink
+                          target="_blank"
+                          to={peopleDetail.the_moviedb_url}
+                        >
+                          {peopleDetail.the_moviedb_id}
+                        </StyledLink>
+                      </>
+                    )}
+                  {peopleDetail.imdb_id && peopleDetail.imdb_url && (
+                    <>
+                      <P>imdb</P>
+                      <StyledLink target="_blank" to={peopleDetail.imdb_url}>
+                        {peopleDetail.imdb_id}
+                      </StyledLink>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
           </div>

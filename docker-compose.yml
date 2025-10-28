@@ -39,7 +39,7 @@ services:
       - 127.0.0.1:9696:9696
     restart: "no"
   auto3t-jellyfin:
-    image: jellyfin/jellyfin
+    image: jellyfin/jellyfin:10.10.7
     container_name: auto3t-jellyfin
     restart: "no"
     volumes:

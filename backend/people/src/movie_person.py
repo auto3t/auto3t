@@ -81,7 +81,7 @@ class MovieDBPerson:
             "name": response["name"],
             "the_moviedb_id": self.moviedb_person_id,
             "imdb_id": response.get("imdb_id"),
-            "medatada_src": "m",
+            "metadata_src": "m",
         }
 
         return person_data

@@ -1,8 +1,6 @@
 """all tv models"""
 
-import base64
 import re
-from io import BytesIO
 from pathlib import Path
 from typing import Self
 
@@ -12,7 +10,6 @@ from django.db import models
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
 from people.models import Credit
-from PIL import Image, ImageFilter
 from rapidfuzz import fuzz
 
 from autot.models import SearchWord, SearchWordCategory, Torrent, log_change
@@ -26,7 +23,6 @@ class BaseModel(models.Model):
 
     CONFIG: ConfigType = get_config()
     FUZZY_RATIO = 95
-    IMAGE_SIZE: None | tuple[int, int] = None
 
     tvmaze_id = models.CharField(max_length=255, verbose_name="ID on remote server")
     remote_server_url = models.URLField(null=True, blank=True, verbose_name="URL on remote server")
@@ -40,45 +36,6 @@ class BaseModel(models.Model):
         """set abstract to not create db relations"""
 
         abstract = True
-
-    def crop_image(self, image_io: BytesIO) -> bytes:
-        """crop image to target resolution"""
-        if not self.IMAGE_SIZE:
-            return image_io.getvalue()
-
-        img = Image.open(image_io)
-        target_aspect = self.IMAGE_SIZE[0] / self.IMAGE_SIZE[1]
-        current_aspect = img.width / img.height
-        if target_aspect == current_aspect:
-            return image_io.getvalue()
-
-        if target_aspect > current_aspect:
-            # crop on top and bottom
-            to_crop = int((img.height - (img.width / target_aspect)) / 2)
-            borders = (0, to_crop, img.width, img.height - to_crop)
-        else:
-            # crop left and right
-            to_crop = int((img.width - img.height * target_aspect) / 2)
-            borders = (to_crop, 0, img.width - to_crop, img.height)
-
-        img_file = img.crop(borders)
-        buffer = BytesIO()
-        img_file.save(buffer, format="JPEG")
-        buffer.seek(0)
-
-        return buffer.getvalue()
-
-    def get_image_blur(self, to_blur: bytes) -> str:
-        """create image blur"""
-        with Image.open(to_blur) as image:
-            blurred_image = image.filter(ImageFilter.GaussianBlur(10))
-            blurred_image.thumbnail((100, 100))
-            buffer = BytesIO()
-            blurred_image.save(buffer, format="JPEG")
-            img_base64 = base64.b64encode(buffer.getvalue()).decode()
-
-        image_blur = f"data:image/jpg;base64,{img_base64}"
-        return image_blur
 
     def add_keyword(self, instance, to_add) -> None:
         """add keyword or overwrite"""
@@ -97,7 +54,6 @@ class TVShow(BaseModel):
     """describes a show"""
 
     TRACK_CHANGES = True
-    IMAGE_SIZE = (2160, 2880)
 
     name = models.CharField(max_length=255)
     imdb_id = models.CharField(255, unique=True, null=True, blank=True)
@@ -237,7 +193,6 @@ class TVSeason(BaseModel):
     """describes a Season of a Show"""
 
     TRACK_CHANGES = True
-    IMAGE_SIZE = (1000, 1500)
 
     number = models.IntegerField()
     show = models.ForeignKey(TVShow, on_delete=models.CASCADE)
@@ -321,7 +276,6 @@ class TVEpisode(BaseModel):
     """describes an Episode of a Season of a Show"""
 
     TRACK_CHANGES = True
-    IMAGE_SIZE = (1920, 1080)
 
     number = models.IntegerField()
     title = models.CharField(max_length=255)

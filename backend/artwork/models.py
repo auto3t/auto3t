@@ -19,16 +19,16 @@ logger = logging.getLogger("django")
 class Artwork(models.Model):
     """represents an artwork instance"""
 
-    RELATED_NAMES = [
-        "image_collection",
-        "image_movie",
-        "image_show",
-        "episode_fallback",
-        "season_fallback",
-        "image_season",
-        "image_episode",
-        "image_person",
-    ]
+    RELATED_CROP: dict[str, tuple[int, int]] = {
+        "image_collection": (1000, 1500),
+        "image_movie": (1000, 1500),
+        "image_show": (1000, 1500),
+        "episode_fallback": (1280, 720),
+        "season_fallback": (1000, 1500),
+        "image_season": (1000, 1500),
+        "image_episode": (1280, 720),
+        "image_person": (1000, 1500),
+    }
 
     image_url = models.URLField(unique=True)
     image = models.ImageField(upload_to="artwork/", null=True, blank=True)
@@ -39,11 +39,19 @@ class Artwork(models.Model):
 
     def get_related(self) -> str | None:
         """get related"""
-        for related in self.RELATED_NAMES:
+        for related in self.RELATED_CROP:
             if (getattr(self, related)).exists():
                 return related
 
         return None
+
+    def get_crop(self) -> tuple[int, int] | None:
+        """get crop defined on model"""
+        related = self.get_related()
+        if not related:
+            return None
+
+        return self.RELATED_CROP.get(related)
 
     def update(self, image_url: str) -> None:
         """update and replace"""
@@ -81,10 +89,11 @@ class Artwork(models.Model):
         img_width, img_height = img.size
         is_aspect_ratio = img_width / img_height
 
-        if is_aspect_ratio > 1:
-            target_aspect_ratio = 16 / 9
-        else:
-            target_aspect_ratio = 2 / 3
+        target = self.get_crop()
+        if not target:
+            return img
+
+        target_aspect_ratio = target[0] / target[1]
 
         if is_aspect_ratio > target_aspect_ratio:  # Image is too wide
             new_width = int(target_aspect_ratio * img_height)
@@ -99,16 +108,17 @@ class Artwork(models.Model):
         bottom = (img_height + new_height) / 2
 
         cropped_image = img.crop((left, top, right, bottom))
+        cropped_image.thumbnail(target)
         return cropped_image
 
     def _get_image_blur(self) -> None:
         """create image blur"""
         with Image.open(self.image) as image:
-            blurred_image = image.filter(ImageFilter.GaussianBlur(10))
-            blurred_image.thumbnail((100, 100))
+            blurred_image = image.filter(ImageFilter.GaussianBlur(100))
+            blurred_image.thumbnail((50, 50))
 
         buffer = BytesIO()
-        blurred_image.save(buffer, format="JPEG")
+        blurred_image.save(buffer, format="JPEG", quality=60, optimize=True)
         img_base64 = base64.b64encode(buffer.getvalue()).decode()
 
         self.image_blur = f"data:image/jpg;base64,{img_base64}"

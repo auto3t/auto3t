@@ -83,7 +83,7 @@ class ShowViewSet(viewsets.ModelViewSet):
 
         is_active = self.request.GET.get("is_active")
         if is_active:
-            active_value = True if is_active.lower() == "true" else False
+            active_value = is_active.lower() == "true"
             queryset = queryset.filter(is_active=active_value)
 
         query = self.request.GET.get("q")

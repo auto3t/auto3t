@@ -11,8 +11,17 @@ class PersonViewSet(viewsets.ReadOnlyModelViewSet):
     """viewset for persons"""
 
     serializer_class = PersonSerializer
-    queryset = Person.objects.all()
+    queryset = Person.objects.none()
     pagination_class = StandardResultsSetPagination
+
+    def get_queryset(self):
+        """get queryset"""
+        queryset = Person.objects.all().order_by("name")
+        query = self.request.GET.get("q")
+        if query:
+            queryset = queryset.filter(name__icontains=query)
+
+        return queryset
 
 
 class CreditViewSet(viewsets.ReadOnlyModelViewSet):

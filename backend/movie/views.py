@@ -170,6 +170,12 @@ class MovieViewSet(viewsets.ModelViewSet):
 
             queryset = queryset.filter(production_state=production_state)
 
+        is_active = self.request.GET.get("is_active")
+        print(is_active)
+        if is_active:
+            active_value = is_active.lower() == "true"
+            queryset = queryset.filter(is_active=active_value)
+
         query = self.request.GET.get("q")
         if query:
             queryset = queryset.filter(name__icontains=query)

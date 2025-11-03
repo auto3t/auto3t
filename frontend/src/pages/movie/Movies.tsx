@@ -41,6 +41,9 @@ export default function Movies() {
       if (userProfile?.movies_production_filter) {
         params.append('production_state', userProfile.movies_production_filter)
       }
+      if (userProfile && userProfile?.movies_active_filter !== null) {
+        params.append('is_active', userProfile.movies_active_filter)
+      }
       try {
         const data = await get(`movie/movie/?${params.toString()}`)
         setMovies(data)
@@ -54,6 +57,7 @@ export default function Movies() {
     setMovies,
     searchTerm,
     userProfile?.movies_production_filter,
+    userProfile?.movies_active_filter,
     userProfile?.movie_status_filter,
   ])
 
@@ -90,6 +94,20 @@ export default function Movies() {
     } else {
       setMovieSearchInput(true)
     }
+  }
+
+  const handleActiveFilterUpdate = async (
+    event: React.ChangeEvent<HTMLSelectElement>,
+  ) => {
+    const newActive: boolean | null =
+      event.target.value === '' ? null : event.target.value === '1'
+    post('user/profile/', { movies_active_filter: newActive })
+      .then((data) => {
+        setUserProfile(data)
+      })
+      .catch((error) => {
+        console.error('Error updating status:', error)
+      })
   }
 
   return (
@@ -134,6 +152,20 @@ export default function Movies() {
               <option value="f">Finished</option>
               <option value="a">Archived</option>
               <option value="i">Ignored</option>
+            </Select>
+            <Select
+              defaultValue={
+                userProfile.movies_active_filter === null
+                  ? ''
+                  : userProfile.movies_active_filter
+                    ? '1'
+                    : '0'
+              }
+              onChange={handleActiveFilterUpdate}
+            >
+              <option value={''}>--- all ---</option>
+              <option value="1">Active</option>
+              <option value="0">Inactive</option>
             </Select>
           </>
         )}

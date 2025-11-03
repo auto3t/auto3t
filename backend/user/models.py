@@ -17,6 +17,7 @@ class UserProfile(models.Model):
     movies_production_filter = models.CharField(
         choices=MovieProductionState.choices(), max_length=1, null=True, blank=True
     )
+    movies_active_filter = models.BooleanField(null=True, blank=True)
     movie_status_filter = models.CharField(choices=MovieStatus.choices(), max_length=1, null=True, blank=True)
     collection_tracking_filter = models.BooleanField(null=True, blank=True)
 

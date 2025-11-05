@@ -69,7 +69,7 @@ const TVShowDetail: React.FC = () => {
 
   useEffect(() => {
     fetchSeasons()
-  }, [id, setSeasons, setShowDetail])
+  }, [id])
 
   useEffect(() => {
     if (seasons.length > 0) {

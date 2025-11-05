@@ -9,7 +9,7 @@ import ShowDetail from '../../components/tv/ShowDetail'
 import useApi from '../../hooks/api'
 import SeasonMetaData from '../../components/tv/SeasonMetaData'
 import { useParams } from 'react-router-dom'
-import { Button, P } from '../../components/Typography'
+import { Button, H2, P } from '../../components/Typography'
 import Spinner from '../../components/Spinner'
 import { useProgressStore } from '../../stores/ProgressStore'
 import PeopleCredits from '../../components/people/PeopleCredits'
@@ -105,13 +105,14 @@ const TVShowDetail: React.FC = () => {
         <ShowDetail showDetail={showDetail} fetchShow={fetchShow} />
       )}
       {id && <PeopleCredits parent="show" id={id} />}
-      <div>
+      <div className="p-4 my-4 border border-accent-2">
         {isLoadingSeasons ? (
           <div className="flex justify-center">
             <Spinner />
           </div>
         ) : (
           <>
+            <H2>Seasons</H2>
             <div className="grid grid-cols-6 gap-2 my-4">
               {Array.isArray(seasons) && seasons.length > 0 ? (
                 showAllSeasons ? (
@@ -142,12 +143,12 @@ const TVShowDetail: React.FC = () => {
                 {showAllSeasons ? 'Show Less' : 'Show More'}
               </Button>
             )}
+            {selectedSeason && <SeasonMetaData fetchEpisodes={fetchEpisodes} />}
           </>
         )}
       </div>
       {selectedSeason ? (
         <>
-          <SeasonMetaData fetchEpisodes={fetchEpisodes} />
           {isLoadingEpisodes ? (
             <div className="flex justify-center">
               <Spinner />

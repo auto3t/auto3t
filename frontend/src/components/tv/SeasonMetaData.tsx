@@ -7,15 +7,7 @@ import AddKeywordComponent from '../AddKeywordComponent'
 import KeywordTableCompnent from '../KeywordTableComponent'
 import ManualSearch from '../ManualSearch'
 import SeasonEpisodeSummary from './SeasonEpisodeSummary'
-import {
-  Button,
-  H2,
-  P,
-  Select,
-  StyledLink,
-  Table,
-  TagItem,
-} from '../Typography'
+import { Button, P, Select, StyledLink, Table, TagItem } from '../Typography'
 
 interface SeasonMetaDataInterface {
   fetchEpisodes: (seasonId: number) => void
@@ -50,8 +42,7 @@ const SeasonMetaData: React.FC<SeasonMetaDataInterface> = ({
 
   return (
     <>
-      <div className="p-4 my-4 border border-accent-2">
-        <H2>Season {selectedSeason.number.toString()}</H2>
+      <div>
         <P variant="smaller">
           ID:{' '}
           <StyledLink
@@ -63,7 +54,7 @@ const SeasonMetaData: React.FC<SeasonMetaDataInterface> = ({
           </StyledLink>
         </P>
         <P dangerouslySetInnerHTML={{ __html: selectedSeason.description }} />
-        <div className="flex gap-2 my-2">
+        <div className="flex gap-2 mt-2 mb-4">
           {selectedSeason.release_date && (
             <TagItem>
               Start: <TimeComponent timestamp={selectedSeason.release_date} />

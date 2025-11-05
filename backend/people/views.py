@@ -1,6 +1,7 @@
 """people api views"""
 
 from django.contrib.contenttypes.models import ContentType
+from movie.models import Movie
 from people.models import Credit, Person
 from people.serializers import CreditSerializer, PersonSerializer
 from rest_framework import viewsets
@@ -44,5 +45,10 @@ class CreditViewSet(viewsets.ReadOnlyModelViewSet):
         if show_id:
             content_type = ContentType.objects.get_for_model(TVShow)
             queryset = queryset.filter(content_type=content_type, object_id=show_id)
+
+        movie_id = self.request.GET.get("movie_id")
+        if movie_id:
+            content_type = ContentType.objects.get_for_model(Movie)
+            queryset = queryset.filter(content_type=content_type, object_id=movie_id)
 
         return queryset

@@ -13,6 +13,7 @@ import { CollectionType } from '../collection/Collections'
 import MovieDetail from '../../components/movie/MovieDetail'
 import { KeywordType } from '../../components/settings/Keywords'
 import { TargetBitrateType } from '../../components/settings/TargetBitrate'
+import PeopleCredits from '../../components/people/PeopleCredits'
 
 export type MovieType = {
   id: number
@@ -69,9 +70,10 @@ const MovieDetails: React.FC = () => {
       {movieDetail && (
         <>
           <MovieDetail movieDetail={movieDetail} fetchMovie={fetchMovie} />
-          <div className="py-4">
+          <div className="pt-4">
             <MovieReleases movie_id={movieDetail.id} />
           </div>
+          {id && <PeopleCredits parent="movie" id={id} />}
           {movieDetail.collection && (
             <>
               <H2>Part of Collection</H2>

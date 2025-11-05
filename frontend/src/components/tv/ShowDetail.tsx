@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ImageComponent, { ImageType } from '../ImageComponent'
 import useApi from '../../hooks/api'
@@ -82,10 +82,10 @@ const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
     fetchShow()
   }
 
-  const getShowPoster = (showDetail: ShowType) => {
+  const showPoster = useMemo(() => {
     if (showDetail.image_show?.image) return showDetail.image_show
     return { image: posterDefault }
-  }
+  }, [showDetail])
 
   const toggleShowConfirm = () => {
     setShowDelete(!showDelete)
@@ -101,7 +101,7 @@ const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
     <div className="p-1 my-1 border border-accent-2">
       <div className="flex items-center ">
         <div className="p-4 flex-1">
-          <ImageComponent image={getShowPoster(showDetail)} alt="show-poster" />
+          <ImageComponent image={showPoster} alt="show-poster" />
         </div>
         <div className="m-2 flex-3">
           <H1>{showDetail.name}</H1>

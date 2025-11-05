@@ -12,6 +12,7 @@ import { useParams } from 'react-router-dom'
 import { Button, P } from '../../components/Typography'
 import Spinner from '../../components/Spinner'
 import { useProgressStore } from '../../stores/ProgressStore'
+import PeopleCredits from '../../components/people/PeopleCredits'
 
 const TVShowDetail: React.FC = () => {
   const { id } = useParams()
@@ -103,6 +104,7 @@ const TVShowDetail: React.FC = () => {
       {showDetail && (
         <ShowDetail showDetail={showDetail} fetchShow={fetchShow} />
       )}
+      {id && <PeopleCredits parent="show" id={id} />}
       <div>
         {isLoadingSeasons ? (
           <div className="flex justify-center">

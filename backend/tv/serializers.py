@@ -17,6 +17,8 @@ class TVShowSerializer(serializers.ModelSerializer):
     episode_fallback = ArtworkSerializer(read_only=True)
     season_fallback = ArtworkSerializer(read_only=True)
     search_query = serializers.ReadOnlyField()
+    credit_main_cast_count = serializers.IntegerField()
+    credit_crew_count = serializers.IntegerField()
 
     class Meta:
         model = TVShow

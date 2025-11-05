@@ -104,6 +104,16 @@ class TVShow(BaseModel):
 
         return f"{show_name} COMPLETE"
 
+    @property
+    def credit_main_cast_count(self) -> int:
+        """count for credit main cast"""
+        return self.credit.filter(role="main_cast").count()  # pylint: disable=no-member
+
+    @property
+    def credit_crew_count(self) -> int:
+        """count for credit main cast"""
+        return self.credit.filter(role="crew").count()  # pylint: disable=no-member
+
     def update_image_show(self, image_url: str | None) -> None:
         """handle update with or without existing"""
         if not image_url:
@@ -407,7 +417,9 @@ class TVEpisode(BaseModel):
 
     def reset_download(self) -> None:
         """reset torrent and state"""
-        self.torrent.filter(torrent_state__in=["u", "q", "d"]).update(torrent_state="i", progress=None)
+        self.torrent.filter(torrent_state__in=["u", "q", "d"]).update(  # pylint: disable=no-member
+            torrent_state="i", progress=None
+        )
         self.status = None
         self.media_server_id = None
         self.media_server_meta = None
@@ -418,7 +430,7 @@ class TVEpisode(BaseModel):
         """add magnet to episode"""
         from autot.src.download import Transmission
 
-        to_cancel = self.torrent.exclude(torrent_state="i")
+        to_cancel = self.torrent.exclude(torrent_state="i")  # pylint: disable=no-member
         for torrent in to_cancel:
             Transmission().cancel(torrent)
 

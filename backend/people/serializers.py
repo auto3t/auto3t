@@ -29,6 +29,7 @@ class CreditSerializer(serializers.ModelSerializer):
     person = PersonSerializer()
     content_type_display = serializers.CharField(source="content_type.name")
     content_type_str = serializers.CharField(source="content_type.model")
+    role_display = serializers.CharField(source="get_role_display")
     content_object = serializers.SerializerMethodField()
 
     class Meta:

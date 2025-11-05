@@ -8,14 +8,15 @@ from rest_framework import serializers
 class PersonSerializer(serializers.ModelSerializer):
     """serialize person"""
 
-    image_person = ArtworkSerializer()
-    tvmaze_url = serializers.CharField(required=False)
-    the_moviedb_url = serializers.CharField(required=False)
-    imdb_url = serializers.CharField(required=False)
+    image_person = ArtworkSerializer(read_only=True)
+    tvmaze_url = serializers.CharField(required=False, read_only=True)
+    the_moviedb_url = serializers.CharField(required=False, read_only=True)
+    imdb_url = serializers.CharField(required=False, read_only=True)
 
     class Meta:
         model = Person
         fields = "__all__"
+        read_only_fields = ("name", "last_refresh", "metadata_src")
 
 
 class CreditSerializer(serializers.ModelSerializer):

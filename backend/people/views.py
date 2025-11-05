@@ -10,7 +10,7 @@ from tv.models import TVShow
 from autot.views import StandardResultsSetPagination
 
 
-class PersonViewSet(viewsets.ReadOnlyModelViewSet):
+class PersonViewSet(viewsets.ModelViewSet):
     """viewset for persons"""
 
     serializer_class = PersonSerializer

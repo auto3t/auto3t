@@ -23,7 +23,7 @@ import CollectionSearch from './pages/collection/Search'
 import RootLayout from './layouts/RootLayout'
 import NotFound from './pages/404'
 import Peoples from './pages/people/Peoples'
-import PeopleDetail from './pages/people/PeopleDetail'
+import PeopleDetails from './pages/people/PeopleDetails'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -47,7 +47,7 @@ const router = createBrowserRouter(
       </Route>
       <Route path="people">
         <Route index element={<Peoples />} />
-        <Route path=":id" element={<PeopleDetail />} />
+        <Route path=":id" element={<PeopleDetails />} />
       </Route>
       <Route path="settings" element={<Settings />} />
       <Route path="*" element={<NotFound />} />

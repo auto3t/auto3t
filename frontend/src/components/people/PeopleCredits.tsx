@@ -103,7 +103,6 @@ const PeopleCredits: React.FC<PeopleCreditInterface> = ({ parent, id }) => {
   const { get } = useApi()
 
   useEffect(() => {
-    console.log(parent, id)
     const fetchCredits = async () => {
       setIsLoading(true)
       let url = 'people/credit/'

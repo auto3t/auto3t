@@ -17,7 +17,7 @@ const ShowTile: React.FC<ShowTileInterface> = ({ show }) => {
   }
 
   return (
-    <Link to={`show/${show.id}`}>
+    <Link to={`/tv/show/${show.id}`}>
       <div>
         <ImageComponent
           image={getShowPoster(show)}

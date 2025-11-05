@@ -145,6 +145,39 @@ class MovieViewSet(viewsets.ModelViewSet):
         """get movie queryset"""
         queryset = Movie.objects.all()
 
+        queryset = self._handle_status_query(queryset)
+
+        production_state = self.request.GET.get("production_state")
+        if production_state:
+            if production_state not in self.VALID_PRODUCTION:
+                message = {"error": f"Invalid production state field: {production_state}."}
+                raise ValidationError(message)
+
+            queryset = queryset.filter(production_state=production_state)
+
+        is_active = self.request.GET.get("is_active")
+        if is_active:
+            active_value = is_active.lower() == "true"
+            queryset = queryset.filter(is_active=active_value)
+
+        query = self.request.GET.get("q")
+        if query:
+            queryset = queryset.filter(name__icontains=query)
+
+        collection = self.request.GET.get("collection")
+        if collection:
+            queryset = queryset.filter(collection=collection)
+
+        person_id = self.request.GET.get("person_id")
+        if person_id:
+            queryset = queryset.filter(credit__person_id=person_id)
+
+        queryset = self._handle_order_by(queryset)
+
+        return queryset.distinct()
+
+    def _handle_status_query(self, queryset):
+        """handle status key query building"""
         status_query = self.request.GET.get("status")
         if status_query:
             query = Q()
@@ -162,30 +195,6 @@ class MovieViewSet(viewsets.ModelViewSet):
 
             queryset = queryset.filter(query)
 
-        production_state = self.request.GET.get("production_state")
-        if production_state:
-            if production_state not in self.VALID_PRODUCTION:
-                message = {"error": f"Invalid production state field: {production_state}."}
-                raise ValidationError(message)
-
-            queryset = queryset.filter(production_state=production_state)
-
-        is_active = self.request.GET.get("is_active")
-        print(is_active)
-        if is_active:
-            active_value = is_active.lower() == "true"
-            queryset = queryset.filter(is_active=active_value)
-
-        query = self.request.GET.get("q")
-        if query:
-            queryset = queryset.filter(name__icontains=query)
-
-        collection = self.request.GET.get("collection")
-        if collection:
-            queryset = queryset.filter(collection=collection)
-
-        queryset = self._handle_order_by(queryset)
-
         return queryset
 
     def _handle_order_by(self, queryset):
@@ -194,9 +203,9 @@ class MovieViewSet(viewsets.ModelViewSet):
         if order_by:
             try:
                 queryset = queryset.order_by(order_by)
-            except FieldError:
+            except FieldError as exc:
                 message = {"error": f"Invalid order-by field: {order_by}."}
-                raise ValidationError(message)
+                raise ValidationError(message) from exc
         else:
             queryset = queryset.annotate(name_sort=Replace(F("name"), Value("The "), Value(""))).order_by(
                 "name_sort", "release_date"

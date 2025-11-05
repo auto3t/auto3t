@@ -86,11 +86,15 @@ class ShowViewSet(viewsets.ModelViewSet):
             active_value = is_active.lower() == "true"
             queryset = queryset.filter(is_active=active_value)
 
+        person_id = self.request.GET.get("person_id")
+        if person_id:
+            queryset = queryset.filter(credit__person_id=person_id)
+
         query = self.request.GET.get("q")
         if query:
             queryset = queryset.filter(name__icontains=query)
 
-        return queryset
+        return queryset.distinct()
 
     def _update_m2m(self, instance: TVShow) -> None:
         """handle search_keywords"""

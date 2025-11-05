@@ -6,6 +6,8 @@ import { PersonType } from './Peoples'
 import ImageComponent from '../../components/ImageComponent'
 import posterDefault from '../../../assets/poster-default.jpg'
 import Spinner from '../../components/Spinner'
+import PeopleMovieCredits from '../../components/people/PeopleMovieCredits'
+import PeopleTVCredits from '../../components/people/PeopleTVCredits'
 
 export default function PeopleDetail() {
   const { id } = useParams()
@@ -41,49 +43,56 @@ export default function PeopleDetail() {
         </div>
       ) : (
         peopleDetail && (
-          <div className="border border-accent-1">
-            <div className="flex gap-2 items-center">
-              <div className="flex-1 mx-auto p-6">
-                <ImageComponent
-                  alt={`image person ${peopleDetail.name}`}
-                  image={getPersonImage(peopleDetail)}
-                />
-              </div>
-              <div className="flex-3">
-                <H1>{peopleDetail.name}</H1>
-                <div className="inline-grid grid-cols-2 gap-2">
-                  {peopleDetail.tvmaze_id && peopleDetail.tvmaze_url && (
-                    <>
-                      <P>tvmaze</P>
-                      <StyledLink target="_blank" to={peopleDetail.tvmaze_url}>
-                        {peopleDetail.tvmaze_id}
-                      </StyledLink>
-                    </>
-                  )}
-                  {peopleDetail.the_moviedb_id &&
-                    peopleDetail.the_moviedb_url && (
+          <>
+            <div className="border border-accent-1">
+              <div className="flex gap-2 items-center">
+                <div className="flex-1 mx-auto p-6">
+                  <ImageComponent
+                    alt={`image person ${peopleDetail.name}`}
+                    image={getPersonImage(peopleDetail)}
+                  />
+                </div>
+                <div className="flex-3">
+                  <H1>{peopleDetail.name}</H1>
+                  <div className="inline-grid grid-cols-2 gap-2">
+                    {peopleDetail.tvmaze_id && peopleDetail.tvmaze_url && (
                       <>
-                        <P>themoviedb</P>
+                        <P>tvmaze</P>
                         <StyledLink
                           target="_blank"
-                          to={peopleDetail.the_moviedb_url}
+                          to={peopleDetail.tvmaze_url}
                         >
-                          {peopleDetail.the_moviedb_id}
+                          {peopleDetail.tvmaze_id}
                         </StyledLink>
                       </>
                     )}
-                  {peopleDetail.imdb_id && peopleDetail.imdb_url && (
-                    <>
-                      <P>imdb</P>
-                      <StyledLink target="_blank" to={peopleDetail.imdb_url}>
-                        {peopleDetail.imdb_id}
-                      </StyledLink>
-                    </>
-                  )}
+                    {peopleDetail.the_moviedb_id &&
+                      peopleDetail.the_moviedb_url && (
+                        <>
+                          <P>themoviedb</P>
+                          <StyledLink
+                            target="_blank"
+                            to={peopleDetail.the_moviedb_url}
+                          >
+                            {peopleDetail.the_moviedb_id}
+                          </StyledLink>
+                        </>
+                      )}
+                    {peopleDetail.imdb_id && peopleDetail.imdb_url && (
+                      <>
+                        <P>imdb</P>
+                        <StyledLink target="_blank" to={peopleDetail.imdb_url}>
+                          {peopleDetail.imdb_id}
+                        </StyledLink>
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+            <PeopleMovieCredits person={peopleDetail} />
+            <PeopleTVCredits person={peopleDetail} />
+          </>
         )
       )}
     </>

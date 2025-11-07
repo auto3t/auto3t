@@ -14,6 +14,7 @@ export type ShowSearchResultType = {
   status: string
   summary: string
   premiered: string
+  character_name?: string
   ended?: string
   image?: string
 }

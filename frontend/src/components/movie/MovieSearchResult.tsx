@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { MovieSearchResultType } from '../../pages/movie/Search'
 import useApi from '../../hooks/api'
 import { useState } from 'react'
-import { Button, H2, P, StyledLink, TagItem } from '../Typography'
+import { Button, H2, H3, P, StyledLink, TagItem } from '../Typography'
 import TimeComponent from '../TimeComponent'
 import { MovieType } from '../../pages/movie/MovieDetails'
 
@@ -48,6 +48,7 @@ const MovieSearchResult: React.FC<MovieSearchResultInterface> = ({
               {result.id}
             </StyledLink>
           </P>
+          {result.character_name && <H3>As: {result.character_name}</H3>}
           <P dangerouslySetInnerHTML={{ __html: result.summary }} />
           <div className="flex gap-2 my-2">
             {result.release_date && (

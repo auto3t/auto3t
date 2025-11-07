@@ -3,7 +3,7 @@ import TimeComponent from '../TimeComponent'
 import { ShowSearchResultType } from '../../pages/tv/Search'
 import useApi from '../../hooks/api'
 import { useState } from 'react'
-import { Button, H2, P, StyledLink, TagItem } from '../Typography'
+import { Button, H2, H3, P, StyledLink, TagItem } from '../Typography'
 import { ShowType } from './ShowDetail'
 import ToggleSwitch from '../ConfigToggle'
 import { useProgressStore } from '../../stores/ProgressStore'
@@ -48,6 +48,7 @@ const ShowSearchResult: React.FC<ShowSearchResultInterface> = ({ result }) => {
               {result.id}
             </StyledLink>
           </P>
+          {result.character_name && <H3>As: {result.character_name}</H3>}
           <P dangerouslySetInnerHTML={{ __html: result.summary }} />
           {result.genres.length > 0 && (
             <P className="mt-4">Genres: {result.genres.join(', ')}</P>

@@ -13,6 +13,7 @@ export type MovieSearchResultType = {
   url: string
   local_id?: number
   image?: string
+  character_name?: string
 }
 
 const MovieSearch = () => {

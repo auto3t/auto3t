@@ -11,7 +11,7 @@ export default function PeopleMovieRemoteCredis({
 }: {
   person: PersonType
 }) {
-  const { get } = useApi()
+  const { get, error } = useApi()
   const [isLoading, setIsLoading] = useState(false)
   const [personRemoteMovies, setPersonRemoteMovies] = useState<
     MovieSearchResultType[] | null
@@ -41,7 +41,9 @@ export default function PeopleMovieRemoteCredis({
   return (
     <div className="py-4">
       <H2>Searching Movies</H2>
-      {isLoading || personRemoteMovies === null ? (
+      {error ? (
+        <P>{error}</P>
+      ) : isLoading || personRemoteMovies === null ? (
         <Spinner />
       ) : personRemoteMovies.length > 0 ? (
         personRemoteMovies.map((result) => (

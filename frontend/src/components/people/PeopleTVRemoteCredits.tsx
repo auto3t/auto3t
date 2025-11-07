@@ -11,7 +11,7 @@ export default function PeopleTVRemoteCredits({
 }: {
   person: PersonType
 }) {
-  const { get } = useApi()
+  const { get, error } = useApi()
   const [isLoading, setIsLoading] = useState(false)
   const [personRemoteShows, setPersonRemoteShows] = useState<
     ShowSearchResultType[] | null
@@ -41,7 +41,9 @@ export default function PeopleTVRemoteCredits({
   return (
     <div className="py-4">
       <H2>Searching Shows</H2>
-      {isLoading || personRemoteShows === null ? (
+      {error ? (
+        <P>{error}</P>
+      ) : isLoading || personRemoteShows === null ? (
         <Spinner />
       ) : personRemoteShows.length > 0 ? (
         personRemoteShows.map((result) => (

@@ -27,7 +27,9 @@ type PersonResponseType = {
 
 export default function Peoples() {
   const { get } = useApi()
-  const [persons, setPersons] = useState<PersonType[] | null>([])
+  const [persons, setPersons] = useState<PersonType[]>([])
+  const [hasMorePersons, setHasMorePersons] = useState(false)
+  const [page, setPage] = useState(1)
   const [showSearchInput, setShowSearchInput] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [isLoading, setIsLoading] = useState(true)
@@ -55,9 +57,10 @@ export default function Peoples() {
       }
       try {
         const data = (await get(
-          `people/person/?page_size=60&${params.toString()}`,
+          `people/person/?page_size=60&page=${page}&${params.toString()}`,
         )) as PersonResponseType
-        setPersons(data.results)
+        setPersons([...persons, ...data.results])
+        setHasMorePersons(Boolean(data.next))
       } catch (error) {
         console.error('error fetching people: ', error)
       } finally {
@@ -65,10 +68,11 @@ export default function Peoples() {
       }
     }
     fetchPersons()
-  }, [setPersons, searchTerm])
+  }, [setPersons, searchTerm, page])
 
   const handleShowSearchInput = async () => {
     if (showSearchInput) {
+      setPersons([])
       setShowSearchInput(false)
       setSearchTerm('')
     } else {
@@ -89,7 +93,10 @@ export default function Peoples() {
         {showSearchInput && (
           <Input
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => {
+              setPersons([])
+              setSearchTerm(e.target.value)
+            }}
             autoFocus
           />
         )}
@@ -99,11 +106,16 @@ export default function Peoples() {
           <Spinner />
         </div>
       ) : persons && persons.length > 0 ? (
-        <div className="grid grid-cols-6 gap-2">
-          {persons.map((person) => (
-            <PersonTile person={person} key={person.id} />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-6 gap-2">
+            {persons.map((person) => (
+              <PersonTile person={person} key={person.id} />
+            ))}
+          </div>
+          {hasMorePersons && (
+            <Button onClick={() => setPage(page + 1)}>Load more</Button>
+          )}
+        </>
       ) : (
         <P>No Persons found.</P>
       )}

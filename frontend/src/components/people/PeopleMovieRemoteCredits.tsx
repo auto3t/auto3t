@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { PersonType } from '../../pages/people/Peoples'
-import { H2, P } from '../Typography'
+import { Button, P } from '../Typography'
 import useApi from '../../hooks/api'
 import { MovieSearchResultType } from '../../pages/movie/Search'
 import Spinner from '../Spinner'
@@ -12,6 +12,7 @@ export default function PeopleMovieRemoteCredis({
   person: PersonType
 }) {
   const { get, error } = useApi()
+  const [showAll, setShowAll] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [personRemoteMovies, setPersonRemoteMovies] = useState<
     MovieSearchResultType[] | null
@@ -39,21 +40,40 @@ export default function PeopleMovieRemoteCredis({
   }, [person])
 
   return (
-    <div className="py-4">
-      <H2>Searching Movies</H2>
+    <>
       {error ? (
         <P>{error}</P>
       ) : isLoading || personRemoteMovies === null ? (
         <Spinner />
       ) : personRemoteMovies.length > 0 ? (
-        personRemoteMovies.map((result) => (
-          <MovieSearchResult key={result.id} result={result} />
-        ))
+        <>
+          {(() => {
+            const fullList = personRemoteMovies ?? []
+            const list = showAll ? fullList : fullList.slice(0, 10)
+            return (
+              <>
+                {list.map((result) => (
+                  <MovieSearchResult key={result.id} result={result} />
+                ))}
+              </>
+            )
+          })()}
+          {personRemoteMovies.length > 10 && (
+            <Button
+              onClick={() => setShowAll(!showAll)}
+              className="mx-auto block my-4"
+            >
+              {showAll
+                ? 'Show less'
+                : `Show more (+${personRemoteMovies.length - 10})`}
+            </Button>
+          )}
+        </>
       ) : (
         <div className="text-center py-6">
           <P>Search query did not return any results.</P>
         </div>
       )}
-    </div>
+    </>
   )
 }

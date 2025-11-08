@@ -7,7 +7,7 @@ import PeopleMovieCredits from '../../components/people/PeopleMovieCredits'
 import PeopleTVCredits from '../../components/people/PeopleTVCredits'
 import PeopleDetail from '../../components/people/PeopleDetail'
 import PeopleTVRemoteCredits from '../../components/people/PeopleTVRemoteCredits'
-import { P } from '../../components/Typography'
+import { H2, P } from '../../components/Typography'
 import PeopleMovieRemoteCredis from '../../components/people/PeopleMovieRemoteCredits'
 
 const LocalPersonCredit = ({ peopleDetail }: { peopleDetail: PersonType }) => {
@@ -22,8 +22,18 @@ const LocalPersonCredit = ({ peopleDetail }: { peopleDetail: PersonType }) => {
 const RemotePersonCredit = ({ peopleDetail }: { peopleDetail: PersonType }) => {
   return (
     <>
-      <PeopleMovieRemoteCredis person={peopleDetail} />
-      <PeopleTVRemoteCredits person={peopleDetail} />
+      <H2>Searching Movies</H2>
+      {peopleDetail.the_moviedb_id ? (
+        <PeopleMovieRemoteCredis person={peopleDetail} />
+      ) : (
+        <P>Person is missing themoviedb ID.</P>
+      )}
+      <H2>Searching Shows</H2>
+      {peopleDetail.tvmaze_id ? (
+        <PeopleTVRemoteCredits person={peopleDetail} />
+      ) : (
+        <P>Person is missing tvmaze id.</P>
+      )}
     </>
   )
 }
@@ -85,7 +95,7 @@ export default function PeopleDetails() {
                 </P>
               ))}
             </div>
-            <div>
+            <div className="py-4">
               <ActiveTab peopleDetail={peopleDetail} />
             </div>
           </>

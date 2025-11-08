@@ -1,6 +1,9 @@
 """people api views"""
 
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from movie.models import Movie
 from movie.src.movie_search import MoviePersonSearch
 from people.models import Credit, Person
@@ -30,6 +33,7 @@ class PersonViewSet(viewsets.ModelViewSet):
 
         return queryset
 
+    @method_decorator(cache_page(settings.CACHE_TTL))
     @action(detail=True, methods=["get"])
     def search_shows(self, request, **kwargs):
         """search shows in remote index"""
@@ -40,6 +44,7 @@ class PersonViewSet(viewsets.ModelViewSet):
         options = ShowPersonSearch().search(tvmaze_person_id=person.tvmaze_id)
         return Response(options)
 
+    @method_decorator(cache_page(settings.CACHE_TTL))
     @action(detail=True, methods=["get"])
     def search_movies(self, request, **kwargs):
         """search movies in remote index"""

@@ -161,6 +161,15 @@ if not DEBUG:
         "rest_framework.renderers.JSONRenderer",
     ]
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": AUTOT_CONFIG["REDIS_CON"],
+        "KEY_PREFIX": AUTOT_CONFIG["REDIS_NAME_SPACE"],
+    }
+}
+
+CACHE_TTL = 60 * 60
 
 MEDIA_ROOT = BASE_DIR / "artwork"
 MEDIA_URL = ""

@@ -2,8 +2,11 @@
 
 import json
 
+from django.conf import settings
 from django.db.models import F, OrderBy, Value
 from django.db.models.functions import Replace
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -342,6 +345,7 @@ class EpisodeViewSet(viewsets.ModelViewSet):
 class ShowRemoteSearch(APIView):
     """search for show"""
 
+    @method_decorator(cache_page(settings.CACHE_TTL))
     def get(self, request):
         """get request"""
         query = request.GET.get("q")

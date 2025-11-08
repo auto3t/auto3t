@@ -2,9 +2,12 @@
 
 import json
 
+from django.conf import settings
 from django.core.exceptions import FieldError
 from django.db.models import F, Q, Value
 from django.db.models.functions import Replace
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from movie.models import Collection, Movie, MovieRelease, MovieReleaseTarget
 from movie.serializers import (
     CollectionSerializer,
@@ -285,6 +288,7 @@ class MovieReleaseTargetView(APIView):
 class MovieRemoteSearch(APIView):
     """search for movies"""
 
+    @method_decorator(cache_page(settings.CACHE_TTL))
     def get(self, request):
         """get request"""
         query = request.GET.get("q")
@@ -299,6 +303,7 @@ class MovieRemoteSearch(APIView):
 class CollectionRemoteSearch(APIView):
     """search for collections"""
 
+    @method_decorator(cache_page(settings.CACHE_TTL))
     def get(self, request):
         """make get request"""
         query = request.GET.get("q")

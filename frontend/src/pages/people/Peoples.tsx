@@ -113,7 +113,9 @@ export default function Peoples() {
             ))}
           </div>
           {hasMorePersons && (
-            <Button onClick={() => setPage(page + 1)}>Load more</Button>
+            <div className="py-4 flex justify-center">
+              <Button onClick={() => setPage(page + 1)}>Load more</Button>
+            </div>
           )}
         </>
       ) : (

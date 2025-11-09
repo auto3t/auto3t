@@ -130,7 +130,7 @@ const PeopleCredits: React.FC<PeopleCreditInterface> = ({ parent, id }) => {
       <H2>Cast & Crew</H2>
       {isLoading ? (
         <Spinner />
-      ) : credits ? (
+      ) : credits && credits.length > 0 ? (
         <CreditTabs credits={credits} />
       ) : (
         <P>No Credits found</P>

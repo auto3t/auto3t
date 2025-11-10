@@ -1,5 +1,7 @@
 """people api views"""
 
+from urllib.parse import quote
+
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.utils.decorators import method_decorator
@@ -8,9 +10,11 @@ from movie.models import Movie
 from movie.src.movie_search import MoviePersonSearch
 from people.models import Credit, Person
 from people.serializers import CreditSerializer, PersonSerializer
+from people.src.person_search import SearchMoviePerson, SearchTvPerson
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from tv.models import TVShow
 from tv.src.show_search import ShowPersonSearch
 
@@ -81,3 +85,23 @@ class CreditViewSet(viewsets.ReadOnlyModelViewSet):
             queryset = queryset.filter(content_type=content_type, object_id=movie_id)
 
         return queryset
+
+
+class PersonRemoteSearch(APIView):
+    """search for persons remotely"""
+
+    @method_decorator(cache_page(settings.CACHE_TTL))
+    def get(self, request):
+        """make request"""
+        query_raw = request.GET.get("q")
+        if not query_raw:
+            return Response({"message": "missing query string"}, status=400)
+
+        query_encoded = quote(query_raw)
+
+        response = {
+            "tv": SearchTvPerson().search(query_encoded),
+            "movie": SearchMoviePerson().search(query_encoded),
+        }
+
+        return Response(response)

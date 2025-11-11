@@ -70,6 +70,7 @@ export default function CollectionSearch() {
           value={query}
           onChange={handleInputChange}
           placeholder="Search..."
+          autoFocus
         />
         <Button onClick={handleClear}>Clear</Button>
       </div>

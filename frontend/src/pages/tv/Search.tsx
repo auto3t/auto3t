@@ -73,6 +73,7 @@ const TVSearch = () => {
           value={query}
           onChange={handleInputChange}
           placeholder="Search..."
+          autoFocus
         />
         <Button onClick={handleClear}>Clear</Button>
       </div>

@@ -82,6 +82,7 @@ export default function PeopleSearch() {
           value={query}
           onChange={handleInputChange}
           placeholder="Search..."
+          autoFocus
         />
         <Button onClick={handleClear}>Clear</Button>
       </div>

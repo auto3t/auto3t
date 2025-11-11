@@ -11,6 +11,7 @@ from movie.src.movie_search import MoviePersonSearch
 from people.models import Credit, Person
 from people.serializers import CreditSerializer, PersonSerializer
 from people.src.person_search import SearchMoviePerson, SearchTvPerson
+from people.tasks import refresh_single_person
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -18,6 +19,7 @@ from rest_framework.views import APIView
 from tv.models import TVShow
 from tv.src.show_search import ShowPersonSearch
 
+from autot.tasks import download_thumbnails
 from autot.views import StandardResultsSetPagination
 
 
@@ -36,6 +38,20 @@ class PersonViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(name__icontains=query)
 
         return queryset
+
+    def create(self, request, *args, **kwargs):
+        """overwrite, refresh immediately on create through API"""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        self.perform_create(serializer)
+
+        instance = serializer.instance
+        person_task = refresh_single_person.delay(person_id=instance.id)
+        download_thumbnails.delay(depends_on=person_task)
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=201, headers=headers)
 
     @method_decorator(cache_page(settings.CACHE_TTL))
     @action(detail=True, methods=["get"])

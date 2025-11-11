@@ -16,7 +16,7 @@ class PersonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Person
         fields = "__all__"
-        read_only_fields = ("name", "last_refresh", "metadata_src")
+        read_only_fields = ("last_refresh", "metadata_src", "tracking_movie_started", "tracking_tv_started")
 
 
 class CreditSerializer(serializers.ModelSerializer):

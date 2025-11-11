@@ -4,6 +4,8 @@ from artwork.models import Artwork
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.db.models import Q
+from django.utils import timezone
 
 from autot.models import log_change
 
@@ -30,8 +32,49 @@ class Person(models.Model):
     the_moviedb_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
     imdb_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
 
+    tracking_movie = models.BooleanField(default=False)
+    tracking_movie_started = models.DateTimeField(null=True, blank=True)
+    tracking_tv = models.BooleanField(default=False)
+    tracking_tv_started = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                check=Q(tvmaze_id__isnull=False) | Q(the_moviedb_id__isnull=False),
+                name="at_least_tvmaze_id_or_the_moviedb_id",
+            ),
+        ]
+
     def __str__(self):
         return str(self.name)
+
+    def save(self, *args, **kwargs):
+        """overwrite to handle timestamp and metadata src"""
+        if self.pk:
+            # update existing related timestamps
+            prev = Person.objects.get(pk=self.pk)
+            if prev.tracking_movie != self.tracking_movie:
+                if self.tracking_movie is True:
+                    self.tracking_movie_started = timezone.now()
+                else:
+                    self.tracking_movie_started = None
+            if prev.tracking_tv != self.tracking_tv:
+                if self.tracking_tv is True:
+                    self.tracking_tv_started = timezone.now()
+                else:
+                    self.tracking_tv_started = None
+        else:
+            # new related timestamps
+            if self.tracking_movie is True:
+                self.tracking_movie_started = timezone.now()
+            if self.tracking_tv is True:
+                self.tracking_tv_started = timezone.now()
+
+            # set default metadata_src
+            if not self.metadata_src:
+                self.metadata_src = "t" if self.tvmaze_id else "m"
+
+        super().save(*args, **kwargs)
 
     @property
     def tvmaze_url(self) -> str | None:

@@ -4,6 +4,7 @@ import { Button, H1, Input, P, StyledLink } from '../Typography'
 import posterDefault from '../../../assets/poster-default.jpg'
 import { useState } from 'react'
 import useApi from '../../hooks/api'
+import ToggleSwitch from '../ConfigToggle'
 
 export default function PeopleDetail({
   person,
@@ -35,6 +36,23 @@ export default function PeopleDetail({
       setIsEditTvmaze(false)
       setNewTvmazeId('')
       setNewMoviedbId('')
+    } catch (error) {
+      console.error('failed to update person: ', error)
+    }
+  }
+
+  const handlePeopleTrackingUpdate = async (
+    key: 'tracking_movie' | 'tracking_tv' | 'is_locked',
+    value: boolean,
+  ) => {
+    try {
+      const data = Object()
+      data[key] = value
+      const response = (await patch(
+        `people/person/${person.id}/`,
+        data,
+      )) as PersonType
+      setPeopleDetail(response)
     } catch (error) {
       console.error('failed to update person: ', error)
     }
@@ -143,6 +161,32 @@ export default function PeopleDetail({
               <P>-</P>
             )}
             <span />
+          </div>
+          <div className="inline-grid grid-cols-2 gap-2">
+            <P>Track Movies</P>
+            <ToggleSwitch
+              value={person.tracking_movie}
+              onChange={() =>
+                handlePeopleTrackingUpdate(
+                  'tracking_movie',
+                  !person.tracking_movie,
+                )
+              }
+            />
+            <P>Tracking Shows</P>
+            <ToggleSwitch
+              value={person.tracking_tv}
+              onChange={() =>
+                handlePeopleTrackingUpdate('tracking_tv', !person.tracking_tv)
+              }
+            />
+            <P>Lock</P>
+            <ToggleSwitch
+              value={person.is_locked}
+              onChange={() =>
+                handlePeopleTrackingUpdate('is_locked', !person.is_locked)
+              }
+            />
           </div>
         </div>
       </div>

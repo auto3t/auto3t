@@ -36,6 +36,7 @@ class Person(models.Model):
     tracking_movie_started = models.DateTimeField(null=True, blank=True)
     tracking_tv = models.BooleanField(default=False)
     tracking_tv_started = models.DateTimeField(null=True, blank=True)
+    is_locked = models.BooleanField(default=False)
 
     class Meta:
         constraints = [

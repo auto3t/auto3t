@@ -37,7 +37,7 @@ export default function PeopleTVRemoteCredits({
       }
     }
     fetchRemoteShows()
-  }, [person])
+  }, [person.id])
 
   return (
     <>

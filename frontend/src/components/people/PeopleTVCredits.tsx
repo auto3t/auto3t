@@ -24,7 +24,7 @@ export default function PeopleTVCredits({ person }: { person: PersonType }) {
       }
     }
     fetchShows()
-  }, [person])
+  }, [person.id])
 
   return (
     <div className="py-4">

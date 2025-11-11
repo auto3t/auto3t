@@ -24,7 +24,7 @@ export default function PeopleMovieCredits({ person }: { person: PersonType }) {
       }
     }
     fetchMovies()
-  }, [person])
+  }, [person.id])
 
   return (
     <div className="py-4">

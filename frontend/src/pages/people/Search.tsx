@@ -98,6 +98,7 @@ export default function PeopleSearch() {
       the_moviedb_id: selectedMoviePerson?.id || null,
       tracking_movie: trackingMovie,
       tracking_tv: trackingTV,
+      is_locked: true,
     })) as PersonType
     if (newPerson) {
       setNewPersonId(newPerson.id)

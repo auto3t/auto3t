@@ -37,7 +37,7 @@ export default function PeopleMovieRemoteCredis({
       }
     }
     fetchRemoteMovies()
-  }, [person])
+  }, [person.id])
 
   return (
     <>

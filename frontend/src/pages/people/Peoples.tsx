@@ -16,6 +16,9 @@ export type PersonType = {
   the_moviedb_url: string | null
   imdb_id: string | null
   imdb_url: string | null
+  tracking_movie: boolean
+  tracking_tv: boolean
+  is_locked: boolean
 }
 
 type PersonResponseType = {

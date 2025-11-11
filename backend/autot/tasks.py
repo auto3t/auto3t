@@ -7,6 +7,7 @@ from artwork.models import Artwork
 from artwork.src.cleanup import cleanup_art
 from django_rq import job
 from django_rq.queues import get_queue
+from people.src.cleanup import cleanup_people
 
 from autot.src.archive import Archiver
 from autot.src.download import Transmission
@@ -81,4 +82,5 @@ def download_thumbnails() -> None:
 @job("default")
 def cleanup() -> None:
     """cleanup task, call periodically"""
+    cleanup_people()
     cleanup_art()

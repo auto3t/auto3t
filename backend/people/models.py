@@ -101,6 +101,13 @@ class Person(models.Model):
 
         return f"https://www.imdb.com/name/{self.imdb_id}/"
 
+    def is_to_delete(self) -> bool:
+        """check if person can be deleted during auto cleanup"""
+        if self.is_locked:
+            return False
+
+        return not self.credit_set.exists()
+
     def update_image_person(self, image_url: str | None) -> None:
         """handle update with or without existing, noop if identical"""
         if not image_url:

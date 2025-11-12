@@ -105,6 +105,10 @@ class Movie(BaseModel):
     media_server_id = models.CharField(max_length=255, null=True, blank=True)
     media_server_meta = models.JSONField(null=True, blank=True)
 
+    class Meta:
+        verbose_name = "Movie"
+        verbose_name_plural = "Movies"
+
     def __str__(self):
         """movie string representation"""
         return self.name_display

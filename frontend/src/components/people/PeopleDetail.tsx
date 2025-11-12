@@ -173,7 +173,7 @@ export default function PeopleDetail({
                 )
               }
             />
-            <P>Tracking Shows</P>
+            <P>Tracking TV</P>
             <ToggleSwitch
               value={person.tracking_tv}
               onChange={() =>

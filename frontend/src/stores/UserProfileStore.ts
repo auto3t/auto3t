@@ -7,6 +7,10 @@ type UserProfileType = {
   movies_active_filter: string
   movie_status_filter: string
   collection_tracking_filter: string
+  people_movie_tracking_filter: boolean | null
+  people_tv_tracking_filter: boolean | null
+  people_locked_filter: boolean | null
+  people_credit_filter: 'm' | 't' | null
 }
 
 interface UserProfileInterface {

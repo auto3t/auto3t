@@ -26,6 +26,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from autot.models import SearchWord
+from autot.src.helper import bool_converter
 from autot.src.redis_con import AutotRedis
 from autot.src.search import SearchIndex
 from autot.static import MovieProductionState, MovieStatus
@@ -63,12 +64,9 @@ class CollectionViewSet(viewsets.ModelViewSet):
             name_sort=Replace(F("name"), Value("The "), Value(""))
         ).order_by("name_sort")
 
-        tracking = self.request.GET.get("tracking")
-        if tracking:
-            if tracking.lower() == "true":
-                queryset = queryset.filter(tracking=True)
-            elif tracking.lower() == "false":
-                queryset = queryset.filter(tracking=False)
+        tracking = bool_converter(self.request.GET.get("tracking"))
+        if tracking is not None:
+            queryset = queryset.filter(tracking=tracking)
 
         query = self.request.GET.get("q")
         if query:
@@ -158,10 +156,9 @@ class MovieViewSet(viewsets.ModelViewSet):
 
             queryset = queryset.filter(production_state=production_state)
 
-        is_active = self.request.GET.get("is_active")
-        if is_active:
-            active_value = is_active.lower() == "true"
-            queryset = queryset.filter(is_active=active_value)
+        is_active = bool_converter(self.request.GET.get("is_active"))
+        if is_active is not None:
+            queryset = queryset.filter(is_active=is_active)
 
         query = self.request.GET.get("q")
         if query:

@@ -19,6 +19,7 @@ from rest_framework.views import APIView
 from tv.models import TVShow
 from tv.src.show_search import ShowPersonSearch
 
+from autot.src.helper import bool_converter
 from autot.tasks import download_thumbnails
 from autot.views import StandardResultsSetPagination
 
@@ -37,7 +38,30 @@ class PersonViewSet(viewsets.ModelViewSet):
         if query:
             queryset = queryset.filter(name__icontains=query)
 
-        return queryset
+        tracking_movie = bool_converter(self.request.GET.get("tracking-movie"))
+        if tracking_movie is not None:
+            queryset = queryset.filter(tracking_movie=tracking_movie)
+
+        tracking_tv = bool_converter(self.request.GET.get("tracking-tv"))
+        if tracking_tv is not None:
+            queryset = queryset.filter(tracking_tv=tracking_tv)
+
+        is_locked = bool_converter(self.request.GET.get("locked"))
+        if is_locked is not None:
+            queryset = queryset.filter(is_locked=is_locked)
+
+        credit_type = self.request.GET.get("credit")
+        if credit_type:
+            if credit_type == "m":
+                content_type = ContentType.objects.get_for_model(Movie)
+            elif credit_type == "t":
+                content_type = ContentType.objects.get_for_model(TVShow)
+            else:
+                return Response({"message": "invalid content type"}, status=400)
+
+            queryset = queryset.filter(credit__content_type=content_type)
+
+        return queryset.distinct()
 
     def create(self, request, *args, **kwargs):
         """overwrite, refresh immediately on create through API"""

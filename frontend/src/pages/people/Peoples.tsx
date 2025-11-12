@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom'
-import { Button, H1, Input, P } from '../../components/Typography'
+import { Button, H1, Input, P, Select } from '../../components/Typography'
 import { ImageType } from '../../components/ImageComponent'
 import { useEffect, useState } from 'react'
 import useApi from '../../hooks/api'
 import Spinner from '../../components/Spinner'
 import PersonTile from '../../components/people/PersonTile'
+import useUserProfileStore from '../../stores/UserProfileStore'
 
 export type PersonType = {
   id: number
@@ -29,7 +30,8 @@ type PersonResponseType = {
 }
 
 export default function Peoples() {
-  const { get } = useApi()
+  const { get, post } = useApi()
+  const { userProfile, setUserProfile } = useUserProfileStore()
   const [persons, setPersons] = useState<PersonType[]>([])
   const [hasMorePersons, setHasMorePersons] = useState(false)
   const [page, setPage] = useState(1)
@@ -58,6 +60,26 @@ export default function Peoples() {
       if (showSearchInput) {
         params.append('q', searchTerm)
       }
+      if (userProfile) {
+        if (userProfile.people_movie_tracking_filter !== null) {
+          params.append(
+            'tracking-movie',
+            String(userProfile.people_movie_tracking_filter),
+          )
+        }
+        if (userProfile.people_tv_tracking_filter !== null) {
+          params.append(
+            'tracking-tv',
+            String(userProfile.people_tv_tracking_filter),
+          )
+        }
+        if (userProfile.people_credit_filter !== null) {
+          params.append('credit', userProfile.people_credit_filter)
+        }
+        if (userProfile.people_locked_filter !== null) {
+          params.append('locked', String(userProfile.people_locked_filter))
+        }
+      }
       try {
         const data = (await get(
           `people/person/?page_size=60&page=${page}&${params.toString()}`,
@@ -71,7 +93,15 @@ export default function Peoples() {
       }
     }
     fetchPersons()
-  }, [setPersons, searchTerm, page])
+  }, [
+    setPersons,
+    searchTerm,
+    page,
+    userProfile?.people_movie_tracking_filter,
+    userProfile?.people_tv_tracking_filter,
+    userProfile?.people_credit_filter,
+    userProfile?.people_locked_filter,
+  ])
 
   const handleShowSearchInput = async () => {
     if (showSearchInput) {
@@ -81,6 +111,34 @@ export default function Peoples() {
     } else {
       setShowSearchInput(true)
     }
+  }
+
+  const handleBoolFilterUpdate = async (
+    key:
+      | 'people_movie_tracking_filter'
+      | 'people_tv_tracking_filter'
+      | 'people_locked_filter',
+    e: React.ChangeEvent<HTMLSelectElement>,
+  ) => {
+    const newValue: boolean | null =
+      e.target.value === '' ? null : e.target.value === '1' ? true : false
+    const data = Object()
+    data[key] = newValue
+    setPage(1)
+    setPersons([])
+    const newProfile = await post('user/profile/', data)
+    setUserProfile(newProfile)
+  }
+
+  const handleCreditTypeUpdate = async (
+    e: React.ChangeEvent<HTMLSelectElement>,
+  ) => {
+    setPage(1)
+    setPersons([])
+    const newProfile = await post('user/profile/', {
+      people_credit_filter: e.target.value || null,
+    })
+    setUserProfile(newProfile)
   }
 
   return (
@@ -102,6 +160,66 @@ export default function Peoples() {
             }}
             autoFocus
           />
+        )}
+        {userProfile && (
+          <>
+            <Select
+              defaultValue={
+                userProfile.people_movie_tracking_filter === null
+                  ? ''
+                  : userProfile.people_movie_tracking_filter
+                    ? '1'
+                    : '0'
+              }
+              onChange={(e) =>
+                handleBoolFilterUpdate('people_movie_tracking_filter', e)
+              }
+            >
+              <option value={''}>--- all movie tracking ---</option>
+              <option value="1">tracking movies</option>
+              <option value="0">not tracking movies</option>
+            </Select>
+            <Select
+              defaultValue={
+                userProfile.people_tv_tracking_filter === null
+                  ? ''
+                  : userProfile.people_tv_tracking_filter
+                    ? '1'
+                    : '0'
+              }
+              onChange={(e) =>
+                handleBoolFilterUpdate('people_tv_tracking_filter', e)
+              }
+            >
+              <option value={''}>--- all tv tracking ---</option>
+              <option value="1">tracking tv</option>
+              <option value="0">not tracking tv</option>
+            </Select>
+            <Select
+              defaultValue={userProfile.people_credit_filter || ''}
+              onChange={(e) => handleCreditTypeUpdate(e)}
+            >
+              <option value={''}>--- all credit types ---</option>
+              <option value="m">movie credits</option>
+              <option value="t">tv credits</option>
+            </Select>
+            <Select
+              defaultValue={
+                userProfile.people_locked_filter === null
+                  ? ''
+                  : userProfile.people_locked_filter
+                    ? '1'
+                    : '0'
+              }
+              onChange={(e) =>
+                handleBoolFilterUpdate('people_locked_filter', e)
+              }
+            >
+              <option value={''}>--- all locked states ---</option>
+              <option value="1">locked only</option>
+              <option value="0">unlocked only</option>
+            </Select>
+          </>
         )}
       </div>
       {isLoading ? (

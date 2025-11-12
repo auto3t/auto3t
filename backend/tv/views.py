@@ -19,6 +19,7 @@ from tv.tasks import import_show, refresh_status
 
 from autot.models import SearchWord, get_logs
 from autot.serializers import ActionLogSerializer
+from autot.src.helper import bool_converter
 from autot.src.redis_con import AutotRedis
 from autot.src.search import SearchIndex
 from autot.static import TvShowStatus
@@ -84,10 +85,9 @@ class ShowViewSet(viewsets.ModelViewSet):
 
             queryset = queryset.filter(status=status)
 
-        is_active = self.request.GET.get("is_active")
-        if is_active:
-            active_value = is_active.lower() == "true"
-            queryset = queryset.filter(is_active=active_value)
+        is_active = bool_converter(self.request.GET.get("is_active"))
+        if is_active is not None:
+            queryset = queryset.filter(is_active=is_active)
 
         person_id = self.request.GET.get("person_id")
         if person_id:

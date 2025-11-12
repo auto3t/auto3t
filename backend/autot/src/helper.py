@@ -44,3 +44,17 @@ def get_tracker_list() -> list[str]:
 def title_clean(title) -> str:
     """clean torrent title string"""
     return title.lower().replace(".", " ").replace(":", "").replace(" & ", " ").replace("!", "")
+
+
+def bool_converter(bool_str: str | None) -> bool | None:
+    """convert to bool if possible, else none"""
+    if bool_str is None:
+        return None
+
+    if bool_str.lower() == "true":
+        return True
+
+    if bool_str.lower() == "false":
+        return False
+
+    return None

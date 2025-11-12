@@ -15,13 +15,18 @@ from autot.tasks import download_thumbnails
 @job
 def refresh_people(outdated: int = 30) -> None:
     """refresh people outdated"""
-    to_refresh = Person.objects.filter(
-        Q(last_refresh__isnull=True) | Q(last_refresh__gte=localtime() + timedelta(days=outdated))
-    )
+    always_refresh = Person.objects.filter(Q(last_refresh__isnull=True) | Q(tracking_movie=True) | Q(tracking_tv=True))
+
+    daily = Person.objects.count() // outdated
+    outdated_persons = Person.objects.filter(Q(last_refresh__gte=localtime() + timedelta(days=outdated)))[:daily]
+
+    to_refresh = {i[0] for i in always_refresh.values_list("id")}
+    if outdated_persons:
+        to_refresh = to_refresh | {i[0] for i in outdated_persons.values_list("id")}
 
     person_tasks: list = []
-    for person in to_refresh:
-        person_task = refresh_single_person.delay(person_id=person.id)
+    for person_id in to_refresh:
+        person_task = refresh_single_person.delay(person_id=person_id)
         person_tasks.append(person_task)
 
     download_thumbnails.delay(depends_on=person_tasks)  # type: ignore
@@ -43,3 +48,5 @@ def refresh_single_person(person_id: int) -> None:
 
     person.last_refresh = localtime()
     person.save(update_fields=["last_refresh"])
+    person.check_tracking_movies()
+    person.check_tracking_shows()

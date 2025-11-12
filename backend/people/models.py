@@ -1,5 +1,7 @@
 """people models"""
 
+from datetime import datetime
+
 from artwork.models import Artwork
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -123,6 +125,47 @@ class Person(models.Model):
         if not self.image_person.image_url == image_url:
             self.image_person.update(image_url)
             log_change(self, "u", "image_person", new_value=image_url, comment="Updated new image")
+
+    def check_tracking_movies(self):
+        """handle movie tracking, add if needed"""
+        from movie.src.movie_search import MoviePersonSearch
+        from movie.tasks import import_movie
+
+        if not self.tracking_movie:
+            return
+
+        options = MoviePersonSearch().search(the_moviedb_person_id=self.the_moviedb_id)
+        for movie_option in options:
+            if movie_option["local_id"]:
+                continue
+
+            if not movie_option["release_date"]:
+                continue
+
+            release = datetime.fromisoformat(movie_option["release_date"]).astimezone()
+
+            if release > self.tracking_movie_started:
+                import_movie.delay(the_moviedb_id=movie_option["id"])
+
+    def check_tracking_shows(self):
+        """thandle show tracking, add if needed"""
+        from tv.src.show_search import ShowPersonSearch
+        from tv.tasks import import_show
+
+        if not self.tracking_tv:
+            return
+
+        options = ShowPersonSearch().search(tvmaze_person_id=self.tvmaze_id)
+        for show_option in options:
+            if show_option["local_id"]:
+                continue
+
+            if not show_option["premiered"]:
+                continue
+
+            release = datetime.fromisoformat(show_option["premiered"]).astimezone()
+            if release > self.tracking_tv_started:
+                import_show.delay(tvmaze_id=show_option["id"])
 
 
 class Credit(models.Model):

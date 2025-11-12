@@ -119,7 +119,7 @@ class Movie(BaseModel):
         """display name"""
         display = self.name
         if self.release_date:
-            display += f" ({self.release_date.year})"
+            display += f" ({self.release_date.year})"  # pylint: disable=no-member
 
         return display
 
@@ -137,7 +137,7 @@ class Movie(BaseModel):
         """build search query"""
         search_query = self.name
         if self.release_date:
-            search_query += f" {self.release_date.year}"
+            search_query += f" {self.release_date.year}"  # pylint: disable=no-member
         return search_query
 
     @property
@@ -185,7 +185,7 @@ class Movie(BaseModel):
         """add magnet to movie"""
         from autot.src.download import Transmission
 
-        to_cancel = self.torrent.exclude(torrent_state="i")
+        to_cancel = self.torrent.exclude(torrent_state="i")  # pylint: disable=no-member
         for torrent in to_cancel:
             Transmission().cancel(torrent)
 
@@ -203,7 +203,9 @@ class Movie(BaseModel):
 
     def reset_download(self) -> None:
         """reset torrent and state"""
-        self.torrent.filter(torrent_state__in=["u", "q", "d"]).update(torrent_state="i", progress=None)
+        self.torrent.filter(torrent_state__in=["u", "q", "d"]).update(  # pylint: disable=no-member
+            torrent_state="i", progress=None
+        )
         self.status = None
         self.media_server_id = None
         self.save()
@@ -211,7 +213,8 @@ class Movie(BaseModel):
 
     def get_archive_path(self, suffix: str | None = None) -> Path:
         """build archive path"""
-        path = Path(str(self.release_date.year)) / self.name_display / self.name_display
+        year_str = str(self.release_date.year)  # pylint: disable=no-member
+        path = Path(year_str) / self.name_display / self.name_display
         if suffix:
             path = Path(f"{path}{suffix}")
 
@@ -220,7 +223,7 @@ class Movie(BaseModel):
     def is_valid_path(self, path: str, strict: bool = True) -> bool:
         """check if path is valid"""
         movie_search = title_clean(self.name)
-        year_str = str(self.release_date.year)
+        year_str = str(self.release_date.year)  # pylint: disable=no-member
         path_lower = path.lower()
         close_enough = fuzz.partial_ratio(movie_search, path_lower) > self.FUZZY_RATIO
         if close_enough and year_str in path_lower:
@@ -232,8 +235,8 @@ class Movie(BaseModel):
         """build keywords for movie"""
         keywords = SearchWord.objects.none()
         for category in SearchWordCategory.objects.all():
-            if self.search_keywords.filter(category=category).exists():
-                keywords |= self.search_keywords.filter(category=category)
+            if self.search_keywords.filter(category=category).exists():  # pylint: disable=no-member
+                keywords |= self.search_keywords.filter(category=category)  # pylint: disable=no-member
             else:
                 keywords |= SearchWord.objects.filter(category=category, movie_default=True)
 
@@ -268,7 +271,8 @@ class MovieRelease(models.Model):
         unique_together = ("movie", "release_type")
 
     def __str__(self) -> str:
-        release_str = f"{self.get_release_type_display()} {self.release_date.date().isoformat()}"
+        release_date = self.release_date.date().isoformat()  # pylint: disable=no-member
+        release_str = f"{self.get_release_type_display()} {release_date}"
         return f"{self.movie.name_display} - {release_str}"
 
 

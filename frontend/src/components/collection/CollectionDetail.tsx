@@ -65,8 +65,8 @@ const CollectionDetail: React.FC<CollectionInterface> = ({
         </div>
         <div className="flex-3">
           <H1>{collectionDetail?.name}</H1>
-          <P variant="smaller">
-            ID:{' '}
+          <div className="inline-grid grid-cols-2 gap-2 pb-4">
+            <P>themoviedb</P>
             <StyledLink
               to={collectionDetail.remote_server_url}
               target="_blank"
@@ -74,7 +74,7 @@ const CollectionDetail: React.FC<CollectionInterface> = ({
             >
               {collectionDetail.the_moviedb_id}
             </StyledLink>
-          </P>
+          </div>
           <P>{collectionDetail.description}</P>
         </div>
       </div>

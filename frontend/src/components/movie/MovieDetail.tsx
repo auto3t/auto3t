@@ -73,8 +73,8 @@ const MovieDetail: React.FC<MovieInterface> = ({ movieDetail, fetchMovie }) => {
         <div className="flex-3">
           <H1>{movieDetail.name_display}</H1>
           <H3>{movieDetail.tagline}</H3>
-          <P variant="smaller">
-            ID:{' '}
+          <div className="inline-grid grid-cols-2 gap-2 pb-4">
+            <P>themoviedb</P>
             <StyledLink
               to={movieDetail.remote_server_url}
               target="_blank"
@@ -82,7 +82,17 @@ const MovieDetail: React.FC<MovieInterface> = ({ movieDetail, fetchMovie }) => {
             >
               {movieDetail.the_moviedb_id}
             </StyledLink>
-          </P>
+            <P>imdb</P>
+            {movieDetail.imdb_id && (
+              <StyledLink
+                to={`https://www.imdb.com/title/${movieDetail.imdb_id}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {movieDetail.imdb_id}
+              </StyledLink>
+            )}
+          </div>
           <P>{movieDetail.description}</P>
           <div className="flex flex-wrap justify-center gap-2 py-4">
             {movieDetail.runtime && (

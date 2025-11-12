@@ -22,6 +22,7 @@ export type ShowType = {
   remote_server_url: string
   is_active: boolean
   tvmaze_id: string
+  imdb_id: string | null
   search_query: string
   search_name?: string
   image_show?: ImageType
@@ -107,8 +108,8 @@ const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
         </div>
         <div className="m-2 flex-3">
           <H1>{showDetail.name}</H1>
-          <P variant="smaller">
-            ID:{' '}
+          <div className="inline-grid grid-cols-2 gap-2 pb-4">
+            <P>tvmaze</P>
             <StyledLink
               to={showDetail.remote_server_url}
               target="_blank"
@@ -116,7 +117,17 @@ const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
             >
               {showDetail.tvmaze_id}
             </StyledLink>
-          </P>
+            <P>imdb</P>
+            {showDetail.imdb_id && (
+              <StyledLink
+                to={`https://www.imdb.com/title/${showDetail.imdb_id}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {showDetail.imdb_id}
+              </StyledLink>
+            )}
+          </div>
           <P dangerouslySetInnerHTML={{ __html: showDetail.description }} />
           <div className="flex gap-2 my-2">
             <TagItem>Status: {showDetail.status_display}</TagItem>

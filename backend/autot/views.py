@@ -8,9 +8,19 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from autot.models import ActionLog, AutotScheduler, SearchWord, SearchWordCategory, TargetBitrate, Torrent, get_logs
+from autot.models import (
+    ActionLog,
+    AppConfig,
+    AutotScheduler,
+    SearchWord,
+    SearchWordCategory,
+    TargetBitrate,
+    Torrent,
+    get_logs,
+)
 from autot.serializers import (
     ActionLogSerializer,
+    AppConfigSerializer,
     SchedulerSeralizer,
     SearchWordCategorySerializer,
     SearchWordSerializer,
@@ -77,6 +87,25 @@ class TargetBitrateView(viewsets.ModelViewSet):
 
     serializer_class = TargetBitrateSerializer
     queryset = TargetBitrate.objects.all().order_by("bitrate")
+
+
+class AppConfigView(APIView):
+    """appconfig, single row"""
+
+    def get(self, request, *args, **kwargs):
+        """get or create appconfig"""
+        app_config, _ = AppConfig.objects.get_or_create(single_lock=1)
+        response = AppConfigSerializer(app_config).data
+
+        return Response(response)
+
+    def post(self, request):
+        """update with a get or create"""
+        app_config, _ = AppConfig.objects.get_or_create(single_lock=1)
+        serializer = AppConfigSerializer(app_config, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
 
 
 class TorrentViewSet(

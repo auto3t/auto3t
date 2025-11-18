@@ -1,6 +1,7 @@
 """all move models"""
 
 from pathlib import Path
+from string import ascii_lowercase, digits
 from typing import Self
 
 from artwork.models import Artwork
@@ -8,7 +9,7 @@ from django.db import models
 from people.models import Credit
 from rapidfuzz import fuzz
 
-from autot.models import SearchWord, SearchWordCategory, TargetBitrate, Torrent, log_change
+from autot.models import AppConfig, SearchWord, SearchWordCategory, TargetBitrate, Torrent, log_change
 from autot.src.config import ConfigType, get_config
 from autot.src.helper import title_clean
 from autot.static import MovieProductionState, MovieReleaseType, MovieStatus
@@ -217,8 +218,24 @@ class Movie(BaseModel):
 
     def get_archive_path(self, suffix: str | None = None) -> Path:
         """build archive path"""
-        year_str = str(self.release_date.year)  # pylint: disable=no-member
-        path = Path(year_str) / self.name_display / self.name_display
+        app_config, _ = AppConfig.objects.get_or_create(single_lock=1)
+        archive_strategy = app_config.movie_archive_format
+
+        if archive_strategy == "y":
+            year_str = str(self.release_date.year)  # pylint: disable=no-member
+            path = Path(year_str) / self.name_display / self.name_display
+        elif archive_strategy == "f":
+            first_letter = self.name_display[0].lower()
+            if first_letter not in ascii_lowercase + digits:
+                first_letter = "-"
+
+            path = Path(first_letter) / self.name_display / self.name_display
+
+        elif archive_strategy == "s":
+            path = Path(self.name_display) / self.name_display
+        else:
+            raise NotImplementedError(f"Archive format '{archive_strategy}' not implemented")
+
         if suffix:
             path = Path(f"{path}{suffix}")
 

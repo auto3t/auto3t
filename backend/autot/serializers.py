@@ -2,7 +2,7 @@
 
 from rest_framework import serializers
 
-from autot.models import ActionLog, AutotScheduler, SearchWord, SearchWordCategory, TargetBitrate, Torrent
+from autot.models import ActionLog, AppConfig, AutotScheduler, SearchWord, SearchWordCategory, TargetBitrate, Torrent
 
 
 class SearchWordCategorySerializer(serializers.ModelSerializer):
@@ -62,6 +62,19 @@ class SchedulerSeralizer(serializers.ModelSerializer):
     class Meta:
         model = AutotScheduler
         fields = ["id", "job", "job_display", "job_id_registered", "cron_schedule", "next_execution"]
+
+
+class AppConfigSerializer(serializers.ModelSerializer):
+    """serialize appconfig"""
+
+    movie_archive_format_display = serializers.CharField(source="get_movie_archive_format_display", read_only=True)
+    movie_archive_format_options = serializers.JSONField(read_only=True)
+    tv_archive_format_display = serializers.CharField(source="get_tv_archive_format_display", read_only=True)
+    tv_archive_format_options = serializers.JSONField(read_only=True)
+
+    class Meta:
+        model = AppConfig
+        exclude = ("id", "single_lock")
 
 
 class ActionLogSerializer(serializers.ModelSerializer):

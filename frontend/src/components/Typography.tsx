@@ -1,3 +1,4 @@
+import React from 'react'
 import { Link, LinkProps, NavLink, NavLinkProps } from 'react-router-dom'
 
 type StyledNavLinkProps = NavLinkProps & {
@@ -103,14 +104,33 @@ export function H3({
   return <h2 {...props} className={`text-2xl text-main-fg my-2 font-bold`} />
 }
 
-export function Input({
-  ...props
-}: React.InputHTMLAttributes<HTMLInputElement>) {
+type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
+  variant?: 'full' | 'inline'
+}
+
+export function Input({ variant = 'full', ...props }: InputProps) {
+  let variantClasses = ''
+  if (variant === 'full') {
+    variantClasses = 'w-full'
+  } else if (variant === 'inline') {
+    variantClasses = 'inline mr-2'
+  }
+
   return (
     <input
       {...props}
-      className="text-main-fg bg-accent-1 px-4 py-1 my-1 w-full"
+      className={`text-main-fg bg-accent-1 px-4 py-1 my-1 ${variantClasses}`}
     />
+  )
+}
+
+type LabelProps = React.LabelHTMLAttributes<HTMLLabelElement> & {
+  className?: string
+}
+
+export function Label({ className = '', ...props }: LabelProps) {
+  return (
+    <label {...props} className={`font-display text-main-fg ${className}`} />
   )
 }
 

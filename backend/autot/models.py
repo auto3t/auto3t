@@ -73,6 +73,34 @@ class SearchWord(models.Model):
         return {i[0] for i in getattr(self, related_field).all().values_list("id")}
 
 
+class AppConfig(models.Model):
+    """dynamic app config, single row, all fields must have defaults"""
+
+    TRACK_CHANGES = True
+    MOVIE_ARCHIVE_CHOICES = [
+        ("y", "Year folder"),
+        ("f", "First letter folder"),
+        ("s", "Single folder"),
+    ]
+    TV_ARCHIVE_CHOICES = [
+        ("s", "Season folder"),
+    ]
+
+    single_lock = models.PositiveSmallIntegerField(default=1, unique=True)
+    movie_archive_format = models.CharField(choices=MOVIE_ARCHIVE_CHOICES, max_length=1, default="f")
+    tv_archive_format = models.CharField(choices=TV_ARCHIVE_CHOICES, max_length=1, default="s")
+
+    @property
+    def movie_archive_format_options(self):
+        """movie archive options"""
+        return {i[0]: i[1] for i in self.MOVIE_ARCHIVE_CHOICES}
+
+    @property
+    def tv_archive_format_options(self):
+        """tv archive options"""
+        return {i[0]: i[1] for i in self.TV_ARCHIVE_CHOICES}
+
+
 class TargetBitrate(models.Model):
     """target bitrate"""
 

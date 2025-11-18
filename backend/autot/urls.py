@@ -16,6 +16,7 @@ urlpatterns = router.urls
 
 urlpatterns.extend(
     [
+        path("appconfig/", views.AppConfigView.as_view(), name="appconfig"),
         path("tasks/", views.TaskView.as_view(), name="tasks"),
         path("progress/", views.QueueProgress.as_view(), name="queue-progress"),
     ]

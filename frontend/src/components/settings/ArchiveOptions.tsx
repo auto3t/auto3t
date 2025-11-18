@@ -59,7 +59,7 @@ export default function ArchiveOptions() {
                     ? key === newMovieArchiveFormat
                     : key === appConfig.movie_archive_format
                 }
-                onClick={() => setNewMovieArchiveFormat(key)}
+                onChange={(e) => setNewMovieArchiveFormat(e.target.value)}
               />
               {description}
             </Label>

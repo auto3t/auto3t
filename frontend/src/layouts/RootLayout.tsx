@@ -7,7 +7,7 @@ import logo from '../../assets/logo.png'
 import useApi from '../hooks/api'
 import { useEffect } from 'react'
 import useUserProfileStore from '../stores/UserProfileStore'
-import { Button, P, StyledNavLink } from '../components/Typography'
+import { LucideIconWrapper, P, StyledNavLink } from '../components/Typography'
 import ProgressIndicator from '../components/ProgressIndicator'
 
 export default function RootLayout() {
@@ -47,23 +47,37 @@ export default function RootLayout() {
     <>
       <div className="grow my-2 mx-5">
         <header className="max-w-7xl m-auto">
-          <nav className="flex justify-between items-center">
-            <div className="flex gap-2 items-center">
-              <Link to="/">
-                <img className="w-[180px]" src={logo} />
-              </Link>
+          <nav className="flex flex-wrap md:justify-between justify-center items-center">
+            <Link to="/">
+              <img className="md:w-[180px] w-[90px]" src={logo} />
+            </Link>
+            <div className="flex flex-wrap justify-center gap-2 items-center px-4">
               <StyledNavLink to="tv">TV</StyledNavLink>
               <StyledNavLink to="movie">Movie</StyledNavLink>
               <StyledNavLink to="collection">Collections</StyledNavLink>
               <StyledNavLink to="people">People</StyledNavLink>
-              <StyledNavLink to="settings">Settings</StyledNavLink>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 py-4">
               <ProgressIndicator />
-              <Button onClick={handleShowNotifications}>
-                Show Notifications
-              </Button>
-              {isLoggedIn && <Button onClick={handleLogout}>Logout</Button>}
+              <LucideIconWrapper
+                size={30}
+                title="Show notifications"
+                onClick={handleShowNotifications}
+                name="BellIcon"
+                className="cursor-pointer"
+              />
+              <Link to="settings">
+                <LucideIconWrapper size={30} name="Settings" title="Settings" />
+              </Link>
+              {isLoggedIn && (
+                <LucideIconWrapper
+                  size={30}
+                  title="Logout"
+                  name="LogOutIcon"
+                  className="cursor-pointer"
+                  onClick={handleLogout}
+                />
+              )}
             </div>
           </nav>
         </header>

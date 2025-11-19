@@ -100,13 +100,15 @@ const Home: React.FC = () => {
       ) : error ? (
         <P>Error: {error}</P>
       ) : processingEpisodes?.length > 0 ? (
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid md:grid-cols-3 grid-cols-1 gap-2">
           {processingEpisodes.map((episode) => (
             <Episode key={episode.id} episode={episode} showShow={true} />
           ))}
         </div>
       ) : (
-        <P>No episodes are processing.</P>
+        <P className="mb-6 md:text-left text-center">
+          No episodes are processing.
+        </P>
       )}
       <H3>Movies</H3>
       {isLoadingProcessingMovies ? (
@@ -116,13 +118,15 @@ const Home: React.FC = () => {
       ) : error ? (
         <P>Error: {error}</P>
       ) : processingMovies?.length > 0 ? (
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid md:grid-cols-4 grid-cols-2 gap-2">
           {processingMovies.map((movie) => (
             <MovieTile movie={movie} key={movie.id} />
           ))}
         </div>
       ) : (
-        <P>No movies are processing</P>
+        <P className="mb-6 md:text-left text-center">
+          No movies are processing
+        </P>
       )}
       <H2>Upcoming</H2>
       <H3>Episodes</H3>
@@ -133,13 +137,15 @@ const Home: React.FC = () => {
       ) : error ? (
         <P>Error: {error}</P>
       ) : upcomingEpisodes?.length > 0 ? (
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid md:grid-cols-3 grid-cols-1 gap-2">
           {upcomingEpisodes.map((episode) => (
             <Episode key={episode.id} episode={episode} showShow={true} />
           ))}
         </div>
       ) : (
-        <P>No upcoming episodes found.</P>
+        <P className="mb-6 md:text-left text-center">
+          No upcoming episodes found.
+        </P>
       )}
       {hasMoreUpcomingEpisodes && (
         <div className="py-4 flex justify-center">
@@ -154,13 +160,15 @@ const Home: React.FC = () => {
       ) : error ? (
         <P>Error: {error}</P>
       ) : upcomingMovies?.length > 0 ? (
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid md:grid-cols-4 grid-cols-2 gap-2">
           {upcomingMovies.map((movie) => (
             <MovieTile movie={movie} key={movie.id} />
           ))}
         </div>
       ) : (
-        <P>No upcoming movies found.</P>
+        <P className="mb-6 md:text-left text-center">
+          No upcoming movies found.
+        </P>
       )}
       {hasMoreUpcomingMovies && (
         <div className="py-4 flex justify-center">

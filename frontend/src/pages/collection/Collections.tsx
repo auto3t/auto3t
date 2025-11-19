@@ -1,11 +1,19 @@
-import { useEffect, useState } from 'react'
-import { Button, H1, Input, P, Select } from '../../components/Typography'
+import { useEffect, useMemo, useState } from 'react'
+import {
+  H1,
+  Input,
+  LucideIconWrapper,
+  P,
+  Select,
+} from '../../components/Typography'
 import useApi from '../../hooks/api'
 import { ImageType } from '../../components/ImageComponent'
 import Spinner from '../../components/Spinner'
 import CollectionTile from '../../components/collection/CollectionTile'
 import { Link } from 'react-router-dom'
-import useUserProfileStore from '../../stores/UserProfileStore'
+import useUserProfileStore, {
+  UserProfileType,
+} from '../../stores/UserProfileStore'
 
 export type CollectionType = {
   id: number
@@ -22,9 +30,9 @@ export default function Collections() {
   const { get, post, error } = useApi()
   const [isLoading, setIsLoading] = useState(true)
   const [collections, setCollections] = useState<CollectionType[]>([])
-
   const [collectionSearchInput, setCollectionSearchInput] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
+  const [showFilter, setShowFilter] = useState(false)
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -64,6 +72,15 @@ export default function Collections() {
     fetchCollections()
   }, [searchTerm, setCollections, userProfile?.collection_tracking_filter])
 
+  const totalActiveFilters = useMemo(() => {
+    if (!userProfile) return 0
+
+    let totalFilters = 0
+    if (userProfile.collection_tracking_filter !== null) totalFilters += 1
+
+    return totalFilters
+  }, [userProfile?.collection_tracking_filter])
+
   const handleCollectionSearchInput = async () => {
     if (collectionSearchInput) {
       setCollectionSearchInput(false)
@@ -87,6 +104,14 @@ export default function Collections() {
       })
   }
 
+  const handleFilterReset = async () => {
+    const data = (await post('user/profile/', {
+      collection_tracking_filter: null,
+    })) as UserProfileType
+    if (data) setUserProfile(data)
+    setShowFilter(false)
+  }
+
   if (error) return <P>{error}</P>
 
   return (
@@ -94,33 +119,67 @@ export default function Collections() {
       <H1>Movie Collections</H1>
       <div className="filter-bar">
         <Link to={'search'}>
-          <Button>Add</Button>
-        </Link>
-        <Button onClick={handleCollectionSearchInput}>
-          {collectionSearchInput ? 'Cancel' : 'Search'}
-        </Button>
-        {collectionSearchInput && (
-          <Input
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            autoFocus
+          <LucideIconWrapper
+            className="bg-main-fg rounded-lg p-2"
+            name="PlusIcon"
+            title="Start tracking new movie"
           />
-        )}
-        {userProfile && (
-          <Select
-            defaultValue={
-              userProfile.collection_tracking_filter === null
-                ? ''
-                : userProfile.collection_tracking_filter
-                  ? '1'
-                  : '0'
+        </Link>
+        <div className="flex gap-2">
+          <LucideIconWrapper
+            className="cursor-pointer bg-main-fg rounded-lg p-2"
+            name={collectionSearchInput ? 'SearchXIcon' : 'SearchIcon'}
+            title={
+              collectionSearchInput ? 'Close search' : 'Search your Collections'
             }
-            onChange={handleTrackingFilterUpdate}
-          >
-            <option value={''}>--- all ---</option>
-            <option value="1">Tracking</option>
-            <option value="0">Not Tracking</option>
-          </Select>
+            onClick={handleCollectionSearchInput}
+          />
+          {collectionSearchInput && (
+            <Input
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              autoFocus
+            />
+          )}
+        </div>
+        {userProfile && (
+          <>
+            <div className="flex gap-2 md:flex-nowrap flex-wrap">
+              <LucideIconWrapper
+                name="Funnel"
+                onClick={() => setShowFilter(!showFilter)}
+                className="cursor-pointer bg-main-fg rounded-lg p-2"
+                title={showFilter ? 'Hide filter' : 'Show filter'}
+                prefix={totalActiveFilters > 0 ? totalActiveFilters : null}
+              />
+              {userProfile.collection_tracking_filter !== null && (
+                <LucideIconWrapper
+                  title="Reset all filters"
+                  className="cursor-pointer bg-main-fg rounded-lg p-2"
+                  name="FunnelX"
+                  onClick={handleFilterReset}
+                />
+              )}
+            </div>
+            {showFilter && (
+              <div className="flex gap-2 md:flex-nowrap flex-wrap">
+                <Select
+                  defaultValue={
+                    userProfile.collection_tracking_filter === null
+                      ? ''
+                      : userProfile.collection_tracking_filter
+                        ? '1'
+                        : '0'
+                  }
+                  onChange={handleTrackingFilterUpdate}
+                >
+                  <option value={''}>--- all ---</option>
+                  <option value="1">Tracking</option>
+                  <option value="0">Not Tracking</option>
+                </Select>
+              </div>
+            )}
+          </>
         )}
       </div>
       {isLoading ? (
@@ -128,7 +187,7 @@ export default function Collections() {
           <Spinner />
         </div>
       ) : collections.length > 0 ? (
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid md:grid-cols-4 grid-cols-2 gap-2">
           {collections.map((collection) => (
             <CollectionTile key={collection.id} collection={collection} />
           ))}

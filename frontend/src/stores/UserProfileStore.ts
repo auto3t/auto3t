@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-type UserProfileType = {
+export type UserProfileType = {
   shows_active_filter: string
   shows_status_filter: string
   movies_production_filter: string

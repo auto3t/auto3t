@@ -1,16 +1,23 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import useTVShowsStore from '../../stores/ShowsStore'
 import ShowTile from '../../components/tv/ShowTile'
 import useApi from '../../hooks/api'
 import { Link } from 'react-router-dom'
 import useUserProfileStore from '../../stores/UserProfileStore'
-import { Button, H1, Input, P, Select } from '../../components/Typography'
+import {
+  H1,
+  Input,
+  LucideIconWrapper,
+  P,
+  Select,
+} from '../../components/Typography'
 
 export default function TVShows() {
   const { userProfile, setUserProfile } = useUserProfileStore()
   const [isLoadingShows, setIsLoadingShows] = useState(true)
   const [showSearchInput, setShowSearchInput] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
+  const [showFilter, setShowFilter] = useState(false)
   const { error, get, post } = useApi()
   const { shows, setShows } = useTVShowsStore()
 
@@ -58,6 +65,14 @@ export default function TVShows() {
     userProfile?.shows_active_filter,
   ])
 
+  const totalActiveFilters = useMemo(() => {
+    if (!userProfile) return 0
+    let totalFilters = 0
+    if (userProfile.shows_status_filter !== null) totalFilters += 1
+    if (userProfile.shows_active_filter !== null) totalFilters += 1
+    return totalFilters
+  }, [userProfile?.shows_status_filter, userProfile?.shows_active_filter])
+
   const handleShowSearchInput = async () => {
     if (showSearchInput) {
       setShowSearchInput(false)
@@ -94,53 +109,93 @@ export default function TVShows() {
       })
   }
 
+  const handleFilterReset = async () => {
+    const data = await post('user/profile/', {
+      shows_status_filter: null,
+      shows_active_filter: null,
+    })
+    if (data) setUserProfile(data)
+    setShowFilter(false)
+  }
+
   return (
     <>
       <H1>TV Shows</H1>
-      <div className="filter-bar">
+      <div className="filter-bar flex gap-2 md:flex-nowrap flex-wrap">
         <Link to={'search'}>
-          <Button>Add</Button>
-        </Link>
-        <Button onClick={handleShowSearchInput}>
-          {showSearchInput ? 'Cancel' : 'Search'}
-        </Button>
-        {showSearchInput && (
-          <Input
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            autoFocus
+          <LucideIconWrapper
+            className="bg-main-fg rounded-lg p-2"
+            name="PlusIcon"
+            title="Start tracking new movie"
           />
-        )}
+        </Link>
+        <div className="flex gap-2">
+          <LucideIconWrapper
+            className="cursor-pointer bg-main-fg rounded-lg p-2"
+            name={showSearchInput ? 'SearchXIcon' : 'SearchIcon'}
+            title={showSearchInput ? 'Close search' : 'Search your shows'}
+            onClick={handleShowSearchInput}
+          />
+          {showSearchInput && (
+            <Input
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              autoFocus
+            />
+          )}
+        </div>
         {userProfile && (
           <>
-            <Select
-              defaultValue={userProfile.shows_status_filter}
-              onChange={handleStatusFilterUpdate}
-            >
-              <option value={''}>--- all show status ---</option>
-              <option value="r">Running</option>
-              <option value="e">Ended</option>
-              <option value="d">In Development</option>
-              <option value="t">To Be Determined</option>
-            </Select>
-            <Select
-              defaultValue={
-                userProfile.shows_active_filter === null
-                  ? ''
-                  : userProfile.shows_active_filter
-                    ? '1'
-                    : '0'
-              }
-              onChange={handleActiveFilterUpdate}
-            >
-              <option value={''}>--- all ---</option>
-              <option value="1">Active</option>
-              <option value="0">Inactive</option>
-            </Select>
+            <div className="flex gap-2 md:flex-nowrap flex-wrap">
+              <LucideIconWrapper
+                name="Funnel"
+                onClick={() => setShowFilter(!showFilter)}
+                className="cursor-pointer bg-main-fg rounded-lg p-2"
+                title={showFilter ? 'Hide filter' : 'Show filter'}
+                prefix={totalActiveFilters > 0 ? totalActiveFilters : null}
+              />
+            </div>
+            {(userProfile.shows_active_filter !== null ||
+              userProfile.shows_status_filter !== null) && (
+              <LucideIconWrapper
+                title="Reset all filters"
+                className="cursor-pointer bg-main-fg rounded-lg p-2"
+                name="FunnelX"
+                onClick={handleFilterReset}
+              />
+            )}
+            {showFilter && (
+              <div className="flex gap-2 md:flex-nowrap flex-wrap">
+                <Select
+                  defaultValue={userProfile.shows_status_filter}
+                  onChange={handleStatusFilterUpdate}
+                >
+                  <option value={''}>--- all show status ---</option>
+                  <option value="r">Running</option>
+                  <option value="e">Ended</option>
+                  <option value="d">In Development</option>
+                  <option value="t">To Be Determined</option>
+                </Select>
+                <Select
+                  defaultValue={
+                    userProfile.shows_active_filter === null
+                      ? ''
+                      : userProfile.shows_active_filter
+                        ? '1'
+                        : '0'
+                  }
+                  onChange={handleActiveFilterUpdate}
+                >
+                  <option value={''}>--- all ---</option>
+                  <option value="1">Active</option>
+                  <option value="0">Inactive</option>
+                </Select>
+              </div>
+            )}
           </>
         )}
       </div>
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid md:grid-cols-4 grid-cols-2 gap-2">
         {isLoadingShows ? (
           <P>Loading...</P>
         ) : error ? (

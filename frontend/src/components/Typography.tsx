@@ -1,4 +1,6 @@
-import React from 'react'
+import * as Icons from 'lucide-react'
+import { LucideIcon } from 'lucide-react'
+import { ComponentProps } from 'react'
 import { Link, LinkProps, NavLink, NavLinkProps } from 'react-router-dom'
 
 type StyledNavLinkProps = NavLinkProps & {
@@ -11,8 +13,8 @@ export function StyledNavLink(props: StyledNavLinkProps) {
       {...props}
       className={({ isActive }) => {
         const base =
-          'px-6 py-4 border-b border-b-accent-1 text-main-fg min-w-[70px] text-center hover:text-main-fg hover:bg-accent-3 font-display'
-        const active = isActive ? ' bg-accent-2' : ''
+          'px-6 py-2 border-b border-b-accent-1 text-main-fg min-w-[70px] text-center hover:text-main-fg hover:bg-accent-3 font-display'
+        const active = isActive ? ' border-b-4' : ''
         return `${base}${active}`
       }}
     />
@@ -82,7 +84,7 @@ export function H1({
   return (
     <h1
       {...props}
-      className={`my-3 text-4xl text-main-fg font-heading uppercase`}
+      className="my-3 text-4xl text-main-fg font-heading uppercase md:text-left text-center"
     />
   )
 }
@@ -93,7 +95,7 @@ export function H2({
   return (
     <h2
       {...props}
-      className={`text-3xl text-accent-2 my-2 font-heading uppercase`}
+      className="text-3xl text-accent-2 my-2 font-heading uppercase md:text-left text-center"
     />
   )
 }
@@ -101,7 +103,12 @@ export function H2({
 export function H3({
   ...props
 }: React.ParamHTMLAttributes<HTMLHeadingElement>) {
-  return <h2 {...props} className={`text-2xl text-main-fg my-2 font-bold`} />
+  return (
+    <h2
+      {...props}
+      className="text-2xl text-main-fg my-2 font-bold md:text-left text-center"
+    />
+  )
 }
 
 type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
@@ -211,5 +218,38 @@ export function TagItem({
     >
       {children}
     </span>
+  )
+}
+
+interface LucideIconProps extends ComponentProps<'svg'> {
+  name: keyof typeof Icons
+  size?: number
+  strokeWidth?: number
+  className?: string
+  title?: string
+  prefix?: string | number | null
+}
+
+export function LucideIconWrapper({
+  name,
+  size = 24,
+  strokeWidth = 2,
+  className = '',
+  title = '',
+  prefix = null,
+  ...props
+}: LucideIconProps) {
+  const IconComponent = Icons[name] as LucideIcon
+
+  if (!IconComponent) {
+    console.warn(`Lucide Icon "${name}" does not exist.`)
+    return null
+  }
+
+  return (
+    <div className={`text-accent-1 flex ${className}`} title={title}>
+      {prefix !== null && <span className="text-lg font-bold">{prefix}</span>}
+      <IconComponent size={size} strokeWidth={strokeWidth} {...props} />
+    </div>
   )
 }

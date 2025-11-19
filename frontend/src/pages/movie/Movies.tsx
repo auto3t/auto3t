@@ -1,16 +1,25 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import useApi from '../../hooks/api'
 import useMovieStore from '../../stores/MovieStore'
 import MovieTile from '../../components/movie/MovieTile'
-import useUserProfileStore from '../../stores/UserProfileStore'
-import { Button, H1, Input, P, Select } from '../../components/Typography'
+import useUserProfileStore, {
+  UserProfileType,
+} from '../../stores/UserProfileStore'
+import {
+  H1,
+  Input,
+  LucideIconWrapper,
+  P,
+  Select,
+} from '../../components/Typography'
 
 export default function Movies() {
   const { userProfile, setUserProfile } = useUserProfileStore()
   const [isLoadingMovies, setIsLoadingMovies] = useState(true)
   const [movieSearchInput, setMovieSearchInput] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
+  const [showFilter, setShowFilter] = useState(false)
   const { error, get, post } = useApi()
   const { movies, setMovies } = useMovieStore()
 
@@ -56,6 +65,21 @@ export default function Movies() {
   }, [
     setMovies,
     searchTerm,
+    userProfile?.movies_production_filter,
+    userProfile?.movies_active_filter,
+    userProfile?.movie_status_filter,
+  ])
+
+  const totalActiveFilters = useMemo(() => {
+    if (!userProfile) return 0
+
+    let totalFilters = 0
+    if (userProfile.movies_production_filter !== null) totalFilters += 1
+    if (userProfile.movie_status_filter !== null) totalFilters += 1
+    if (userProfile.movies_active_filter !== null) totalFilters += 1
+
+    return totalFilters
+  }, [
     userProfile?.movies_production_filter,
     userProfile?.movies_active_filter,
     userProfile?.movie_status_filter,
@@ -110,67 +134,109 @@ export default function Movies() {
       })
   }
 
+  const handleFilterReset = async () => {
+    const data = (await post('user/profile/', {
+      movies_production_filter: null,
+      movies_active_filter: null,
+      movie_status_filter: null,
+    })) as UserProfileType
+    if (data) setUserProfile(data)
+    setShowFilter(false)
+  }
+
   return (
     <>
       <H1>Movies</H1>
-      <div className="filter-bar">
+      <div className="filter-bar flex gap-2 md:flex-nowrap flex-wrap">
         <Link to={'search'}>
-          <Button>Add</Button>
-        </Link>
-        <Button onClick={handleMovieSearchInput}>
-          {movieSearchInput ? 'Cancel' : 'Search'}
-        </Button>
-        {movieSearchInput && (
-          <Input
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            autoFocus
+          <LucideIconWrapper
+            className="bg-main-fg rounded-lg p-2"
+            name="PlusIcon"
+            title="Start tracking new movie"
           />
-        )}
+        </Link>
+        <div className="flex gap-2">
+          <LucideIconWrapper
+            className="cursor-pointer bg-main-fg rounded-lg p-2"
+            name={movieSearchInput ? 'SearchXIcon' : 'SearchIcon'}
+            title={movieSearchInput ? 'Close search' : 'Search your movies'}
+            onClick={handleMovieSearchInput}
+          />
+          {movieSearchInput && (
+            <Input
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              autoFocus
+            />
+          )}
+        </div>
         {userProfile && (
           <>
-            <Select
-              defaultValue={userProfile.movies_production_filter}
-              onChange={handleProductionFilterUpdate}
-            >
-              <option value={''}>--- all production states ---</option>
-              <option value="r">Rumored</option>
-              <option value="p">Planned</option>
-              <option value="i">In Production</option>
-              <option value="o">Post Production</option>
-              <option value="e">Released</option>
-            </Select>
-            <Select
-              defaultValue={userProfile.movie_status_filter}
-              onChange={handleStatusFilterUpdate}
-            >
-              <option value={''}>--- all movie status ---</option>
-              <option value="n">None</option>
-              <option value="u">Upcoming</option>
-              <option value="s">Searching</option>
-              <option value="d">Downloading</option>
-              <option value="f">Finished</option>
-              <option value="a">Archived</option>
-              <option value="i">Ignored</option>
-            </Select>
-            <Select
-              defaultValue={
-                userProfile.movies_active_filter === null
-                  ? ''
-                  : userProfile.movies_active_filter
-                    ? '1'
-                    : '0'
-              }
-              onChange={handleActiveFilterUpdate}
-            >
-              <option value={''}>--- all ---</option>
-              <option value="1">Active</option>
-              <option value="0">Inactive</option>
-            </Select>
+            <div className="flex gap-2 md:flex-nowrap flex-wrap">
+              <LucideIconWrapper
+                name="Funnel"
+                onClick={() => setShowFilter(!showFilter)}
+                className="cursor-pointer bg-main-fg rounded-lg p-2"
+                title={showFilter ? 'Hide filter' : 'Show filter'}
+                prefix={totalActiveFilters > 0 ? totalActiveFilters : null}
+              />
+              {(userProfile.movie_status_filter !== null ||
+                userProfile.movies_active_filter !== null ||
+                userProfile.movies_production_filter !== null) && (
+                <LucideIconWrapper
+                  title="Reset all filters"
+                  className="cursor-pointer bg-main-fg rounded-lg p-2"
+                  name="FunnelX"
+                  onClick={handleFilterReset}
+                />
+              )}
+            </div>
+            {showFilter && (
+              <div className="flex gap-2 md:flex-nowrap flex-wrap">
+                <Select
+                  defaultValue={userProfile.movies_production_filter}
+                  onChange={handleProductionFilterUpdate}
+                >
+                  <option value={''}>--- all production states ---</option>
+                  <option value="r">Rumored</option>
+                  <option value="p">Planned</option>
+                  <option value="i">In Production</option>
+                  <option value="o">Post Production</option>
+                  <option value="e">Released</option>
+                </Select>
+                <Select
+                  defaultValue={userProfile.movie_status_filter}
+                  onChange={handleStatusFilterUpdate}
+                >
+                  <option value={''}>--- all movie status ---</option>
+                  <option value="n">None</option>
+                  <option value="u">Upcoming</option>
+                  <option value="s">Searching</option>
+                  <option value="d">Downloading</option>
+                  <option value="f">Finished</option>
+                  <option value="a">Archived</option>
+                  <option value="i">Ignored</option>
+                </Select>
+                <Select
+                  defaultValue={
+                    userProfile.movies_active_filter === null
+                      ? ''
+                      : userProfile.movies_active_filter
+                        ? '1'
+                        : '0'
+                  }
+                  onChange={handleActiveFilterUpdate}
+                >
+                  <option value={''}>--- all ---</option>
+                  <option value="1">Active</option>
+                  <option value="0">Inactive</option>
+                </Select>
+              </div>
+            )}
           </>
         )}
       </div>
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid md:grid-cols-4 grid-cols-2 gap-2">
         {isLoadingMovies ? (
           <P>Loading...</P>
         ) : error ? (

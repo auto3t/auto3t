@@ -5,6 +5,7 @@ import {
   H2,
   H3,
   Input,
+  LucideIconWrapper,
   P,
   Table,
 } from '../../components/Typography'
@@ -144,7 +145,11 @@ export default function PeopleSearch() {
       <H1>Start tracking a new Person</H1>
       <div className="filter-bar">
         <Link to={'/people'}>
-          <Button>Back</Button>
+          <LucideIconWrapper
+            className="bg-main-fg rounded-lg p-2"
+            name="ArrowLeft"
+            title="Go back to Shows"
+          />
         </Link>
       </div>
       <div className="flex gap-2">
@@ -155,7 +160,15 @@ export default function PeopleSearch() {
           placeholder="Search..."
           autoFocus
         />
-        <Button onClick={handleClear}>Clear</Button>
+        {query && (
+          <LucideIconWrapper
+            name="X"
+            title="Clear search"
+            onClick={handleClear}
+            className="cursor-pointer"
+            size={35}
+          />
+        )}
       </div>
       {(selectedMoviePerson !== null || selectedTVPerson !== null) && (
         <div>
@@ -188,7 +201,7 @@ export default function PeopleSearch() {
           <div className="py-4">
             <H2>Movie Person Results</H2>
             {moviePersonResults && moviePersonResults.length > 0 ? (
-              <div className="grid grid-cols-6 gap-2">
+              <div className="grid md:grid-cols-6 grid-cols-2 gap-2">
                 {moviePersonResults.map((person) => (
                   <PeopleSearchResult
                     key={person.id}
@@ -204,7 +217,7 @@ export default function PeopleSearch() {
           <div className="py-4">
             <H2>TV Person Results</H2>
             {tvPersonResults && tvPersonResults.length > 0 ? (
-              <div className="grid grid-cols-6 gap-2">
+              <div className="grid md:grid-cols-6 grid-cols-2 gap-2">
                 {tvPersonResults.map((person) => (
                   <PeopleSearchResult
                     key={person.id}

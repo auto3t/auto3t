@@ -34,7 +34,7 @@ const ShowSearchResult: React.FC<ShowSearchResultInterface> = ({ result }) => {
 
   return (
     <div className="p-1 my-1">
-      <div className="flex items-center border border-accent-2">
+      <div className="md:flex items-center block border border-accent-2">
         <div className="p-4 flex-1">
           {result.image && (
             <img className="w-full" src={result.image} alt="show-poster" />

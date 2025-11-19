@@ -2,7 +2,7 @@ import { useState } from 'react'
 import useApi from '../../hooks/api'
 import MovieSearchResult from '../../components/movie/MovieSearchResult'
 import { Link } from 'react-router-dom'
-import { Button, H1, Input, P } from '../../components/Typography'
+import { H1, Input, LucideIconWrapper, P } from '../../components/Typography'
 import Spinner from '../../components/Spinner'
 
 export type MovieSearchResultType = {
@@ -61,7 +61,11 @@ const MovieSearch = () => {
       <H1>Start track a new Movie</H1>
       <div className="filter-bar">
         <Link to={'/movie'}>
-          <Button>Back</Button>
+          <LucideIconWrapper
+            className="bg-main-fg rounded-lg p-2"
+            name="ArrowLeft"
+            title="Go back to Shows"
+          />
         </Link>
       </div>
       <div className="flex gap-2">
@@ -72,7 +76,15 @@ const MovieSearch = () => {
           placeholder="Search..."
           autoFocus
         />
-        <Button onClick={handleClear}>Clear</Button>
+        {query && (
+          <LucideIconWrapper
+            name="X"
+            title="Clear search"
+            onClick={handleClear}
+            className="cursor-pointer"
+            size={35}
+          />
+        )}
       </div>
       {isLoading ? (
         <Spinner />

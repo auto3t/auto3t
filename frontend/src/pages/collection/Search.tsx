@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Button, H1, Input, P } from '../../components/Typography'
+import { H1, Input, LucideIconWrapper, P } from '../../components/Typography'
 import { useState } from 'react'
 import useApi from '../../hooks/api'
 import Spinner from '../../components/Spinner'
@@ -61,7 +61,11 @@ export default function CollectionSearch() {
       <H1>Start tracking a new Movie Collection</H1>
       <div className="filter-bar">
         <Link to={'/collection'}>
-          <Button>Back</Button>
+          <LucideIconWrapper
+            className="bg-main-fg rounded-lg p-2"
+            name="ArrowLeft"
+            title="Go back to Shows"
+          />
         </Link>
       </div>
       <div className="flex gap-2">
@@ -72,7 +76,15 @@ export default function CollectionSearch() {
           placeholder="Search..."
           autoFocus
         />
-        <Button onClick={handleClear}>Clear</Button>
+        {query && (
+          <LucideIconWrapper
+            name="X"
+            title="Clear search"
+            onClick={handleClear}
+            className="cursor-pointer"
+            size={35}
+          />
+        )}
       </div>
       {isLoading ? (
         <Spinner />

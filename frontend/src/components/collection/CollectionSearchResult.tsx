@@ -34,13 +34,13 @@ const CollectionSearchResult: React.FC<CollectionSearchResultInterface> = ({
 
   return (
     <div className="p-1 my-1">
-      <div className="flex items-center border border-accent-2">
+      <div className="md:flex items-center block border border-accent-2">
         <div className="p-4 flex-1">
           {result.image && (
             <img className="w-full" src={result.image} alt="movie-poster" />
           )}
         </div>
-        <div className="m-2 flex-3">
+        <div className="m-2 p-2 flex-3">
           <H2>{result.name}</H2>
           <P variant="smaller">
             ID:{' '}

@@ -113,7 +113,7 @@ const TVShowDetail: React.FC = () => {
         ) : (
           <>
             <H2>Seasons</H2>
-            <div className="grid grid-cols-6 gap-2 my-4">
+            <div className="grid md:grid-cols-6 grid-cols-2 gap-2 my-4">
               {Array.isArray(seasons) && seasons.length > 0 ? (
                 showAllSeasons ? (
                   seasons.map((season) => (
@@ -154,7 +154,7 @@ const TVShowDetail: React.FC = () => {
               <Spinner />
             </div>
           ) : (
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid md:grid-cols-3 grid-cols-1 gap-2">
               {episodes?.length > 0 &&
                 episodes.map((episode) => (
                   <Episode key={episode.id} episode={episode} />

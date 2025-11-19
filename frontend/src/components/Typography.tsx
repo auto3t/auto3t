@@ -159,35 +159,39 @@ export const Table: React.FC<TableProps> = ({
   className = '',
 }) => {
   return (
-    <table className={`my-4 table-auto font-display text-main-fg ${className}`}>
-      {headers && (
-        <thead>
-          <tr>
-            {headers.map((header, index) => (
-              <th key={index} className="bg-accent-3 px-4 text-left py-1">
-                {header}
-              </th>
-            ))}
-          </tr>
-        </thead>
-      )}
-      <tbody>
-        {rows.map((row, rowIndex) => (
-          <tr key={rowIndex}>
-            {row.map((cell, colIndex) => (
-              <td
-                key={colIndex}
-                className={`px-4 py-1 ${
-                  colIndex === 0 || colIndex === 1 ? 'min-w-[200px]' : ''
-                }`}
-              >
-                {cell}
-              </td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <div className="overflow-x-scroll">
+      <table
+        className={`my-4 table-auto font-display text-main-fg ${className}`}
+      >
+        {headers && (
+          <thead>
+            <tr>
+              {headers.map((header, index) => (
+                <th key={index} className="bg-accent-3 px-4 text-left py-1">
+                  {header}
+                </th>
+              ))}
+            </tr>
+          </thead>
+        )}
+        <tbody>
+          {rows.map((row, rowIndex) => (
+            <tr key={rowIndex}>
+              {row.map((cell, colIndex) => (
+                <td
+                  key={colIndex}
+                  className={`px-4 py-1 ${
+                    colIndex === 0 || colIndex === 1 ? 'min-w-[200px]' : ''
+                  }`}
+                >
+                  {cell}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   )
 }
 
@@ -226,6 +230,7 @@ interface LucideIconProps extends ComponentProps<'svg'> {
   size?: number
   strokeWidth?: number
   className?: string
+  colorClassName?: string
   title?: string
   prefix?: string | number | null
 }
@@ -235,8 +240,10 @@ export function LucideIconWrapper({
   size = 24,
   strokeWidth = 2,
   className = '',
+  colorClassName = 'text-accent-1',
   title = '',
   prefix = null,
+
   ...props
 }: LucideIconProps) {
   const IconComponent = Icons[name] as LucideIcon
@@ -247,7 +254,7 @@ export function LucideIconWrapper({
   }
 
   return (
-    <div className={`text-accent-1 flex ${className}`} title={title}>
+    <div className={`${colorClassName} flex ${className}`} title={title}>
       {prefix !== null && <span className="text-lg font-bold">{prefix}</span>}
       <IconComponent size={size} strokeWidth={strokeWidth} {...props} />
     </div>

@@ -8,7 +8,16 @@ import KeywordTableCompnent from '../KeywordTableComponent'
 import { KeywordType } from '../settings/Keywords'
 import posterDefault from '../../../assets/poster-default.jpg'
 import ToggleSwitch from '../ConfigToggle'
-import { Button, H1, Input, P, StyledLink, Table, TagItem } from '../Typography'
+import {
+  Button,
+  H1,
+  Input,
+  LucideIconWrapper,
+  P,
+  StyledLink,
+  Table,
+  TagItem,
+} from '../Typography'
 import ManualSearch from '../ManualSearch'
 
 export type ShowType = {
@@ -56,11 +65,7 @@ const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
     setEditedSearchName(event.target.value)
   }
 
-  const handleSearchNameSubmit = (
-    event: React.MouseEvent<HTMLButtonElement>,
-  ) => {
-    event.preventDefault()
-
+  const handleSearchNameSubmit = () => {
     put(`tv/show/${showDetail.id}/`, { search_name: editedSearchName })
       .then(() => {
         fetchShow()
@@ -83,10 +88,6 @@ const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
     fetchShow()
   }
 
-  const toggleShowConfirm = () => {
-    setShowDelete(!showDelete)
-  }
-
   const handleShowDelete = () => {
     del(`tv/show/${showDetail.id}/`).then(() => {
       navigate('/tv')
@@ -95,7 +96,7 @@ const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
 
   return (
     <div className="p-1 my-1 border border-accent-2">
-      <div className="flex items-center ">
+      <div className="md:flex block items-center ">
         <div className="p-4 flex-1">
           <ImageComponent
             image={
@@ -150,16 +151,6 @@ const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
         </Button>
         {showDetails && (
           <>
-            <Button className="ml-2" onClick={toggleShowConfirm}>
-              Remove Show
-            </Button>
-            {showDelete && (
-              <div className="flex gap-2 items-center mt-4">
-                <P>Remove &apos;{showDetail.name}&apos; from AutoT?</P>
-                <Button onClick={handleShowDelete}>Confirm</Button>
-                <Button onClick={toggleShowConfirm}>Cancel</Button>
-              </div>
-            )}
             <Table
               rows={[
                 [
@@ -171,23 +162,68 @@ const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
                   />,
                 ],
                 [
-                  'Search Name',
+                  'Search Alias',
                   editMode ? (
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 items-center">
                       <Input
                         type="text"
                         value={editedSearchName || ''}
                         onChange={handleSearchNameChange}
                       />
-                      <Button onClick={handleSearchNameSubmit}>Submit</Button>
-                      <Button onClick={handleSearchNameCancel}>Cancel</Button>
+                      <LucideIconWrapper
+                        name="Check"
+                        title="Save search alias"
+                        className="cursor-pointer"
+                        colorClassName="text-green-700"
+                        onClick={handleSearchNameSubmit}
+                      />
+                      <LucideIconWrapper
+                        name="X"
+                        title="Cancel new search alias"
+                        className="cursor-pointer"
+                        onClick={handleSearchNameCancel}
+                      />
                     </div>
                   ) : (
-                    <>
+                    <div className="flex gap-2">
                       <span>{showDetail.search_name || ''} </span>
-                      <Button onClick={() => setEditMode(true)}>Edit</Button>
-                    </>
+                      <LucideIconWrapper
+                        name="Pencil"
+                        className="cursor-pointer"
+                        title="Edit search alias"
+                        onClick={() => setEditMode(true)}
+                      />
+                    </div>
                   ),
+                ],
+                [
+                  'Delete Show',
+                  <div className="flex gap-2" key="show delete">
+                    {showDelete ? (
+                      <>
+                        <LucideIconWrapper
+                          name="Check"
+                          title="Confirm delete show"
+                          className="cursor-pointer"
+                          colorClassName="text-green-700"
+                          onClick={handleShowDelete}
+                        />
+                        <LucideIconWrapper
+                          name="X"
+                          title="Cancel delete show"
+                          className="cursor-pointer"
+                          onClick={() => setShowDelete(false)}
+                        />
+                      </>
+                    ) : (
+                      <LucideIconWrapper
+                        name="Trash2"
+                        title="Delete Show"
+                        className="cursor-pointer"
+                        onClick={() => setShowDelete(!showDelete)}
+                      />
+                    )}
+                  </div>,
                 ],
                 [
                   'Add Keyword',

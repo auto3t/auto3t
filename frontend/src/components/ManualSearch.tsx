@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import useApi from '../hooks/api'
 import TimeComponent from './TimeComponent'
 import { formatBytes } from '../utils'
-import { Button, H2, Input, P, TagItem } from './Typography'
+import { Button, H2, Input, LucideIconWrapper, P, TagItem } from './Typography'
 import Spinner from './Spinner'
 
 export type ManualSearchType = {
@@ -68,7 +68,7 @@ const ManualSearchResult: React.FC<ManualSearchResultInterface> = ({
   return (
     <div key={result.id} className="border border-accent-1 mb-2 p-2">
       <P>{result.title}</P>
-      <div className="flex gap-2 my-2">
+      <div className="flex flex-wrap gap-2 my-2">
         <TagItem>{result.indexer}</TagItem>
         <TagItem>{formatBytes(result.size)}</TagItem>
         <TagItem>
@@ -133,8 +133,22 @@ const ManualSearch: React.FC<ManualSearchInterface> = ({
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <Button onClick={handleSearch}>Search</Button>
-        {searchResults !== null && <Button onClick={handleClear}>Clear</Button>}
+        <LucideIconWrapper
+          name="Search"
+          size={35}
+          title="Search"
+          className="cursor-pointer"
+          onClick={handleSearch}
+        />
+        {searchResults !== null && (
+          <LucideIconWrapper
+            name="X"
+            title="Clear search"
+            size={35}
+            className="cursor-pointer"
+            onClick={handleClear}
+          />
+        )}
       </div>
       {isSearching ? (
         <Spinner />

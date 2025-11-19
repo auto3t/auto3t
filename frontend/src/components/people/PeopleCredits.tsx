@@ -66,7 +66,7 @@ const CreditTabs = ({ credits }: { credits: CreditType[] }) => {
           )
         })}
       </div>
-      <div className="grid grid-cols-6 gap-2">
+      <div className="grid md:grid-cols-6 grid-cols-2 gap-2">
         {(() => {
           const fullList = grouped[active] ?? []
           const list = showAll ? fullList : fullList.slice(0, 12)

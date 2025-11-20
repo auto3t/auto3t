@@ -97,7 +97,7 @@ const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
   return (
     <div className="p-1 my-1 border border-accent-2">
       <div className="md:flex block items-center ">
-        <div className="p-4 flex-1">
+        <div className="md:w-full w-[75%] mx-auto p-4 flex-1">
           <ImageComponent
             image={
               showDetail.image_show?.image

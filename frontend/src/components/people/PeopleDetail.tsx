@@ -1,6 +1,13 @@
 import { PersonType } from '../../pages/people/Peoples'
 import ImageComponent from '../ImageComponent'
-import { Button, H1, Input, P, StyledLink } from '../Typography'
+import {
+  Button,
+  H1,
+  Input,
+  LucideIconWrapper,
+  P,
+  StyledLink,
+} from '../Typography'
 import posterDefault from '../../../assets/poster-default.jpg'
 import { useState } from 'react'
 import useApi from '../../hooks/api'
@@ -60,8 +67,8 @@ export default function PeopleDetail({
 
   return (
     <div className="border border-accent-1">
-      <div className="flex gap-2 items-center">
-        <div className="flex-1 mx-auto p-6">
+      <div className="md:flex gap-2 items-center">
+        <div className="md:w-full w-[75%] flex-1 mx-auto p-6">
           <ImageComponent
             alt={`image person ${person.name}`}
             image={
@@ -71,9 +78,9 @@ export default function PeopleDetail({
             }
           />
         </div>
-        <div className="flex-3">
+        <div className="m-2 flex-3">
           <H1>{person.name}</H1>
-          <div className="inline-grid grid-cols-3 gap-2">
+          <div className="inline-grid grid-cols-3 gap-2 py-4">
             <P>tvmaze</P>
             {isEditTvmaze ? (
               <Input
@@ -106,7 +113,12 @@ export default function PeopleDetail({
                   </Button>
                 </div>
               ) : person.tvmaze_id === null ? (
-                <Button onClick={() => setIsEditTvmaze(true)}>Edit</Button>
+                <LucideIconWrapper
+                  name="Pencil"
+                  onClick={() => setIsEditTvmaze(true)}
+                  className="cursor-pointer"
+                  title="Edit tvmaze ID"
+                />
               ) : (
                 <span></span>
               )}
@@ -128,25 +140,33 @@ export default function PeopleDetail({
             )}
             <div>
               {isEditMoviedb ? (
-                <div className="flex gap-2 h-full">
-                  <Button
+                <div className="flex items-center gap-2 h-full">
+                  <LucideIconWrapper
+                    name="X"
                     onClick={() => {
                       setIsEditMoviedb(false)
                       setNewMoviedbId('')
                     }}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
+                    className="cursor-pointer"
+                    title="Cancel edit"
+                  />
+                  <LucideIconWrapper
+                    name="Check"
                     onClick={() =>
                       handlePeopleUpdate('the_moviedb_id', newMoviedbId)
                     }
-                  >
-                    Save
-                  </Button>
+                    className="cursor-pointer"
+                    colorClassName="text-green-700"
+                    title="Apply change"
+                  />
                 </div>
               ) : person.the_moviedb_id === null ? (
-                <Button onClick={() => setIsEditMoviedb(true)}>Edit</Button>
+                <LucideIconWrapper
+                  name="Pencil"
+                  onClick={() => setIsEditMoviedb(true)}
+                  className="cursor-pointer"
+                  title="Edit themoviedb ID"
+                />
               ) : (
                 <span></span>
               )}
@@ -162,7 +182,7 @@ export default function PeopleDetail({
             )}
             <span />
           </div>
-          <div className="inline-grid grid-cols-2 gap-2">
+          <div className="inline-grid grid-cols-2 gap-2 py-4">
             <P>Track Movies</P>
             <ToggleSwitch
               value={person.tracking_movie}

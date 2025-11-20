@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { PersonType } from '../../pages/people/Peoples'
-import { Button, P } from '../Typography'
+import { Button, LucideIconWrapper, P } from '../Typography'
 import useApi from '../../hooks/api'
 import { MovieSearchResultType } from '../../pages/movie/Search'
 import Spinner from '../Spinner'
@@ -62,6 +62,19 @@ export default function PeopleMovieRemoteCredis({
             <Button
               onClick={() => setShowAll(!showAll)}
               className="mx-auto block my-4"
+              iconBefore={
+                showAll ? (
+                  <LucideIconWrapper
+                    name="ChevronUp"
+                    colorClassName="text-white"
+                  />
+                ) : (
+                  <LucideIconWrapper
+                    name="ChevronDown"
+                    colorClassName="text-white"
+                  />
+                )
+              }
             >
               {showAll
                 ? 'Show less'

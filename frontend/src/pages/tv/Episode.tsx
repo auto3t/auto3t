@@ -113,15 +113,15 @@ const TVEpisode: React.FC = () => {
                     <LucideIconWrapper
                       name="X"
                       onClick={() => setEditEpisodeStatus(false)}
-                      className="cursor-pointer"
+                      className="cursor-pointer bg-main-fg rounded-lg p-2"
                     />
                   </span>
                 ) : (
-                  <span className="flex gap-2">
+                  <span className="flex items-center gap-4">
                     Status: {episodeDetail.status_display || 'undefined'}
                     <LucideIconWrapper
                       name="Pencil"
-                      className="cursor-pointer"
+                      className="cursor-pointer bg-main-fg rounded-lg p-2"
                       onClick={() => setEditEpisodeStatus(true)}
                     />
                   </span>

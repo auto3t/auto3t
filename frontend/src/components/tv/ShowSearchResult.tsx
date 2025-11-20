@@ -35,19 +35,19 @@ const ShowSearchResult: React.FC<ShowSearchResultInterface> = ({ result }) => {
   return (
     <div className="p-1 my-1">
       <div className="md:flex items-center block border border-accent-2">
-        <div className="p-4 flex-1">
+        <div className="md:w-full w-[75%] mx-auto p-4 flex-1">
           {result.image && (
             <img className="w-full" src={result.image} alt="show-poster" />
           )}
         </div>
         <div className="m-2 p-2 flex-3">
           <H2>{result.name}</H2>
-          <P variant="smaller">
-            ID:{' '}
+          <div className="inline-grid grid-cols-2 gap-2 py-4">
+            <P>tvmaze</P>
             <StyledLink to={result.url} target="_blank" rel="noreferrer">
               {result.id}
             </StyledLink>
-          </P>
+          </div>
           {result.character_name && <H3>As: {result.character_name}</H3>}
           <P dangerouslySetInnerHTML={{ __html: result.summary }} />
           {result.genres.length > 0 && (

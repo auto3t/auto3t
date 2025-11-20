@@ -31,7 +31,7 @@ const MovieSearchResult: React.FC<MovieSearchResultInterface> = ({
   return (
     <div className="p-1 my-1">
       <div className="md:flex items-center block border border-accent-2">
-        <div className="p-4 flex-1">
+        <div className="md:w-full w-[75%] mx-auto p-4 flex-1">
           {result.image && (
             <img className="w-full" src={result.image} alt="movie-poster" />
           )}
@@ -42,12 +42,12 @@ const MovieSearchResult: React.FC<MovieSearchResultInterface> = ({
             {result.release_date &&
               `(${new Date(result.release_date).getFullYear()})`}
           </H2>
-          <P variant="smaller">
-            ID:{' '}
+          <div className="inline-grid grid-cols-2 gap-2 py-4">
+            <P>themoviedb</P>
             <StyledLink to={result.url} target="_blank" rel="noreferrer">
               {result.id}
             </StyledLink>
-          </P>
+          </div>
           {result.character_name && <H3>As: {result.character_name}</H3>}
           <P dangerouslySetInnerHTML={{ __html: result.summary }} />
           <div className="flex gap-2 my-2">

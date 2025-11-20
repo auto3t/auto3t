@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { PersonType } from '../../pages/people/Peoples'
 import { ShowSearchResultType } from '../../pages/tv/Search'
 import useApi from '../../hooks/api'
-import { Button, P } from '../Typography'
+import { Button, LucideIconWrapper, P } from '../Typography'
 import Spinner from '../Spinner'
 import ShowSearchResult from '../tv/ShowSearchResult'
 
@@ -62,6 +62,19 @@ export default function PeopleTVRemoteCredits({
             <Button
               onClick={() => setShowAll(!showAll)}
               className="mx-auto block my-4"
+              iconBefore={
+                showAll ? (
+                  <LucideIconWrapper
+                    name="ChevronUp"
+                    colorClassName="text-white"
+                  />
+                ) : (
+                  <LucideIconWrapper
+                    name="ChevronDown"
+                    colorClassName="text-white"
+                  />
+                )
+              }
             >
               {showAll
                 ? 'Show less'

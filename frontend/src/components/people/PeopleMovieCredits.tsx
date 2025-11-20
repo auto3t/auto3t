@@ -32,7 +32,7 @@ export default function PeopleMovieCredits({ person }: { person: PersonType }) {
       {isLoading || personMovies === null ? (
         <Spinner />
       ) : personMovies.length > 0 ? (
-        <div className="grid grid-cols-6 gap-2">
+        <div className="grid md:grid-cols-6 grid-cols-3 gap-2">
           {personMovies.map((movie) => (
             <MovieTile key={movie.id} movie={movie} />
           ))}

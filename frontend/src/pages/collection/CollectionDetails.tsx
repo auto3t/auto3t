@@ -55,7 +55,7 @@ const MissingMovieTile = function ({
           {addingMovie === null && (
             <Button
               onClick={() => handleAddMovie(missingMovie.the_moviedb_id)}
-              className="mr-2"
+              className="mr-2 mb-2"
             >
               Add
             </Button>
@@ -160,7 +160,7 @@ export default function CollectionDetails() {
               </div>
             ) : collectionMovies.length > 0 ||
               missingCollectionMovies.length > 0 ? (
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid md:grid-cols-4 grid-cols-2 gap-2">
                 {collectionMovies.map((movie) => (
                   <MovieTile key={movie.id} movie={movie} />
                 ))}

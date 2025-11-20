@@ -78,8 +78,8 @@ const MovieDetails: React.FC = () => {
           {movieDetail.collection && (
             <>
               <H2>Part of Collection</H2>
-              <div className="flex gap-4 items-center p-4 my-4 border border-accent-1">
-                <div className="w-50 flex-none">
+              <div className="md:flex gap-4 items-center p-4 my-4 border border-accent-1">
+                <div className="md:w-50 w-[75%] mx-auto flex-none">
                   <ImageComponent
                     alt={`collection-poster-${movieDetail.collection.name}`}
                     image={getCollectionPoster(movieDetail.collection)}
@@ -87,8 +87,8 @@ const MovieDetails: React.FC = () => {
                 </div>
                 <div>
                   <H3>{movieDetail.collection.name}</H3>
-                  <P variant="smaller">
-                    ID:{' '}
+                  <div className="inline-grid grid-cols-2 gap-2 pb-4">
+                    <P>themoviedb</P>
                     <StyledLink
                       to={movieDetail.collection.remote_server_url}
                       target="_blank"
@@ -96,7 +96,7 @@ const MovieDetails: React.FC = () => {
                     >
                       {movieDetail.collection.the_moviedb_id}
                     </StyledLink>
-                  </P>
+                  </div>
                   <P className="mb-2">{movieDetail.collection.description}</P>
                   <Link to={`/collection/${movieDetail.collection.id}`}>
                     <Button>Details</Button>

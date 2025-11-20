@@ -32,7 +32,7 @@ export default function PeopleTVCredits({ person }: { person: PersonType }) {
       {isLoading || personShows === null ? (
         <Spinner />
       ) : personShows.length > 0 ? (
-        <div className="grid grid-cols-6 gap-2">
+        <div className="grid md:grid-cols-6 grid-cols-3 gap-2">
           {personShows.map((show) => (
             <ShowTile key={show.id} show={show} />
           ))}

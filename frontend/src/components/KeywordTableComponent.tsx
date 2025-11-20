@@ -39,7 +39,7 @@ const KeywordTableCompnent: React.FC<KeywortTableComponentInterface> = ({
       'inherited'
     ) : (
       <LucideIconWrapper
-        name="X"
+        name="Trash2"
         className="cursor-pointer"
         onClick={() => handleKeywordRemove(keyword.id)}
       />

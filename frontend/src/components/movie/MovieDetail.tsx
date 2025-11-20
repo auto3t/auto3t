@@ -6,6 +6,7 @@ import {
   Button,
   H1,
   H3,
+  LucideIconWrapper,
   P,
   Select,
   StyledLink,
@@ -63,17 +64,17 @@ const MovieDetail: React.FC<MovieInterface> = ({ movieDetail, fetchMovie }) => {
 
   return (
     <div className="border border-accent-1">
-      <div className="flex gap-2 items-center">
-        <div className="flex-1 mx-auto p-6">
+      <div className="md:flex gap-2 items-center">
+        <div className="md:w-full w-[75%] flex-1 mx-auto p-6">
           <ImageComponent
             image={getMoviePoster(movieDetail)}
             alt="movie-poster"
           />
         </div>
-        <div className="flex-3">
+        <div className="m-2 flex-3">
           <H1>{movieDetail.name_display}</H1>
           <H3>{movieDetail.tagline}</H3>
-          <div className="inline-grid grid-cols-2 gap-2 pb-4">
+          <div className="inline-grid grid-cols-2 gap-2 py-4">
             <P>themoviedb</P>
             <StyledLink
               to={movieDetail.remote_server_url}
@@ -108,7 +109,7 @@ const MovieDetail: React.FC<MovieInterface> = ({ movieDetail, fetchMovie }) => {
             </TagItem>
             <TagItem className="tag-item">
               {editMovieStatus ? (
-                <>
+                <span className="flex gap-3 items-center">
                   <Select
                     defaultValue={movieDetail.status}
                     onChange={(e) => handleMovieStatusUpdate(e.target.value)}
@@ -120,23 +121,23 @@ const MovieDetail: React.FC<MovieInterface> = ({ movieDetail, fetchMovie }) => {
                     <option value="a">Archived</option>
                     <option value="i">Ignored</option>
                   </Select>
-                  <Button
-                    className="ml-2"
+                  <LucideIconWrapper
+                    name="X"
                     onClick={() => setEditMovieStatus(false)}
-                  >
-                    Cancel
-                  </Button>
-                </>
+                    className="cursor-pointer bg-main-fg rounded-lg p-2"
+                    title="Cancel edit status"
+                  />
+                </span>
               ) : (
-                <>
+                <span className="flex gap-4 items-center">
                   Status: {movieDetail?.status_display || 'undefined'}
-                  <Button
-                    className="ml-2"
+                  <LucideIconWrapper
+                    name="Pencil"
                     onClick={() => setEditMovieStatus(true)}
-                  >
-                    Edit
-                  </Button>
-                </>
+                    className="cursor-pointer bg-main-fg rounded-lg p-2"
+                    title="Edit status"
+                  />
+                </span>
               )}
             </TagItem>
             {movieDetail.target_file_size_str && (
@@ -148,24 +149,23 @@ const MovieDetail: React.FC<MovieInterface> = ({ movieDetail, fetchMovie }) => {
         </div>
       </div>
       <div className="ml-6 mb-6">
-        <Button onClick={() => setShowMovieDetail(!showMovieDetail)}>
+        <Button
+          onClick={() => setShowMovieDetail(!showMovieDetail)}
+          iconBefore={
+            showMovieDetail ? (
+              <LucideIconWrapper colorClassName="text-white" name="ChevronUp" />
+            ) : (
+              <LucideIconWrapper
+                colorClassName="text-white"
+                name="ChevronDown"
+              />
+            )
+          }
+        >
           {showMovieDetail ? 'Hide Details' : 'Show Details'}
         </Button>
         {showMovieDetail && (
           <>
-            <Button
-              className="ml-2"
-              onClick={() => setMovieDelete(!movieDelete)}
-            >
-              Remove Movie
-            </Button>
-            {movieDelete && (
-              <div className="flex gap-2 items-center mt-4">
-                <P>Remove &apos;{movieDetail.name}&apos; from AutoT?</P>
-                <Button onClick={handleMovieDelete}>Confirm</Button>
-                <Button onClick={() => setMovieDelete(false)}>Cancel</Button>
-              </div>
-            )}
             <Table
               rows={[
                 [
@@ -188,6 +188,35 @@ const MovieDetail: React.FC<MovieInterface> = ({ movieDetail, fetchMovie }) => {
                         : null
                     }
                   />,
+                ],
+                [
+                  'Delete Movie',
+                  <div className="flex gap-2" key="show delete">
+                    {movieDelete ? (
+                      <>
+                        <LucideIconWrapper
+                          name="Check"
+                          title="Confirm delete movie"
+                          className="cursor-pointer"
+                          colorClassName="text-green-700"
+                          onClick={handleMovieDelete}
+                        />
+                        <LucideIconWrapper
+                          name="X"
+                          title="Cancel delete movie"
+                          className="cursor-pointer"
+                          onClick={() => setMovieDelete(false)}
+                        />
+                      </>
+                    ) : (
+                      <LucideIconWrapper
+                        name="Trash2"
+                        title="Delete movie"
+                        className="cursor-pointer"
+                        onClick={() => setMovieDelete(!movieDelete)}
+                      />
+                    )}
+                  </div>,
                 ],
                 [
                   'Add Keyword',

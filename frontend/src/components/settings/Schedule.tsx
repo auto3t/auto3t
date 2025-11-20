@@ -2,7 +2,14 @@ import { useCallback, useEffect, useState } from 'react'
 import useApi from '../../hooks/api'
 import useScheduleStore from '../../stores/ScheduleStore'
 import TimeComponent from '../TimeComponent'
-import { Button, H2, Input, Select, Table } from '../Typography'
+import {
+  Button,
+  H2,
+  Input,
+  LucideIconWrapper,
+  Select,
+  Table,
+} from '../Typography'
 
 export type SchedulerType = {
   id: number
@@ -137,9 +144,19 @@ export default function Schedule() {
     'Schedule',
     'Next Execution',
     createSchedule === true ? (
-      <Button onClick={handleCancleCreate}>Cancel</Button>
+      <LucideIconWrapper
+        name="X"
+        onClick={handleCancleCreate}
+        className="cursor-pointer bg-main-fg rounded-lg p-2 w-fit"
+        title="Cancel add new schedule"
+      />
     ) : (
-      <Button onClick={handleShowAddForm}>Add</Button>
+      <LucideIconWrapper
+        name="Plus"
+        onClick={handleShowAddForm}
+        className="cursor-pointer bg-main-fg rounded-lg p-2 w-fit"
+        title="Add new schedule"
+      />
     ),
   ]
 
@@ -167,12 +184,22 @@ export default function Schedule() {
         key="create-schedule-cron"
       />,
       '',
-      <>
-        <Button onClick={handleCreateSchedule}>Create Schedule</Button>
-        <Button className="ml-2" onClick={handleCancleCreate}>
-          Cancel
-        </Button>
-      </>,
+      <div className="flex gap-2" key="create-new-schedule">
+        <LucideIconWrapper
+          name="Check"
+          onClick={handleCreateSchedule}
+          key="new-category-button"
+          className="cursor-pointer"
+          colorClassName="text-green-700"
+          title="Confirm create Schedule"
+        />
+        <LucideIconWrapper
+          name="X"
+          onClick={handleCancleCreate}
+          className="cursor-pointer"
+          title="Cancel create Schedule"
+        />
+      </div>,
     ])
   }
 
@@ -185,16 +212,28 @@ export default function Schedule() {
         key={`schedule-next-exec-${schedule.id}`}
       />,
       deletingSchedule === schedule ? (
-        <>
-          <Button onClick={handleDeleteScheduleConfirm}>Confirm</Button>
-          <Button className="ml-2" onClick={handleCancleDeleteSchedule}>
-            Cancel
-          </Button>
-        </>
+        <div className="flex gap-2">
+          <LucideIconWrapper
+            name="Check"
+            onClick={handleDeleteScheduleConfirm}
+            className="cursor-pointer"
+            colorClassName="text-green-700"
+            title="Confirm delete schedule"
+          />
+          <LucideIconWrapper
+            name="X"
+            onClick={handleCancleDeleteSchedule}
+            className="cursor-pointer"
+            title="Cancel delete schedule"
+          />
+        </div>
       ) : (
-        <>
-          <Button onClick={() => handleDeleteSchedule(schedule)}>Delete</Button>
-        </>
+        <LucideIconWrapper
+          name="Trash2"
+          onClick={() => handleDeleteSchedule(schedule)}
+          className="cursor-pointer"
+          title="Delete schedule"
+        />
       ),
     ]),
   )

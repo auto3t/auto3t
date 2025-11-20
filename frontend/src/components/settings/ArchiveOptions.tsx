@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Button, H2, Input, Label, P } from '../Typography'
+import { H2, Input, Label, LucideIconWrapper, P } from '../Typography'
 import useApi from '../../hooks/api'
 
 type AppConfigType = {
@@ -70,8 +70,19 @@ export default function ArchiveOptions() {
       )}
       {newMovieArchiveFormat && (
         <div className="flex gap-2 mt-2">
-          <Button onClick={() => setNewMovieArchiveFormat(null)}>Cancel</Button>
-          <Button onClick={handleMovieArchiveFormatUpdate}>Save</Button>
+          <LucideIconWrapper
+            name="X"
+            onClick={() => setNewMovieArchiveFormat(null)}
+            className="cursor-pointer"
+            title="Cancel editing"
+          />
+          <LucideIconWrapper
+            name="Check"
+            onClick={handleMovieArchiveFormatUpdate}
+            className="cursor-pointer"
+            colorClassName="text-green-700"
+            title="Update movie archive strategy"
+          />
         </div>
       )}
     </>

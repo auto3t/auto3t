@@ -2,7 +2,7 @@ import { useEffect, useCallback, useState } from 'react'
 import useCategoryFormStore from '../../stores/CategoryFormStore'
 import useSearchKeyWordStore from '../../stores/SearchKeyWordsStore'
 import useApi from '../../hooks/api'
-import { Button, H2, Input, Select, Table } from '../Typography'
+import { H2, Input, LucideIconWrapper, Select, Table } from '../Typography'
 
 type KeywordRelated = {
   movie: number[]
@@ -73,10 +73,7 @@ export default function Keywords() {
     setIsDefaultMovie(false)
   }
 
-  const handleNewKeywordSubmit = async (
-    event: React.MouseEvent<HTMLButtonElement>,
-  ) => {
-    event.preventDefault()
+  const handleNewKeywordSubmit = async () => {
     try {
       const body = {
         category: selectedCategory,
@@ -185,9 +182,19 @@ export default function Keywords() {
     'Default TV',
     'Default Movie',
     createKeyword === true ? (
-      <Button onClick={handleCancelCreate}>Cancel</Button>
+      <LucideIconWrapper
+        name="X"
+        onClick={handleCancelCreate}
+        className="cursor-pointer bg-main-fg rounded-lg p-2 w-fit"
+        title="Cancel add new category"
+      />
     ) : (
-      <Button onClick={handleShowAddForm}>Add</Button>
+      <LucideIconWrapper
+        name="Plus"
+        onClick={handleShowAddForm}
+        className="cursor-pointer bg-main-fg rounded-lg p-2 w-fit"
+        title="Cancel add new category"
+      />
     ),
   ]
 
@@ -233,9 +240,13 @@ export default function Keywords() {
         onChange={(e) => setIsDefaultMovie(e.target.checked)}
         key="keyword-create-default-movie-input"
       />,
-      <Button onClick={handleNewKeywordSubmit} key="keyword-create-button">
-        Create Keyword
-      </Button>,
+      <LucideIconWrapper
+        name="Check"
+        className="cursor-pointer"
+        colorClassName="text-green-700"
+        onClick={handleNewKeywordSubmit}
+        key="keyword-create-button"
+      />,
     ])
   }
 
@@ -288,14 +299,21 @@ export default function Keywords() {
             onChange={handleInputChange}
             key={`editing-default-movie-${keyword.id}`}
           />,
-          <>
-            <Button type="button" onClick={handleEditSubmit}>
-              Update
-            </Button>
-            <Button className="ml-2" type="button" onClick={handleEditCancel}>
-              Cancel
-            </Button>
-          </>,
+          <div className="flex gap-2" key="editing-key-word">
+            <LucideIconWrapper
+              name="X"
+              onClick={handleEditCancel}
+              className="cursor-pointer"
+              title="Cancel editing"
+            />
+            <LucideIconWrapper
+              name="Check"
+              onClick={handleEditSubmit}
+              className="cursor-pointer"
+              colorClassName="text-green-700"
+              title="Update keyword"
+            />
+          </div>,
         ]
       }
 
@@ -308,22 +326,36 @@ export default function Keywords() {
         keyword.movie_default ? '✅' : '-',
 
         deletingKeyword === keyword ? (
-          <>
-            <Button onClick={handleDeleteConfirm}>Confirm</Button>
-            <Button className="ml-2" onClick={handleCancelDelete}>
-              Cancel
-            </Button>
-          </>
+          <div className="flex gap-2">
+            <LucideIconWrapper
+              name="Check"
+              onClick={handleDeleteConfirm}
+              className="cursor-pointer"
+              colorClassName="text-green-700"
+              title="Confirm delete keyword"
+            />
+            <LucideIconWrapper
+              name="X"
+              onClick={handleCancelDelete}
+              className="cursor-pointer"
+              title="Cancel delete keyword"
+            />
+          </div>
         ) : (
-          <>
-            <Button onClick={() => handleEditKeyword(keyword)}>Edit</Button>
-            <Button
-              className="ml-2"
+          <div className="flex gap-2">
+            <LucideIconWrapper
+              name="Pencil"
+              onClick={() => handleEditKeyword(keyword)}
+              className="cursor-pointer"
+              title="Edit keyword"
+            />
+            <LucideIconWrapper
+              name="Trash2"
               onClick={() => handleDeleteKeyword(keyword)}
-            >
-              Delete
-            </Button>
-          </>
+              className="cursor-pointer"
+              title="Delete keyword"
+            />
+          </div>
         ),
       ]
     }),

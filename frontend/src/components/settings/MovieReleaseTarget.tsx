@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Button, H2, Input, P, Table } from '../Typography'
+import { H2, Input, LucideIconWrapper, P, Table } from '../Typography'
 import useApi from '../../hooks/api'
 
 type TargetReleaseType = {
@@ -66,16 +66,31 @@ export default function MovieReleaseTarget() {
     'Tracking',
     'Days Delay',
     isEditing ? (
-      <>
-        <Button onClick={handleCancelEdit}>Cancel</Button>
+      <div className="flex gap-2">
+        <LucideIconWrapper
+          name="X"
+          onClick={handleCancelEdit}
+          className="cursor-pointer bg-main-fg rounded-lg p-2 w-fit"
+          title="Cancel edit"
+        />
         {releaseTargets !== editingTargets && (
-          <Button className="ml-2" onClick={handleSave}>
-            Save
-          </Button>
+          <LucideIconWrapper
+            name="Check"
+            onClick={handleSave}
+            key="release-target-save"
+            className="cursor-pointer bg-main-fg rounded-lg p-2 w-fit"
+            colorClassName="text-green-700"
+            title="Save"
+          />
         )}
-      </>
+      </div>
     ) : (
-      <Button onClick={() => setIsEditing(true)}>Edit</Button>
+      <LucideIconWrapper
+        name="Pencil"
+        onClick={() => setIsEditing(true)}
+        className="cursor-pointer bg-main-fg rounded-lg p-2 w-fit"
+        title="Edit"
+      />
     ),
   ]
 

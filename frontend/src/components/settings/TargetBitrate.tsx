@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Button, H2, Input, P, Table } from '../Typography'
+import { H2, Input, LucideIconWrapper, P, Table } from '../Typography'
 import useApi from '../../hooks/api'
 
 export type TargetBitrateType = {
@@ -55,10 +55,7 @@ export default function TargetBitrate() {
     setNewDefaultMovie(false)
   }
 
-  const handleNewTargetSubmit = async (
-    event: React.MouseEvent<HTMLButtonElement>,
-  ) => {
-    event.preventDefault()
+  const handleNewTargetSubmit = async () => {
     try {
       const body = {
         bitrate: newBitrate,
@@ -146,9 +143,19 @@ export default function TargetBitrate() {
     'Default TV',
     'Default Movie',
     createNewTarget ? (
-      <Button onClick={handleEditCancel}>Cancel</Button>
+      <LucideIconWrapper
+        name="X"
+        onClick={handleEditCancel}
+        className="cursor-pointer bg-main-fg rounded-lg p-2 w-fit"
+        title="Cancel add new target bitrate"
+      />
     ) : (
-      <Button onClick={() => setCreateNewTarget(!createNewTarget)}>Add</Button>
+      <LucideIconWrapper
+        name="Plus"
+        onClick={() => setCreateNewTarget(!createNewTarget)}
+        className="cursor-pointer bg-main-fg rounded-lg p-2 w-fit"
+        title="Add new target bitrate"
+      />
     ),
   ]
 
@@ -181,9 +188,14 @@ export default function TargetBitrate() {
         onChange={(e) => setNewDefaultMovie(e.target.checked)}
         key="new-default-movie"
       />,
-      <Button onClick={handleNewTargetSubmit} key="new-button-submit">
-        Save
-      </Button>,
+      <LucideIconWrapper
+        name="Check"
+        onClick={handleNewTargetSubmit}
+        key="new-button-submit"
+        className="cursor-pointer"
+        colorClassName="text-green-700"
+        title="Confirm create"
+      />,
     ])
   }
   const rows = rowsHead.concat(
@@ -220,15 +232,21 @@ export default function TargetBitrate() {
             onChange={handleInputChange}
             key={`editing-target-movie_default-${targetBitrate.id}`}
           />,
-          <>
-            <Button onClick={handleEditSubmit}>Update</Button>
-            <Button
-              className="ml-2"
+          <div className="flex gap-2" key="editing-target-bitrate">
+            <LucideIconWrapper
+              name="X"
               onClick={() => setEditingTarget(editingDefault)}
-            >
-              Cancel
-            </Button>
-          </>,
+              className="cursor-pointer"
+              title="Cancel editing"
+            />
+            <LucideIconWrapper
+              name="Check"
+              onClick={handleEditSubmit}
+              className="cursor-pointer"
+              colorClassName="text-green-700"
+              title="Update target bitrate"
+            />
+          </div>,
         ]
       }
       // is not editing
@@ -238,24 +256,36 @@ export default function TargetBitrate() {
         targetBitrate.tv_default ? '✅' : '-',
         targetBitrate.movie_default ? '✅' : '-',
         deletingTarget === targetBitrate ? (
-          <>
-            <Button onClick={handleDeleteConfirm}>Confirm</Button>
-            <Button className="ml-2" onClick={() => setDeletingTarget(null)}>
-              Cancel
-            </Button>
-          </>
+          <div className="flex gap-2">
+            <LucideIconWrapper
+              name="Check"
+              onClick={handleDeleteConfirm}
+              className="cursor-pointer"
+              colorClassName="text-green-700"
+              title="Confirm delete target bitrate"
+            />
+            <LucideIconWrapper
+              name="X"
+              onClick={() => setDeletingTarget(null)}
+              className="cursor-pointer"
+              title="Cancel delete target bitrate"
+            />
+          </div>
         ) : (
-          <>
-            <Button onClick={() => handleEditTarget(targetBitrate)}>
-              Edit
-            </Button>
-            <Button
-              className="ml-2"
+          <div className="flex gap-2">
+            <LucideIconWrapper
+              name="Pencil"
+              onClick={() => handleEditTarget(targetBitrate)}
+              className="cursor-pointer"
+              title="Edit target bitrate"
+            />
+            <LucideIconWrapper
+              name="Trash2"
               onClick={() => setDeletingTarget(targetBitrate)}
-            >
-              Delete
-            </Button>
-          </>
+              className="cursor-pointer"
+              title="Delete target bitrate"
+            />
+          </div>
         ),
       ]
     }),

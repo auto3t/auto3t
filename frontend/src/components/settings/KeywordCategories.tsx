@@ -1,7 +1,7 @@
 import { useEffect, useCallback } from 'react'
 import useCategoryFormStore from '../../stores/CategoryFormStore'
 import useApi from '../../hooks/api'
-import { Button, H2, Input, Table } from '../Typography'
+import { H2, Input, LucideIconWrapper, Table } from '../Typography'
 
 export type KeyWordCategoryType = {
   id: number
@@ -35,10 +35,7 @@ export default function KeywordCategories() {
     fetchCategories()
   }, [fetchCategories])
 
-  const handleNewCategorySubmit = async (
-    event: React.MouseEvent<HTMLButtonElement>,
-  ) => {
-    event.preventDefault()
+  const handleNewCategorySubmit = async () => {
     try {
       const data = await post('keyword-category/', { name: newCategoryName })
       if (data) {
@@ -113,11 +110,19 @@ export default function KeywordCategories() {
   const headers = [
     'Name',
     createCategory === false ? (
-      <Button onClick={handleShowCreateForm}>Add</Button>
+      <LucideIconWrapper
+        name="Plus"
+        onClick={handleShowCreateForm}
+        className="cursor-pointer bg-main-fg rounded-lg p-2 w-fit"
+        title="Add new category"
+      />
     ) : (
-      <Button className="ml-2" onClick={handleCancelCreate}>
-        Cancel
-      </Button>
+      <LucideIconWrapper
+        name="X"
+        onClick={handleCancelCreate}
+        className="cursor-pointer bg-main-fg rounded-lg p-2 w-fit"
+        title="Cancel add new category"
+      />
     ),
   ]
 
@@ -132,9 +137,14 @@ export default function KeywordCategories() {
         placeholder="Enter category name"
         key="new-category-input"
       />,
-      <Button onClick={handleNewCategorySubmit} key="new-category-button">
-        Create Category
-      </Button>,
+      <LucideIconWrapper
+        name="Check"
+        onClick={handleNewCategorySubmit}
+        key="new-category-button"
+        className="cursor-pointer"
+        colorClassName="text-green-700"
+        title="Confirm create"
+      />,
     ])
   }
 
@@ -150,12 +160,21 @@ export default function KeywordCategories() {
             onChange={(e) => setEditedCategoryName(e.target.value)}
             key={`editing-category-${category.id}`}
           />,
-          <>
-            <Button onClick={handleCancelEdit}>Cancel</Button>
-            <Button className="ml-2" onClick={handleUpdateCategory}>
-              Update
-            </Button>
-          </>,
+          <div className="flex gap-2" key="editing-key-word-category">
+            <LucideIconWrapper
+              name="X"
+              onClick={handleCancelEdit}
+              className="cursor-pointer"
+              title="Cancel editing"
+            />
+            <LucideIconWrapper
+              name="Check"
+              onClick={handleUpdateCategory}
+              className="cursor-pointer"
+              colorClassName="text-green-700"
+              title="Update category"
+            />
+          </div>,
         ]
       }
 
@@ -163,22 +182,36 @@ export default function KeywordCategories() {
       return [
         category.name,
         deletingCategory === category ? (
-          <>
-            <Button onClick={handleDeleteConfirm}>Confirm</Button>
-            <Button className="ml-2" onClick={handleCancelDelete}>
-              Cancel
-            </Button>
-          </>
+          <div className="flex gap-2">
+            <LucideIconWrapper
+              name="Check"
+              onClick={handleDeleteConfirm}
+              className="cursor-pointer"
+              colorClassName="text-green-700"
+              title="Confirm delete category"
+            />
+            <LucideIconWrapper
+              name="X"
+              onClick={handleCancelDelete}
+              className="cursor-pointer"
+              title="Cancel delete category"
+            />
+          </div>
         ) : (
-          <>
-            <Button onClick={() => handleEditCategory(category)}>Edit</Button>
-            <Button
-              className="ml-2"
+          <div className="flex gap-2">
+            <LucideIconWrapper
+              name="Pencil"
+              onClick={() => handleEditCategory(category)}
+              className="cursor-pointer"
+              title="Edit category"
+            />
+            <LucideIconWrapper
+              name="Trash2"
               onClick={() => handleDeleteCategory(category)}
-            >
-              Delete
-            </Button>
-          </>
+              className="cursor-pointer"
+              title="Delete category"
+            />
+          </div>
         ),
       ]
     }),

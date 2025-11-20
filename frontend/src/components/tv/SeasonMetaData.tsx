@@ -7,7 +7,15 @@ import AddKeywordComponent from '../AddKeywordComponent'
 import KeywordTableCompnent from '../KeywordTableComponent'
 import ManualSearch from '../ManualSearch'
 import SeasonEpisodeSummary from './SeasonEpisodeSummary'
-import { Button, P, Select, StyledLink, Table, TagItem } from '../Typography'
+import {
+  Button,
+  LucideIconWrapper,
+  P,
+  Select,
+  StyledLink,
+  Table,
+  TagItem,
+} from '../Typography'
 
 interface SeasonMetaDataInterface {
   fetchEpisodes: (seasonId: number) => void
@@ -42,8 +50,8 @@ const SeasonMetaData: React.FC<SeasonMetaDataInterface> = ({
 
   return (
     <>
-      <P variant="smaller">
-        ID:{' '}
+      <div className="inline-grid grid-cols-2 gap-2 pb-4">
+        <P>tvmaze</P>
         <StyledLink
           to={selectedSeason.remote_server_url}
           target="_blank"
@@ -51,7 +59,7 @@ const SeasonMetaData: React.FC<SeasonMetaDataInterface> = ({
         >
           {selectedSeason.tvmaze_id}
         </StyledLink>
-      </P>
+      </div>
       <P dangerouslySetInnerHTML={{ __html: selectedSeason.description }} />
       <div className="flex gap-2 mt-2 mb-8">
         {selectedSeason.release_date && (
@@ -65,7 +73,24 @@ const SeasonMetaData: React.FC<SeasonMetaDataInterface> = ({
           </TagItem>
         )}
       </div>
-      <Button onClick={toggleShowSeasonDetails}>
+      <Button
+        onClick={toggleShowSeasonDetails}
+        iconBefore={
+          showSeasonDetails ? (
+            <LucideIconWrapper
+              name="ChevronUp"
+              colorClassName="text-white"
+              className="cursor-pointer"
+            />
+          ) : (
+            <LucideIconWrapper
+              name="ChevronDown"
+              colorClassName="text-white"
+              className="cursor-pointer"
+            />
+          )
+        }
+      >
         {showSeasonDetails ? 'Hide Details' : 'Season Details'}
       </Button>
       {showSeasonDetails && (

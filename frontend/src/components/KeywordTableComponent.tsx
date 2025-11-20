@@ -1,6 +1,6 @@
 import useApi from '../hooks/api'
 import { KeywordType } from './settings/Keywords'
-import { Button, Table } from './Typography'
+import { LucideIconWrapper, Table } from './Typography'
 
 interface KeywortTableComponentInterface {
   all_keywords: KeywordType[]
@@ -38,7 +38,11 @@ const KeywordTableCompnent: React.FC<KeywortTableComponentInterface> = ({
       keyword.related[inheritKey].includes(inheritId) ? (
       'inherited'
     ) : (
-      <Button onClick={() => handleKeywordRemove(keyword.id)}>remove</Button>
+      <LucideIconWrapper
+        name="X"
+        className="cursor-pointer"
+        onClick={() => handleKeywordRemove(keyword.id)}
+      />
     ),
   ])
 

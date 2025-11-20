@@ -48,8 +48,8 @@ const EpisodeNav: React.FC<EpisodeNavInterface> = ({ currentEpisodeId }) => {
   }, [currentEpisodeId])
 
   return (
-    <div className="grid grid-cols-9 text-sm py-2">
-      <div className="text-right col-span-4">
+    <div className="grid grid-cols-8 text-sm py-2">
+      <div className="text-right col-span-4 pr-4 h-full">
         {previousEpisode ? (
           <StyledLink
             title="previous episode"
@@ -66,10 +66,7 @@ const EpisodeNav: React.FC<EpisodeNavInterface> = ({ currentEpisodeId }) => {
           <P className="first-nav">First Episode</P>
         )}
       </div>
-      <div className="text-center text-gray-400 col-span-1">
-        <P> | </P>
-      </div>
-      <div className="text-left col-span-4">
+      <div className="border-l border-white pl-4 text-left col-span-4 h-full">
         {nextEpisode ? (
           <StyledLink title="next episode" to={`/tv/episode/${nextEpisode.id}`}>
             <span>S{String(nextEpisode.season.number).padStart(2, '0')}</span>

@@ -146,7 +146,19 @@ const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
         </div>
       </div>
       <div className="p-4">
-        <Button onClick={toggleShowDetails}>
+        <Button
+          onClick={toggleShowDetails}
+          iconBefore={
+            showDetails ? (
+              <LucideIconWrapper name="ChevronUp" colorClassName="text-white" />
+            ) : (
+              <LucideIconWrapper
+                name="ChevronDown"
+                colorClassName="text-white"
+              />
+            )
+          }
+        >
           {showDetails ? 'Hide Details' : 'Show Details'}
         </Button>
         {showDetails && (

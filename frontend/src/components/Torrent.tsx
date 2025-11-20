@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import useApi from '../hooks/api'
-import { Button, P, TagItem } from './Typography'
+import { Button, LucideIconWrapper, P, TagItem } from './Typography'
 
 export type TorrentType = {
   id: number
@@ -70,40 +70,49 @@ const Torrent: React.FC<TorrentInterface> = ({ torrent, setRefresh }) => {
         </div>
       )}
       <div className="pt-4">
-        <P className="bg-accent-3 p-2 mb-2 break-words">
+        <P className="bg-accent-3 p-2 mb-2 wrap-break-word">
           {isExpanded ? torrent.magnet : torrent.magnet_hash}
         </P>
-        {(torrent.torrent_state === 'u' ||
-          torrent.torrent_state === 'q' ||
-          torrent.torrent_state === 'd') && (
-          <Button className="mr-2" onClick={handleIgnore}>
-            Ignore
+        <div className="flex gap-2">
+          {(torrent.torrent_state === 'u' ||
+            torrent.torrent_state === 'q' ||
+            torrent.torrent_state === 'd') && (
+            <Button className="mr-2" onClick={handleIgnore}>
+              Ignore
+            </Button>
+          )}
+          <Button onClick={() => setIsExpanded(!isExpanded)}>
+            {isExpanded ? 'Show Hash' : 'Show Magnet'}
           </Button>
-        )}
-        <Button onClick={() => setIsExpanded(!isExpanded)}>
-          {isExpanded ? 'Show Hash' : 'Show Magnet'}
-        </Button>
-        {torrent.torrent_state === 'i' && (
-          <>
-            {deleteConfirm ? (
-              <>
-                <Button className="ml-2" onClick={handleDelete}>
-                  Confirm
-                </Button>
-                <Button
-                  className="ml-2"
-                  onClick={() => setDeleteConfirm(false)}
-                >
-                  Cancel
-                </Button>
-              </>
-            ) : (
-              <Button className="ml-2" onClick={() => setDeleteConfirm(true)}>
-                Delete
-              </Button>
-            )}
-          </>
-        )}
+          {torrent.torrent_state === 'i' && (
+            <>
+              {deleteConfirm ? (
+                <>
+                  <LucideIconWrapper
+                    title="Confirm Delete"
+                    name="Check"
+                    onClick={handleDelete}
+                    className="cursor-pointer"
+                  />
+                  <LucideIconWrapper
+                    title="Cancel Delete"
+                    name="X"
+                    onClick={() => setDeleteConfirm(false)}
+                    className="cursor-pointer"
+                    colorClassName="text-green-700"
+                  />
+                </>
+              ) : (
+                <LucideIconWrapper
+                  title="Delete"
+                  name="Trash2Icon"
+                  onClick={() => setDeleteConfirm(true)}
+                  className="cursor-pointer"
+                />
+              )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   )

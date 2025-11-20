@@ -10,7 +10,14 @@ import ManualSearch from '../../components/ManualSearch'
 import { EpisodeType } from '../../components/tv/Episode'
 import MediaServerDetail from '../../components/MediaServerDetail'
 import episodeLogoDefault from '../../../assets/episode-default.jpg'
-import { Button, H1, H2, P, Select, TagItem } from '../../components/Typography'
+import {
+  H1,
+  H2,
+  LucideIconWrapper,
+  P,
+  Select,
+  TagItem,
+} from '../../components/Typography'
 import { formatDuration } from '../../utils'
 
 const TVEpisode: React.FC = () => {
@@ -55,16 +62,19 @@ const TVEpisode: React.FC = () => {
     <div className="mb-10">
       {episodeDetail && (
         <>
-          <div className="w-[75%] mx-auto py-6">
+          <div className="md:w-[75%] mx-auto py-6">
             {episodeImage && (
               <ImageComponent image={episodeImage} alt="episode-poster" />
             )}
           </div>
-          <div className="text-center py-4">
-            <H1>{episodeDetail.title}</H1>
+          <div className="flex gap-4 justify-center items-baseline flex-wrap py-4">
             <Link to={`/tv/show/${episodeDetail.season.show.id}`}>
               <H2>{episodeDetail.season.show.name}</H2>
             </Link>
+            <P variant="larger">:</P>
+            <H1>{episodeDetail.title}</H1>
+          </div>
+          <div className="text-center">
             <P>
               S{String(episodeDetail.season.number).padStart(2, '0')}E
               {String(episodeDetail.number).padStart(2, '0')}
@@ -86,7 +96,7 @@ const TVEpisode: React.FC = () => {
               )}
               <TagItem>
                 {editEpisodeStatus ? (
-                  <>
+                  <span className="flex gap-2 items-center">
                     <Select
                       defaultValue={episodeDetail.status}
                       onChange={(e) =>
@@ -100,23 +110,21 @@ const TVEpisode: React.FC = () => {
                       <option value="a">Archived</option>
                       <option value="i">Ignored</option>
                     </Select>
-                    <Button
-                      className="ml-2"
+                    <LucideIconWrapper
+                      name="X"
                       onClick={() => setEditEpisodeStatus(false)}
-                    >
-                      Cancel
-                    </Button>
-                  </>
+                      className="cursor-pointer"
+                    />
+                  </span>
                 ) : (
-                  <>
+                  <span className="flex gap-2">
                     Status: {episodeDetail.status_display || 'undefined'}
-                    <Button
-                      className="ml-2"
+                    <LucideIconWrapper
+                      name="Pencil"
+                      className="cursor-pointer"
                       onClick={() => setEditEpisodeStatus(true)}
-                    >
-                      Edit
-                    </Button>
-                  </>
+                    />
+                  </span>
                 )}
               </TagItem>
             </div>

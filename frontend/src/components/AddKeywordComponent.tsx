@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import useApi from '../hooks/api'
 import { KeywordType } from './settings/Keywords'
-import { Button, Select } from './Typography'
+import { LucideIconWrapper, Select } from './Typography'
 
 interface AddKeywordComponentInterface {
   patchURL: string
@@ -40,7 +40,7 @@ const AddKeywordComponent: React.FC<AddKeywordComponentInterface> = ({
   return (
     <>
       {allKeywords && (
-        <>
+        <div className="flex gap-2 items-center">
           <Select onChange={handleOptionSelect} defaultValue={''}>
             <option value="">---</option>
             {allKeywords.map((keyword) => (
@@ -50,11 +50,13 @@ const AddKeywordComponent: React.FC<AddKeywordComponentInterface> = ({
             ))}
           </Select>
           {selectedOption && (
-            <Button className="ml-2" onClick={handleOptionUpdate}>
-              Add
-            </Button>
+            <LucideIconWrapper
+              name="Check"
+              onClick={handleOptionUpdate}
+              className="cursor-pointer"
+            />
           )}
-        </>
+        </div>
       )}
     </>
   )

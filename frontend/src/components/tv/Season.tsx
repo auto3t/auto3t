@@ -41,7 +41,7 @@ const Season: React.FC<SeasonComponent> = ({ season, onClick }) => {
         alt={'season-poster-' + season.number}
       />
       <div
-        className={`text-center ${selectedSeason?.id === season.id ? 'bg-accent-3' : ''}`}
+        className={`pl-2 text-center ${selectedSeason?.id === season.id ? 'bg-accent-3' : ''}`}
       >
         <H3>Season {season.number.toString()}</H3>
       </div>

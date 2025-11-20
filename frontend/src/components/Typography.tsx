@@ -29,14 +29,20 @@ type ButtonVariant = 'default' | 'alert'
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant
+  iconBefore?: React.ReactNode
+  iconAfter?: React.ReactNode
 }
 
 export function Button({
+  children,
   variant = 'default',
   className = '',
+  iconBefore,
+  iconAfter,
   ...props
 }: ButtonProps) {
-  const baseClasses = 'px-3 py-1 cursor-pointer font-display'
+  const baseClasses =
+    'px-3 py-1 cursor-pointer font-display inline-flex items-center gap-2'
   let variantClasses = ''
 
   if (variant === 'default') {
@@ -49,7 +55,11 @@ export function Button({
     <button
       {...props}
       className={`${baseClasses} ${variantClasses} ${className}`}
-    />
+    >
+      {iconBefore && <>{iconBefore}</>}
+      {children}
+      {iconAfter && <>{iconAfter}</>}
+    </button>
   )
 }
 
@@ -181,7 +191,7 @@ export const Table: React.FC<TableProps> = ({
                 <td
                   key={colIndex}
                   className={`px-4 py-1 ${
-                    colIndex === 0 || colIndex === 1 ? 'min-w-[200px]' : ''
+                    colIndex === 0 || colIndex === 1 ? 'md:min-w-[200px]' : ''
                   }`}
                 >
                   {cell}

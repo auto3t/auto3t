@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { PersonType } from '../../pages/people/Peoples'
-import { Button, H2, P } from '../Typography'
+import { Button, H2, LucideIconWrapper, P } from '../Typography'
 import useApi from '../../hooks/api'
 import PersonTile from './PersonTile'
 import Spinner from '../Spinner'
@@ -87,6 +87,16 @@ const CreditTabs = ({ credits }: { credits: CreditType[] }) => {
         <Button
           onClick={() => setShowAll(!showAll)}
           className="mx-auto block my-4"
+          iconBefore={
+            showAll ? (
+              <LucideIconWrapper colorClassName="text-white" name="ChevronUp" />
+            ) : (
+              <LucideIconWrapper
+                colorClassName="text-white"
+                name="ChevronDown"
+              />
+            )
+          }
         >
           {showAll
             ? 'Show less'

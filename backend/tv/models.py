@@ -99,10 +99,10 @@ class TVShow(BaseModel):
 
     @property
     def search_query(self) -> str:
-        """search for season"""
+        """search for show"""
         show_name = self.search_name or self.name
 
-        return f"{show_name} COMPLETE"
+        return f"{show_name} COMPLETE SERIES"
 
     @property
     def credit_main_cast_count(self) -> int:

@@ -1,4 +1,4 @@
-"""read application config"""
+"""read environment value config, static at app startup"""
 
 from os import environ
 from pathlib import Path

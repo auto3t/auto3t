@@ -85,10 +85,18 @@ class AppConfig(models.Model):
     TV_ARCHIVE_CHOICES = [
         ("s", "Season folder"),
     ]
+    FILE_OPERATION_CHOICES = [
+        ("m", "Move"),
+        ("c", "Copy"),
+        ("d", "Copy and Delete"),
+        ("l", "Hard link"),
+        ("b", "Copy and Hard"),
+    ]
 
     single_lock = models.PositiveSmallIntegerField(default=1, unique=True)
     movie_archive_format = models.CharField(choices=MOVIE_ARCHIVE_CHOICES, max_length=1, default="f")
     tv_archive_format = models.CharField(choices=TV_ARCHIVE_CHOICES, max_length=1, default="s")
+    file_archive_operation = models.CharField(choices=FILE_OPERATION_CHOICES, max_length=1, default="c")
 
     @property
     def movie_archive_format_options(self):
@@ -99,6 +107,16 @@ class AppConfig(models.Model):
     def tv_archive_format_options(self):
         """tv archive options"""
         return {i[0]: i[1] for i in self.TV_ARCHIVE_CHOICES}
+
+    @property
+    def file_archive_options(self):
+        """file archive operation options"""
+        return {i[0]: i[1] for i in self.FILE_OPERATION_CHOICES}
+
+    def __str__(self):
+        return (
+            f"Movie: {self.movie_archive_format} - TV: {self.tv_archive_format} - File: {self.file_archive_operation}"
+        )
 
 
 class TargetBitrate(models.Model):

@@ -1,6 +1,5 @@
 """archive completed torrents"""
 
-import shutil
 from pathlib import Path
 
 from django.db.models import QuerySet
@@ -8,7 +7,8 @@ from movie.models import Movie
 from transmission_rpc.torrent import Torrent as TransmissionTorrent
 from tv.models import TVEpisode
 
-from autot.models import Torrent, log_change
+from autot.models import AppConfig, Torrent, log_change
+from autot.src.archive_options import copy, copy_and_delete, copy_and_hardlink, hard_link, move
 from autot.src.config import ConfigType, get_config
 from autot.src.download import Transmission
 
@@ -17,6 +17,28 @@ class Archiver:
     """archive media file"""
 
     CONFIG: ConfigType = get_config()
+    ARCHIVE_METHOD = {
+        "m": {
+            "func": move,
+            "delete_t": True,
+        },
+        "c": {
+            "func": copy,
+            "delete_t": False,
+        },
+        "d": {
+            "func": copy_and_delete,
+            "delete_t": True,
+        },
+        "l": {
+            "func": hard_link,
+            "delete_t": False,
+        },
+        "b": {
+            "func": copy_and_hardlink,
+            "delete_t": False,
+        },
+    }
 
     def archive(self) -> bool:
         """archive all"""
@@ -45,21 +67,35 @@ class Archiver:
         if not tm_torrent.is_finished:
             return
 
+        archive_options = self._get_archive_function()
+
         if torrent.torrent_type in ["e", "s", "w"]:
             episodes = TVEpisode.objects.filter(torrent=torrent).exclude(status="f")
             for episode in episodes:
-                self._archive_episode(tm_torrent, episode)
+                self._archive_episode(tm_torrent, episode, archive_options["func"])
         elif torrent.torrent_type == "m":
             movie = Movie.objects.get(torrent=torrent)
-            self._archive_movie(tm_torrent, movie)
+            self._archive_movie(tm_torrent, movie, archive_options["func"])
         else:
             raise NotImplementedError
 
-        tm.delete(tm_torrent)
+        if archive_options["delete_t"]:
+            tm.delete(tm_torrent)
+
         torrent.torrent_state = "a"
         torrent.save()
 
-    def _archive_episode(self, tm_torrent: TransmissionTorrent, episode: TVEpisode) -> None:
+    def _get_archive_function(self) -> dict:
+        """get archive function based on appconfig"""
+        app_config, _ = AppConfig.objects.get_or_create(single_lock=1)
+        file_operation = app_config.file_archive_operation
+        archive_function = self.ARCHIVE_METHOD.get(file_operation)
+        if not archive_function:
+            raise NotImplementedError(f"archive function not implemented: {file_operation}")
+
+        return archive_function
+
+    def _archive_episode(self, tm_torrent: TransmissionTorrent, episode: TVEpisode, archive_func: callable) -> None:
         """archive tvfile"""
         filename = self.get_valid_media_file(tm_torrent, episode)
         download_path: Path = self.CONFIG["TM_BASE_FOLDER"] / filename
@@ -68,8 +104,9 @@ class Archiver:
 
         episode_path = episode.get_archive_path(suffix=download_path.suffix)
         archive_path = self.CONFIG["TV_BASE_FOLDER"] / episode_path
-        archive_path.parent.mkdir(parents=True, exist_ok=True)
-        shutil.move(download_path, archive_path, copy_function=shutil.copyfile)
+
+        archive_func(src_file=download_path, target_file=archive_path)
+
         old_status = episode.status
         episode.status = "f"
         episode.save()
@@ -89,7 +126,7 @@ class Archiver:
 
         raise FileNotFoundError(f"didn't find expected media file in {tm_torrent}")
 
-    def _archive_movie(self, tm_torrent, movie) -> None:
+    def _archive_movie(self, tm_torrent: TransmissionTorrent, movie: Movie, archive_func: callable) -> None:
         """archive movie"""
         filename = self._get_valid_movie_file(tm_torrent, movie)
         download_path: Path = self.CONFIG["TM_BASE_FOLDER"] / filename
@@ -98,8 +135,9 @@ class Archiver:
 
         movie_path = movie.get_archive_path(suffix=download_path.suffix)
         archive_path = self.CONFIG["MOVIE_BASE_FOLDER"] / movie_path
-        archive_path.parent.mkdir(parents=True, exist_ok=True)
-        shutil.move(download_path, archive_path, copy_function=shutil.copyfile)
+
+        archive_func(src_file=download_path, target_file=archive_path)
+
         old_status = movie.status
         movie.status = "f"
         movie.save()

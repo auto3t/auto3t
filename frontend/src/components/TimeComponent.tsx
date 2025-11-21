@@ -6,7 +6,7 @@ const TimeComponent: React.FC<TimeStampInterface> = ({ timestamp }) => {
   if (!timestamp) return 'TBD'
   const date = new Date(timestamp)
   const now = new Date()
-  const localDateString = date.toLocaleDateString()
+  const localDateString = date.toISOString().split('T')[0]
   const localTimeString = date.toLocaleTimeString()
   const difference = date.getTime() - now.getTime()
   const differenceInDays = Math.ceil(difference / (1000 * 60 * 60 * 24))

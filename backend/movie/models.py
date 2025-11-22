@@ -245,7 +245,7 @@ class Movie(BaseModel):
         """check if path is valid"""
         movie_search = title_clean(self.name)
         year_str = str(self.release_date.year)  # pylint: disable=no-member
-        path_lower = path.lower()
+        path_lower = title_clean(path.lower())
         close_enough = fuzz.partial_ratio(movie_search, path_lower) > self.FUZZY_RATIO
         if close_enough and year_str in path_lower:
             return True

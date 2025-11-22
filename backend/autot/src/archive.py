@@ -1,5 +1,6 @@
 """archive completed torrents"""
 
+from collections.abc import Callable
 from pathlib import Path
 
 from django.db.models import QuerySet
@@ -95,7 +96,7 @@ class Archiver:
 
         return archive_function
 
-    def _archive_episode(self, tm_torrent: TransmissionTorrent, episode: TVEpisode, archive_func: callable) -> None:
+    def _archive_episode(self, tm_torrent: TransmissionTorrent, episode: TVEpisode, archive_func: Callable) -> None:
         """archive tvfile"""
         filename = self.get_valid_media_file(tm_torrent, episode)
         download_path: Path = self.CONFIG["TM_BASE_FOLDER"] / filename
@@ -126,7 +127,7 @@ class Archiver:
 
         raise FileNotFoundError(f"didn't find expected media file in {tm_torrent}")
 
-    def _archive_movie(self, tm_torrent: TransmissionTorrent, movie: Movie, archive_func: callable) -> None:
+    def _archive_movie(self, tm_torrent: TransmissionTorrent, movie: Movie, archive_func: Callable) -> None:
         """archive movie"""
         filename = self._get_valid_movie_file(tm_torrent, movie)
         download_path: Path = self.CONFIG["TM_BASE_FOLDER"] / filename
@@ -155,7 +156,7 @@ class Archiver:
             if "trailer" in torrent_file.name.lower():
                 continue
 
-            is_valid_path = movie.is_valid_path(torrent_file.name.lower().replace(".", " "))
+            is_valid_path = movie.is_valid_path(torrent_file.name)
             if is_valid_path:
                 return torrent_file.name
 

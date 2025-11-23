@@ -156,8 +156,10 @@ class Movie(BaseModel):
             return None, None
 
         expected_size_exact = self.runtime * 60 * target_bitrate.bitrate / 8 / 1024
-        lower = expected_size_exact * (target_bitrate.plusminus / 100)
-        upper = expected_size_exact * ((100 + target_bitrate.plusminus) / 100)
+        range_diff = expected_size_exact * (target_bitrate.plusminus / 100)
+
+        lower = expected_size_exact - range_diff
+        upper = expected_size_exact + range_diff
 
         return lower, upper
 

@@ -157,8 +157,8 @@ class SearchIndex:
         if hasattr(to_search, "target_file_size"):
             lower, upper = to_search.target_file_size
             if lower and upper and result_item.get("size"):
-                size_is = result_item["size"]
-                is_filesize_target = size_is >= lower * 1000 and size_is <= upper * 1000
+                size_is = result_item["size"] / 1024 / 1024 / 1024
+                is_filesize_target = size_is >= lower and size_is <= upper
 
         to_exclude = [i.word for i in to_search.get_keywords().filter(direction="e")]
         is_not_excluded = not any(i for i in to_exclude if i in result_item["title"])

@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useProgressStore } from '../stores/ProgressStore'
 import useApi from '../hooks/api'
-import { P } from './Typography'
+import { LucideIconWrapper, P } from './Typography'
 
 interface Props {
   pollingInterval?: number
@@ -76,23 +76,27 @@ export default function ProgressIndicator({ pollingInterval = 3000 }: Props) {
   return (
     <div className="flex items-center">
       {pendingJobs > 0 ? (
-        <>
-          <P>{pendingJobs}</P>
-          <div className="animate-spin">
-            <span className="p-2">⏳</span>
-          </div>
-        </>
+        <div
+          className="bg-main-fg flex items-center gap-2 py-1 px-3 rounded-md"
+          title={`${pendingJobs} jobs are processing...`}
+        >
+          <P variant="alert">{pendingJobs}</P>
+          <LucideIconWrapper
+            className="animate-spin ml-2"
+            size={18}
+            name="Hourglass"
+          />
+        </div>
       ) : showRefresh ? (
         <div
           onClick={() => {
             refetch()
             resetHadPendingJobs()
           }}
-          className="cursor-pointer"
+          className="cursor-pointer bg-main-fg py-1 px-3 rounded-md"
+          title="Jobs have completed, refresh interface."
         >
-          <P variant="larger" className="mr-2">
-            &#x21bb;
-          </P>
+          <LucideIconWrapper size={18} name="RotateCcw" />
         </div>
       ) : null}
     </div>

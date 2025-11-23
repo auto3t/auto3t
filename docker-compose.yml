@@ -27,7 +27,7 @@ services:
 
   # additional services
   auto3t-prowlarr:
-    image: lscr.io/linuxserver/prowlarr:latest
+    image: linuxserver/prowlarr:latest
     container_name: auto3t_prowlarr
     environment:
       - PUID=1000
@@ -50,7 +50,7 @@ services:
     ports:
       - 127.0.0.1:8096:8096
   auto3t-transmission:
-    image: lscr.io/linuxserver/transmission
+    image: linuxserver/transmission
     container_name: auto3t-transmission
     restart: "no"
     environment:

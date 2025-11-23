@@ -17,7 +17,7 @@ export default function PersonTile({
   }
 
   return (
-    <Link to={`/people/${person.id}`}>
+    <Link to={`/people/person/${person.id}`}>
       <div>
         <ImageComponent
           image={getPersonImage(person)}

@@ -48,7 +48,7 @@ const router = createBrowserRouter(
       </Route>
       <Route path="people">
         <Route index element={<Peoples />} />
-        <Route path=":id" element={<PeopleDetails />} />
+        <Route path="person/:id" element={<PeopleDetails />} />
         <Route path="search" element={<PeopleSearch />} />
       </Route>
       <Route path="settings" element={<Settings />} />

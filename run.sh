@@ -3,7 +3,7 @@
 
 set -e
 
-python manage.py migrate --noinput
+python manage.py migrate_and_backup
 python manage.py collectstatic --noinput
 python manage.py vacuum_sqlite
 

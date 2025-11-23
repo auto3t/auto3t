@@ -48,14 +48,16 @@ export default function RootLayout() {
       <div className="grow my-2 mx-5">
         <header className="max-w-7xl m-auto">
           <nav className="flex flex-wrap md:justify-between justify-center items-center">
-            <Link to="/">
-              <img className="md:w-[180px] w-[90px]" src={logo} />
-            </Link>
-            <div className="flex flex-wrap justify-center gap-2 items-center px-4">
-              <StyledNavLink to="tv">TV</StyledNavLink>
-              <StyledNavLink to="movie">Movie</StyledNavLink>
-              <StyledNavLink to="collection">Collections</StyledNavLink>
-              <StyledNavLink to="people">People</StyledNavLink>
+            <div className="flex flex-wrap justify-center md:justify-left gap-4 items-center py-4">
+              <Link to="/">
+                <img className="md:w-[180px] w-[90px]" src={logo} />
+              </Link>
+              <div>
+                <StyledNavLink to="tv">TV</StyledNavLink>
+                <StyledNavLink to="movie">Movie</StyledNavLink>
+                <StyledNavLink to="collection">Collections</StyledNavLink>
+                <StyledNavLink to="people">People</StyledNavLink>
+              </div>
             </div>
             <div className="flex gap-2 py-4">
               <ProgressIndicator />

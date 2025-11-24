@@ -4,12 +4,14 @@ import logging
 from typing import NotRequired, TypedDict
 
 import requests
+from django.conf import settings
 from django.db.models.query import QuerySet
 from movie.models import Movie
-from tv.models import TVEpisode
+from tv.models import TVEpisode, TVShow
 
 from autot.models import log_change
 from autot.src.config import ConfigType, get_config
+from autot.src.redis_con import AutotRedis
 
 logger = logging.getLogger("django")
 
@@ -17,14 +19,14 @@ logger = logging.getLogger("django")
 class MediaServerItem(TypedDict):
     """describes metadata from mediaserver"""
 
-    media_server_id: NotRequired[str]
-    width: int
-    height: int
-    codec: str
-    fps: float
-    size: int
-    duration: int
-    bitrate: int
+    media_server_id: str | None
+    width: NotRequired[int]
+    height: NotRequired[int]
+    codec: NotRequired[str]
+    fps: NotRequired[float]
+    size: NotRequired[int]
+    duration: NotRequired[int]
+    bitrate: NotRequired[int]
 
 
 class MediaServerIdentify:
@@ -36,6 +38,15 @@ class MediaServerIdentify:
     CONFIG: ConfigType = get_config()
     TIMEOUT: int = 60
     HEADERS: dict[str, str] = {"Authorization": f"MediaBrowser Token={CONFIG['JF_API_KEY']}"}
+
+    @property
+    def cache_key(self) -> str:
+        """get redis cache key"""
+        return f"jf:{self.JF_ITEM_TYPE.lower()}"
+
+    def get_unidentified(self):
+        """implement in base class"""
+        raise NotImplementedError
 
     def make_request(self, url, method, data=False):
         """make API request"""
@@ -92,11 +103,13 @@ class MediaServerIdentify:
                 "duration": duration,
                 "bitrate": bitrate,
             }
-            tv_maze_id = item["ProviderIds"].get(self.PROVIDER_ID)
+            tv_maze_id: str | None = item["ProviderIds"].get(self.PROVIDER_ID)
             if not tv_maze_id:
                 continue
 
             jf_items.update({tv_maze_id: stream_meta})
+
+        AutotRedis().set_hash_messages(self.cache_key, values=jf_items, expire=settings.CACHE_TTL, delete=True)
 
         return jf_items
 
@@ -164,6 +177,36 @@ class EpisodeIdentify(MediaServerIdentify):
     def get_unidentified(self) -> QuerySet[TVEpisode]:
         """get tv episodes not identified"""
         return TVEpisode.objects.filter(media_server_id__isnull=True)
+
+
+class ShowIdentify(MediaServerIdentify):
+    """identify shows"""
+
+    JF_ITEM_TYPE: str = "Series"
+    PROVIDER_ID: str = "TvMaze"
+
+    def get_unidentified(self) -> QuerySet[TVShow]:
+        """get shows not identified"""
+        return TVShow.objects.filter(media_server_id__isnull=True)
+
+    def get_jf_data(self) -> dict:
+        """get all jf episodes, partial result, only for matching"""
+        url = f"Items?Recursive=true&IncludeItemTypes={self.JF_ITEM_TYPE}&fields=ProviderIds,MediaSources"
+        response = self.make_request(url, "GET")
+        jf_items = {}
+        for item in response["Items"]:
+
+            tv_maze_id: str | None = item["ProviderIds"].get(self.PROVIDER_ID)
+            if not tv_maze_id:
+                continue
+
+            show_meta: MediaServerItem = {"media_server_id": item["Id"]}
+
+            jf_items.update({tv_maze_id: show_meta})
+
+        AutotRedis().set_hash_messages(self.cache_key, values=jf_items, expire=settings.CACHE_TTL, delete=True)
+
+        return jf_items
 
 
 class MovieIdentify(MediaServerIdentify):

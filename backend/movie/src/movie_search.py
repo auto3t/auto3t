@@ -1,38 +1,64 @@
 """search for movies on remote"""
 
+import json
 from urllib import parse
 
 from movie.models import Collection, Movie
 from movie.src.movie_db_client import MovieDB
 
+from autot.src.config import ConfigType, get_config
+from autot.src.media_server import MovieIdentify
+from autot.src.redis_con import AutotRedis
+
 
 class TheMoviedbSearch:
     """base class"""
+
+    CONFIG: ConfigType = get_config()
 
     def get_local_ids(self):
         """get all local ids to match against"""
         return {i[0]: i[1] for i in Movie.objects.all().values_list("the_moviedb_id", "id")}
 
-    def parse_result(self, result: dict, local_ids: dict[str, int]) -> dict:
+    def get_jf_ids(self):
+        """get ids from JF"""
+        cache_key = MovieIdentify().cache_key
+        jf_items = AutotRedis().get_hash_message(cache_key)
+        if jf_items:
+            jf_items = {i[0]: json.loads(i[1]) for i in jf_items.items()}
+        else:
+            jf_items = MovieIdentify().get_jf_data()
+
+        return jf_items
+
+    def parse_result(self, result: dict, local_ids: dict[str, int], jf_items: dict | None = None) -> dict:
         """parse single result"""
-        movide_data = {
+        movie_data = {
             "id": result["id"],
             "local_id": local_ids.get(str(result["id"])),
+            "media_server_id": None,
+            "media_server_url": None,
             "name": result["original_title"],
             "url": f"https://www.themoviedb.org/movie/{result['id']}",
             "genres": result.get("genre_ids"),
             "summary": result.get("overview"),
             "character_name": result.get("character"),
         }
+        if jf_items:
+            media_server_id = jf_items.get(str(result["id"]), {}).get("media_server_id")
+            if media_server_id:
+                base_url = self.CONFIG["JF_PROXY_URL"]
+                media_server_url = f"{base_url}/web/#/details?id={media_server_id}"
+                movie_data.update({"media_server_id": media_server_id, "media_server_url": media_server_url})
 
         if result.get("poster_path"):
             image_url = f"http://image.tmdb.org/t/p/original{result['poster_path']}"
-            movide_data.update({"image": image_url})
+            movie_data.update({"image": image_url})
 
         if "release_date" in result:
-            movide_data.update({"release_date": result["release_date"]})
+            movie_data.update({"release_date": result["release_date"]})
 
-        return movide_data
+        return movie_data
 
 
 class MovieId(TheMoviedbSearch):
@@ -47,7 +73,8 @@ class MovieId(TheMoviedbSearch):
             return None
 
         local_ids = self.get_local_ids()
-        options = [self.parse_result(result, local_ids) for result in response["results"]]
+        jf_items = self.get_jf_ids()
+        options = [self.parse_result(result, local_ids, jf_items) for result in response["results"]]
 
         return options
 

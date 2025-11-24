@@ -67,7 +67,7 @@ const ShowSearchResult: React.FC<ShowSearchResultInterface> = ({ result }) => {
             )}
           </div>
           <div>
-            <div className="mb-4">
+            <div className="flex gap-2 mb-4">
               {result.local_id ? (
                 <Link to={`/tv/show/${result.local_id}`}>
                   <Button>Open</Button>
@@ -98,6 +98,11 @@ const ShowSearchResult: React.FC<ShowSearchResultInterface> = ({ result }) => {
                   )}
                   {error && <P>Failed to add: {error}</P>}
                 </>
+              )}
+              {result.media_server_id && result.media_server_url && (
+                <Link to={result.media_server_url} target="_blank">
+                  <Button>Mediaserver</Button>
+                </Link>
               )}
             </div>
           </div>

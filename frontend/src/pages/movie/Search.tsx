@@ -11,7 +11,9 @@ export type MovieSearchResultType = {
   release_date: string
   summary: string
   url: string
-  local_id?: number
+  local_id: number | null
+  media_server_id: string | null
+  media_server_url: string | null
   image?: string
   character_name?: string
 }

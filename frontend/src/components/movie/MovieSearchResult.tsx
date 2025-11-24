@@ -56,6 +56,11 @@ const MovieSearchResult: React.FC<MovieSearchResultInterface> = ({
                 Released: {<TimeComponent timestamp={result.release_date} />}
               </TagItem>
             )}
+            {result.media_server_id && result.media_server_url && (
+              <Link to={result.media_server_url} target="_blank">
+                <Button>Mediaserver</Button>
+              </Link>
+            )}
             {result.local_id ? (
               <Link to={`/movie/movie/${result.local_id}`}>
                 <Button>Open</Button>

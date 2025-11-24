@@ -8,7 +8,9 @@ import Spinner from '../../components/Spinner'
 export type ShowSearchResultType = {
   id: number
   name: string
-  local_id?: number
+  local_id: number | null
+  media_server_id: string | null
+  media_server_url: string | null
   url: string
   genres: string[]
   status: string

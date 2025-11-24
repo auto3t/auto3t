@@ -3,6 +3,8 @@ import { create } from 'zustand'
 interface AuthStoreInterface {
   isLoggedIn: boolean
   setIsLoggedIn: (newState: boolean) => void
+  hasUser: boolean | null
+  setHasUser: (hasUser: boolean) => void
 }
 
 const useAuthStore = create<AuthStoreInterface>((set) => ({
@@ -16,6 +18,8 @@ const useAuthStore = create<AuthStoreInterface>((set) => ({
       set({ isLoggedIn: false })
     }
   },
+  hasUser: null,
+  setHasUser: (hasUser) => set({ hasUser }),
 }))
 
 export default useAuthStore

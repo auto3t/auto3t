@@ -5,8 +5,10 @@ from django.conf import settings
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from user.models import UserProfile
 
 from autot.models import (
     ActionLog,
@@ -233,3 +235,16 @@ class QueueProgress(APIView):
             total_pending += pending
 
         return Response({"pending_jobs": total_pending})
+
+
+class AppStatusView(APIView):
+    """app status, public endpoint"""
+
+    permission_classes = [AllowAny]
+
+    def get(self, request, *args, **kwargs):
+        """get app status"""
+
+        response = {"user_exists": UserProfile.objects.exists()}
+
+        return Response(response)

@@ -1,6 +1,7 @@
 // api.js
 import { useState } from 'react'
 import useAuthStore from '../stores/AuthStore'
+import { AppStatusType } from '../pages/Login'
 
 const API_BASE = `${import.meta.env.VITE_APP_API_URL || window.location.origin}/api/`
 
@@ -23,7 +24,7 @@ function getCookie(name: string) {
 
 const useApi = () => {
   const [error, setError] = useState<string | null>(null)
-  const { setIsLoggedIn } = useAuthStore()
+  const { setIsLoggedIn, setHasUser } = useAuthStore()
   const csrfToken = getCookie('csrftoken')
 
   const fetchData = async (
@@ -110,6 +111,27 @@ const useApi = () => {
     }
   }
 
+  const getAppStatus = async () => {
+    // public endpoint
+    try {
+      const response = await fetch(`${API_BASE}appstatus/`)
+      if (!response.ok) {
+        const errorResponse = await response.json()
+        setError(errorResponse.error || 'Failed to login')
+      } else {
+        const response_json = (await response.json()) as AppStatusType
+        setHasUser(response_json.user_exists)
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message)
+      } else {
+        setError('app status fetch failed')
+      }
+      throw error
+    }
+  }
+
   const logoutUser = async () => {
     const response = await fetch(`${API_BASE}auth/logout/`, {
       method: 'POST',
@@ -155,7 +177,18 @@ const useApi = () => {
     return await fetchData(url, 'DELETE')
   }
 
-  return { error, get, post, patch, put, del, loginUser, logoutUser, getImage }
+  return {
+    error,
+    get,
+    post,
+    patch,
+    put,
+    del,
+    loginUser,
+    logoutUser,
+    getImage,
+    getAppStatus,
+  }
 }
 
 export default useApi

@@ -96,7 +96,7 @@ class Movie(BaseModel):
     image_movie = models.ForeignKey(
         Artwork, related_name="image_movie", on_delete=models.SET_NULL, null=True, blank=True
     )
-    collection = models.ForeignKey(Collection, on_delete=models.CASCADE, null=True, blank=True)
+    collection = models.ForeignKey(Collection, on_delete=models.PROTECT, null=True, blank=True)
     production_state = models.CharField(choices=MovieProductionState.choices(), max_length=1, null=True, blank=True)
     status = models.CharField(choices=MovieStatus.choices(), max_length=1, null=True, blank=True)
     torrent = models.ManyToManyField(Torrent, related_name="torrent")

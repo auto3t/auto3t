@@ -10,7 +10,7 @@ if __name__ == "__main__":
     uvicorn.run(
         "config.asgi:application",
         host="0.0.0.0",
-        port=8000,
+        port=int(environ.get("A3T_PORT", 8000)),
         workers=4,
         log_level=LOG_LEVEL,
         reload=False,

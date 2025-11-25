@@ -7,6 +7,8 @@ from user.models import UserProfile
 class UserProfileSerializer(serializers.ModelSerializer):
     """serialize user profile"""
 
+    user_support_reminder = serializers.BooleanField(read_only=True)
+
     class Meta:
         model = UserProfile
         fields = "__all__"

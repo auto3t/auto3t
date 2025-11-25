@@ -1,6 +1,9 @@
 import { create } from 'zustand'
 
 export type UserProfileType = {
+  user_support_confirmed: boolean
+  user_support_remind_at: string | null
+  user_support_reminder: boolean
   shows_active_filter: string
   shows_status_filter: string
   movies_production_filter: string

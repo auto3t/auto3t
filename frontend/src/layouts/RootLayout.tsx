@@ -9,10 +9,11 @@ import { useEffect } from 'react'
 import useUserProfileStore from '../stores/UserProfileStore'
 import { LucideIconWrapper, P, StyledNavLink } from '../components/Typography'
 import ProgressIndicator from '../components/ProgressIndicator'
+import SupportBar from '../components/SupportBar'
 
 export default function RootLayout() {
   const { isLoggedIn } = useAuthStore()
-  const { setUserProfile } = useUserProfileStore()
+  const { userProfile, setUserProfile } = useUserProfileStore()
   const { get } = useApi()
   const { logoutUser } = useApi()
   const { showNotifications, setShowNotifications } = useNotificationStore()
@@ -84,6 +85,7 @@ export default function RootLayout() {
           </nav>
         </header>
         <main className="max-w-7xl m-auto">
+          {userProfile !== null && <SupportBar userProfile={userProfile} />}
           <Outlet />
           <NotificationBox />
         </main>

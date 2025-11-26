@@ -3,7 +3,7 @@ FROM python:3.11.13-slim-bullseye AS python-builder
 # install requirements
 RUN python -m venv /applib
 ENV PATH="/applib/bin:$PATH"
-COPY ./requirements.txt /requirements.txt
+COPY ./backend/requirements.txt /requirements.txt
 RUN pip install -r requirements.txt
 
 # build main.js

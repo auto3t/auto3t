@@ -149,7 +149,7 @@ export default function PeopleSearch() {
           <LucideIconWrapper
             className="bg-main-fg rounded-lg p-2"
             name="ArrowLeft"
-            title="Go back to Shows"
+            title="Go back to People"
           />
         </Link>
       </div>
@@ -172,7 +172,7 @@ export default function PeopleSearch() {
         )}
       </div>
       {(selectedMoviePerson !== null || selectedTVPerson !== null) && (
-        <div>
+        <div className="bg-second-bg p-8 mt-4">
           <H3>Selected</H3>
           {rows.length > 0 && (
             <Table headers={['Source', 'Name', 'ID', 'Tracking']} rows={rows} />

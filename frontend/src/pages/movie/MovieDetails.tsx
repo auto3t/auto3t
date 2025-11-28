@@ -70,6 +70,7 @@ const MovieDetails: React.FC = () => {
     <div className="mb-10">
       {movieDetail && (
         <>
+          <title>{`A3T | ${movieDetail.name_display}`}</title>
           <MovieDetail movieDetail={movieDetail} fetchMovie={fetchMovie} />
           <div className="pt-4">
             <MovieReleases movie_id={movieDetail.id} />

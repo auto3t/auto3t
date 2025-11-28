@@ -142,6 +142,7 @@ export default function PeopleSearch() {
 
   return (
     <>
+      <title>A3T | Track new Person</title>
       <H1>Start tracking a new Person</H1>
       <div className="filter-bar">
         <Link to={'/people'}>

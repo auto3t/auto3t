@@ -59,7 +59,8 @@ const MovieSearch = () => {
   }
 
   return (
-    <div>
+    <>
+      <title>A3T | Track new Movie</title>
       <H1>Start track a new Movie</H1>
       <div className="filter-bar">
         <Link to={'/movie'}>
@@ -103,7 +104,7 @@ const MovieSearch = () => {
           <P>Search query did not return any results.</P>
         </div>
       )}
-    </div>
+    </>
   )
 }
 

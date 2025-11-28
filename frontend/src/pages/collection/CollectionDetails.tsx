@@ -142,6 +142,7 @@ export default function CollectionDetails() {
     <div className="mb-10">
       {collection && (
         <>
+          <title>{`A3T | ${collection.name}`}</title>
           {isLoadingCollection ? (
             <div className="flex justify-center">
               <Spinner />

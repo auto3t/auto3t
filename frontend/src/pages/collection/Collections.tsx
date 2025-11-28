@@ -116,6 +116,7 @@ export default function Collections() {
 
   return (
     <>
+      <title>A3T | Collections</title>
       <H1>Movie Collections</H1>
       <div className="filter-bar">
         <Link to={'search'}>

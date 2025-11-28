@@ -146,6 +146,7 @@ export default function Movies() {
 
   return (
     <>
+      <title>A3T | Movies</title>
       <H1>Movies</H1>
       <div className="filter-bar flex gap-2 md:flex-nowrap flex-wrap">
         <Link to={'search'}>

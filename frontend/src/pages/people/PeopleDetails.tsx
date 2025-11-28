@@ -76,6 +76,7 @@ export default function PeopleDetails() {
       ) : (
         peopleDetail && (
           <>
+            <title>{`A3T | ${peopleDetail.name}`}</title>
             <PeopleDetail
               person={peopleDetail}
               setPeopleDetail={setPeopleDetail}

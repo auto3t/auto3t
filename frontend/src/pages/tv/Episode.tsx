@@ -62,6 +62,7 @@ const TVEpisode: React.FC = () => {
     <div className="mb-10">
       {episodeDetail && (
         <>
+          <title>{`A3T | ${episodeDetail.title}`}</title>
           <div className="md:w-[75%] mx-auto py-6">
             {episodeImage && (
               <ImageComponent image={episodeImage} alt="episode-poster" />

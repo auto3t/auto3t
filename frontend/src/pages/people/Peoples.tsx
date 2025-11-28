@@ -179,6 +179,7 @@ export default function Peoples() {
 
   return (
     <>
+      <title>A3T | People</title>
       <H1>People</H1>
       <div className="filter-bar flex gap-2 md:flex-nowrap flex-wrap">
         <Link to={'search'}>

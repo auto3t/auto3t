@@ -102,7 +102,10 @@ const TVShowDetail: React.FC = () => {
   return (
     <>
       {showDetail && (
-        <ShowDetail showDetail={showDetail} fetchShow={fetchShow} />
+        <>
+          <title>{`A3T | ${showDetail.name}`}</title>
+          <ShowDetail showDetail={showDetail} fetchShow={fetchShow} />
+        </>
       )}
       {id && <PeopleCredits parent="show" id={id} />}
       <div className="p-4 my-4 border border-accent-2">

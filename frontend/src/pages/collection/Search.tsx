@@ -58,6 +58,7 @@ export default function CollectionSearch() {
 
   return (
     <>
+      <title>A3T | Track new Collection</title>
       <H1>Start tracking a new Movie Collection</H1>
       <div className="filter-bar">
         <Link to={'/collection'}>

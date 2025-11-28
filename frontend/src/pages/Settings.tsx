@@ -9,6 +9,7 @@ import { H1 } from '../components/Typography'
 export default function Settings() {
   return (
     <>
+      <title>A3T | Settings</title>
       <H1>Settings</H1>
       <div className="py-4">
         <KeywordCategories />

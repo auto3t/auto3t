@@ -120,6 +120,7 @@ export default function TVShows() {
 
   return (
     <>
+      <title>A3T | TV Shows</title>
       <H1>TV Shows</H1>
       <div className="filter-bar flex gap-2 md:flex-nowrap flex-wrap">
         <Link to={'search'}>

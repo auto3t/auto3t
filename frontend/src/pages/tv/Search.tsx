@@ -62,7 +62,8 @@ const TVSearch = () => {
   }
 
   return (
-    <div>
+    <>
+      <title>A3T | Track new TV Show</title>
       <H1>Start tracking a new TV Show</H1>
       <div className="filter-bar">
         <Link to={'/tv'}>
@@ -106,7 +107,7 @@ const TVSearch = () => {
           <P>Search query did not return any results.</P>
         </div>
       )}
-    </div>
+    </>
   )
 }
 

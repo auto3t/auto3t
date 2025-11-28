@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import useApi from '../hooks/api'
 import { TargetBitrateType } from './settings/TargetBitrate'
-import { Button, Select } from './Typography'
+import { LucideIconWrapper, Select } from './Typography'
 
 interface AddTargetBitrateComponentInterface {
   patchURL: string
@@ -44,7 +44,7 @@ const AddTargetBitrateComponent: React.FC<
   return (
     <>
       {targetBitrates && (
-        <>
+        <div className="flex items-center gap-2">
           <Select
             onChange={handleOptionSelect}
             value={defaultTarget ? defaultTarget.id.toString() : ''}
@@ -57,16 +57,21 @@ const AddTargetBitrateComponent: React.FC<
             ))}
           </Select>
           {selectedOption && (
-            <Button className="ml-2" onClick={handleOptionUpdate}>
-              Update
-            </Button>
+            <LucideIconWrapper
+              name="Check"
+              onClick={handleOptionUpdate}
+              className="cursor-pointer"
+              colorClassName="text-green-700"
+            />
           )}
           {defaultTarget?.movie_default === false && (
-            <Button onClick={handleReset} className="ml-2">
-              Reset
-            </Button>
+            <LucideIconWrapper
+              name="X"
+              onClick={handleReset}
+              className="cursor-pointer"
+            />
           )}
-        </>
+        </div>
       )}
     </>
   )

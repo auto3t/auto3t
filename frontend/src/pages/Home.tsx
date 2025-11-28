@@ -2,7 +2,7 @@ import { useState } from 'react'
 import Episode, { EpisodeType } from '../components/tv/Episode'
 import useApi from '../hooks/api'
 import usePolling from '../hooks/usePolling'
-import { Button, H2, H3, P } from '../components/Typography'
+import { Button, H2, H3, LucideIconWrapper, P } from '../components/Typography'
 import Spinner from '../components/Spinner'
 import { MovieType } from './movie/MovieDetails'
 import MovieTile from '../components/movie/MovieTile'
@@ -149,7 +149,17 @@ const Home: React.FC = () => {
       )}
       {hasMoreUpcomingEpisodes && (
         <div className="py-4 flex justify-center">
-          <Button onClick={handleLoadMoreUpcomingEpisodes}>Load More</Button>
+          <Button
+            onClick={handleLoadMoreUpcomingEpisodes}
+            iconBefore={
+              <LucideIconWrapper
+                name="ChevronDown"
+                colorClassName="text-white"
+              />
+            }
+          >
+            Load More
+          </Button>
         </div>
       )}
       <H3>Movies</H3>
@@ -172,7 +182,17 @@ const Home: React.FC = () => {
       )}
       {hasMoreUpcomingMovies && (
         <div className="py-4 flex justify-center">
-          <Button onClick={handleLoadMoreUpcomingMovies}>Load More</Button>
+          <Button
+            onClick={handleLoadMoreUpcomingMovies}
+            iconBefore={
+              <LucideIconWrapper
+                name="ChevronDown"
+                colorClassName="text-white"
+              />
+            }
+          >
+            Load More
+          </Button>
         </div>
       )}
     </>

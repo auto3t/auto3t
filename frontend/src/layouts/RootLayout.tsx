@@ -53,11 +53,15 @@ export default function RootLayout() {
               <Link to="/">
                 <img className="md:w-[180px] w-[90px]" src={logo} />
               </Link>
-              <div>
-                <StyledNavLink to="tv">TV</StyledNavLink>
-                <StyledNavLink to="movie">Movie</StyledNavLink>
-                <StyledNavLink to="collection">Collections</StyledNavLink>
-                <StyledNavLink to="people">People</StyledNavLink>
+              <div className="flex flex-wrap gap-2 justify-center">
+                <div className="flex gap-2 flex-wrap justify-center">
+                  <StyledNavLink to="tv">TV</StyledNavLink>
+                  <StyledNavLink to="movie">Movie</StyledNavLink>
+                </div>
+                <div className="flex gap-2 flex-wrap justify-center">
+                  <StyledNavLink to="collection">Collections</StyledNavLink>
+                  <StyledNavLink to="people">People</StyledNavLink>
+                </div>
               </div>
             </div>
             <div className="flex gap-2 py-4">

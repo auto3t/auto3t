@@ -5,6 +5,9 @@ from datetime import datetime, timedelta
 
 import pytz
 from artwork.models import Artwork
+from autot.models import log_change
+from autot.src.media_server import MediaServerIdentify
+from autot.static import TvShowStatus
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import QuerySet
 from django.utils import timezone
@@ -12,10 +15,6 @@ from people.models import Credit
 from people.src.tv_person import TVPerson
 from tv.models import TVEpisode, TVSeason, TVShow
 from tv.src.tv_maze_client import TVMaze
-
-from autot.models import log_change
-from autot.src.media_server import MediaServerIdentify
-from autot.static import TvShowStatus
 
 
 class TVMazeShow:

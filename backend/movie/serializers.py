@@ -1,12 +1,11 @@
 """all movie serializers"""
 
 from artwork.serializers import ArtworkSerializer
-from movie.models import Collection, Movie, MovieRelease
-from rest_framework import serializers
-
 from autot.models import TargetBitrate
 from autot.serializers import SearchWordSerializer, TargetBitrateSerializer, TorrentSerializer
 from autot.static import MovieProductionState, MovieReleaseType
+from movie.models import Collection, Movie, MovieRelease
+from rest_framework import serializers
 
 
 class CollectionSerializer(serializers.ModelSerializer):

@@ -3,15 +3,14 @@
 from collections.abc import Callable
 from pathlib import Path
 
-from django.db.models import QuerySet
-from movie.models import Movie
-from transmission_rpc.torrent import Torrent as TransmissionTorrent
-from tv.models import TVEpisode
-
 from autot.models import AppConfig, Torrent, log_change
 from autot.src.archive_options import copy, copy_and_delete, copy_and_hardlink, hard_link, move
 from autot.src.config import ConfigType, get_config
 from autot.src.download import Transmission
+from django.db.models import QuerySet
+from movie.models import Movie
+from transmission_rpc.torrent import Torrent as TransmissionTorrent
+from tv.models import TVEpisode
 
 
 class Archiver:

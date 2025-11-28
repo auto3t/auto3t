@@ -2,6 +2,12 @@
 
 import json
 
+from autot.models import SearchWord, get_logs
+from autot.serializers import ActionLogSerializer
+from autot.src.helper import bool_converter
+from autot.src.redis_con import AutotRedis
+from autot.src.search import SearchIndex
+from autot.static import TvShowStatus
 from django.conf import settings
 from django.db.models import F, OrderBy, Value
 from django.db.models.functions import Replace
@@ -16,13 +22,6 @@ from tv.serializers import TVEpisodeBulkUpdateSerializer, TVEpisodeSerializer, T
 from tv.src.show import TVMazeShow
 from tv.src.show_search import ShowId
 from tv.tasks import import_show, refresh_status
-
-from autot.models import SearchWord, get_logs
-from autot.serializers import ActionLogSerializer
-from autot.src.helper import bool_converter
-from autot.src.redis_con import AutotRedis
-from autot.src.search import SearchIndex
-from autot.static import TvShowStatus
 
 
 class ShowViewSet(viewsets.ModelViewSet):

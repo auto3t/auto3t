@@ -3,12 +3,11 @@
 import json
 from urllib import parse
 
-from movie.models import Collection, Movie
-from movie.src.movie_db_client import MovieDB
-
 from autot.src.config import ConfigType, get_config
 from autot.src.media_server import MovieIdentify
 from autot.src.redis_con import AutotRedis
+from movie.models import Collection, Movie
+from movie.src.movie_db_client import MovieDB
 
 
 class TheMoviedbSearch:

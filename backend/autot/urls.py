@@ -1,9 +1,8 @@
 """all api urls"""
 
+from autot import views
 from django.urls import path
 from rest_framework.routers import DefaultRouter
-
-from autot import views
 
 router = DefaultRouter()
 router.register(r"torrent", views.TorrentViewSet, basename="torrent")

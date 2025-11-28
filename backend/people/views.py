@@ -2,6 +2,9 @@
 
 from urllib.parse import quote
 
+from autot.src.helper import bool_converter
+from autot.tasks import download_thumbnails
+from autot.views import StandardResultsSetPagination
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.utils.decorators import method_decorator
@@ -18,10 +21,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from tv.models import TVShow
 from tv.src.show_search import ShowPersonSearch
-
-from autot.src.helper import bool_converter
-from autot.tasks import download_thumbnails
-from autot.views import StandardResultsSetPagination
 
 
 class PersonViewSet(viewsets.ModelViewSet):

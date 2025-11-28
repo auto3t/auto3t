@@ -6,14 +6,13 @@ from hashlib import md5
 from urllib.parse import quote
 
 import requests
-from django.db.models import QuerySet
-from movie.models import Movie
-from tv.models import TVEpisode, TVSeason
-
 from autot.models import Torrent, log_change
 from autot.src.config import ConfigType, get_config
 from autot.src.helper import get_magnet_hash
 from autot.src.redis_con import AutotRedis
+from django.db.models import QuerySet
+from movie.models import Movie
+from tv.models import TVEpisode, TVSeason
 
 logger = logging.getLogger("django")
 

@@ -3,13 +3,12 @@
 import json
 
 from artwork.models import Artwork
+from autot.models import log_change
+from autot.src.redis_con import AutotRedis
 from movie.models import Collection, Movie
 from movie.serializers import MovieMissingSerializer
 from movie.src.movie import MovieDBMovie
 from movie.src.movie_db_client import MovieDB
-
-from autot.models import log_change
-from autot.src.redis_con import AutotRedis
 
 
 class MovieDBCollection:

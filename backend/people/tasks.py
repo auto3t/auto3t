@@ -2,14 +2,13 @@
 
 from datetime import timedelta
 
+from autot.tasks import download_thumbnails
 from django.db.models import Q
 from django.utils.timezone import localtime
 from django_rq import job
 from people.models import Person
 from people.src.movie_person import MovieDBPerson
 from people.src.tv_person import TVPerson
-
-from autot.tasks import download_thumbnails
 
 
 @job

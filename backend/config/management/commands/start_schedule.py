@@ -2,11 +2,10 @@
 
 from datetime import timedelta
 
-from django.core.management.base import BaseCommand
-from django_rq.queues import get_queue
-
 from autot.models import AutotScheduler
 from autot.tasks import download_watcher
+from django.core.management.base import BaseCommand
+from django_rq.queues import get_queue
 
 
 class Command(BaseCommand):

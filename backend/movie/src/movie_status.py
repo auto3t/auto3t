@@ -3,12 +3,11 @@
 import logging
 from datetime import timedelta
 
+from autot.models import Torrent, log_change
+from autot.src.search import SearchIndex
 from django.db.models import Q
 from django.utils import timezone
 from movie.models import Movie, MovieRelease, MovieReleaseTarget
-
-from autot.models import Torrent, log_change
-from autot.src.search import SearchIndex
 
 logger = logging.getLogger("django")
 

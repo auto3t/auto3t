@@ -3,12 +3,11 @@
 import json
 from urllib import parse
 
-from tv.models import TVShow
-from tv.src.tv_maze_client import TVMaze
-
 from autot.src.config import ConfigType, get_config
 from autot.src.media_server import ShowIdentify
 from autot.src.redis_con import AutotRedis
+from tv.models import TVShow
+from tv.src.tv_maze_client import TVMaze
 
 
 class TVMazeSearch:

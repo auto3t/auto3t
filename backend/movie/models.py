@@ -5,14 +5,13 @@ from string import ascii_lowercase, digits
 from typing import Self
 
 from artwork.models import Artwork
-from django.db import models
-from people.models import Credit
-from rapidfuzz import fuzz
-
 from autot.models import AppConfig, SearchWord, SearchWordCategory, TargetBitrate, Torrent, log_change
 from autot.src.config import ConfigType, get_config
 from autot.src.helper import title_clean
 from autot.static import MovieProductionState, MovieReleaseType, MovieStatus
+from django.db import models
+from people.models import Credit
+from rapidfuzz import fuzz
 
 
 class BaseModel(models.Model):

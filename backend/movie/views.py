@@ -2,6 +2,11 @@
 
 import json
 
+from autot.models import SearchWord
+from autot.src.helper import bool_converter
+from autot.src.redis_con import AutotRedis
+from autot.src.search import SearchIndex
+from autot.static import MovieProductionState, MovieStatus
 from django.conf import settings
 from django.core.exceptions import FieldError
 from django.db.models import F, Q, Value
@@ -24,12 +29,6 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-from autot.models import SearchWord
-from autot.src.helper import bool_converter
-from autot.src.redis_con import AutotRedis
-from autot.src.search import SearchIndex
-from autot.static import MovieProductionState, MovieStatus
 
 
 class CollectionViewSet(viewsets.ModelViewSet):

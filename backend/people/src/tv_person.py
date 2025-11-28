@@ -1,10 +1,9 @@
 """build tv person, expected to be called from async queue"""
 
+from autot.models import log_change
 from people.models import Person
 from people.src.cross_match import match_t_m
 from tv.src.tv_maze_client import TVMaze
-
-from autot.models import log_change
 
 
 class TVPerson:

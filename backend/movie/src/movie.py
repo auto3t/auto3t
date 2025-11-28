@@ -4,14 +4,13 @@ from datetime import date, datetime
 
 import django_rq
 from artwork.models import Artwork
+from autot.models import log_change
+from autot.static import MovieProductionState
 from django.contrib.contenttypes.models import ContentType
 from movie.models import Movie, MovieRelease
 from movie.src.movie_db_client import MovieDB
 from people.models import Credit
 from people.src.movie_person import MovieDBPerson
-
-from autot.models import log_change
-from autot.static import MovieProductionState
 
 
 class MovieDBMovie:

@@ -4,7 +4,6 @@ import json
 from typing import TYPE_CHECKING
 
 import redis
-
 from autot.src.config import get_config
 
 if TYPE_CHECKING:

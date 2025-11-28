@@ -1,11 +1,10 @@
 """all tv serializers"""
 
 from artwork.serializers import ArtworkSerializer
-from rest_framework import serializers
-from tv.models import TVEpisode, TVSeason, TVShow
-
 from autot.serializers import SearchWordSerializer, TorrentSerializer
 from autot.static import TvEpisodeStatus
+from rest_framework import serializers
+from tv.models import TVEpisode, TVSeason, TVShow
 
 
 class TVShowSerializer(serializers.ModelSerializer):

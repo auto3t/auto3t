@@ -2,14 +2,13 @@
 
 from math import ceil
 
+from autot.src.config import ConfigType, get_config
+from autot.src.helper import get_tracker_list
+from autot.static import TvEpisodeStatus
 from django.utils import timezone
 from transmission_rpc import Client
 from transmission_rpc.torrent import Torrent as TransmissionTorrent
 from tv.models import Torrent, TVEpisode
-
-from autot.src.config import ConfigType, get_config
-from autot.src.helper import get_tracker_list
-from autot.static import TvEpisodeStatus
 
 
 class Transmission:

@@ -1,10 +1,9 @@
 """build movie person, expected to be called from async queue"""
 
+from autot.models import log_change
 from movie.src.movie_db_client import MovieDB
 from people.models import Person
 from people.src.cross_match import match_m_t
-
-from autot.models import log_change
 
 
 class MovieDBPerson:

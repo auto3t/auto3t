@@ -2,15 +2,14 @@
 
 from datetime import timedelta
 
+from autot.src.download import Transmission
+from autot.tasks import download_thumbnails, download_watcher, media_server_identify
 from django_rq import job
 from django_rq.queues import get_queue
 from movie.models import Movie
 from movie.src.collection import MovieDBCollection
 from movie.src.movie import MovieDBMovie
 from movie.src.movie_status import MovieStatus
-
-from autot.src.download import Transmission
-from autot.tasks import download_thumbnails, download_watcher, media_server_identify
 
 
 @job

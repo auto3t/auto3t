@@ -1,15 +1,6 @@
 """all api views"""
 
 import django_rq
-from django.conf import settings
-from rest_framework import mixins, viewsets
-from rest_framework.decorators import action
-from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import AllowAny
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from user.models import UserProfile
-
 from autot.models import (
     ActionLog,
     AppConfig,
@@ -31,6 +22,14 @@ from autot.serializers import (
 )
 from autot.src.search import SearchIndex
 from autot.static import TASK_OPTIONS
+from django.conf import settings
+from rest_framework import mixins, viewsets
+from rest_framework.decorators import action
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from user.models import UserProfile
 
 
 class StandardResultsSetPagination(PageNumberPagination):

@@ -4,6 +4,8 @@ import logging
 import zoneinfo
 from datetime import datetime
 
+from autot.src.helper import get_magnet_hash
+from autot.static import TASK_OPTIONS
 from crontab import CronTab
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -15,9 +17,6 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django_rq import get_scheduler
 from django_rq.jobs import Job
-
-from autot.src.helper import get_magnet_hash
-from autot.static import TASK_OPTIONS
 
 logger = logging.getLogger("django")
 

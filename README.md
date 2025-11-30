@@ -3,7 +3,7 @@ Auto3T: Tape. Track. Torrent.
 
 - Short: A3T
 - Pronounced: *auto-three-tee*
-- [Screenshots](SHOWCASE.MD)
+- [Screenshots](SHOWCASE.md)
 
 ## Core Functionality
 
@@ -27,7 +27,7 @@ By:
 
 ## Free as in Freedom
 
-This application is free and open source, licensed under the GPL-3.0 License, see [LICENSE.MD](LICENSE.MD) for more details. Free here is as in *freedom* not in *free beer*. To use this application you are required to either:
+This application is free and open source, licensed under the GPL-3.0 License, see [LICENSE.MD](LICENSE.md) for more details. Free here is as in *freedom* not in *free beer*. To use this application you are required to either:
 
 - Contribute to this project by committing to any of the repos of this organisation at least once per year.
 - Or make a small financial contribution to the dev. The price is the equivalent of 3 coffees (or similar) per year of your nearest coffee shop.

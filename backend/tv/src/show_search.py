@@ -92,12 +92,13 @@ class ShowPersonSearch(TVMazeSearch):
             return None
 
         local_ids = self.get_local_ids()
+        jf_items = self.get_jf_ids()
 
         options = []
         for show_result in response:
             character_name = show_result["_links"]["character"]["name"]
 
-            option = self.parse_result(show_result["_embedded"], local_ids)
+            option = self.parse_result(show_result["_embedded"], local_ids, jf_items)
             option["character_name"] = character_name
             options.append(option)
 

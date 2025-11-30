@@ -90,7 +90,8 @@ class MoviePersonSearch(TheMoviedbSearch):
             return None
 
         local_ids = self.get_local_ids()
-        options = [self.parse_result(result, local_ids) for result in response["cast"]]
+        jf_items = self.get_jf_ids()
+        options = [self.parse_result(result, local_ids, jf_items) for result in response["cast"]]
 
         return options
 

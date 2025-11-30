@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom'
 import useApi from '../../hooks/api'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { PersonType } from './Peoples'
 import Spinner from '../../components/Spinner'
 import PeopleMovieCredits from '../../components/people/PeopleMovieCredits'
@@ -9,6 +9,7 @@ import PeopleDetail from '../../components/people/PeopleDetail'
 import PeopleTVRemoteCredits from '../../components/people/PeopleTVRemoteCredits'
 import { H2, P } from '../../components/Typography'
 import PeopleMovieRemoteCredis from '../../components/people/PeopleMovieRemoteCredits'
+import { useProgressStore } from '../../stores/ProgressStore'
 
 const LocalPersonCredit = ({ peopleDetail }: { peopleDetail: PersonType }) => {
   return (
@@ -47,25 +48,33 @@ export default function PeopleDetails() {
   const { id } = useParams()
   const { get } = useApi()
 
+  const { setRefetch } = useProgressStore()
   const [activeTabIndex, setActiveTabindex] = useState(0)
   const [peopleDetail, setPeopleDetail] = useState<PersonType | null>(null)
   const [isLoadingPerson, setIsLoadingPerson] = useState(true)
 
   const ActiveTab = PersonTabs[activeTabIndex].component
 
-  useEffect(() => {
-    const fetchPeople = async () => {
-      try {
-        const data = (await get(`people/person/${id}/`)) as PersonType
-        setPeopleDetail(data)
-      } catch (error) {
-        console.error('error fetching person: ', error)
-      } finally {
-        setIsLoadingPerson(false)
-      }
+  const fetchPeople = useCallback(async () => {
+    try {
+      const data = (await get(`people/person/${id}/`)) as PersonType
+      setPeopleDetail(data)
+    } catch (error) {
+      console.error('error fetching person: ', error)
+    } finally {
+      setIsLoadingPerson(false)
     }
+  }, [id])
+
+  useEffect(() => {
     fetchPeople()
   }, [id])
+
+  useEffect(() => {
+    setRefetch(() => {
+      fetchPeople()
+    })
+  }, [setRefetch, fetchPeople])
 
   return (
     <>

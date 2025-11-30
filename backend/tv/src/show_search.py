@@ -102,4 +102,6 @@ class ShowPersonSearch(TVMazeSearch):
             option["character_name"] = character_name
             options.append(option)
 
-        return options
+        options_sorted = sorted(options, key=lambda d: d["premiered"], reverse=True)
+
+        return options_sorted

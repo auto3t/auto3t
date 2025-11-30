@@ -92,8 +92,9 @@ class MoviePersonSearch(TheMoviedbSearch):
         local_ids = self.get_local_ids()
         jf_items = self.get_jf_ids()
         options = [self.parse_result(result, local_ids, jf_items) for result in response["cast"]]
+        options_sorted = sorted(options, key=lambda d: d["release_date"], reverse=True)
 
-        return options
+        return options_sorted
 
 
 class CollectionId:

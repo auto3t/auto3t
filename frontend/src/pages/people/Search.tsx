@@ -184,7 +184,7 @@ export default function PeopleSearch() {
           )}
           {addingPerson === true && <P>Loading...</P>}
           {addingPerson === false && !error && newPersonId && (
-            <Link to={`/people/${newPersonId}`}>
+            <Link to={`/people/person/${newPersonId}`}>
               <Button>Open</Button>
             </Link>
           )}

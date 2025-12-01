@@ -2,18 +2,28 @@ services:
   # auto3t services
   auto3t:
     container_name: auto3t
-    restart: "no"
-    user: 1000:1000
-    build:
-      context: .
-      args:
-        - INSTALL_DEBUG=1
+    restart: unless-stopped
+    user: 1000:1000                             # run container under your user
+    image: ghcr.io/auto3t/auto3t
     volumes:
-      - ./volume/auto3t:/data
-      - ./volume/downloads:/downloads
-      - ./volume/media:/media
-    env_file:
-      - env/auto3t.env
+      - auto3t:/data                            # application data
+      - downloads:/downloads                    # shared with transmission container
+      - media:/media                            # shared with jellyfin container
+    environment:
+      - REDIS_CON=redis://autot-redis:6379
+      - TZ=America/New_York
+      - JF_URL=http://auto3t-jellyfin:8096
+      - JF_API_KEY=xxxxx
+      - MOVIE_DB_API_KEY=yyyyy
+      - PRR_URL=http://auto3t-prowlarr:9696
+      - PRR_KEY=zzzz
+      - TM_URL=auto3t-transmission
+      - TM_PORT=9091
+      - TM_USER=transmission
+      - TM_PASS=transmission
+      - TM_BASE_FOLDER=/downloads/complete      # configure base for complete folder
+      - TV_BASE_FOLDER=/media/tv
+      - MOVIE_BASE_FOLDER=/media/movie
     ports:
       - 127.0.0.1:8000:8000
     depends_on:
@@ -21,47 +31,55 @@ services:
   auto3t-redis:
     image: redis
     container_name: auto3t-redis
-    restart: "no"
-    ports:
-      - 127.0.0.1:6379:6379
+    restart: unless-stopped
+    expose:
+      - "6379"
 
   # additional services
   auto3t-prowlarr:
     image: linuxserver/prowlarr:latest
-    container_name: auto3t_prowlarr
+    container_name: auto3t-prowlarr
+    restart: unless-stopped
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Asia/Vientiane
+      - TZ=America/New_York
     volumes:
-      - ./volume/prowlarr/data:/config
+      - prowlarr:/config
     ports:
       - 127.0.0.1:9696:9696
-    restart: "no"
   auto3t-jellyfin:
     image: jellyfin/jellyfin:10.10.7
     container_name: auto3t-jellyfin
-    restart: "no"
+    restart: unless-stopped
     volumes:
-      - ./volume/jellyfin/config:/config
-      - ./volume/jellyfin/cache:/cache
-      - ./volume/media/movie/:/media/movie
-      - ./volume/media/tv/:/media/tv
+      - jellyfin-config:/config
+      - jellyfin-cache:/cache
+      - media:/media                          # shared with auto3t container
     ports:
       - 127.0.0.1:8096:8096
   auto3t-transmission:
     image: linuxserver/transmission
     container_name: auto3t-transmission
-    restart: "no"
+    restart: unless-stopped
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Asia/Vientiane
+      - PUID=1000                             # matching with auto3t user
+      - PGID=1000                             # matching with auto3t user
       - USER=transmission
       - PASS=transmission
     volumes:
-      - ./volume/transmission/config:/config
-      - ./volume/transmission/watch:/watch
-      - ./volume/downloads:/downloads
+      - transmission-config:/config
+      - transmission-watch:/watch
+      - downloads:/downloads                  # shared with auto3t container
     ports:
       - 127.0.0.1:9091:9091
+
+volumes:
+  auto3t:
+  downloads:
+  media:
+  prowlarr:
+  jellyfin-config:
+  jellyfin-cache:
+  transmission-config:
+  transmission-watch:

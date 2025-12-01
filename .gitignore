@@ -13,6 +13,7 @@ backend/artwork/artwork
 
 # docker
 env/auto3t.env
+docker-compose.override.yml
 
 # frontend
 node_modules

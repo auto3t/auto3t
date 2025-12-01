@@ -4,14 +4,14 @@ repos:
     hooks:
       - id: end-of-file-fixer
   - repo: https://github.com/psf/black
-    rev: 25.9.0
+    rev: 25.11.0
     hooks:
       - id: black
         alias: python
         files: ^backend/
         args: ["--line-length=120"]
   - repo: https://github.com/pycqa/isort
-    rev: 6.1.0
+    rev: 7.0.0
     hooks:
       - id: isort
         name: isort (python)
@@ -31,7 +31,7 @@ repos:
       - id: codespell
         exclude: ^frontend/package-lock.json
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v9.39.1
+    rev: v10.0.0-alpha.1
     hooks:
       - id: eslint
         name: eslint-frontend

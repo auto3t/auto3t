@@ -27,7 +27,7 @@ ENV PATH=/applib/bin:$PATH
 RUN mkdir -p /data/static /downloads /media/tv
 
 RUN apt-get clean && apt-get -y update && apt-get -y install --no-install-recommends \
-    curl && rm -rf /var/lib/apt/lists/*
+    curl tini && rm -rf /var/lib/apt/lists/*
 
 # copy build requirements
 COPY --from=python-builder /applib /applib
@@ -52,4 +52,4 @@ COPY ./backend_start.py /app
 WORKDIR /app
 EXPOSE 8000
 
-CMD ["./run.sh"]
+CMD ["/bin/tini", "--", "./run.sh"]

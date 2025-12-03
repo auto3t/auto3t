@@ -1,12 +1,12 @@
 # Contribute to Auto3T
 
-Thank you for considering to contribute to Auto3T.
+Thank you for considering contributing to Auto3T.
 
 ## How to open an Issue
 
 ## Dev Setup
 
-This project is setup to be developed outside of a docker container. When testing your changes, make sure everything works fine inside the container as well, there can be subtle differences, especially if it comes to networking and filesystem access.
+This project is set up to be developed outside of a docker container. When testing your changes, make sure everything works fine inside the container as well, there can be subtle differences, especially if it comes to networking and filesystem access.
 
 ### Backend
 Install your dependencies in the root of repo, e.g. with pip and venv:
@@ -70,4 +70,4 @@ Now all your future commits will automatically be linted and formatted as expect
 4. Start the redis queue worker `rqworker` and scheduler `rqscheduler`, see `run.sh` for the exact commands.
 5. Run the react frontend with `npm start` from the frontend folder.
 
-There is a convenient `devstart.sh` script in the root of this repo that lunches a tmux session and each thread in a separate window, quick and convenient.
+There is a convenient `devstart.sh` script in the root of this repo that launches a tmux session and each thread in a separate window.

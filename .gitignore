@@ -18,3 +18,4 @@ docker-compose.override.yml
 # frontend
 node_modules
 frontend/README.md
+frontend/.env.development

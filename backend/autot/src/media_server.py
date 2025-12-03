@@ -60,7 +60,7 @@ class MediaServerIdentify:
             raise ValueError("invalid jf request method")
 
         if not response.ok:
-            message = f"jf request failed: {response.json()}"
+            message = f"jf request failed: response '{response.text}' with status {response.status_code}"
             raise ValueError(message)
 
         if response.status_code == 204:

@@ -23,7 +23,7 @@ Integrating with:
 By:
 
 - Searching and adding new media releases to your download queue based on timing, aka search after a given release date.
-- Filter include and exclude based on user defined criteria from target bitrate to keyword filtering.
+- Filter includes and excludes based on user defined criteria from target bitrate to keyword filtering.
 
 ## Free as in Freedom
 
@@ -31,18 +31,18 @@ This application is free and open source, licensed under the GPL-3.0 License, se
 
 - Contribute to this project by committing to any of the repos of this organisation at least once per year.
 - Or make a small financial contribution to the dev. The price is the equivalent of 3 coffees (or similar) per year of your nearest coffee shop.
-- On first start, there is a info box to confirm the above, or click on "remind me later" if you just want to give it a spin first.
+- On first start, there is an info box to confirm the above, or click on "remind me later" if you just want to give it a spin first.
 
 This is an honour system, there is no licensing server or paywall. 
 
-- [Github Sponsor](https://github.com/sponsors/bbilly1): This also gives you access to the issues here.
+- [Github Sponsor](https://github.com/sponsors/bbilly1): This is preferred, and also gives you access to the issues here.
 - [Paypal.me](https://paypal.me/bbilly1): For an alternative payment option.
 
 ## Installation
 
 You can use the example docker-compose.yml file committed here as a base.
 
-Install and configure the additional services first. This Readme just gives a quick overview of configurations relevant to this project. For a full documentation, see the corresponding docs of these projects.
+Install and configure the additional services first. For these services, this Readme just gives a quick overview of configurations relevant to this project. For a full documentation, see the corresponding docs of these projects.
 
 ### Install Auto3T
 
@@ -82,7 +82,7 @@ Also see > Settings > File Operation Option.
 
 #### Networking
 
-Auto3T needs to be able to reach each container over the network. You can do this by publishing each container on localhost or create a separate docker network to for inter container communication. Redis only needs to be accessible from Auto3T but you probably want to access the other services over the network too.
+Auto3T needs to be able to reach each container over the network. You can do this by publishing each container on localhost or create a separate docker network for inter container communication. Redis only needs to be accessible from Auto3T but you probably want to access the other services over the network too.
 
 ### Redis
 
@@ -90,7 +90,7 @@ Redis serves as a cache and handles the queue. Redis only needs to be accessible
 
 ### Prowlarr
 
-When configuring your indexer, if the config is available, make sure to select Magnet option for both "Download link" and "Download link (fallback)".
+When configuring your indexer, if the config is available, make sure to select the Magnet option for both "Download link" and "Download link (fallback)".
 
 ### Jellyfin
 
@@ -120,7 +120,7 @@ Create your user by running:
 python manage.py createsuperuser
 ```
 
-in the Auto3T docker container. Follow the prompts from there.
+in the Auto3T docker container. Follow the prompts from there to create your credentials.
 
 ### Setup Auto3T
 

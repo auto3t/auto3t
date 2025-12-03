@@ -36,14 +36,3 @@ def hard_link(src_file: Path, target_file: Path):
         target_file.unlink()
 
     os.link(src_file, target_file)
-
-
-def copy_and_hardlink(src_file: Path, target_file: Path):
-    """cp src to target, hardlink target back to src"""
-    _ensure_parent(target_file)
-    shutil.copy2(src_file, target_file)
-
-    if src_file.exists():
-        src_file.unlink()
-
-    os.link(target_file, src_file)

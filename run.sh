@@ -3,6 +3,7 @@
 
 set -e
 
+python manage.py startup_check
 python manage.py migrate_and_backup
 python manage.py collectstatic --noinput
 python manage.py vacuum_sqlite

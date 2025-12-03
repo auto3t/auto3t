@@ -28,6 +28,18 @@ class SearchIndex:
         "movie": 2000,
     }
 
+    def ping(self):
+        """ping prowlarr, check auth"""
+        base = self.CONFIG["PRR_URL"]
+        key = self.CONFIG["PRR_KEY"]
+        url = f"{base}/api/v1/system/status?apikey={key}"
+        response = requests.get(url, timeout=self.TIMEOUT)
+        if not response.ok:
+            message = f"Prowlarr request failed: response '{response.text}' with status {response.status_code}"
+            raise ValueError(message)
+
+        return response.json()
+
     def free_search(self, search_term: str, category: str | None) -> list[dict]:
         """free form search"""
         base = self.CONFIG["PRR_URL"]

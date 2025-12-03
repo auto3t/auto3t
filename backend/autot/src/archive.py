@@ -4,7 +4,7 @@ from collections.abc import Callable
 from pathlib import Path
 
 from autot.models import AppConfig, Torrent, log_change
-from autot.src.archive_options import copy, copy_and_delete, copy_and_hardlink, hard_link, move
+from autot.src.archive_options import copy, copy_and_delete, hard_link, move
 from autot.src.config import ConfigType, get_config
 from autot.src.download import Transmission
 from django.db.models import QuerySet
@@ -32,10 +32,6 @@ class Archiver:
         },
         "l": {
             "func": hard_link,
-            "delete_t": False,
-        },
-        "b": {
-            "func": copy_and_hardlink,
             "delete_t": False,
         },
     }

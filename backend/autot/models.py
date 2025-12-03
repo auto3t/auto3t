@@ -89,7 +89,6 @@ class AppConfig(models.Model):
         ("c", "Copy"),
         ("d", "Copy and Delete"),
         ("l", "Hard link"),
-        ("b", "Copy and Hard link"),
     ]
 
     single_lock = models.PositiveSmallIntegerField(default=1, unique=True)

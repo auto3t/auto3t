@@ -47,7 +47,11 @@ Install and configure the additional services first. For these services, this Re
 
 ### Install Auto3T
 
-This is the main application container. The backend is built with Django, frontend with React. Configure at least the required environment variables, make sure you share the volumes as described below.
+This is a docker container, docker is the only supported installation method. This Readme has a quick overview, for more details see [docs.auto3t.com/installation/docker-compose](https://docs.auto3t.com/installation/docker-compose/).
+
+If you are installing this on another platform supporting Docker containers but not Docker Compose, you should be able to infere the required info from the existing installation instructions - or provide your own.
+
+This is the main application, the backend is built with Django, frontend with React TS. Configure at least the required environment variables, make sure you share the volumes as described below.
 
 #### Environment variables
 

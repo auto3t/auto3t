@@ -1,0 +1,34 @@
+name: I want to contribute
+description: Discussing and asking for input about something I want to implement
+title: "[CONTRIBUTING]: "
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to help improve this project! Please read the [how to open an issue](https://github.com/auto3t/auto3t/blob/master/CONTRIBUTING.md#how-to-open-an-issue) guide carefully before continuing.
+
+  - type: checkboxes
+    id: latest
+    attributes:
+      label: "I've read the documentation"
+      options:
+        - label: I have read the [how to open an issue](https://github.com/auto3t/auto3t/blob/master/CONTRIBUTING.md#how-to-open-an-issue) guide. I understand, issues not following the how to guide will get closed without comment.
+          required: true
+
+  - type: textarea
+    id: what-i-want-to-do
+    attributes:
+      label: What I want to do
+      value: "## Describe what I want to do\n\n## Things I considered\n\n## My suggestions"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: I have capacity to spend time on this soon.
+      options:
+        - label: Yes I will work on this in the next few days or weeks.
+    validations:
+      required: true

@@ -51,6 +51,12 @@ This is a docker container, docker is the only supported installation method. Th
 
 If you are installing this on another platform supporting Docker containers but not Docker Compose, you should be able to infere the required info from the existing installation instructions - or provide your own.
 
+The image is hosted here on github and available at `ghcr.io/auto3t/auto3t`.
+
+- The image is built for `linux/amd64` and `linux/arm64`.
+- Use the `latest` tag
+- There is an `unstable` tag for testing builds between regular releases.
+
 This is the main application, the backend is built with Django, frontend with React TS. Configure at least the required environment variables, make sure you share the volumes as described below.
 
 #### Environment variables

@@ -1,4 +1,4 @@
-![AutoT](assets/autot-banner.jpg?raw=true "AutoT Banner")  
+![Auto3T](assets/auto3t-landing-illustration.png?raw=true "Auto3T Banner")
 
 # Auto3T: Tape. Track. Torrent.
 

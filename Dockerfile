@@ -54,4 +54,4 @@ COPY ./backend_start.py /app
 WORKDIR /app
 EXPOSE 8000
 
-CMD ["/bin/tini", "--", "./run.sh"]
+CMD ["/usr/bin/tini", "--", "./run.sh"]

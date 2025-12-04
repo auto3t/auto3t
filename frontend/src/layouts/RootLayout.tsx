@@ -105,7 +105,9 @@ export default function RootLayout() {
           <P className="flex items-center">
             <span>© AutoT {new Date().getFullYear()}</span>
             <Spacer />
-            {releaseTag ? (
+            {releaseTag === 'unstable' ? (
+              <span>{releaseTag}</span>
+            ) : releaseTag ? (
               <Link
                 to={`https://github.com/auto3t/auto3t/releases/tag/${releaseTag}`}
               >

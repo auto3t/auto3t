@@ -270,3 +270,7 @@ export function LucideIconWrapper({
     </div>
   )
 }
+
+export function Spacer() {
+  return <span className="text-3xl mx-3">|</span>
+}

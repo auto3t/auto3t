@@ -44,6 +44,7 @@ jobs:
           cache-to: type=gha,mode=max
           build-args: |
             GIT_COMMIT=${{ github.sha }}
+            GIT_TAG=unstable
 
   # regular tagged release
   build-release:
@@ -81,3 +82,4 @@ jobs:
           cache-to: type=gha,mode=max
           build-args: |
             GIT_COMMIT=${{ github.sha }}
+            GIT_TAG=${{ github.event.release.tag_name }}

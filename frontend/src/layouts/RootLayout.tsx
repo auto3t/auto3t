@@ -7,7 +7,12 @@ import logo from '../../assets/logo.png'
 import useApi from '../hooks/api'
 import { useEffect } from 'react'
 import useUserProfileStore from '../stores/UserProfileStore'
-import { LucideIconWrapper, P, StyledNavLink } from '../components/Typography'
+import {
+  LucideIconWrapper,
+  P,
+  Spacer,
+  StyledNavLink,
+} from '../components/Typography'
 import ProgressIndicator from '../components/ProgressIndicator'
 import SupportBar from '../components/SupportBar'
 
@@ -43,6 +48,7 @@ export default function RootLayout() {
   }
 
   const commitHash = import.meta.env.VITE_GIT_COMMIT
+  const releaseTag = import.meta.env.VITE_GIT_TAG
 
   return (
     <>
@@ -95,10 +101,50 @@ export default function RootLayout() {
         </main>
       </div>
       <footer className="bg-accent-3 py-4 text-center shrink mt-15">
-        <div className="max-w-7xl m-auto">
-          <P>
-            © AutoT {new Date().getFullYear()} - v0.0.1{' '}
-            {commitHash && `- ${commitHash.substring(0, 7)}`}
+        <div className="flex justify-center max-w-7xl m-auto">
+          <P className="flex items-center">
+            <span>© AutoT {new Date().getFullYear()}</span>
+            <Spacer />
+            {releaseTag ? (
+              <Link
+                to={`https://github.com/auto3t/auto3t/releases/tag/${releaseTag}`}
+              >
+                {releaseTag}
+              </Link>
+            ) : (
+              <span>dev</span>
+            )}
+            {commitHash && (
+              <>
+                <Spacer />
+                <Link
+                  className="hover:border-white border-b-2 border-transparent"
+                  to={`https://github.com/auto3t/auto3t/commit/${commitHash}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {commitHash.substring(0, 7)}
+                </Link>
+              </>
+            )}
+            <Spacer />
+            <Link
+              className="hover:border-white border-b-2 border-transparent"
+              to="https://github.com/auto3t/auto3t"
+              target="_blank"
+              rel="noreferrer"
+            >
+              GitHub
+            </Link>
+            <Spacer />
+            <Link
+              className="hover:border-white border-b-2 border-transparent"
+              to="https://docs.auto3t.com/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Docs
+            </Link>
           </P>
         </div>
       </footer>

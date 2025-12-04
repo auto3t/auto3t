@@ -10,7 +10,9 @@ RUN pip install -r requirements.txt
 FROM node:24 AS js-builder
 
 ARG GIT_COMMIT
+ARG GIT_TAG
 ENV VITE_GIT_COMMIT=$GIT_COMMIT
+ENV VITE_GIT_TAG=$GIT_TAG
 
 WORKDIR /app/frontend
 COPY frontend/package*.json ./

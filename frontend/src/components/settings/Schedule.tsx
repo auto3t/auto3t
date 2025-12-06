@@ -7,6 +7,7 @@ import {
   H2,
   Input,
   LucideIconWrapper,
+  P,
   Select,
   Table,
 } from '../Typography'
@@ -251,7 +252,7 @@ export default function Schedule() {
   return (
     <>
       <H2>Schedule</H2>
-      {error && <p>Error: {error}</p>}
+      {error && <P>Error: {error}</P>}
       <Table rows={scheduleRows} headers={scheduleHeaders} />
       <div className="pt-4">
         <H2>Tasks</H2>

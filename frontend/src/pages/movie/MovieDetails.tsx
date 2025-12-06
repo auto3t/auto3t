@@ -80,13 +80,13 @@ const MovieDetails: React.FC = () => {
             <>
               <H2>Part of Collection</H2>
               <div className="md:flex gap-4 items-center p-4 my-4 border border-accent-1">
-                <div className="md:w-50 w-[75%] mx-auto flex-none">
+                <div className="md:w-full w-[75%] flex-1 mx-auto">
                   <ImageComponent
                     alt={`collection-poster-${movieDetail.collection.name}`}
                     image={getCollectionPoster(movieDetail.collection)}
                   />
                 </div>
-                <div>
+                <div className="m-2 flex-3">
                   <H3>{movieDetail.collection.name}</H3>
                   <div className="inline-grid grid-cols-2 gap-2 pb-4">
                     <P>themoviedb</P>

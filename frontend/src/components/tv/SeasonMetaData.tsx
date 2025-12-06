@@ -50,15 +50,17 @@ const SeasonMetaData: React.FC<SeasonMetaDataInterface> = ({
 
   return (
     <>
-      <div className="inline-grid grid-cols-2 gap-2 pb-4">
-        <P>tvmaze</P>
-        <StyledLink
-          to={selectedSeason.remote_server_url}
-          target="_blank"
-          rel="noreferrer"
-        >
-          {selectedSeason.tvmaze_id}
-        </StyledLink>
+      <div className="mt-4">
+        <div className="inline-grid grid-cols-2 gap-2 pb-4">
+          <P>tvmaze</P>
+          <StyledLink
+            to={selectedSeason.remote_server_url}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {selectedSeason.tvmaze_id}
+          </StyledLink>
+        </div>
       </div>
       <P dangerouslySetInnerHTML={{ __html: selectedSeason.description }} />
       <div className="flex gap-2 mt-2 mb-8">

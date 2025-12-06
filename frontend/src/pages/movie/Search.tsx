@@ -61,7 +61,7 @@ const MovieSearch = () => {
   return (
     <>
       <title>A3T | Track new Movie</title>
-      <H1>Start track a new Movie</H1>
+      <H1>Start tracking a new Movie</H1>
       <div className="filter-bar">
         <Link to={'/movie'}>
           <LucideIconWrapper

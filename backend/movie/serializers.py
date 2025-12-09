@@ -50,7 +50,7 @@ class MovieSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class MovieMissingSerializer(serializers.Serializer):
+class MovieMissingSerializer(serializers.Serializer):  # pylint: disable=abstract-method
     """free serialize missing movie response"""
 
     the_moviedb_id = serializers.CharField()
@@ -72,7 +72,7 @@ class MovieReleaseSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class MovieReleaseTargetSerializer(serializers.Serializer):
+class MovieReleaseTargetSerializer(serializers.Serializer):  # pylint: disable=abstract-method
     """serialize json object"""
 
     release_target = serializers.ChoiceField(choices=[i[0] for i in MovieReleaseType.choices()])

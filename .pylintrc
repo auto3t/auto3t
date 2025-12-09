@@ -1,3 +1,8 @@
 [DEFAULT]
-max-line-length = 120
 disable = import-star-module-level
+
+[FORMAT]
+max-line-length=120
+
+[MESSAGES CONTROL]
+disable=import-outside-toplevel

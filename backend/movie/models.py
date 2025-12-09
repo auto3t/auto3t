@@ -7,7 +7,7 @@ from typing import Self
 from artwork.models import Artwork
 from autot.models import AppConfig, SearchWord, SearchWordCategory, TargetBitrate, Torrent, log_change
 from autot.src.config import ConfigType, get_config
-from autot.src.helper import title_clean
+from autot.src.helper import calc_target_file_size, title_clean
 from autot.static import MovieProductionState, MovieReleaseType, MovieStatus
 from django.db import models
 from people.models import Credit
@@ -148,17 +148,7 @@ class Movie(BaseModel):
     def target_file_size(self) -> tuple[float | None, float | None]:
         """target filesize based on runtime and target bitrate"""
         target_bitrate = self.get_target_bitrate()
-        if not target_bitrate:
-            return None, None
-
-        if not self.runtime:
-            return None, None
-
-        expected_size_exact = self.runtime * 60 * target_bitrate.bitrate / 8 / 1024
-        range_diff = expected_size_exact * (target_bitrate.plusminus / 100)
-
-        lower = expected_size_exact - range_diff
-        upper = expected_size_exact + range_diff
+        lower, upper = calc_target_file_size(target_bitrate, self.runtime)
 
         return lower, upper
 

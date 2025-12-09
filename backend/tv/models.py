@@ -6,9 +6,9 @@ from typing import Self
 
 import pytz
 from artwork.models import Artwork
-from autot.models import SearchWord, SearchWordCategory, Torrent, log_change
+from autot.models import SearchWord, SearchWordCategory, TargetBitrate, Torrent, log_change
 from autot.src.config import ConfigType, get_config
-from autot.src.helper import sanitize_file_name, title_clean
+from autot.src.helper import calc_target_file_size, sanitize_file_name, title_clean
 from autot.static import TvEpisodeStatus, TvShowStatus
 from django.db import models
 from django.db.models.signals import post_delete
@@ -48,6 +48,20 @@ class BaseModel(models.Model):
         """remove keyword if existing"""
         instance.search_keywords.remove(to_remove)
 
+    @property
+    def target_file_size(self) -> tuple[float | None, float | None]:
+        """implement in child class"""
+        raise NotImplementedError
+
+    @property
+    def target_file_size_str(self) -> None | str:
+        """target filesize in str for UI"""
+        lower, upper = self.target_file_size
+        if not lower or not upper:
+            return None
+
+        return f"{round(lower, 2)} - {round(upper, 2)}GB"
+
 
 class TVShow(BaseModel):
     """describes a show"""
@@ -60,6 +74,7 @@ class TVShow(BaseModel):
     status = models.CharField(choices=TvShowStatus.choices(), max_length=1, null=True, blank=True)
     is_daily = models.BooleanField(default=False)
     show_time_zone = models.CharField(max_length=255, default="UTC")
+    target_bitrate = models.ForeignKey(TargetBitrate, null=True, blank=True, on_delete=models.SET_NULL)
     credit = models.ManyToManyField(Credit)
     search_keywords = models.ManyToManyField(SearchWord)
     is_active = models.BooleanField(default=True)
@@ -112,6 +127,20 @@ class TVShow(BaseModel):
     def credit_crew_count(self) -> int:
         """count for credit main cast"""
         return self.credit.filter(role="crew").count()  # pylint: disable=no-member
+
+    @property
+    def runtime(self) -> int | None:
+        """agg show episode runtime"""
+        runtime = TVEpisode.objects.filter(season__show=self).aggregate(models.Sum("runtime"))
+        return runtime.get("runtime__sum", None)
+
+    @property
+    def target_file_size(self) -> tuple[float | None, float | None]:
+        """target file size to trimm search"""
+        target_bitrate = self.get_target_bitrate()
+        lower, upper = calc_target_file_size(target_bitrate, self.runtime)
+
+        return lower, upper
 
     def update_image_show(self, image_url: str | None) -> None:
         """handle update with or without existing"""
@@ -197,6 +226,18 @@ class TVShow(BaseModel):
         episodes.update(status="d", media_server_id=None, media_server_meta=None)
         log_change(self, "c", comment="Added Show Torrent.")
 
+    def get_target_bitrate(self) -> TargetBitrate | None:
+        """get episode target bitrate"""
+        if self.target_bitrate:
+            return self.target_bitrate
+
+        try:
+            return TargetBitrate.objects.get(tv_default=True)
+        except TargetBitrate.DoesNotExist:
+            pass
+
+        return None
+
 
 class TVSeason(BaseModel):
     """describes a Season of a Show"""
@@ -206,6 +247,7 @@ class TVSeason(BaseModel):
     number = models.IntegerField()
     show = models.ForeignKey(TVShow, on_delete=models.CASCADE)
     search_keywords = models.ManyToManyField(SearchWord)
+    target_bitrate = models.ForeignKey(TargetBitrate, null=True, blank=True, on_delete=models.SET_NULL)
     image_season = models.ForeignKey(
         Artwork, related_name="image_season", on_delete=models.SET_NULL, null=True, blank=True
     )
@@ -258,6 +300,20 @@ class TVSeason(BaseModel):
 
         return f"{show_name} S{str(self.number).zfill(2)} COMPLETE"
 
+    @property
+    def runtime(self) -> int | None:
+        """agg season episode runtime"""
+        runtime = TVEpisode.objects.filter(season=self).aggregate(models.Sum("runtime"))
+        return runtime.get("runtime__sum", None)
+
+    @property
+    def target_file_size(self) -> tuple[float | None, float | None]:
+        """target file size to trimm search"""
+        target_bitrate = self.get_target_bitrate()
+        lower, upper = calc_target_file_size(target_bitrate, self.runtime)
+
+        return lower, upper
+
     def add_magnet(self, magnet: str, title: str | None) -> None:
         """add magnet to all episodes in season"""
         episodes = TVEpisode.objects.filter(season=self)
@@ -280,6 +336,21 @@ class TVSeason(BaseModel):
 
         return has_complete
 
+    def get_target_bitrate(self) -> TargetBitrate | None:
+        """get season target bitrate"""
+        if self.target_bitrate:
+            return self.target_bitrate
+
+        if show_target := self.show.target_bitrate:
+            return show_target
+
+        try:
+            return TargetBitrate.objects.get(tv_default=True)
+        except TargetBitrate.DoesNotExist:
+            pass
+
+        return None
+
 
 class TVEpisode(BaseModel):
     """describes an Episode of a Season of a Show"""
@@ -289,6 +360,7 @@ class TVEpisode(BaseModel):
     number = models.IntegerField()
     title = models.CharField(max_length=255)
     runtime = models.PositiveIntegerField(null=True, blank=True)
+    target_bitrate = models.ForeignKey(TargetBitrate, null=True, blank=True, on_delete=models.SET_NULL)
     season = models.ForeignKey(TVSeason, on_delete=models.CASCADE)
     media_server_id = models.CharField(max_length=255, null=True, blank=True)
     media_server_meta = models.JSONField(null=True, blank=True)
@@ -375,6 +447,14 @@ class TVEpisode(BaseModel):
 
         base_url = self.CONFIG["JF_PROXY_URL"]
         return f"{base_url}/web/#/details?id={self.media_server_id}"
+
+    @property
+    def target_file_size(self) -> tuple[float | None, float | None]:
+        """target file size to trimm search"""
+        target_bitrate = self.get_target_bitrate()
+        lower, upper = calc_target_file_size(target_bitrate, self.runtime)
+
+        return lower, upper
 
     def get_archive_path(self, suffix: str | None = None) -> Path:
         """build archive path"""
@@ -469,6 +549,24 @@ class TVEpisode(BaseModel):
             previous_episode = TVEpisode.objects.filter(season=previous_season).order_by("-number").first()
             if previous_episode:
                 return previous_episode
+
+        return None
+
+    def get_target_bitrate(self) -> TargetBitrate | None:
+        """get episode target bitrate"""
+        if self.target_bitrate:
+            return self.target_bitrate
+
+        if season_target := self.season.target_bitrate:
+            return season_target
+
+        if show_target := self.season.show.target_bitrate:
+            return show_target
+
+        try:
+            return TargetBitrate.objects.get(tv_default=True)
+        except TargetBitrate.DoesNotExist:
+            pass
 
         return None
 

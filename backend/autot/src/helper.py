@@ -2,10 +2,14 @@
 
 import logging
 import re
+from typing import TYPE_CHECKING
 from urllib.parse import parse_qs
 
 import requests
 from django.conf import settings
+
+if TYPE_CHECKING:
+    from autot.models import TargetBitrate
 
 logger = logging.getLogger("django")
 
@@ -58,3 +62,22 @@ def bool_converter(bool_str: str | None) -> bool | None:
         return False
 
     return None
+
+
+def calc_target_file_size(
+    target_bitrate: "TargetBitrate | None", runtime: int | None
+) -> tuple[float | None, float | None]:
+    """calc target filesize"""
+    if not target_bitrate:
+        return None, None
+
+    if not runtime:
+        return None, None
+
+    expected_size_exact = runtime * 60 * target_bitrate.bitrate / 8 / 1024
+    range_diff = expected_size_exact * (target_bitrate.plusminus / 100)
+
+    lower = expected_size_exact - range_diff
+    upper = expected_size_exact + range_diff
+
+    return lower, upper

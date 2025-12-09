@@ -1,7 +1,8 @@
 """all tv serializers"""
 
 from artwork.serializers import ArtworkSerializer
-from autot.serializers import SearchWordSerializer, TorrentSerializer
+from autot.models import TargetBitrate
+from autot.serializers import SearchWordSerializer, TargetBitrateSerializer, TorrentSerializer
 from autot.static import TvEpisodeStatus
 from rest_framework import serializers
 from tv.models import TVEpisode, TVSeason, TVShow
@@ -18,6 +19,10 @@ class TVShowSerializer(serializers.ModelSerializer):
     search_query = serializers.ReadOnlyField()
     credit_main_cast_count = serializers.IntegerField()
     credit_crew_count = serializers.IntegerField()
+    runtime = serializers.IntegerField(read_only=True)
+    target_bitrate = serializers.PrimaryKeyRelatedField(queryset=TargetBitrate.objects.all(), allow_null=True)
+    target_file_size_str = serializers.CharField(read_only=True, allow_null=True)
+    get_target_bitrate = TargetBitrateSerializer(read_only=True)
 
     class Meta:
         model = TVShow
@@ -31,6 +36,10 @@ class TVSeasonSerializer(serializers.ModelSerializer):
     image_season = ArtworkSerializer(read_only=True)
     all_keywords = SearchWordSerializer(source="get_keywords", many=True)
     search_query = serializers.ReadOnlyField()
+    runtime = serializers.IntegerField(read_only=True)
+    target_bitrate = serializers.PrimaryKeyRelatedField(queryset=TargetBitrate.objects.all(), allow_null=True)
+    target_file_size_str = serializers.CharField(read_only=True, allow_null=True)
+    get_target_bitrate = TargetBitrateSerializer(read_only=True)
 
     class Meta:
         model = TVSeason
@@ -46,6 +55,9 @@ class TVEpisodeSerializer(serializers.ModelSerializer):
     image_episode = ArtworkSerializer(read_only=True)
     search_query = serializers.ReadOnlyField()
     media_server_url = serializers.CharField(read_only=True)
+    target_bitrate = serializers.PrimaryKeyRelatedField(queryset=TargetBitrate.objects.all(), allow_null=True)
+    target_file_size_str = serializers.CharField(read_only=True, allow_null=True)
+    get_target_bitrate = TargetBitrateSerializer(read_only=True)
 
     class Meta:
         model = TVEpisode

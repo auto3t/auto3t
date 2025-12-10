@@ -268,7 +268,7 @@ class AutotScheduler(models.Model):
 
         scheduler = get_scheduler(self.schedule_name)
         job = scheduler.cron(cron_string=self.cron_schedule, func=self.job)
-        logger.info(f"registered new schedule for job {job.func_name}")
+        logger.info("registered new schedule for job %s", job.func_name)
 
     def delete_on_scheduler(self) -> None:
         """remove from scheduler"""

@@ -138,7 +138,7 @@ class SearchIndex:
         if not magnet_link:
             raise ValueError("failed to extract magnet link URL")
 
-        response = requests.get(magnet_link, allow_redirects=False)
+        response = requests.get(magnet_link, allow_redirects=False, timeout=self.TIMEOUT)
         if not response.ok:
             raise ValueError(f"request failed with status {response.status_code}: {response.text}")
 

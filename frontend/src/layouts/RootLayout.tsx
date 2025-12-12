@@ -102,8 +102,8 @@ export default function RootLayout() {
       </div>
       <footer className="bg-accent-3 py-4 text-center shrink mt-15">
         <div className="flex justify-center max-w-7xl m-auto">
-          <P className="flex items-center">
-            <span>© AutoT {new Date().getFullYear()}</span>
+          <P className="flex items-center flex-wrap justify-center">
+            <span>© Auto3T {new Date().getFullYear()}</span>
             <Spacer />
             {releaseTag === 'unstable' ? (
               <span>{releaseTag}</span>

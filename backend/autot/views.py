@@ -87,7 +87,16 @@ class TargetBitrateView(viewsets.ModelViewSet):
     """target bitrate"""
 
     serializer_class = TargetBitrateSerializer
-    queryset = TargetBitrate.objects.all().order_by("bitrate")
+    queryset = TargetBitrate.objects.none().order_by("bitrate")
+
+    def get_queryset(self):
+        """filter queryset"""
+        queryset = TargetBitrate.objects.all().order_by("bitrate")
+        exclude_default = self.request.GET.get("exclude-default")
+        if exclude_default == "true":
+            return queryset.filter(movie_default=False, tv_default=False)
+
+        return queryset
 
 
 class AppConfigView(APIView):

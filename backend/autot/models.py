@@ -138,6 +138,7 @@ class TargetBitrate(models.Model):
 
     @property
     def bitrate_str(self):
+        """bitrate string"""
         return str(self)
 
     def __str__(self):
@@ -148,6 +149,20 @@ class TargetBitrate(models.Model):
             default = " - Default TV"
 
         return f"{self.bitrate}Mbps +/- {self.plusminus}%{default}"
+
+    @property
+    def related(self):
+        """get related"""
+        return {
+            "movie": self._extract_related("movie_set"),
+            "show": self._extract_related("tvshow_set"),
+            "season": self._extract_related("tvseason_set"),
+            "episode": self._extract_related("tvepisode_set"),
+        }
+
+    def _extract_related(self, related_field: str):
+        """extract by related field name"""
+        return {i[0] for i in getattr(self, related_field).all().values_list("id")}
 
 
 class Torrent(models.Model):

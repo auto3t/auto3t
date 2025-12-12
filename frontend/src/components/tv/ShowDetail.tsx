@@ -19,6 +19,8 @@ import {
   TagItem,
 } from '../Typography'
 import ManualSearch from '../ManualSearch'
+import { TargetBitrateType } from '../settings/TargetBitrate'
+import AddTargetBitrateComponent from '../AddTargetBitrateComponent'
 
 export type ShowType = {
   id: number
@@ -38,6 +40,9 @@ export type ShowType = {
   season_fallback?: ImageType
   episode_fallback?: ImageType
   all_keywords: KeywordType[]
+  target_bitrate: number | null
+  target_file_size_str: string | null
+  get_target_bitrate: TargetBitrateType | null
 }
 
 interface ShowInterface {
@@ -171,6 +176,24 @@ const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
                     key="show-is-active"
                     value={showDetail.is_active}
                     onChange={handleActiveToggle}
+                  />,
+                ],
+                [
+                  'Target Bitrate',
+                  <AddTargetBitrateComponent
+                    key="show-target-bitrate"
+                    patchURL={`tv/show/${showDetail.id}/`}
+                    refreshCallback={fetchShow}
+                    defaultTarget={
+                      showDetail?.get_target_bitrate
+                        ? showDetail.get_target_bitrate
+                        : null
+                    }
+                    canDelete={
+                      showDetail.get_target_bitrate?.related?.show.includes(
+                        showDetail.id,
+                      ) || false
+                    }
                   />,
                 ],
                 [

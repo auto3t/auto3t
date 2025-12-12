@@ -187,6 +187,11 @@ const MovieDetail: React.FC<MovieInterface> = ({ movieDetail, fetchMovie }) => {
                         ? movieDetail.get_target_bitrate
                         : null
                     }
+                    canDelete={
+                      movieDetail.get_target_bitrate?.related?.movie.includes(
+                        movieDetail.id,
+                      ) || false
+                    }
                   />,
                 ],
                 [

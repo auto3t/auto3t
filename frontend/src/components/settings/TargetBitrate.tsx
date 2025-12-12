@@ -2,6 +2,13 @@ import { useCallback, useEffect, useState } from 'react'
 import { H2, Input, LucideIconWrapper, P, Table } from '../Typography'
 import useApi from '../../hooks/api'
 
+type TargetBitrateRelations = {
+  movie: number[]
+  show: number[]
+  season: number[]
+  episode: number[]
+}
+
 export type TargetBitrateType = {
   id: number
   bitrate: number
@@ -9,6 +16,7 @@ export type TargetBitrateType = {
   plusminus: number
   tv_default: boolean
   movie_default: boolean
+  related?: TargetBitrateRelations
 }
 
 export default function TargetBitrate() {

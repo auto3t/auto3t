@@ -27,7 +27,7 @@ from tv.tasks import import_show, refresh_status
 class ShowViewSet(viewsets.ModelViewSet):
     """get tv show/s"""
 
-    UPDATABLE_FIELDS = {"search_name", "is_active", "search_keywords"}
+    UPDATABLE_FIELDS = {"search_name", "is_active", "search_keywords", "target_bitrate"}
     VALID_STATUS = [i.name for i in TvShowStatus]
 
     serializer_class = TVShowSerializer

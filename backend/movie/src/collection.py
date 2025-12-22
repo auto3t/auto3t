@@ -128,7 +128,7 @@ class CollectionMissing:
             self.set_cache(movie_data)
             missing.append(movie_data)
 
-        missing_sorted = sorted(missing, key=lambda d: d.get("release_date"))
+        missing_sorted = sorted(missing, key=lambda d: (d.get("release_date") is None, d.get("release_date")))
 
         return missing_sorted
 

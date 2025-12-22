@@ -4,8 +4,9 @@ from math import ceil
 
 from autot.src.config import ConfigType, get_config
 from autot.src.helper import get_tracker_list
-from autot.static import TvEpisodeStatus
+from autot.static import MovieStatus, TvEpisodeStatus
 from django.utils import timezone
+from movie.models import Movie
 from transmission_rpc import Client
 from transmission_rpc.torrent import Torrent as TransmissionTorrent
 from tv.models import Torrent, TVEpisode
@@ -123,38 +124,71 @@ class Transmission:
 
     def validate_expected(self, remote_torrent: TransmissionTorrent, local_torrent: Torrent):
         """validate expected files are in torrent"""
-        from autot.src.archive import Archiver
-
         if local_torrent.torrent_type == "e":
-            # single episode check
-            episode = TVEpisode.objects.get(torrent=local_torrent)
-            try:
-                Archiver().get_valid_media_file(remote_torrent, episode)
-                local_torrent.has_expected_files = True
-                local_torrent.save()
-            except FileNotFoundError:
-                self.cancel(local_torrent)
-                episode.status = TvEpisodeStatus.s.name
-                episode.save()
-                local_torrent.has_expected_files = False
-                local_torrent.save()
+            self._check_single_episode(remote_torrent, local_torrent)
+        elif local_torrent.torrent_type in ["s", "w"]:
+            self._check_multi_episode(remote_torrent, local_torrent)
+        elif local_torrent.torrent_type == "m":
+            self._check_single_movie(remote_torrent, local_torrent)
+
+    def _check_single_episode(self, remote_torrent: TransmissionTorrent, local_torrent: Torrent) -> None:
+        """check single episode"""
+        episode = TVEpisode.objects.get(torrent=local_torrent)
+        is_valid = self._is_valid(remote_torrent, to_check=episode)
+        if is_valid:
+            local_torrent.has_expected_files = True
+            local_torrent.save()
             return
 
-        if local_torrent.torrent_type in ["s", "w"]:
-            # multiple episodes check
-            episodes = TVEpisode.objects.filter(torrent=local_torrent)
-            try:
-                for episode in episodes:
-                    Archiver().get_valid_media_file(remote_torrent, episode)
+        self.cancel(local_torrent)
+        episode.status = TvEpisodeStatus.s.name
+        episode.save()
+        local_torrent.has_expected_files = False
+        local_torrent.save()
 
-                local_torrent.has_expected_files = True
-                local_torrent.save()
+    def _check_multi_episode(self, remote_torrent: TransmissionTorrent, local_torrent: Torrent) -> None:
+        """check multi episode torrent"""
+        episodes = TVEpisode.objects.filter(torrent=local_torrent)
+        for episode in episodes:
+            is_valid = self._is_valid(remote_torrent, to_check=episode)
+            if is_valid:
+                continue
 
-            except FileNotFoundError:
-                self.cancel(local_torrent)
-                episodes.update(status=TvEpisodeStatus.s.name)
-                local_torrent.has_expected_files = False
-                local_torrent.save()
+            self.cancel(local_torrent)
+            episodes.update(status=TvEpisodeStatus.s.name)
+            local_torrent.has_expected_files = False
+            local_torrent.save()
+            return
+
+        local_torrent.has_expected_files = True
+        local_torrent.save()
+
+    def _check_single_movie(self, remote_torrent: TransmissionTorrent, local_torrent: Torrent) -> None:
+        """check single movie"""
+        movie = Movie.objects.get(torrent=local_torrent)
+        is_valid = self._is_valid(remote_torrent, to_check=movie)
+        if is_valid:
+            local_torrent.has_expected_files = True
+            local_torrent.save()
+            return
+
+        self.cancel(local_torrent)
+        movie.status = MovieStatus.s.name
+        movie.save()
+        local_torrent.has_expected_files = False
+        local_torrent.save()
+
+    def _is_valid(self, remote_torrent: TransmissionTorrent, to_check: Movie | TVEpisode) -> bool:
+        """check for expected"""
+        from autot.src.archive import Archiver
+
+        try:
+            Archiver().get_valid_media_file(remote_torrent, to_check)
+            return True
+        except FileNotFoundError:
+            pass
+
+        return False
 
     def add_trackers(self):
         """add trackers for transmissions"""

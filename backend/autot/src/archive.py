@@ -108,7 +108,7 @@ class Archiver:
         episode.save()
         log_change(episode, "u", field_name="status", old_value=old_status, new_value="f")
 
-    def get_valid_media_file(self, tm_torrent: TransmissionTorrent, episode: TVEpisode) -> str:
+    def get_valid_media_file(self, tm_torrent: TransmissionTorrent, to_check: TVEpisode | Movie) -> str:
         """get valid media file"""
         for torrent_file in tm_torrent.get_files():
             if torrent_file.size < self.CONFIG["MEDIA_MIN_SIZE"]:
@@ -116,7 +116,7 @@ class Archiver:
             if torrent_file.name.split(".")[-1] not in self.CONFIG["MEDIA_EXT"]:
                 continue
 
-            is_valid_path = episode.is_valid_path(torrent_file.name.lower())
+            is_valid_path = to_check.is_valid_path(torrent_file.name.lower())
             if is_valid_path:
                 return torrent_file.name
 

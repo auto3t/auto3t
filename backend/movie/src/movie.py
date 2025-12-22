@@ -38,8 +38,8 @@ class MovieDBMovie:
 
     def get_movie(self) -> tuple[Movie, str | None]:
         """get or create moview"""
-        response = self._get_remote_movie()
-        movie_data = self._parse_movie(response)
+        response = self.get_remote_movie()
+        movie_data = self.parse_movie(response)
         poster_path = response.get("poster_path")
 
         if response.get("belongs_to_collection"):
@@ -52,7 +52,7 @@ class MovieDBMovie:
         except Movie.DoesNotExist:
             movie = Movie.objects.create(**movie_data)
             if poster_path:
-                image_url = self._get_image_url(poster_path)
+                image_url = self.get_image_url(poster_path)
                 movie.image_movie = Artwork(image_url=image_url)
                 movie.image_movie.save()
 
@@ -71,12 +71,12 @@ class MovieDBMovie:
             movie.save()
 
         if poster_path:
-            image_url = self._get_image_url(poster_path)
+            image_url = self.get_image_url(poster_path)
             movie.update_image_movie(image_url)
 
         return movie, collection_id
 
-    def _get_remote_movie(self) -> dict:
+    def get_remote_movie(self) -> dict:
         """get movie from api"""
         url = f"movie/{self.the_moviedb_id}"
         response = MovieDB().get(url)
@@ -85,7 +85,7 @@ class MovieDBMovie:
 
         return response
 
-    def _parse_movie(self, response: dict) -> dict:
+    def parse_movie(self, response: dict) -> dict:
         """parse API response for model"""
         release_date = date.fromisoformat(response["release_date"]) if response["release_date"] else None
         movie_data = {
@@ -109,7 +109,7 @@ class MovieDBMovie:
 
         raise ValueError("did not find status choice")
 
-    def _get_image_url(self, moviedb_file_path: str) -> str:
+    def get_image_url(self, moviedb_file_path: str) -> str:
         """build URL from snipped"""
         return f"https://image.tmdb.org/t/p/original{moviedb_file_path}"
 

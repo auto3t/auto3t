@@ -128,7 +128,7 @@ class CollectionMissing:
             self.set_cache(movie_data)
             missing.append(movie_data)
 
-        missing_sorted = sorted(missing, key=lambda d: d.get("release_date"))
+        missing_sorted = sorted(missing, key=lambda d: (d.get("release_date") is None, d.get("release_date")))
 
         return missing_sorted
 
@@ -153,12 +153,12 @@ class CollectionMissing:
         """get from remote"""
 
         handler = MovieDBMovie(the_moviedb_id)
-        response = handler._get_remote_movie()
-        movie_data = handler._parse_movie(response)
+        response = handler.get_remote_movie()
+        movie_data = handler.parse_movie(response)
 
         poster_path = response.get("poster_path")
         if poster_path:
-            movie_data["image_url"] = handler._get_image_url(poster_path)
+            movie_data["image_url"] = handler.get_image_url(poster_path)
         else:
             movie_data["image_url"] = None
 

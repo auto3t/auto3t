@@ -1,6 +1,3 @@
-[DEFAULT]
-disable = import-star-module-level
-
 [FORMAT]
 max-line-length=120
 

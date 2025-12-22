@@ -89,6 +89,11 @@ const TVEpisode: React.FC = () => {
                   {`Runtime: ${formatDuration(episodeDetail.runtime * 60)}`}
                 </TagItem>
               )}
+              {episodeDetail.target_file_size_str && (
+                <TagItem>
+                  {`Target Filesize: ${episodeDetail.target_file_size_str}`}
+                </TagItem>
+              )}
               {episodeDetail.release_date && (
                 <TagItem>
                   Release:{' '}

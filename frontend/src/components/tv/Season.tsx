@@ -17,6 +17,8 @@ export type SeasonType = {
   end_date: string
   all_keywords: KeywordType[]
   search_query: string
+  target_file_size_str?: string
+  runtime: number
   show: ShowType
 }
 

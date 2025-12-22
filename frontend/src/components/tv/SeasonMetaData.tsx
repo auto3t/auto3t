@@ -16,6 +16,7 @@ import {
   Table,
   TagItem,
 } from '../Typography'
+import { formatDuration } from '../../utils'
 
 interface SeasonMetaDataInterface {
   fetchEpisodes: (seasonId: number) => void
@@ -72,6 +73,16 @@ const SeasonMetaData: React.FC<SeasonMetaDataInterface> = ({
         {selectedSeason.end_date && (
           <TagItem>
             End: <TimeComponent timestamp={selectedSeason.end_date} />
+          </TagItem>
+        )}
+        {selectedSeason.runtime && (
+          <TagItem>
+            {`Runtime: ${formatDuration(selectedSeason.runtime * 60)}`}
+          </TagItem>
+        )}
+        {selectedSeason.target_file_size_str && (
+          <TagItem>
+            {`Target Filesize: ${selectedSeason.target_file_size_str}`}
           </TagItem>
         )}
       </div>

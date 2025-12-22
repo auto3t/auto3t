@@ -21,6 +21,7 @@ import {
 import ManualSearch from '../ManualSearch'
 import { TargetBitrateType } from '../settings/TargetBitrate'
 import AddTargetBitrateComponent from '../AddTargetBitrateComponent'
+import { formatDuration } from '../../utils'
 
 export type ShowType = {
   id: number
@@ -40,6 +41,7 @@ export type ShowType = {
   season_fallback?: ImageType
   episode_fallback?: ImageType
   all_keywords: KeywordType[]
+  runtime: number | null
   target_bitrate: number | null
   target_file_size_str: string | null
   get_target_bitrate: TargetBitrateType | null
@@ -146,6 +148,20 @@ const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
               <TagItem>
                 End: <TimeComponent timestamp={showDetail.end_date} />
               </TagItem>
+            )}
+            {showDetail.status === 'e' && (
+              <>
+                {showDetail.runtime && (
+                  <TagItem>
+                    {`Runtime: ${formatDuration(showDetail.runtime * 60)}`}
+                  </TagItem>
+                )}
+                {showDetail.target_file_size_str && (
+                  <TagItem>
+                    {`Target Filesize: ${showDetail.target_file_size_str}`}
+                  </TagItem>
+                )}
+              </>
             )}
           </div>
         </div>

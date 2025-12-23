@@ -1,4 +1,4 @@
-FROM python:3.13.11-slim-bullseye AS python-builder
+FROM python:3.13.11-slim-trixie AS python-builder
 
 # install requirements
 RUN python -m venv /applib
@@ -21,7 +21,7 @@ COPY frontend/ .
 RUN npm run build
 
 # build final image
-FROM python:3.13.11-slim-bullseye AS auto3t
+FROM python:3.13.11-slim-trixie AS auto3t
 ARG INSTALL_DEBUG
 ENV PYTHONUNBUFFERED=1
 ENV PATH=/applib/bin:$PATH

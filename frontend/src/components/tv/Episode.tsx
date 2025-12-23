@@ -32,6 +32,7 @@ export type EpisodeType = {
   media_server_meta: MediaServerMetaType
   media_server_url: string
   media_server_id: string
+  target_file_size_str: string
   season: SeasonType
 }
 

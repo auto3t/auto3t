@@ -42,7 +42,7 @@ class Person(models.Model):
     class Meta:
         constraints = [
             models.CheckConstraint(
-                check=Q(tvmaze_id__isnull=False) | Q(the_moviedb_id__isnull=False),
+                condition=Q(tvmaze_id__isnull=False) | Q(the_moviedb_id__isnull=False),
                 name="at_least_tvmaze_id_or_the_moviedb_id",
             ),
         ]

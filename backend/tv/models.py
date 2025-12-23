@@ -131,7 +131,12 @@ class TVShow(BaseModel):
     @property
     def runtime(self) -> int | None:
         """agg show episode runtime"""
-        runtime = TVEpisode.objects.filter(season__show=self).aggregate(models.Sum("runtime"))
+        episodes = TVEpisode.objects.filter(season__show=self)
+        if episodes.filter(runtime__isnull=True).exists():
+            # runtime of show not known yet
+            return None
+
+        runtime = episodes.aggregate(models.Sum("runtime"))
         return runtime.get("runtime__sum", None)
 
     @property
@@ -303,7 +308,12 @@ class TVSeason(BaseModel):
     @property
     def runtime(self) -> int | None:
         """agg season episode runtime"""
-        runtime = TVEpisode.objects.filter(season=self).aggregate(models.Sum("runtime"))
+        episodes = TVEpisode.objects.filter(season=self)
+        if episodes.filter(runtime__isnull=True).exists():
+            # runtime of season not known yet
+            return None
+
+        runtime = episodes.aggregate(models.Sum("runtime"))
         return runtime.get("runtime__sum", None)
 
     @property

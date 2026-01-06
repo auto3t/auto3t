@@ -54,10 +54,10 @@ export default function RootLayout() {
     <>
       <div className="grow my-2 mx-5">
         <header className="max-w-7xl m-auto">
-          <nav className="flex flex-wrap md:justify-between justify-center items-center">
+          <nav className="flex flex-wrap md:justify-between justify-center items-center pb-4">
             <div className="flex flex-wrap justify-center md:justify-left gap-4 items-center py-4">
               <Link to="/">
-                <img className="md:w-[180px] w-[90px]" src={logo} />
+                <img className="md:w-[140px] w-[90px]" src={logo} />
               </Link>
               <div className="flex flex-wrap gap-2 justify-center">
                 <div className="flex gap-2 flex-wrap justify-center">

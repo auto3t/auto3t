@@ -1,8 +1,8 @@
 django-cors-headers==4.9.0
-django-rq==3.2.1
+django-rq==3.2.2
 Django==6.0
 djangorestframework==3.16.1
-pillow==12.0.0
+pillow==12.1.0
 pytz==2025.2
 rapidfuzz==3.14.3
 requests==2.32.5

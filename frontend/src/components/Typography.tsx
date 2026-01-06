@@ -79,7 +79,7 @@ export function P({ variant = 'default', className = '', ...props }: PProps) {
   } else if (variant === 'alert') {
     variantClasses = 'text-accent-1 text-lg'
   } else if (variant === 'smaller') {
-    variantClasses = 'text-main-fg text-xs'
+    variantClasses = 'text-main-fg text-s'
   } else if (variant === 'larger') {
     variantClasses = 'text-main-fg text-2xl'
   }

@@ -137,7 +137,7 @@ const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
             )}
           </div>
           <P dangerouslySetInnerHTML={{ __html: showDetail.description }} />
-          <div className="flex gap-2 my-2">
+          <div className="flex flex-wrap md:justify-normal justify-center gap-2 my-2">
             <TagItem>Status: {showDetail.status_display}</TagItem>
             {showDetail.release_date && (
               <TagItem>

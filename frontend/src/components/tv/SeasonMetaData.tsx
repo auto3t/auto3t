@@ -64,7 +64,7 @@ const SeasonMetaData: React.FC<SeasonMetaDataInterface> = ({
         </div>
       </div>
       <P dangerouslySetInnerHTML={{ __html: selectedSeason.description }} />
-      <div className="flex gap-2 mt-2 mb-8">
+      <div className="flex flex-wrap md:justify-normal justify-center gap-2 mt-2 mb-8">
         {selectedSeason.release_date && (
           <TagItem>
             Start: <TimeComponent timestamp={selectedSeason.release_date} />

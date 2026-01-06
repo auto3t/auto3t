@@ -83,7 +83,7 @@ const TVEpisode: React.FC = () => {
             <P
               dangerouslySetInnerHTML={{ __html: episodeDetail.description }}
             />
-            <div className="flex gap-2 justify-center py-4">
+            <div className="flex flex-wrap gap-2 justify-center py-4">
               {episodeDetail.runtime && (
                 <TagItem>
                   {`Runtime: ${formatDuration(episodeDetail.runtime * 60)}`}

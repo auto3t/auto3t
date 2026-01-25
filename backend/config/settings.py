@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     "artwork",
     "user",
     "django_rq",
+    "imdb_cache",
 ]
 
 MIDDLEWARE = [
@@ -107,6 +108,17 @@ DATABASES = {
         },
     }
 }
+if AUTOT_CONFIG["INTEGRATE_IMDB"]:
+    DATABASES["cached"] = {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db-cached.sqlite3",
+        "OPTIONS": {
+            "timeout": 30,
+        },
+    }
+    DATABASE_ROUTERS = ["config.db_routers.CachedDataRouter"]
+else:
+    DATABASE_ROUTERS = []
 
 
 # Password validation

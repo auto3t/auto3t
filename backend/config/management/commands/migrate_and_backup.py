@@ -3,9 +3,12 @@
 import shutil
 import subprocess
 
+from autot.src.config import get_config
 from django.conf import settings
 from django.core.management import BaseCommand, call_command
 from django.utils.timezone import localtime
+
+AUTOT_CONFIG = get_config()
 
 
 class Command(BaseCommand):
@@ -38,4 +41,7 @@ class Command(BaseCommand):
         else:
             self.stdout.write(self.style.SUCCESS("No pending migrations."))
 
-        call_command("migrate")
+        call_command("migrate", database="default")
+
+        if AUTOT_CONFIG["INTEGRATE_IMDB"]:
+            call_command("migrate", database="cached")

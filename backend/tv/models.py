@@ -423,13 +423,8 @@ class TVEpisode(BaseModel):
 
     @property
     def identifier(self) -> str:
-        """build S00E00 identifier, apply offset"""
-        if self.number_offset_overwrite:
-            real_number = self.number + self.number_offset_overwrite
-        else:
-            real_number = self.number
-
-        return f"S{str(self.season.number).zfill(2)}E{str(real_number).zfill(2)}"
+        """build S00E00 identifier, don't apply offset"""
+        return f"S{str(self.season.number).zfill(2)}E{str(self.number).zfill(2)}"
 
     @property
     def identifier_date(self) -> str:
@@ -439,12 +434,17 @@ class TVEpisode(BaseModel):
 
     @property
     def search_query(self) -> str:
-        """build search query"""
+        """build search query, apply offset"""
         show_search = self.season.show.search_name or self.season.show.name
         if self.season.show.is_daily:
             seach_identifier = self.identifier_date
         else:
-            seach_identifier = self.identifier
+            if self.number_offset_overwrite:
+                real_number = self.number + self.number_offset_overwrite
+            else:
+                real_number = self.number
+
+            seach_identifier = f"S{str(self.season.number).zfill(2)}E{str(real_number).zfill(2)}"
 
         return f"{show_search} {seach_identifier}"
 

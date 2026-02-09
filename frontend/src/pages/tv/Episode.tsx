@@ -167,55 +167,58 @@ const TVEpisode: React.FC = () => {
                   </span>
                 )}
               </TagItem>
-              <TagItem>
-                {editEpisodeOffset ? (
-                  <span className="flex gap-2 items-center">
-                    <Input
-                      type="number"
-                      value={offsetValue}
-                      variant="inline"
-                      onChange={(e) => setOffsetValue(e.target.value)}
-                      placeholder="Offset"
-                    />
-                    <LucideIconWrapper
-                      name="Check"
-                      onClick={handleOffsetSave}
-                      className="cursor-pointer bg-main-fg rounded-lg p-2"
-                      title="Save number offset"
-                    />
-                    <LucideIconWrapper
-                      name="RotateCcw"
-                      onClick={handleOffsetReset}
-                      className="cursor-pointer bg-main-fg rounded-lg p-2"
-                      title="Reset number offset"
-                    />
-                    <LucideIconWrapper
-                      name="X"
-                      onClick={() => setEditEpisodeOffset(false)}
-                      className="cursor-pointer bg-main-fg rounded-lg p-2"
-                      title="Cancel"
-                    />
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-4">
-                    Number Offset:{' '}
-                    {episodeDetail.number_offset_overwrite ?? 'none'}
-                    <LucideIconWrapper
-                      name="Pencil"
-                      className="cursor-pointer bg-main-fg rounded-lg p-2"
-                      onClick={() => {
-                        setOffsetValue(
-                          episodeDetail.number_offset_overwrite !== null &&
-                            episodeDetail.number_offset_overwrite !== undefined
-                            ? episodeDetail.number_offset_overwrite.toString()
-                            : '',
-                        )
-                        setEditEpisodeOffset(true)
-                      }}
-                    />
-                  </span>
-                )}
-              </TagItem>
+              {episodeDetail.season.show.is_daily === false && (
+                <TagItem>
+                  {editEpisodeOffset ? (
+                    <span className="flex gap-2 items-center">
+                      <Input
+                        type="number"
+                        value={offsetValue}
+                        variant="inline"
+                        onChange={(e) => setOffsetValue(e.target.value)}
+                        placeholder="Offset"
+                      />
+                      <LucideIconWrapper
+                        name="Check"
+                        onClick={handleOffsetSave}
+                        className="cursor-pointer bg-main-fg rounded-lg p-2"
+                        title="Save number offset"
+                      />
+                      <LucideIconWrapper
+                        name="RotateCcw"
+                        onClick={handleOffsetReset}
+                        className="cursor-pointer bg-main-fg rounded-lg p-2"
+                        title="Reset number offset"
+                      />
+                      <LucideIconWrapper
+                        name="X"
+                        onClick={() => setEditEpisodeOffset(false)}
+                        className="cursor-pointer bg-main-fg rounded-lg p-2"
+                        title="Cancel"
+                      />
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-4">
+                      Number Offset:{' '}
+                      {episodeDetail.number_offset_overwrite ?? 'none'}
+                      <LucideIconWrapper
+                        name="Pencil"
+                        className="cursor-pointer bg-main-fg rounded-lg p-2"
+                        onClick={() => {
+                          setOffsetValue(
+                            episodeDetail.number_offset_overwrite !== null &&
+                              episodeDetail.number_offset_overwrite !==
+                                undefined
+                              ? episodeDetail.number_offset_overwrite.toString()
+                              : '',
+                          )
+                          setEditEpisodeOffset(true)
+                        }}
+                      />
+                    </span>
+                  )}
+                </TagItem>
+              )}
             </div>
           </div>
           <EpisodeNav currentEpisodeId={episodeDetail.id} />

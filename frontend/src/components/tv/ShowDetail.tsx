@@ -33,6 +33,7 @@ export type ShowType = {
   end_date: string
   remote_server_url: string
   is_active: boolean
+  is_daily: boolean
   tvmaze_id: string
   imdb_id: string | null
   search_query: string

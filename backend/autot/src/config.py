@@ -28,7 +28,6 @@ class ConfigType(TypedDict):
     APP_ROOT: Path | None
     TZ: str
     DJANGO_DEBUG: bool
-    INTEGRATE_IMDB: bool
 
 
 def get_config() -> ConfigType:
@@ -54,7 +53,6 @@ def get_config() -> ConfigType:
         "APP_ROOT": Path(environ["APP_ROOT"]) if environ.get("APP_ROOT") else None,
         "TZ": environ.get("TZ", "UTC"),
         "DJANGO_DEBUG": bool(environ.get("DJANGO_DEBUG", False)),
-        "INTEGRATE_IMDB": bool(environ.get("INTEGRATE_IMDB")),
     }
 
     return config

@@ -20,6 +20,7 @@ export type MediaServerMetaType = {
 export type EpisodeType = {
   id: number
   number: number
+  number_offset_overwrite: number | null
   image_episode?: ImageType
   status_display: string
   description: string

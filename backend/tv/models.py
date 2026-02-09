@@ -368,6 +368,7 @@ class TVEpisode(BaseModel):
     TRACK_CHANGES = True
 
     number = models.IntegerField()
+    number_offset_overwrite = models.IntegerField(null=True, blank=True)
     title = models.CharField(max_length=255)
     runtime = models.PositiveIntegerField(null=True, blank=True)
     target_bitrate = models.ForeignKey(TargetBitrate, null=True, blank=True, on_delete=models.SET_NULL)
@@ -422,8 +423,13 @@ class TVEpisode(BaseModel):
 
     @property
     def identifier(self) -> str:
-        """build S00E00 identifier"""
-        return f"S{str(self.season.number).zfill(2)}E{str(self.number).zfill(2)}"
+        """build S00E00 identifier, apply offset"""
+        if self.number_offset_overwrite:
+            real_number = self.number + self.number_offset_overwrite
+        else:
+            real_number = self.number
+
+        return f"S{str(self.season.number).zfill(2)}E{str(real_number).zfill(2)}"
 
     @property
     def identifier_date(self) -> str:

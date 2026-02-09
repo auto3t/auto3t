@@ -13,6 +13,7 @@ import episodeLogoDefault from '../../../assets/episode-default.jpg'
 import {
   H1,
   H2,
+  Input,
   LucideIconWrapper,
   P,
   Select,
@@ -25,6 +26,8 @@ const TVEpisode: React.FC = () => {
   const { get, patch } = useApi()
   const [episodeRefresh, setEpisodeRefresh] = useState(false)
   const [editEpisodeStatus, setEditEpisodeStatus] = useState(false)
+  const [editEpisodeOffset, setEditEpisodeOffset] = useState(false)
+  const [offsetValue, setOffsetValue] = useState<string>('')
 
   const { episodeDetail, setEpisodeDetail, episodeImage, setEpisodeImage } =
     useEpsiodeDetailStore()
@@ -55,6 +58,37 @@ const TVEpisode: React.FC = () => {
       setEditEpisodeStatus(false)
     } catch (error) {
       console.error('error updating status: ', error)
+    }
+  }
+
+  const handleOffsetSave = async () => {
+    const trimmed = offsetValue.trim()
+    const parsed = trimmed === '' ? null : Number(trimmed)
+    if (parsed !== null && Number.isNaN(parsed)) {
+      return
+    }
+
+    try {
+      const data = await patch(`tv/episode/${id}/`, {
+        number_offset_overwrite: parsed,
+      })
+      setEpisodeDetail(data)
+      setEditEpisodeOffset(false)
+    } catch (error) {
+      console.error('error updating number offset: ', error)
+    }
+  }
+
+  const handleOffsetReset = async () => {
+    try {
+      const data = await patch(`tv/episode/${id}/`, {
+        number_offset_overwrite: null,
+      })
+      setEpisodeDetail(data)
+      setOffsetValue('')
+      setEditEpisodeOffset(false)
+    } catch (error) {
+      console.error('error resetting number offset: ', error)
     }
   }
 
@@ -129,6 +163,55 @@ const TVEpisode: React.FC = () => {
                       name="Pencil"
                       className="cursor-pointer bg-main-fg rounded-lg p-2"
                       onClick={() => setEditEpisodeStatus(true)}
+                    />
+                  </span>
+                )}
+              </TagItem>
+              <TagItem>
+                {editEpisodeOffset ? (
+                  <span className="flex gap-2 items-center">
+                    <Input
+                      type="number"
+                      value={offsetValue}
+                      variant="inline"
+                      onChange={(e) => setOffsetValue(e.target.value)}
+                      placeholder="Offset"
+                    />
+                    <LucideIconWrapper
+                      name="Check"
+                      onClick={handleOffsetSave}
+                      className="cursor-pointer bg-main-fg rounded-lg p-2"
+                      title="Save number offset"
+                    />
+                    <LucideIconWrapper
+                      name="RotateCcw"
+                      onClick={handleOffsetReset}
+                      className="cursor-pointer bg-main-fg rounded-lg p-2"
+                      title="Reset number offset"
+                    />
+                    <LucideIconWrapper
+                      name="X"
+                      onClick={() => setEditEpisodeOffset(false)}
+                      className="cursor-pointer bg-main-fg rounded-lg p-2"
+                      title="Cancel"
+                    />
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-4">
+                    Number Offset:{' '}
+                    {episodeDetail.number_offset_overwrite ?? 'none'}
+                    <LucideIconWrapper
+                      name="Pencil"
+                      className="cursor-pointer bg-main-fg rounded-lg p-2"
+                      onClick={() => {
+                        setOffsetValue(
+                          episodeDetail.number_offset_overwrite !== null &&
+                            episodeDetail.number_offset_overwrite !== undefined
+                            ? episodeDetail.number_offset_overwrite.toString()
+                            : '',
+                        )
+                        setEditEpisodeOffset(true)
+                      }}
                     />
                   </span>
                 )}

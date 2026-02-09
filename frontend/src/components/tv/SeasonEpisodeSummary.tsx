@@ -6,7 +6,10 @@ const SeasonEpisodeSummary = () => {
   const { episodes } = useTVEpisodeStore()
 
   const rows = episodes.map((episode) => [
-    episode.number.toString(),
+    episode.number_offset_overwrite !== null &&
+    episode.number_offset_overwrite !== undefined
+      ? `${episode.number} ${episode.number_offset_overwrite}`
+      : episode.number.toString(),
     episode.media_server_meta ? (
       <>
         {episode.media_server_meta?.width}x{episode.media_server_meta?.height}

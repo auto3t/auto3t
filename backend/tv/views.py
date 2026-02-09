@@ -273,6 +273,25 @@ class EpisodeViewSet(viewsets.ModelViewSet):
 
         return queryset
 
+    def update(self, request, *args, **kwargs):
+        """handle update"""
+        instance = self.get_object()
+        data = request.data
+        old_offset = instance.number_offset_overwrite
+
+        serializer = self.get_serializer(instance, data=data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if "number_offset_overwrite" in data.keys():
+            new_offset = serializer.instance.number_offset_overwrite
+            if new_offset != old_offset:
+                TVEpisode.objects.filter(season=instance.season, number__gte=instance.number).update(
+                    number_offset_overwrite=new_offset
+                )
+
+        return Response(serializer.data)
+
     def create(self, request, *args, **kwargs):
         """Bulk update status of episodes"""
         serializer_class = self.get_serializer_class()

@@ -481,9 +481,12 @@ class TVEpisode(BaseModel):
         return path
 
     def is_valid_path(self, path: str, strict: bool = False) -> bool:
-        """check if path is valid"""
+        """check if path is valid, apply offset"""
         season_number = self.season.number
-        episode_number = self.number
+        if self.number_offset_overwrite:
+            episode_number = self.number_offset_overwrite + self.number
+        else:
+            episode_number = self.number
 
         path_clean = title_clean(path)
 

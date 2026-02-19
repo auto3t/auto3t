@@ -16,6 +16,8 @@ export type MovieSearchResultType = {
   media_server_url: string | null
   image?: string
   character_name?: string
+  imdb_id: string | null
+  imdb_rating: string | null
 }
 
 const MovieSearch = () => {

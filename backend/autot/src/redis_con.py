@@ -38,6 +38,13 @@ class AutotRedis(RedisBase):
 
             pipe.execute()
 
+    def set_message(self, key: str, message: str, expire: bool | int = False) -> None:
+        """set single message"""
+        redis_key = f"{self.NAME_SPACE}{key}"
+        self.conn.set(redis_key, message)
+        if expire:
+            self.conn.expire(redis_key, expire)
+
     def get_message(self, key: str) -> str | None:
         """get message by key"""
         return self.conn.get(f"{self.NAME_SPACE}{key}")

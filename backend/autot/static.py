@@ -113,4 +113,5 @@ TASK_OPTIONS: list[TaskItem] = [
     TaskItem(id=4, job="movie.tasks.refresh_status", name="Refresh Movie Status", queue="movie"),
     TaskItem(id=5, job="people.tasks.refresh_people", name="Refresh People", queue="default"),
     TaskItem(id=6, job="autot.tasks.cleanup", name="Cleanup Database", queue="default"),
+    TaskItem(id=7, job="autot.tasks.clear_cache", name="Clear Redis Cache", queue="default"),
 ]

@@ -49,6 +49,23 @@ class AutotRedis(RedisBase):
         """get message by key"""
         return self.conn.get(f"{self.NAME_SPACE}{key}")
 
+    def delete_messages_pattern(self, key: str, batch_size: int = 1000) -> int:
+        """delete keys matching wildcard pattern in batches"""
+        match = f"{self.NAME_SPACE}{key}"
+        batch: list[str] = []
+        deleted = 0
+
+        for redis_key in self.conn.scan_iter(match=match, count=batch_size):
+            batch.append(redis_key)
+            if len(batch) >= batch_size:
+                deleted += self.conn.delete(*batch)
+                batch.clear()
+
+        if batch:
+            deleted += self.conn.delete(*batch)
+
+        return deleted
+
     def set_hash_messages(
         self, key: str, values: dict[str, "MediaServerItem"], expire: bool | int = False, delete: bool = False
     ):

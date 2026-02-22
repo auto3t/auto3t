@@ -8,6 +8,7 @@ from artwork.src.cleanup import cleanup_art
 from autot.src.archive import Archiver
 from autot.src.download import Transmission
 from autot.src.media_server import EpisodeIdentify, MediaServerIdentify, MovieIdentify
+from autot.src.redis_con import AutotRedis
 from django_rq import job
 from django_rq.queues import get_queue
 from people.src.cleanup import cleanup_people
@@ -83,3 +84,9 @@ def cleanup() -> None:
     """cleanup task, call periodically"""
     cleanup_people()
     cleanup_art()
+
+
+@job("default")
+def clear_cache() -> None:
+    """clear cache"""
+    AutotRedis().delete_messages_pattern("*")

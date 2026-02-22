@@ -22,12 +22,10 @@ const MovieTile: React.FC<MovieTileInterface> = ({ movie }) => {
           image={getMoviePoster(movie)}
           alt={'movie-poster-' + movie.name}
         />
-        <TagItem
-          title={movie.status_display}
-          className="absolute top-0 right-0 m-4"
-        >
-          {movie.status || '-'}
-        </TagItem>
+        <div className="flex gap-2 absolute top-0 right-0 m-4">
+          <TagItem title={movie.status_display}>{movie.status || '-'}</TagItem>
+          {movie.imdb_rating && <TagItem>IMDb {movie.imdb_rating}/10</TagItem>}
+        </div>
         <ProgressBar torrents={movie?.torrent} />
       </div>
       <div className="text-center">

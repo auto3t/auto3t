@@ -7,6 +7,8 @@ import logging
 
 import requests
 from autot.src.config import get_config
+from django.conf import settings
+from django.core.cache import cache
 
 logger = logging.getLogger("django")
 
@@ -62,3 +64,22 @@ class IMDB:
             return []
 
         return response
+
+
+def get_cached_imdb_rating(imdb_id: str | None) -> float | None:
+    """get imdb rating"""
+    if not imdb_id:
+        return None
+
+    imdb_handler = IMDB()
+    if not imdb_handler.is_enabled:
+        return None
+
+    title = imdb_handler.get_title(imdb_id)
+    if not title:
+        return None
+
+    key = f"imdb:{imdb_id}:rating"
+    rating = cache.get_or_set(key, lambda: title.get("average_rating"), timeout=settings.CACHE_TTL)
+
+    return rating

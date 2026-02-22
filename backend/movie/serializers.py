@@ -3,6 +3,7 @@
 from artwork.serializers import ArtworkSerializer
 from autot.models import TargetBitrate
 from autot.serializers import SearchWordSerializer, TargetBitrateSerializer, TorrentSerializer
+from autot.src.imdb_request import get_cached_imdb_rating
 from autot.static import MovieProductionState, MovieReleaseType
 from movie.models import Collection, Movie, MovieRelease
 from rest_framework import serializers
@@ -44,10 +45,15 @@ class MovieSerializer(serializers.ModelSerializer):
     torrent = TorrentSerializer(many=True)
     media_server_url = serializers.CharField(read_only=True)
     production_state_display = serializers.CharField(source="get_production_state_display", read_only=True)
+    imdb_rating = serializers.SerializerMethodField(allow_null=True, read_only=True)
 
     class Meta:
         model = Movie
         fields = "__all__"
+
+    def get_imdb_rating(self, obj: Movie) -> float | None:
+        """get imdb rating, if available"""
+        return get_cached_imdb_rating(imdb_id=obj.imdb_id)
 
 
 class MovieMissingSerializer(serializers.Serializer):  # pylint: disable=abstract-method

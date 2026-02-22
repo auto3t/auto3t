@@ -85,13 +85,16 @@ const MovieDetail: React.FC<MovieInterface> = ({ movieDetail, fetchMovie }) => {
             </StyledLink>
             <P>imdb</P>
             {movieDetail.imdb_id && (
-              <StyledLink
-                to={`https://www.imdb.com/title/${movieDetail.imdb_id}`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                {movieDetail.imdb_id}
-              </StyledLink>
+              <div className="flex gap-2">
+                <StyledLink
+                  to={`https://www.imdb.com/title/${movieDetail.imdb_id}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {movieDetail.imdb_id}
+                </StyledLink>
+                {movieDetail.imdb_rating && <P>{movieDetail.imdb_rating}/10</P>}
+              </div>
             )}
           </div>
           <P>{movieDetail.description}</P>

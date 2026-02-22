@@ -4,7 +4,7 @@ import json
 from urllib import parse
 
 from autot.src.config import ConfigType, get_config
-from autot.src.imdb_request import IMDB
+from autot.src.imdb_request import IMDB, get_cached_imdb_rating
 from autot.src.media_server import MovieIdentify
 from autot.src.redis_con import AutotRedis
 from movie.models import Collection, Movie
@@ -77,13 +77,13 @@ class TheMoviedbSearch:
         if not imdb_id:
             return None
 
-        title = imdb_handler.get_title(tconst=imdb_id)
-        if not title:
+        rating = get_cached_imdb_rating(imdb_id=imdb_id)
+        if not rating:
             return None
 
         imdb_data = {
             "imdb_id": imdb_id,
-            "imdb_rating": title.get("average_rating"),
+            "imdb_rating": rating,
         }
         return imdb_data
 

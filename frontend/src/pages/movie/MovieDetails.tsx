@@ -25,6 +25,7 @@ export type MovieType = {
   remote_server_url: string
   the_moviedb_id: string
   imdb_id: string | null
+  imdb_rating: string | null
   release_date: string
   status: string
   status_display: string

@@ -84,24 +84,53 @@ class ShowId(TVMazeSearch):
 class ShowPersonSearch(TVMazeSearch):
     """search person cast credits"""
 
-    def search(self, tvmaze_person_id) -> list[dict] | None:
+    def _slice_person_credits(
+        self,
+        response: list[dict],
+        page: int | None = None,
+        page_size: int | None = None,
+    ) -> tuple[list[dict], int]:
+        """sort and optionally slice raw person credit response before parsing"""
+        response_sorted = sorted(
+            response,
+            key=lambda item: item.get("_embedded", {}).get("show", {}).get("premiered") or "",
+            reverse=True,
+        )
+        total_count = len(response_sorted)
+
+        if page is None or page_size is None:
+            return response_sorted, total_count
+
+        start = (page - 1) * page_size
+        end = start + page_size
+        return response_sorted[start:end], total_count
+
+    def search(
+        self,
+        tvmaze_person_id,
+        page: int | None = None,
+        page_size: int | None = None,
+        paginated: bool = False,
+    ) -> list[dict] | dict | None:
         """get list of show results of person"""
         url = f"people/{tvmaze_person_id}/castcredits?embed=show"
         response = TVMaze().get(url)
         if not response:
             return None
 
+        response_page, total_count = self._slice_person_credits(response=response, page=page, page_size=page_size)
         local_ids = self.get_local_ids()
         jf_items = self.get_jf_ids()
 
         options = []
-        for show_result in response:
+        for show_result in response_page:
             character_name = show_result["_links"]["character"]["name"]
 
             option = self.parse_result(show_result["_embedded"], local_ids, jf_items)
             option["character_name"] = character_name
             options.append(option)
 
-        options_sorted = sorted(options, key=lambda d: d["premiered"], reverse=True)
+        if paginated:
+            return {"count": total_count, "results": options}
 
-        return options_sorted
+        return options

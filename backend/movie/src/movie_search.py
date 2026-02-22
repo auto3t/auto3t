@@ -109,7 +109,34 @@ class MovieId(TheMoviedbSearch):
 class MoviePersonSearch(TheMoviedbSearch):
     """search person cast credits"""
 
-    def search(self, the_moviedb_person_id: str) -> list[dict] | None:
+    def _slice_person_credits(
+        self,
+        response: list[dict],
+        page: int | None = None,
+        page_size: int | None = None,
+    ) -> tuple[list[dict], int]:
+        """sort and optionally slice raw person credit response before parsing"""
+        response_sorted = sorted(
+            response,
+            key=lambda item: item.get("release_date") or "",
+            reverse=True,
+        )
+        total_count = len(response_sorted)
+
+        if page is None or page_size is None:
+            return response_sorted, total_count
+
+        start = (page - 1) * page_size
+        end = start + page_size
+        return response_sorted[start:end], total_count
+
+    def search(
+        self,
+        the_moviedb_person_id: str,
+        page: int | None = None,
+        page_size: int | None = None,
+        paginated: bool = False,
+    ) -> list[dict] | dict | None:
         """get list of movie results of person"""
 
         url = f"person/{the_moviedb_person_id}/movie_credits"
@@ -117,12 +144,15 @@ class MoviePersonSearch(TheMoviedbSearch):
         if not response:
             return None
 
+        cast_page, total_count = self._slice_person_credits(response=response["cast"], page=page, page_size=page_size)
         local_ids = self.get_local_ids()
         jf_items = self.get_jf_ids()
-        options = [self.parse_result(result, local_ids, jf_items) for result in response["cast"]]
-        options_sorted = sorted(options, key=lambda d: d["release_date"], reverse=True)
+        options = [self.parse_result(result, local_ids, jf_items) for result in cast_page]
 
-        return options_sorted
+        if paginated:
+            return {"count": total_count, "results": options}
+
+        return options
 
 
 class CollectionId:

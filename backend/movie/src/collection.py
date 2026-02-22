@@ -4,6 +4,7 @@ import json
 
 from artwork.models import Artwork
 from autot.models import log_change
+from autot.src.imdb_request import get_cached_imdb_rating
 from autot.src.redis_con import AutotRedis
 from movie.models import Collection, Movie
 from movie.serializers import MovieMissingSerializer
@@ -161,6 +162,8 @@ class CollectionMissing:
             movie_data["image_url"] = handler.get_image_url(poster_path)
         else:
             movie_data["image_url"] = None
+
+        movie_data["imdb_rating"] = get_cached_imdb_rating(imdb_id=movie_data.get("imdb_id"))
 
         serializer = MovieMissingSerializer(data=movie_data)
         serializer.is_valid(raise_exception=True)

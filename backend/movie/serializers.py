@@ -66,6 +66,8 @@ class MovieMissingSerializer(serializers.Serializer):  # pylint: disable=abstrac
     release_date = serializers.DateField(required=False, allow_null=True)
     production_state = serializers.ChoiceField(choices=MovieProductionState.names())
     image_url = serializers.CharField(required=False, allow_null=True)
+    imdb_id = serializers.CharField(allow_null=True)
+    imdb_rating = serializers.FloatField(allow_null=True, required=False)
 
 
 class MovieReleaseSerializer(serializers.ModelSerializer):

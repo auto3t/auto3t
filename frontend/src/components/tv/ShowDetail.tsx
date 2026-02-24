@@ -36,6 +36,7 @@ export type ShowType = {
   is_daily: boolean
   tvmaze_id: string
   imdb_id: string | null
+  imdb_rating: number | null
   search_query: string
   search_name?: string
   image_show?: ImageType
@@ -128,13 +129,16 @@ const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
             </StyledLink>
             <P>imdb</P>
             {showDetail.imdb_id && (
-              <StyledLink
-                to={`https://www.imdb.com/title/${showDetail.imdb_id}`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                {showDetail.imdb_id}
-              </StyledLink>
+              <div className="flex gap-2">
+                <StyledLink
+                  to={`https://www.imdb.com/title/${showDetail.imdb_id}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {showDetail.imdb_id}
+                </StyledLink>
+                {showDetail.imdb_rating && <P>{showDetail.imdb_rating}/10</P>}
+              </div>
             )}
           </div>
           <P dangerouslySetInnerHTML={{ __html: showDetail.description }} />

@@ -3,6 +3,7 @@
 from artwork.serializers import ArtworkSerializer
 from autot.models import TargetBitrate
 from autot.serializers import SearchWordSerializer, TargetBitrateSerializer, TorrentSerializer
+from autot.src.imdb_request import get_cached_imdb_rating
 from autot.static import TvEpisodeStatus
 from rest_framework import serializers
 from tv.models import TVEpisode, TVSeason, TVShow
@@ -23,10 +24,15 @@ class TVShowSerializer(serializers.ModelSerializer):
     target_bitrate = serializers.PrimaryKeyRelatedField(queryset=TargetBitrate.objects.all(), allow_null=True)
     target_file_size_str = serializers.CharField(read_only=True, allow_null=True)
     get_target_bitrate = TargetBitrateSerializer(read_only=True)
+    imdb_rating = serializers.SerializerMethodField(allow_null=True, read_only=True)
 
     class Meta:
         model = TVShow
         exclude = ("credit",)
+
+    def get_imdb_rating(self, obj: TVShow) -> float | None:
+        """get imdb rating, if available"""
+        return get_cached_imdb_rating(imdb_id=obj.imdb_id)
 
 
 class TVSeasonSerializer(serializers.ModelSerializer):

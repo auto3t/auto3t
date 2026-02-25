@@ -65,6 +65,17 @@ class IMDB:
 
         return response
 
+    def get_episodes(self, tconst: str) -> list[dict]:
+        """get episodes of show"""
+        if not tconst:
+            return []
+
+        response = self.make_request(f"series/{tconst}/episodes")
+        if not isinstance(response, list):
+            return []
+
+        return response
+
 
 def get_cached_imdb_rating(imdb_id: str | None) -> float | None:
     """get imdb rating"""
@@ -75,11 +86,50 @@ def get_cached_imdb_rating(imdb_id: str | None) -> float | None:
     if not imdb_handler.is_enabled:
         return None
 
+    key = f"imdb:{imdb_id}:rating"
+    cached_rating = cache.get(key)
+    if cached_rating:
+        return cached_rating
+
     title = imdb_handler.get_title(imdb_id)
     if not title:
         return None
 
-    key = f"imdb:{imdb_id}:rating"
-    rating = cache.get_or_set(key, lambda: title.get("average_rating"), timeout=settings.CACHE_TTL)
+    rating = title.get("average_rating")
+    cache.set(key, rating, timeout=settings.CACHE_TTL)
 
     return rating
+
+
+def get_cached_show_ratings(imdb_id: str | None):
+    """get cached imdb show ratings"""
+    if not imdb_id:
+        return None
+
+    imdb_handler = IMDB()
+    if not imdb_handler.is_enabled:
+        return None
+
+    key = f"imdb:{imdb_id}:episode_ratings"
+    cached_episode_ratings = cache.get(key)
+    if cached_episode_ratings:
+        return cached_episode_ratings
+
+    episodes = imdb_handler.get_episodes(tconst=imdb_id)
+
+    episode_ratings: dict[int, list[dict[str, int]]] = {}
+    for episode in episodes:
+        if not episode_ratings.get(episode["season_number"]):
+            episode_ratings[episode["season_number"]] = []
+
+        episode_ratings[episode["season_number"]].append(
+            {
+                "episode_number": episode["episode_number"],
+                "average_rating": episode["average_rating"],
+                "num_votes": episode["num_votes"],
+            }
+        )
+
+    cache.set(key, episode_ratings, timeout=settings.CACHE_TTL)
+
+    return episode_ratings

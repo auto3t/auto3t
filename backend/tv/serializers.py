@@ -3,7 +3,7 @@
 from artwork.serializers import ArtworkSerializer
 from autot.models import TargetBitrate
 from autot.serializers import SearchWordSerializer, TargetBitrateSerializer, TorrentSerializer
-from autot.src.imdb_request import get_cached_imdb_rating
+from autot.src.imdb_request import get_cached_imdb_rating, get_cached_show_ratings
 from autot.static import TvEpisodeStatus
 from rest_framework import serializers
 from tv.models import TVEpisode, TVSeason, TVShow
@@ -64,10 +64,31 @@ class TVEpisodeSerializer(serializers.ModelSerializer):
     target_bitrate = serializers.PrimaryKeyRelatedField(queryset=TargetBitrate.objects.all(), allow_null=True)
     target_file_size_str = serializers.CharField(read_only=True, allow_null=True)
     get_target_bitrate = TargetBitrateSerializer(read_only=True)
+    imdb_rating = serializers.SerializerMethodField(allow_null=True, read_only=True)
 
     class Meta:
         model = TVEpisode
         fields = "__all__"
+
+    def get_imdb_rating(self, obj: TVEpisode) -> float | None:
+        """get imdb rating, if available"""
+        show_imdb_id = obj.season.show.imdb_id
+        if not show_imdb_id:
+            return None
+
+        ratings = get_cached_show_ratings(imdb_id=show_imdb_id)
+        if not ratings:
+            return None
+
+        season_ratings = ratings.get(obj.season.number)
+        if not season_ratings:
+            return None
+
+        episode = [i for i in season_ratings if i["episode_number"] == obj.number]
+        if not episode:
+            return None
+
+        return episode[0]["average_rating"]
 
 
 class TVEpisodeBulkUpdateSerializer(serializers.Serializer):  # pylint: disable=abstract-method

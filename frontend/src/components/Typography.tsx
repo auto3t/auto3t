@@ -161,12 +161,16 @@ interface TableProps {
   headers?: string[] | React.ReactNode[]
   rows: (string | number | React.ReactNode)[][]
   className?: string
+  disableMinWidth?: boolean
+  cellPxClass?: string
 }
 
 export const Table: React.FC<TableProps> = ({
   headers,
   rows,
   className = '',
+  disableMinWidth = false,
+  cellPxClass = 'px-4',
 }) => {
   return (
     <div className="overflow-x-scroll">
@@ -190,8 +194,10 @@ export const Table: React.FC<TableProps> = ({
               {row.map((cell, colIndex) => (
                 <td
                   key={colIndex}
-                  className={`px-4 py-1 ${
-                    colIndex === 0 || colIndex === 1 ? 'md:min-w-[200px]' : ''
+                  className={`${cellPxClass} py-1 ${
+                    !disableMinWidth && (colIndex === 0 || colIndex === 1)
+                      ? 'md:min-w-[200px]'
+                      : ''
                   }`}
                 >
                   {cell}

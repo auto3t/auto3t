@@ -47,6 +47,21 @@ const MovieSearchResult: React.FC<MovieSearchResultInterface> = ({
             <StyledLink to={result.url} target="_blank" rel="noreferrer">
               {result.id}
             </StyledLink>
+            {result.imdb_id && (
+              <>
+                <P>imdb</P>
+                <div className="flex gap-2">
+                  <StyledLink
+                    to={`https://www.imdb.com/title/${result.imdb_id}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {result.imdb_id}
+                  </StyledLink>
+                  {result.imdb_rating && <P>{result.imdb_rating}/10</P>}
+                </div>
+              </>
+            )}
           </div>
           {result.character_name && <H3>As: {result.character_name}</H3>}
           <P dangerouslySetInnerHTML={{ __html: result.summary }} />

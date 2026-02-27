@@ -35,6 +35,7 @@ export type EpisodeType = {
   media_server_id: string
   target_file_size_str: string
   season: SeasonType
+  imdb_rating: number | null
 }
 
 interface EpisodeComponent {

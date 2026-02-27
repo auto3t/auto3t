@@ -17,6 +17,8 @@ type MissingMovieType = {
   release_date: string
   production_state: string
   image_url: string
+  imdb_id?: string | null
+  imdb_rating?: number | null
 }
 
 const MissingMovieTile = function ({
@@ -51,18 +53,18 @@ const MissingMovieTile = function ({
           src={missingMovie.image_url || posterDefault}
           alt={`missing-movie-poster-${missingMovie.name}`}
         />
-        <div className="absolute top-0 right-0 m-4">
+        <div className="absolute top-0 right-0 m-4 flex gap-2">
           {addingMovie === null && (
-            <Button
-              onClick={() => handleAddMovie(missingMovie.the_moviedb_id)}
-              className="mr-2 mb-2"
-            >
+            <Button onClick={() => handleAddMovie(missingMovie.the_moviedb_id)}>
               Add
             </Button>
           )}
           <TagItem variant="alert">
             {addingMovie === true ? 'adding...' : 'missing'}
           </TagItem>
+          {missingMovie.imdb_id && missingMovie.imdb_rating && (
+            <TagItem>IMDb {missingMovie.imdb_rating}/10</TagItem>
+          )}
         </div>
       </div>
       <div className="text-center">

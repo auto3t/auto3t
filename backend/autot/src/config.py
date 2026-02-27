@@ -28,6 +28,8 @@ class ConfigType(TypedDict):
     APP_ROOT: Path | None
     TZ: str
     DJANGO_DEBUG: bool
+    IMDB_DB_URL: str | None
+    IMDB_DB_API_KEY: str | None
 
 
 def get_config() -> ConfigType:
@@ -53,6 +55,8 @@ def get_config() -> ConfigType:
         "APP_ROOT": Path(environ["APP_ROOT"]) if environ.get("APP_ROOT") else None,
         "TZ": environ.get("TZ", "UTC"),
         "DJANGO_DEBUG": bool(environ.get("DJANGO_DEBUG", False)),
+        "IMDB_DB_URL": environ.get("IMDB_DB_URL"),
+        "IMDB_DB_API_KEY": environ.get("IMDB_DB_API_KEY"),
     }
 
     return config

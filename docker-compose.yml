@@ -34,6 +34,8 @@ services:
     restart: unless-stopped
     expose:
       - "6379"
+    volumes:
+      - redis:/data
 
   # additional services
   auto3t-prowlarr:
@@ -78,6 +80,7 @@ volumes:
   auto3t:
   downloads:
   media:
+  redis:
   prowlarr:
   jellyfin-config:
   jellyfin-cache:

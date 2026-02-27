@@ -5,6 +5,7 @@ import json
 from autot.models import SearchWord, get_logs
 from autot.serializers import ActionLogSerializer
 from autot.src.helper import bool_converter
+from autot.src.imdb_request import get_cached_show_ratings
 from autot.src.redis_con import AutotRedis
 from autot.src.search import SearchIndex
 from autot.static import TvShowStatus
@@ -138,6 +139,16 @@ class ShowViewSet(viewsets.ModelViewSet):
         refresh_status.delay()
 
         return Response(result)
+
+    @action(detail=True, methods=["get"])
+    def ratings(self, request, **kwargs) -> Response:
+        """get imdb ratings"""
+        show: TVShow = self.get_object()
+        ratings = get_cached_show_ratings(imdb_id=show.imdb_id)
+        if not ratings:
+            return Response({})
+
+        return Response(ratings)
 
     @action(detail=True, methods=["get"])
     def actionlog(self, request, **kwargs):

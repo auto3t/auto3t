@@ -15,12 +15,20 @@ from people.models import Credit, Person
 from people.serializers import CreditSerializer, PersonSerializer
 from people.src.person_search import SearchMoviePerson, SearchTvPerson
 from people.tasks import refresh_single_person
-from rest_framework import viewsets
+from rest_framework import exceptions, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.utils.urls import remove_query_param, replace_query_param
 from rest_framework.views import APIView
 from tv.models import TVShow
 from tv.src.show_search import ShowPersonSearch
+
+
+class RemotePersonCreditPagination(StandardResultsSetPagination):
+    """fixed pagination for remote credit search actions"""
+
+    page_size = 10
+    page_size_query_param = None
 
 
 class PersonViewSet(viewsets.ModelViewSet):
@@ -29,6 +37,49 @@ class PersonViewSet(viewsets.ModelViewSet):
     serializer_class = PersonSerializer
     queryset = Person.objects.none()
     pagination_class = StandardResultsSetPagination
+
+    def _get_remote_credit_pagination(self, request) -> tuple[int, int]:
+        """read and validate page params for remote credit endpoints"""
+        page_raw = request.query_params.get("page", "1")
+        try:
+            page = int(page_raw)
+        except (TypeError, ValueError) as err:
+            raise exceptions.NotFound("Invalid page.") from err
+
+        if page < 1:
+            raise exceptions.NotFound("Invalid page.")
+
+        return page, RemotePersonCreditPagination.page_size
+
+    def _remote_credit_paginated_response(self, request, options: dict, page: int, page_size: int):
+        """build DRF-style paginated response for already-sliced remote results"""
+        count = options.get("count", 0)
+        results = options.get("results", [])
+        start = (page - 1) * page_size
+        if count > 0 and start >= count:
+            raise exceptions.NotFound("Invalid page.")
+
+        current_url = request.build_absolute_uri()
+        next_link = None
+        if page * page_size < count:
+            next_link = replace_query_param(current_url, "page", page + 1)
+
+        previous_link = None
+        if page > 1:
+            previous_link = (
+                remove_query_param(current_url, "page")
+                if page == 2
+                else replace_query_param(current_url, "page", page - 1)
+            )
+
+        return Response(
+            {
+                "count": count,
+                "next": next_link,
+                "previous": previous_link,
+                "results": results,
+            }
+        )
 
     def get_queryset(self):
         """get queryset"""
@@ -84,8 +135,16 @@ class PersonViewSet(viewsets.ModelViewSet):
         if not person.tvmaze_id:
             return Response({"message": "Person has not tvmazeid"}, status=400)
 
-        options = ShowPersonSearch().search(tvmaze_person_id=person.tvmaze_id)
-        return Response(options)
+        page, page_size = self._get_remote_credit_pagination(request)
+        options = ShowPersonSearch().search(
+            tvmaze_person_id=person.tvmaze_id,
+            page=page,
+            page_size=page_size,
+            paginated=True,
+        )
+        if not options:
+            options = {"count": 0, "results": []}
+        return self._remote_credit_paginated_response(request, options, page, page_size)
 
     @method_decorator(cache_page(settings.CACHE_TTL))
     @action(detail=True, methods=["get"])
@@ -95,8 +154,16 @@ class PersonViewSet(viewsets.ModelViewSet):
         if not person.the_moviedb_id:
             return Response({"message": "Person has not the_moviedb_id"}, status=400)
 
-        options = MoviePersonSearch().search(the_moviedb_person_id=person.the_moviedb_id)
-        return Response(options)
+        page, page_size = self._get_remote_credit_pagination(request)
+        options = MoviePersonSearch().search(
+            the_moviedb_person_id=person.the_moviedb_id,
+            page=page,
+            page_size=page_size,
+            paginated=True,
+        )
+        if not options:
+            options = {"count": 0, "results": []}
+        return self._remote_credit_paginated_response(request, options, page, page_size)
 
 
 class CreditViewSet(viewsets.ReadOnlyModelViewSet):

@@ -4,6 +4,7 @@ import json
 from urllib import parse
 
 from autot.src.config import ConfigType, get_config
+from autot.src.imdb_request import IMDB, get_cached_imdb_rating
 from autot.src.media_server import MovieIdentify
 from autot.src.redis_con import AutotRedis
 from movie.models import Collection, Movie
@@ -42,6 +43,8 @@ class TheMoviedbSearch:
             "genres": result.get("genre_ids"),
             "summary": result.get("overview"),
             "character_name": result.get("character"),
+            "imdb_id": result.get("imdb_id"),
+            "imdb_rating": None,
         }
         if jf_items:
             media_server_id = jf_items.get(str(result["id"]), {}).get("media_server_id")
@@ -57,7 +60,32 @@ class TheMoviedbSearch:
         if "release_date" in result:
             movie_data.update({"release_date": result["release_date"]})
 
+        if not movie_data.get("imdb_id"):
+            imdb_data = self._enrich_imdb(the_moviedb_id=result["id"])
+            if imdb_data:
+                movie_data.update(imdb_data)
+
         return movie_data
+
+    def _enrich_imdb(self, the_moviedb_id: str) -> dict | None:
+        """get imdb id if enabled"""
+        imdb_handler = IMDB()
+        if not imdb_handler.is_enabled:
+            return None
+
+        imdb_id = MovieDB().get_imdb_id(the_moviedb_id)
+        if not imdb_id:
+            return None
+
+        rating = get_cached_imdb_rating(imdb_id=imdb_id)
+        if not rating:
+            return None
+
+        imdb_data = {
+            "imdb_id": imdb_id,
+            "imdb_rating": rating,
+        }
+        return imdb_data
 
 
 class MovieId(TheMoviedbSearch):
@@ -81,7 +109,34 @@ class MovieId(TheMoviedbSearch):
 class MoviePersonSearch(TheMoviedbSearch):
     """search person cast credits"""
 
-    def search(self, the_moviedb_person_id: str) -> list[dict] | None:
+    def _slice_person_credits(
+        self,
+        response: list[dict],
+        page: int | None = None,
+        page_size: int | None = None,
+    ) -> tuple[list[dict], int]:
+        """sort and optionally slice raw person credit response before parsing"""
+        response_sorted = sorted(
+            response,
+            key=lambda item: item.get("release_date") or "",
+            reverse=True,
+        )
+        total_count = len(response_sorted)
+
+        if page is None or page_size is None:
+            return response_sorted, total_count
+
+        start = (page - 1) * page_size
+        end = start + page_size
+        return response_sorted[start:end], total_count
+
+    def search(
+        self,
+        the_moviedb_person_id: str,
+        page: int | None = None,
+        page_size: int | None = None,
+        paginated: bool = False,
+    ) -> list[dict] | dict | None:
         """get list of movie results of person"""
 
         url = f"person/{the_moviedb_person_id}/movie_credits"
@@ -89,12 +144,15 @@ class MoviePersonSearch(TheMoviedbSearch):
         if not response:
             return None
 
+        cast_page, total_count = self._slice_person_credits(response=response["cast"], page=page, page_size=page_size)
         local_ids = self.get_local_ids()
         jf_items = self.get_jf_ids()
-        options = [self.parse_result(result, local_ids, jf_items) for result in response["cast"]]
-        options_sorted = sorted(options, key=lambda d: d["release_date"], reverse=True)
+        options = [self.parse_result(result, local_ids, jf_items) for result in cast_page]
 
-        return options_sorted
+        if paginated:
+            return {"count": total_count, "results": options}
+
+        return options
 
 
 class CollectionId:

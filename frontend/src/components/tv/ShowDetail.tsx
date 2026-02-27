@@ -22,6 +22,7 @@ import ManualSearch from '../ManualSearch'
 import { TargetBitrateType } from '../settings/TargetBitrate'
 import AddTargetBitrateComponent from '../AddTargetBitrateComponent'
 import { formatDuration } from '../../utils'
+import ShowRatings from './ShowRatings'
 
 export type ShowType = {
   id: number
@@ -58,6 +59,7 @@ const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
   const navigate = useNavigate()
   const { put, patch, del } = useApi()
   const [showDetails, setShowDetails] = useState(false)
+  const [showRatings, setShowRatings] = useState(false)
   const [editedSearchName, setEditedSearchName] = useState('')
   const [editMode, setEditMode] = useState(false)
   const [showDelete, setShowDelete] = useState(false)
@@ -187,6 +189,28 @@ const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
         >
           {showDetails ? 'Hide Details' : 'Show Details'}
         </Button>
+        {showDetail.imdb_id && (
+          <Button
+            className="ml-2"
+            onClick={() => setShowRatings(!showRatings)}
+            iconBefore={
+              showRatings ? (
+                <LucideIconWrapper
+                  name="ChevronUp"
+                  colorClassName="text-white"
+                />
+              ) : (
+                <LucideIconWrapper
+                  name="ChevronDown"
+                  colorClassName="text-white"
+                />
+              )
+            }
+          >
+            {showRatings ? 'Hide Ratings' : 'Show Ratings'}
+          </Button>
+        )}
+
         {showDetails && (
           <>
             <Table
@@ -304,6 +328,9 @@ const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
               />
             )}
           </>
+        )}
+        {showRatings && showDetail.imdb_id && (
+          <ShowRatings showId={showDetail.id} />
         )}
       </div>
     </div>

@@ -11,6 +11,7 @@ import ToggleSwitch from '../ConfigToggle'
 import {
   Button,
   H1,
+  H3,
   Input,
   LucideIconWrapper,
   P,
@@ -212,7 +213,8 @@ const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
         )}
 
         {showDetails && (
-          <>
+          <div className="pt-4">
+            <H3>Show Configuration Details</H3>
             <Table
               rows={[
                 [
@@ -327,7 +329,7 @@ const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
                 searchDefault={showDetail.search_query}
               />
             )}
-          </>
+          </div>
         )}
         {showRatings && showDetail.imdb_id && (
           <ShowRatings showId={showDetail.id} />

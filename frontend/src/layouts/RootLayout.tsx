@@ -15,6 +15,7 @@ import {
 } from '../components/Typography'
 import ProgressIndicator from '../components/ProgressIndicator'
 import SupportBar from '../components/SupportBar'
+import useAppconfigStore from '../stores/AppconfigStore'
 
 export default function RootLayout() {
   const { isLoggedIn } = useAuthStore()
@@ -22,6 +23,7 @@ export default function RootLayout() {
   const { get } = useApi()
   const { logoutUser } = useApi()
   const { showNotifications, setShowNotifications } = useNotificationStore()
+  const { setAppConfig } = useAppconfigStore()
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -32,7 +34,16 @@ export default function RootLayout() {
         console.error('Error fetching user profile:', error)
       }
     }
+    const fetchAppConfig = async () => {
+      try {
+        const data = await get('appconfig/')
+        setAppConfig(data)
+      } catch (error) {
+        console.error('Error fetching appconfig: ', error)
+      }
+    }
     fetchProfile()
+    fetchAppConfig()
   }, [])
 
   if (!isLoggedIn) {

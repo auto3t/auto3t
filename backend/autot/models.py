@@ -111,6 +111,11 @@ class AppConfig(models.Model):
         """file archive operation options"""
         return {i[0]: i[1] for i in self.FILE_OPERATION_CHOICES}
 
+    @property
+    def integrate_imdb(self) -> bool:
+        """for frontend controls"""
+        return settings.INTEGRATE_IMDB
+
     def __str__(self):
         return (
             f"Movie: {self.movie_archive_format} - TV: {self.tv_archive_format} - File: {self.file_archive_operation}"

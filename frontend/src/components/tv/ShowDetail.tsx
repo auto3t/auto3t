@@ -24,6 +24,7 @@ import { TargetBitrateType } from '../settings/TargetBitrate'
 import AddTargetBitrateComponent from '../AddTargetBitrateComponent'
 import { formatDuration } from '../../utils'
 import ShowRatings from './ShowRatings'
+import useAppconfigStore from '../../stores/AppconfigStore'
 
 export type ShowType = {
   id: number
@@ -64,6 +65,7 @@ const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
   const [editedSearchName, setEditedSearchName] = useState('')
   const [editMode, setEditMode] = useState(false)
   const [showDelete, setShowDelete] = useState(false)
+  const { appConfig } = useAppconfigStore()
 
   const toggleShowDetails = () => {
     setShowDetails(!showDetails)
@@ -175,27 +177,11 @@ const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
         </div>
       </div>
       <div className="p-4">
-        <Button
-          onClick={toggleShowDetails}
-          iconBefore={
-            showDetails ? (
-              <LucideIconWrapper name="ChevronUp" colorClassName="text-white" />
-            ) : (
-              <LucideIconWrapper
-                name="ChevronDown"
-                colorClassName="text-white"
-              />
-            )
-          }
-        >
-          {showDetails ? 'Hide Details' : 'Show Details'}
-        </Button>
-        {showDetail.imdb_id && (
+        <div className="flex gap-2">
           <Button
-            className="ml-2"
-            onClick={() => setShowRatings(!showRatings)}
+            onClick={toggleShowDetails}
             iconBefore={
-              showRatings ? (
+              showDetails ? (
                 <LucideIconWrapper
                   name="ChevronUp"
                   colorClassName="text-white"
@@ -208,9 +194,29 @@ const ShowDetail: React.FC<ShowInterface> = ({ showDetail, fetchShow }) => {
               )
             }
           >
-            {showRatings ? 'Hide Ratings' : 'Show Ratings'}
+            {showDetails ? 'Hide Details' : 'Show Details'}
           </Button>
-        )}
+          {showDetail.imdb_id && appConfig?.integrate_imdb && (
+            <Button
+              onClick={() => setShowRatings(!showRatings)}
+              iconBefore={
+                showRatings ? (
+                  <LucideIconWrapper
+                    name="ChevronUp"
+                    colorClassName="text-white"
+                  />
+                ) : (
+                  <LucideIconWrapper
+                    name="ChevronDown"
+                    colorClassName="text-white"
+                  />
+                )
+              }
+            >
+              {showRatings ? 'Hide Ratings' : 'Show Ratings'}
+            </Button>
+          )}
+        </div>
 
         {showDetails && (
           <div className="pt-4">

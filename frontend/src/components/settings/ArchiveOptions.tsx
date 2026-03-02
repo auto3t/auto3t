@@ -1,38 +1,15 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { H2, Input, Label, LucideIconWrapper, P } from '../Typography'
 import useApi from '../../hooks/api'
-
-type AppConfigType = {
-  movie_archive_format: string
-  movie_archive_format_display: string
-  movie_archive_format_options: Record<string, string>
-  tv_archive_format: string
-  tv_archive_format_display: string
-  tv_archive_format_options: Record<string, string>
-  file_archive_operation: string
-  file_archive_operation_display: string
-  file_archive_options: Record<string, string>
-}
+import useAppconfigStore, { AppConfigType } from '../../stores/AppconfigStore'
 
 export default function ArchiveOptions() {
-  const { get, post } = useApi()
-  const [appConfig, setAppConfig] = useState<AppConfigType | null>(null)
+  const { post } = useApi()
   const [newMovieArchiveFormat, setNewMovieArchiveFormat] = useState<
     string | null
   >(null)
   const [newFileArchive, setNewFileArchive] = useState<string | null>(null)
-
-  useEffect(() => {
-    const fetchAppConfig = async () => {
-      try {
-        const data = (await get('appconfig/')) as AppConfigType
-        setAppConfig(data)
-      } catch (error) {
-        console.error('Error fetching appconfig: ', error)
-      }
-    }
-    fetchAppConfig()
-  }, [setAppConfig])
+  const { appConfig, setAppConfig } = useAppconfigStore()
 
   const handleMovieArchiveFormatUpdate = async () => {
     try {

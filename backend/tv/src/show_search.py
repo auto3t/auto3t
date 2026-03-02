@@ -4,6 +4,7 @@ import json
 from urllib import parse
 
 from autot.src.config import ConfigType, get_config
+from autot.src.imdb_request import IMDB, get_cached_imdb_rating
 from autot.src.media_server import ShowIdentify
 from autot.src.redis_con import AutotRedis
 from tv.models import TVShow
@@ -43,6 +44,8 @@ class TVMazeSearch:
             "genres": result["genres"],
             "status": result["status"],
             "summary": result["summary"],
+            "imdb_id": result.get("externals", {}).get("imdb"),
+            "imdb_rating": None,
         }
         if jf_items:
             media_server_id = jf_items.get(str(result["id"]), {}).get("media_server_id")
@@ -60,7 +63,26 @@ class TVMazeSearch:
         if "image" in result and result["image"]:
             show_data.update({"image": result["image"].get("original")})
 
+        imdb_rating = self._enrich_imdb(imdb_id=show_data["imdb_id"])
+        if imdb_rating:
+            show_data["imdb_rating"] = imdb_rating
+
         return show_data
+
+    def _enrich_imdb(self, imdb_id) -> float | None:
+        """get imdb data"""
+        if not imdb_id:
+            return None
+
+        imdb_handler = IMDB()
+        if not imdb_handler.is_enabled:
+            return None
+
+        rating = get_cached_imdb_rating(imdb_id=imdb_id)
+        if not rating:
+            return None
+
+        return rating
 
 
 class ShowId(TVMazeSearch):
@@ -69,8 +91,7 @@ class ShowId(TVMazeSearch):
     def search(self, query_raw: str) -> list[dict] | None:
         """search in api"""
         query_encoded = parse.quote(query_raw)
-        url = f"search/shows?q={query_encoded}"
-        response = TVMaze().get(url)
+        response = TVMaze().get(f"search/shows?q={query_encoded}")
         if not response:
             return None
 

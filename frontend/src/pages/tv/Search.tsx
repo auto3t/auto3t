@@ -19,6 +19,8 @@ export type ShowSearchResultType = {
   character_name?: string
   ended?: string
   image?: string
+  imdb_id: string | null
+  imdb_rating: number | null
 }
 
 const TVSearch = () => {

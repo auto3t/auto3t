@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import useApi from '../../hooks/api'
 import Spinner from '../Spinner'
-import { H3, P, Table } from '../Typography'
+import { H3, Table } from '../Typography'
 
 type RatingItemType = {
   episode_number: number
@@ -77,23 +77,25 @@ const ShowRatings = ({ showId }: { showId: number }) => {
     : 0
 
   const headers = [
-    'Season',
+    '',
     'Avg',
     ...Array.from({ length: maxEpisodes }, (_, idx) => `E${idx + 1}`),
   ]
 
-  const rows = seasons.map(([season, episodes]) => {
+  const rows = seasons.flatMap(([season, episodes]) => {
     const ratedEpisodes = episodes.filter(
       (episode): episode is RatingItemType & { average_rating: number } =>
         episode.average_rating !== null,
     )
+
+    // Skip seasons where no episode has a rating.
+    if (ratedEpisodes.length === 0) {
+      return []
+    }
+
     const averageInSeason =
-      ratedEpisodes.length > 0
-        ? ratedEpisodes.reduce(
-            (sum, episode) => sum + episode.average_rating,
-            0,
-          ) / ratedEpisodes.length
-        : null
+      ratedEpisodes.reduce((sum, episode) => sum + episode.average_rating, 0) /
+      ratedEpisodes.length
 
     const ratingsByEpisode = new Map(
       episodes.map((episode) => [
@@ -107,16 +109,16 @@ const ShowRatings = ({ showId }: { showId: number }) => {
         : '-',
     )
 
-    return [`S${season}`, renderRatingBadge(averageInSeason), ...episodeCells]
+    return [[`S${season}`, renderRatingBadge(averageInSeason), ...episodeCells]]
   })
 
   return (
-    <div>
+    <div className="pt-4">
       {isLoading ? (
         <Spinner />
-      ) : !ratings || seasons.length === 0 ? (
-        <P>No ratings found.</P>
-      ) : (
+      ) : seasons.length === 0 ||
+        maxEpisodes === 0 ||
+        rows.length === 0 ? null : (
         <>
           <H3>IMDb Ratings by Season and Episode</H3>
           <Table

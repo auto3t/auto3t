@@ -73,6 +73,7 @@ class AppConfigSerializer(serializers.ModelSerializer):
     tv_archive_format_options = serializers.JSONField(read_only=True)
     file_archive_operation_display = serializers.CharField(source="get_file_archive_operation_display", read_only=True)
     file_archive_options = serializers.JSONField(read_only=True)
+    integrate_imdb = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = AppConfig

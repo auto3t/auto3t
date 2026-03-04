@@ -84,6 +84,7 @@ class Movie(BaseModel):
     the_moviedb_id = models.CharField(max_length=255, unique=True)
     imdb_id = models.CharField(255, unique=True, null=True, blank=True)
     name = models.CharField(max_length=255)
+    search_name = models.CharField(max_length=255, null=True, blank=True)
     date_added = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     release_date = models.DateField(null=True, blank=True)
@@ -139,7 +140,7 @@ class Movie(BaseModel):
     @property
     def search_query(self) -> str:
         """build search query"""
-        search_query = self.name
+        search_query = self.search_name or self.name
         if self.release_date:
             search_query += f" {self.release_date.year}"  # pylint: disable=no-member
         return search_query

@@ -23,7 +23,7 @@ const ShowTile: React.FC<ShowTileInterface> = ({ show }) => {
           image={getShowPoster(show)}
           alt={'show-poster-' + show.name}
         />
-        <div className="flex gap-2 absolute top-0 right-0 m-4">
+        <div className="flex flex-wrap justify-end gap-2 absolute top-0 right-0 m-4">
           <TagItem title={show.status_display}>{show.status || '-'}</TagItem>
           {show.imdb_rating && <TagItem>IMDb {show.imdb_rating}/10</TagItem>}
         </div>

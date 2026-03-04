@@ -237,3 +237,5 @@ LOGGING = {
 }
 
 AUTOT_TRACKER_URL = "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all.txt"
+
+INTEGRATE_IMDB = AUTOT_CONFIG["IMDB_DB_URL"]

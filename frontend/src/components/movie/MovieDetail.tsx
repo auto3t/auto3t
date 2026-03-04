@@ -6,6 +6,7 @@ import {
   Button,
   H1,
   H3,
+  Input,
   LucideIconWrapper,
   P,
   Select,
@@ -28,16 +29,24 @@ interface MovieInterface {
 }
 
 const MovieDetail: React.FC<MovieInterface> = ({ movieDetail, fetchMovie }) => {
-  const { patch, del } = useApi()
+  const { patch, del, put } = useApi()
   const navigate = useNavigate()
   const [showMovieDetail, setShowMovieDetail] = useState(false)
   const [movieDelete, setMovieDelete] = useState(false)
   const [editMovieStatus, setEditMovieStatus] = useState(false)
+  const [editMode, setEditMode] = useState(false)
+  const [editedSearchName, setEditedSearchName] = useState('')
 
   const handleMovieDelete = () => {
     del(`movie/movie/${movieDetail.id}/`).then(() => {
       navigate('/movie')
     })
+  }
+
+  const toggleShowDetails = () => {
+    setShowMovieDetail(!showMovieDetail)
+    setEditedSearchName(movieDetail.search_name || '')
+    setEditMode(false)
   }
 
   const getMoviePoster = (movieDetail: MovieType) => {
@@ -60,6 +69,28 @@ const MovieDetail: React.FC<MovieInterface> = ({ movieDetail, fetchMovie }) => {
     } catch (error) {
       console.error('error updating status: ', error)
     }
+  }
+
+  const handleSearchNameChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setEditedSearchName(event.target.value)
+  }
+
+  const handleSearchNameSubmit = () => {
+    put(`movie/movie/${movieDetail.id}/`, { search_name: editedSearchName })
+      .then(() => {
+        fetchMovie()
+        setEditMode(false)
+      })
+      .catch((error) => {
+        console.error('Error:', error)
+      })
+  }
+
+  const handleSearchNameCancel = () => {
+    setEditedSearchName(movieDetail.search_name || '')
+    setEditMode(false)
   }
 
   return (
@@ -153,7 +184,7 @@ const MovieDetail: React.FC<MovieInterface> = ({ movieDetail, fetchMovie }) => {
       </div>
       <div className="ml-6 mb-6">
         <Button
-          onClick={() => setShowMovieDetail(!showMovieDetail)}
+          onClick={toggleShowDetails}
           iconBefore={
             showMovieDetail ? (
               <LucideIconWrapper colorClassName="text-white" name="ChevronUp" />
@@ -196,6 +227,41 @@ const MovieDetail: React.FC<MovieInterface> = ({ movieDetail, fetchMovie }) => {
                       ) || false
                     }
                   />,
+                ],
+                [
+                  'Search Alias',
+                  editMode ? (
+                    <div className="flex gap-2 items-center">
+                      <Input
+                        type="text"
+                        value={editedSearchName || ''}
+                        onChange={handleSearchNameChange}
+                      />
+                      <LucideIconWrapper
+                        name="Check"
+                        title="Save search alias"
+                        className="cursor-pointer"
+                        colorClassName="text-green-700"
+                        onClick={handleSearchNameSubmit}
+                      />
+                      <LucideIconWrapper
+                        name="X"
+                        title="Cancel new search alias"
+                        className="cursor-pointer"
+                        onClick={handleSearchNameCancel}
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex gap-2">
+                      <span>{movieDetail.search_name || ''} </span>
+                      <LucideIconWrapper
+                        name="Pencil"
+                        className="cursor-pointer"
+                        title="Edit search alias"
+                        onClick={() => setEditMode(true)}
+                      />
+                    </div>
+                  ),
                 ],
                 [
                   'Delete Movie',

@@ -136,7 +136,7 @@ class ShowPersonSearch(TVMazeSearch):
         """get list of show results of person"""
         url = f"people/{tvmaze_person_id}/castcredits?embed=show"
         response = TVMaze().get(url)
-        if not response:
+        if not response or not isinstance(response, list):
             return None
 
         response_page, total_count = self._slice_person_credits(response=response, page=page, page_size=page_size)

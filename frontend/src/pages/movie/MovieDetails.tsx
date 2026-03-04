@@ -18,6 +18,7 @@ import PeopleCredits from '../../components/people/PeopleCredits'
 export type MovieType = {
   id: number
   name: string
+  search_name: string
   name_display: string
   tagline: string
   description: string

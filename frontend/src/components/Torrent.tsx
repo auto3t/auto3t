@@ -57,7 +57,7 @@ const Torrent: React.FC<TorrentInterface> = ({ torrent, setRefresh }) => {
         <TagItem>Type: {torrent.torrent_type_display}</TagItem>
         <TagItem>State: {torrent.torrent_state_display}</TagItem>
       </div>
-      {validatedProgress && validatedProgress > 0 && (
+      {validatedProgress !== null && validatedProgress > 0 && (
         <div className="relative h-10">
           <div className="absolute w-full bg-accent-1 bottom-0">
             <div

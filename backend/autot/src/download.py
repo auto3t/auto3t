@@ -115,7 +115,7 @@ class Transmission:
 
         last_activity = remote_torrent.activity_date
         has_activity = bool(last_activity.timestamp())
-        has_recent_activity = timezone.now().utcnow().timestamp() - last_activity.timestamp() < self.ACTIVITY_THRESH
+        has_recent_activity = timezone.now().timestamp() - last_activity.timestamp() < self.ACTIVITY_THRESH
 
         if has_activity and has_recent_activity:
             return False

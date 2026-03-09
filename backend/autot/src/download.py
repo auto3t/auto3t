@@ -2,14 +2,15 @@
 
 from math import ceil
 
+from autot.models import Torrent
 from autot.src.config import ConfigType, get_config
-from autot.src.helper import get_tracker_list
+from autot.src.helper import get_cached_tracker_list
 from autot.static import MovieStatus, TvEpisodeStatus
 from django.utils import timezone
 from movie.models import Movie
 from transmission_rpc import Client
 from transmission_rpc.torrent import Torrent as TransmissionTorrent
-from tv.models import Torrent, TVEpisode
+from tv.models import TVEpisode
 
 
 class Transmission:
@@ -17,6 +18,7 @@ class Transmission:
 
     CONFIG: ConfigType = get_config()
     ACTIVITY_THRESH = 3600
+    TRACKER_LIST_DELAY = 300
 
     def __init__(self):
         self.transission_client = Client(
@@ -50,9 +52,9 @@ class Transmission:
 
         return None
 
-    def cancel(self, torrent: Torrent) -> Torrent:
+    def cancel(self, torrent: Torrent, reason: str = "Torrent canceled by application overwrite.") -> Torrent:
         """cancel and reset torrent"""
-        updated_torrent = torrent.set_to_ignore()
+        updated_torrent = torrent.set_to_ignore(reason=reason)
         to_delete = self.get_single(torrent)
         if to_delete:
             self.delete(to_delete)
@@ -77,7 +79,7 @@ class Transmission:
         for local_torrent in to_check:
             remote_torrent = in_queue.get(local_torrent.magnet_hash)
             if not remote_torrent:
-                local_torrent.set_to_ignore()
+                local_torrent.set_to_ignore(reason="Local torrent is missing from queue.")
                 continue
 
             has_files = remote_torrent.get_files()
@@ -100,27 +102,54 @@ class Transmission:
                 local_torrent.progress = None
                 needs_archiving = True
 
+            self.check_trackers(local_torrent, remote_torrent)
+            self.check_inactive(local_torrent, remote_torrent)
+
             local_torrent.save()
 
         return needs_checking, needs_archiving
 
-    def needs_refresh(self, remote_torrent: TransmissionTorrent) -> bool:
-        """return True if torrent is not working"""
+    def check_trackers(self, local_torrent: Torrent, remote_torrent: TransmissionTorrent):
+        """check if torrent needs trackerlist update"""
+        if local_torrent.torrent_state != "d":
+            return
+
+        if local_torrent.has_tracker_list:
+            return
+
+        is_new = remote_torrent.seconds_downloading < self.TRACKER_LIST_DELAY
+        if is_new:
+            return
+
+        last_activity = remote_torrent.activity_date
+        has_activity = bool(last_activity.timestamp())
+        has_recent_activity = timezone.now().timestamp() - last_activity.timestamp() < self.TRACKER_LIST_DELAY
+
+        if has_activity and has_recent_activity:
+            return
+
+        tracker_list = get_cached_tracker_list()
+        tracker_list_list = [[i] for i in tracker_list]
+        self.transission_client.change_torrent(remote_torrent.id, tracker_list=tracker_list_list)
+        local_torrent.has_tracker_list = True
+
+    def check_inactive(self, local_torrent: Torrent, remote_torrent: TransmissionTorrent) -> None:
+        """check if torrent is inactive, trigger ignore"""
         if remote_torrent.status.value != "downloading":
-            return False
+            return
 
         is_new = remote_torrent.seconds_downloading < self.ACTIVITY_THRESH
         if is_new:
-            return False
+            return
 
         last_activity = remote_torrent.activity_date
         has_activity = bool(last_activity.timestamp())
         has_recent_activity = timezone.now().timestamp() - last_activity.timestamp() < self.ACTIVITY_THRESH
 
         if has_activity and has_recent_activity:
-            return False
+            return
 
-        return True
+        self.cancel(torrent=local_torrent, reason="Torrent ignored due to lack of activity.")
 
     def validate_expected(self, remote_torrent: TransmissionTorrent, local_torrent: Torrent):
         """validate expected files are in torrent"""
@@ -144,6 +173,7 @@ class Transmission:
         episode.status = TvEpisodeStatus.s.name
         episode.save()
         local_torrent.has_expected_files = False
+        local_torrent.message = "Torrent does not contain expected episode file."
         local_torrent.save()
 
     def _check_multi_episode(self, remote_torrent: TransmissionTorrent, local_torrent: Torrent) -> None:
@@ -157,6 +187,7 @@ class Transmission:
             self.cancel(local_torrent)
             episodes.update(status=TvEpisodeStatus.s.name)
             local_torrent.has_expected_files = False
+            local_torrent.message = "Torrent does not contain expected episodes files."
             local_torrent.save()
             return
 
@@ -176,6 +207,7 @@ class Transmission:
         movie.status = MovieStatus.s.name
         movie.save()
         local_torrent.has_expected_files = False
+        local_torrent.message = "Torrent does not contain expected movie file."
         local_torrent.save()
 
     def _is_valid(self, remote_torrent: TransmissionTorrent, to_check: Movie | TVEpisode) -> bool:
@@ -189,10 +221,3 @@ class Transmission:
             pass
 
         return False
-
-    def add_trackers(self):
-        """add trackers for transmissions"""
-        tracker_list = get_tracker_list()
-        tracker_list_list = [[i] for i in tracker_list]
-        for torrent in self.transission_client.get_torrents():
-            self.transission_client.change_torrent(torrent.id, tracker_list=tracker_list_list)

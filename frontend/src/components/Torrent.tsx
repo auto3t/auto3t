@@ -12,6 +12,7 @@ export type TorrentType = {
   torrent_type: string
   torrent_state: string
   progress?: number
+  message: string | null
 }
 
 interface TorrentInterface {
@@ -53,9 +54,10 @@ const Torrent: React.FC<TorrentInterface> = ({ torrent, setRefresh }) => {
   return (
     <div className="p-4 my-4 border border-accent-1">
       {torrent.title && <P className="mb-2">{torrent.title}</P>}
-      <div className="flex gap-2">
+      <div className="flex gap-2 items-center">
         <TagItem>Type: {torrent.torrent_type_display}</TagItem>
         <TagItem>State: {torrent.torrent_state_display}</TagItem>
+        {torrent.message && <P>{torrent.message}</P>}
       </div>
       {validatedProgress !== null && validatedProgress > 0 && (
         <div className="relative h-10">

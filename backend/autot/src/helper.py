@@ -7,6 +7,7 @@ from urllib.parse import parse_qs
 
 import requests
 from django.conf import settings
+from django.core.cache import cache
 
 if TYPE_CHECKING:
     from autot.models import TargetBitrate
@@ -35,14 +36,23 @@ def get_magnet_hash(magnet: str) -> str:
     return magnets[0].split(":")[-1].lower()
 
 
-def get_tracker_list() -> list[str]:
+def get_cached_tracker_list() -> list[str]:
     """get tracker lists"""
+    key = "trackerlist"
+    cached_list = cache.get(key)
+    if cached_list:
+        return cached_list
+
     response = requests.get(settings.AUTOT_TRACKER_URL, timeout=300)
     if not response.ok:
         logger.error("failed to get tracker fallback: status %s, error: %s", response.status_code, response.text)
-        return []
+        tracker_list = []
+    else:
+        tracker_list = response.text.split()
 
-    return response.text.split()
+    cache.set(key, tracker_list, timeout=settings.CACHE_TTL)
+
+    return tracker_list
 
 
 def title_clean(title) -> str:

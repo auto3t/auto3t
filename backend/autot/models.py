@@ -194,6 +194,8 @@ class Torrent(models.Model):
     torrent_state = models.CharField(choices=TORRENT_STATE, max_length=1, default="u")
     progress = models.IntegerField(null=True, blank=True)
     has_expected_files = models.BooleanField(null=True, blank=True)
+    has_tracker_list = models.BooleanField(default=False)
+    message = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
         unique_together = ("magnet", "torrent_type")
@@ -203,7 +205,7 @@ class Torrent(models.Model):
         """extract magnet hash"""
         return get_magnet_hash(self.magnet)
 
-    def set_to_ignore(self):
+    def set_to_ignore(self, reason: str | None = None):
         """set torrent to ignore"""
         from movie.models import Movie
         from tv.models import TVEpisode
@@ -211,11 +213,11 @@ class Torrent(models.Model):
         if self.torrent_type in ["e", "s", "w"]:
             episodes = TVEpisode.objects.filter(torrent=self)
             for episode in episodes:
-                episode.reset_download()
+                episode.reset_download(reason)
         elif self.torrent_type == "m":
             movies = Movie.objects.filter(torrent=self)
             for movie in movies:
-                movie.reset_download()
+                movie.reset_download(reason)
 
         self.refresh_from_db()
         return self

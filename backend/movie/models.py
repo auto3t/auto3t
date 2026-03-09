@@ -198,10 +198,10 @@ class Movie(BaseModel):
         self.save()
         log_change(self, action="c", field_name="torrent", new_value=torrent.magnet_hash)
 
-    def reset_download(self) -> None:
+    def reset_download(self, reason: str | None) -> None:
         """reset torrent and state"""
         self.torrent.filter(torrent_state__in=["u", "q", "d"]).update(  # pylint: disable=no-member
-            torrent_state="i", progress=None
+            torrent_state="i", progress=None, message=reason
         )
         self.status = None
         self.media_server_id = None

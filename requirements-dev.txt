@@ -1,12 +1,12 @@
 -r backend/requirements.txt
-black==26.1.0
-codespell==2.4.1
+black==26.3.0
+codespell==2.4.2
 flake8==7.3.0
-ipython==9.10.0
-isort==8.0.0
+ipython==9.11.0
+isort==8.0.1
 pre-commit==4.5.1
 pylint-django==2.7.0
-python-dotenv==1.2.1
+python-dotenv==1.2.2
 requirementscheck==0.1.0
-types-pytz==2025.2.0.20251108
+types-pytz==2026.1.1.20260304
 types-requests==2.32.4.20260107

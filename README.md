@@ -69,6 +69,8 @@ All environment variables are documented in detail in the [installation docs](ht
 | REDIS_CON             | Redis connection string               | required  |
 | TZ                    | Timezone                              | optional  |
 | DJANGO_DEBUG          | Additional Debug output               | optional  |
+| IMDB_DB_URL           | Additional metadata from [imdb-db](https://github.com/bbilly1/imdb-db)   | optional  |
+| IMDB_DB_API_KEY       | API key for IMDb-db                   | optional  |
 | JF_URL                | Container internal Jellyfin URL       | required  |
 | JF_PROXY_URL          | Jellyfin proxy URL                    | optional  |
 | JF_API_KEY            | Jellyfin API key                      | required  |

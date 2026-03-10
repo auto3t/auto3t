@@ -5,6 +5,7 @@
 - Short: A3T
 - Pronounced: *auto-three-tee*
 - [Screenshots](SHOWCASE.md)
+- [docs](https://docs.auto3t.com/) built from [auto3t/docs](https://github.com/auto3t/docs)
 
 ## Core Functionality
 

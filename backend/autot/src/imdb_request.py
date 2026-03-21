@@ -33,9 +33,13 @@ class IMDB:
         if api_key:
             headers = {"Authorization": f"Bearer {api_key}"}
 
-        response = requests.get(f"{base_path}/api/{path}", headers=headers, timeout=self.TIMEOUT)
-        if not response.ok:
-            logger.error("imdb-db request failed, status %s, error %s", response.status_code, response.text)
+        try:
+            response = requests.get(f"{base_path}/api/{path}", headers=headers, timeout=self.TIMEOUT)
+            if not response.ok:
+                logger.error("imdb-db request failed, status %s, error %s", response.status_code, response.text)
+                return None
+        except requests.exceptions.ConnectionError as err:
+            logger.error("imdb-db request failed: %s", str(err))
             return None
 
         return response.json()

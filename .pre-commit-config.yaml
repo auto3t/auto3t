@@ -32,6 +32,13 @@ repos:
         exclude: ^frontend/package-lock.json
   - repo: local
     hooks:
+      - id: actionlint
+        name: actionlint
+        entry: actionlint
+        language: system
+        files: ^\.github/workflows/.*\.ya?ml$
+  - repo: local
+    hooks:
       - id: eslint
         name: eslint-frontend
         entry: ./frontend/node_modules/.bin/eslint --fix --config ./frontend/eslint.config.mjs

@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { KeyWordCategoryType } from '../components/KeywordCategories'
+import { KeyWordCategoryType } from '../components/settings/KeywordCategories'
 
 interface CategoryFormStoreInterface {
   categories: KeyWordCategoryType[]

@@ -38,8 +38,15 @@ const SeasonEpisodeSummary = () => {
 
   const hasOffset = rows.some((row) => row[1] !== '')
   const hasRatings = rows.some((row) => row[2] !== '')
-  if (!hasOffset || !hasRatings) {
-    rows = rows.map((row) => row.filter((_, colIndex) => colIndex !== 1))
+  const columnsToRemove: number[] = []
+
+  if (!hasRatings) columnsToRemove.push(2)
+  if (!hasOffset) columnsToRemove.push(1)
+
+  if (columnsToRemove.length > 0) {
+    rows = rows.map((row) =>
+      row.filter((_, colIndex) => !columnsToRemove.includes(colIndex)),
+    )
   }
   if (!hasRatings) headers.splice(2, 1)
   if (!hasOffset) headers.splice(1, 1)

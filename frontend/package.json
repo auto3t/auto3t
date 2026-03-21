@@ -18,7 +18,8 @@
     "start": "vite",
     "build": "vite build",
     "test": "vitest",
-    "lint": "eslint '**/*.{js,jsx,ts,tsx}' --fix",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src eslint.config.mjs vite.config.mts --fix",
     "format": "prettier --write '**/*.{js,jsx,ts,tsx,json,css,md}'"
   },
   "eslintConfig": {
@@ -54,6 +55,7 @@
     "prettier": "^3.4.2",
     "tailwindcss": "^4.1.7",
     "typescript": "5.7.2",
-    "vite": "^6.0.3"
+    "vite": "^6.0.3",
+    "vite-plugin-checker": "^0.12.0"
   }
 }

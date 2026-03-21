@@ -30,15 +30,18 @@ repos:
     hooks:
       - id: codespell
         exclude: ^frontend/package-lock.json
-  - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v10.0.2
+  - repo: local
     hooks:
       - id: eslint
         name: eslint-frontend
-        entry: npm run --prefix ./frontend lint
-        files: \.[jt]sx?$
-        types: [file]
-        language: node
+        entry: ./frontend/node_modules/.bin/eslint --fix --config ./frontend/eslint.config.mjs
+        language: system
+        files: ^frontend/.*\.[cm]?[jt]sx?$
+      - id: frontend-typecheck
+        name: frontend-typecheck
+        entry: npm run --prefix ./frontend typecheck
+        language: system
+        files: ^frontend/src/.*\.[jt]sx?$
         pass_filenames: false
   - repo: https://github.com/pre-commit/mirrors-prettier
     rev: v4.0.0-alpha.8
@@ -50,4 +53,4 @@ repos:
         files: ^frontend/
         pass_filenames: false
 
-exclude: 'migrations/.*'
+exclude: '(^frontend/build/|migrations/.*)'

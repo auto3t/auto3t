@@ -72,7 +72,7 @@ class MediaServerIdentify:
         """get all jf episodes"""
         url = f"Items?Recursive=true&IncludeItemTypes={self.JF_ITEM_TYPE}&fields=ProviderIds,MediaSources"
         response = self.make_request(url, "GET")
-        jf_items = {}
+        jf_items: dict[str, MediaServerItem] = {}
         for item in response["Items"]:
             sources = item.get("MediaSources")
             if not sources:
@@ -102,11 +102,11 @@ class MediaServerIdentify:
                 "duration": duration,
                 "bitrate": bitrate,
             }
-            tv_maze_id: str | None = item["ProviderIds"].get(self.PROVIDER_ID)
-            if not tv_maze_id:
+            provider_id: str | None = item["ProviderIds"].get(self.PROVIDER_ID)
+            if not provider_id:
                 continue
 
-            jf_items.update({tv_maze_id: stream_meta})
+            jf_items.update({provider_id: stream_meta})
 
         AutotRedis().set_hash_messages(self.cache_key, values=jf_items, expire=settings.CACHE_TTL, delete=True)
 

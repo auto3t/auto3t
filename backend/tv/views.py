@@ -6,6 +6,7 @@ from autot.models import SearchWord, get_logs
 from autot.serializers import ActionLogSerializer
 from autot.src.helper import bool_converter
 from autot.src.imdb_request import get_cached_show_ratings
+from autot.src.media_server import ShowMissing
 from autot.src.redis_con import AutotRedis
 from autot.src.search import SearchIndex
 from autot.static import TvShowStatus
@@ -379,5 +380,15 @@ class ShowRemoteSearch(APIView):
         """get request"""
         query = request.GET.get("q")
         response = ShowId().search(query)
+
+        return Response(response)
+
+
+class MediaserverShowDiscovery(APIView):
+    """search for shows in medieaserver not ended"""
+
+    def get(self, request):
+        """get request"""
+        response = ShowMissing().get_jf_data()
 
         return Response(response)

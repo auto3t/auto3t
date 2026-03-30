@@ -6,6 +6,7 @@ from typing import NotRequired, TypedDict
 import requests
 from autot.models import log_change
 from autot.src.config import ConfigType, get_config
+from autot.src.imdb_request import get_cached_imdb_rating
 from autot.src.redis_con import AutotRedis
 from django.conf import settings
 from django.db.models.query import QuerySet
@@ -43,7 +44,7 @@ class MediaServerIdentify:
         """get redis cache key"""
         return f"jf:{self.JF_ITEM_TYPE.lower()}"
 
-    def get_unidentified(self):
+    def get_local(self):
         """implement in base class"""
         raise NotImplementedError
 
@@ -115,7 +116,7 @@ class MediaServerIdentify:
     def identify(self):
         """identify movies"""
         jf_items = self.get_jf_data()
-        to_id = self.get_unidentified()
+        to_id = self.get_local()
 
         for media_item in to_id:
             if hasattr(media_item, "the_moviedb_id"):
@@ -173,7 +174,7 @@ class EpisodeIdentify(MediaServerIdentify):
     JF_ITEM_TYPE: str = "Episode"
     PROVIDER_ID: str = "TvMaze"
 
-    def get_unidentified(self) -> QuerySet[TVEpisode]:
+    def get_local(self) -> QuerySet[TVEpisode]:
         """get tv episodes not identified"""
         return TVEpisode.objects.filter(media_server_id__isnull=True)
 
@@ -184,7 +185,7 @@ class ShowIdentify(MediaServerIdentify):
     JF_ITEM_TYPE: str = "Series"
     PROVIDER_ID: str = "TvMaze"
 
-    def get_unidentified(self) -> QuerySet[TVShow]:
+    def get_local(self) -> QuerySet[TVShow]:
         """get shows not identified"""
         return TVShow.objects.filter(media_server_id__isnull=True)
 
@@ -208,12 +209,68 @@ class ShowIdentify(MediaServerIdentify):
         return jf_items
 
 
+class ShowMissing(MediaServerIdentify):
+    """get shows from JF missing in A3T"""
+
+    JF_ITEM_TYPE: str = "Series"
+    PROVIDER_ID: str = "TvMaze"
+
+    def get_local(self):
+        """get all local shows"""
+        return TVShow.objects.all()
+
+    def get_jf_data(self) -> dict:
+        """get all jf episodes, partial result, only for matching"""
+        url = f"Items?Recursive=true&IncludeItemTypes={self.JF_ITEM_TYPE}&fields=ProviderIds,Overview"
+        response = self.make_request(url, "GET")
+        all_shows = self.get_local()
+        indexed = {i[0] for i in all_shows.values_list("tvmaze_id")}
+        jf_items = {}
+        for item in response["Items"]:
+
+            tv_maze_id: str | None = item["ProviderIds"].get(self.PROVIDER_ID)
+            if not tv_maze_id:
+                continue
+
+            if tv_maze_id in indexed:
+                continue
+
+            status = item.get("Status")
+            if status == "Ended":
+                continue
+
+            base_url = self.CONFIG["JF_PROXY_URL"]
+            media_server_id = item["Id"]
+            imdb_id = item["ProviderIds"].get("Imdb")
+
+            show_data = {
+                "name": item["Name"],
+                "media_server_id": media_server_id,
+                "media_server_url": f"{base_url}/web/#/details?id={media_server_id}",
+                "status": status,
+                "overview": item.get("Overview"),
+                "premier_date": item.get("PremiereDate"),
+                "image_url": f"{base_url}/Items/{media_server_id}/Images/Primary",
+                "tv_maze_id": tv_maze_id,
+                "imdb_id": imdb_id,
+                "imdb_rating": None,
+            }
+            if imdb_id:
+                rating = get_cached_imdb_rating(imdb_id=imdb_id)
+                if rating:
+                    show_data["imdb_rating"] = rating
+
+            jf_items.update({tv_maze_id: show_data})
+
+        return jf_items
+
+
 class MovieIdentify(MediaServerIdentify):
     """identify movies"""
 
     JF_ITEM_TYPE: str = "Movie"
     PROVIDER_ID: str = "Tmdb"
 
-    def get_unidentified(self) -> QuerySet[TVEpisode]:
+    def get_local(self) -> QuerySet[TVEpisode]:
         """get movies not identified"""
         return Movie.objects.filter(media_server_id__isnull=True)

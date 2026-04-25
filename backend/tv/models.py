@@ -211,7 +211,12 @@ class TVShow(BaseModel):
         return keywords.distinct()
 
     def get_archive_path(self) -> Path:
-        """sanitize name"""
+        """get overwrite by tvmaze id or build by sanitize name"""
+        for folder in self.CONFIG["TV_BASE_FOLDER"].iterdir():
+            if str(folder).endswith(f"[tvmazeid-{self.tvmaze_id}]"):
+                # found overwrite
+                return folder
+
         return Path(sanitize_file_name(self.name))
 
     def get_all_episodes(self):

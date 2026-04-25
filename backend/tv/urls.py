@@ -14,5 +14,6 @@ urlpatterns = router.urls
 urlpatterns.extend(
     [
         path("remote-search", views.ShowRemoteSearch.as_view(), name="remote-search"),
+        path("mediaserver-shows", views.MediaserverShowDiscovery.as_view(), name="mediaserver-shows"),
     ]
 )

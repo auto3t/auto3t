@@ -23,17 +23,17 @@ const LocalPersonCredit = ({ peopleDetail }: { peopleDetail: PersonType }) => {
 const RemotePersonCredit = ({ peopleDetail }: { peopleDetail: PersonType }) => {
   return (
     <>
-      <H2>Searching Movies</H2>
-      {peopleDetail.the_moviedb_id ? (
-        <PeopleMovieRemoteCredis person={peopleDetail} />
-      ) : (
-        <P>Person is missing themoviedb ID.</P>
-      )}
       <H2>Searching Shows</H2>
       {peopleDetail.tvmaze_id ? (
         <PeopleTVRemoteCredits person={peopleDetail} />
       ) : (
         <P>Person is missing tvmaze id.</P>
+      )}
+      <H2>Searching Movies</H2>
+      {peopleDetail.the_moviedb_id ? (
+        <PeopleMovieRemoteCredis person={peopleDetail} />
+      ) : (
+        <P>Person is missing themoviedb ID.</P>
       )}
     </>
   )

@@ -7,7 +7,7 @@ COPY ./backend/requirements.txt /requirements.txt
 RUN pip install -r requirements.txt
 
 # build main.js
-FROM node:24 AS js-builder
+FROM node:24.11.1 AS js-builder
 
 ARG GIT_COMMIT
 ARG GIT_TAG

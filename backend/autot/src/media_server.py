@@ -252,6 +252,7 @@ class ShowMissing(MediaServerIdentify):
                 "premier_date": item.get("PremiereDate"),
                 "image_url": f"{base_url}/Items/{media_server_id}/Images/Primary",
                 "tv_maze_id": tv_maze_id,
+                "tv_maze_url": f"https://www.tvmaze.com/shows/{tv_maze_id}",
                 "imdb_id": imdb_id,
                 "imdb_rating": None,
             }

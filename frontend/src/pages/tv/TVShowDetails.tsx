@@ -88,6 +88,9 @@ const TVShowDetail: React.FC = () => {
       fetchSeasons()
       if (selectedSeason !== null) fetchEpisodes(selectedSeason.id)
     })
+    return () => {
+      setRefetch(undefined)
+    }
   }, [setRefetch, fetchShow, fetchSeasons, fetchEpisodes])
 
   const handleSeasonClick = (seasonId: number) => {

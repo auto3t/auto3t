@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import useApi from '../../hooks/api'
 import ImageComponent from '../../components/ImageComponent'
@@ -20,10 +20,12 @@ import {
   TagItem,
 } from '../../components/Typography'
 import { formatDuration } from '../../utils'
+import { useProgressStore } from '../../stores/ProgressStore'
 
 const TVEpisode: React.FC = () => {
   const { id } = useParams()
   const { get, patch } = useApi()
+  const { setRefetch } = useProgressStore()
   const [episodeRefresh, setEpisodeRefresh] = useState(false)
   const [editEpisodeStatus, setEditEpisodeStatus] = useState(false)
   const [editEpisodeOffset, setEditEpisodeOffset] = useState(false)
@@ -32,24 +34,38 @@ const TVEpisode: React.FC = () => {
   const { episodeDetail, setEpisodeDetail, episodeImage, setEpisodeImage } =
     useEpsiodeDetailStore()
 
-  useEffect(() => {
-    const getEpisodeImage = (data: EpisodeType) => {
+  const getEpisodeImage = useCallback(
+    (data: EpisodeType) => {
       if (data.image_episode?.image) return data.image_episode
       if (data.season.show.episode_fallback?.image)
         return data.season.show.episode_fallback
       return { image: episodeLogoDefault }
+    },
+    [id],
+  )
+
+  const fetchEpisode = useCallback(async () => {
+    try {
+      const data = await get(`tv/episode/${id}/`)
+      setEpisodeDetail(data)
+      setEpisodeImage(getEpisodeImage(data))
+    } catch (error) {
+      console.error('error fetching episode: ', error)
     }
-    const fetchEpisode = async () => {
-      try {
-        const data = await get(`tv/episode/${id}/`)
-        setEpisodeDetail(data)
-        setEpisodeImage(getEpisodeImage(data))
-      } catch (error) {
-        console.error('error fetching episode: ', error)
-      }
-    }
+  }, [id])
+
+  useEffect(() => {
     fetchEpisode()
   }, [id, episodeRefresh])
+
+  useEffect(() => {
+    setRefetch(() => {
+      fetchEpisode()
+    })
+    return () => {
+      setRefetch(undefined)
+    }
+  }, [setRefetch, fetchEpisode])
 
   const handleEpisodeStatusUpdate = async (status: string) => {
     try {

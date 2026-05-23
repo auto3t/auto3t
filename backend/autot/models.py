@@ -366,7 +366,7 @@ class ActionLog(models.Model):
                 | models.Q(content_type=ContentType.objects.get_for_model(TVEpisode), object_id__in=episode_ids)
             )
 
-        elif model_name == "tvseason":
+        if model_name == "tvseason":
             episode_ids = TVEpisode.objects.filter(season_id=object_id).values_list("id", flat=True)
 
             return cls.objects.filter(

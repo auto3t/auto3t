@@ -74,6 +74,9 @@ export default function PeopleDetails() {
     setRefetch(() => {
       fetchPeople()
     })
+    return () => {
+      setRefetch(undefined)
+    }
   }, [setRefetch, fetchPeople])
 
   return (

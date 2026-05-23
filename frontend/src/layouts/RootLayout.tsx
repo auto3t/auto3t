@@ -112,7 +112,7 @@ export default function RootLayout() {
         </main>
       </div>
       <footer className="bg-accent-3 py-4 text-center shrink mt-15">
-        <div className="flex justify-center max-w-7xl m-auto">
+        <div className="flex justify-center max-w-7xl m-auto px-4">
           <P
             variant="smaller"
             className="flex items-center flex-wrap justify-center"

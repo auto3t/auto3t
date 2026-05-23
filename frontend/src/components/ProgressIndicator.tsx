@@ -71,7 +71,8 @@ export default function ProgressIndicator({ pollingInterval = 3000 }: Props) {
     }
   }, [pendingJobs, pollingInterval, setPendingJobs, isPolling])
 
-  const showRefresh = pendingJobs === 0 && hadPendingJobs
+  const showRefresh =
+    refetch !== undefined && pendingJobs === 0 && hadPendingJobs
 
   return (
     <div className="flex items-center">

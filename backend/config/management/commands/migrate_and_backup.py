@@ -19,6 +19,7 @@ class Command(BaseCommand):
         db_path = settings.DATABASES["default"]["NAME"]
         if not db_path.exists():
             self.stdout.write("new installation, skip migration check...")
+            call_command("migrate")
             return
 
         # Detect pending migrations

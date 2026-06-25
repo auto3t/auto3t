@@ -17,6 +17,9 @@ class Command(BaseCommand):
         """handle command"""
 
         db_path = settings.DATABASES["default"]["NAME"]
+        if not db_path.exists():
+            self.stdout.write("new installation, skip migration check...")
+            return
 
         # Detect pending migrations
         self.stdout.write("Checking for pending migrations...")

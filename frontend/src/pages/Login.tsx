@@ -39,7 +39,7 @@ export default function Login() {
               target="_blank"
               rel="noreferrer"
             >
-              <div className="bg-main-fg p-4 rounded-md mb-4">
+              <div className="bg-main-fg p-4 rounded-md mb-4 border-2 border-transparent hover:border-accent-1">
                 <P variant="alert">
                   It looks like there is no user created. Click here to open the
                   docs to get you started.

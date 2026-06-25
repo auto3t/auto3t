@@ -25,7 +25,7 @@ class ConfigType(TypedDict):
     TM_BASE_FOLDER: Path
     TV_BASE_FOLDER: Path
     MOVIE_BASE_FOLDER: Path
-    APP_ROOT: Path | None
+    APP_ROOT: Path
     TZ: str
     DJANGO_DEBUG: bool
     IMDB_DB_URL: str | None
@@ -52,7 +52,7 @@ def get_config() -> ConfigType:
         "TM_BASE_FOLDER": Path(environ["TM_BASE_FOLDER"]),
         "TV_BASE_FOLDER": Path(environ["TV_BASE_FOLDER"]),
         "MOVIE_BASE_FOLDER": Path(environ["MOVIE_BASE_FOLDER"]),
-        "APP_ROOT": Path(environ["APP_ROOT"]) if environ.get("APP_ROOT") else None,
+        "APP_ROOT": Path(environ.get("APP_ROOT", "/data")),
         "TZ": environ.get("TZ", "UTC"),
         "DJANGO_DEBUG": bool(environ.get("DJANGO_DEBUG", False)),
         "IMDB_DB_URL": environ.get("IMDB_DB_URL"),

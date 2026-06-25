@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 import hashlib
-from pathlib import Path
 
 from autot.src.config import get_config
 
@@ -25,7 +24,7 @@ except ModuleNotFoundError:
 AUTOT_CONFIG = get_config()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = AUTOT_CONFIG["APP_ROOT"] or Path(__file__).resolve().parent.parent
+BASE_DIR = AUTOT_CONFIG["APP_ROOT"]
 
 
 # Quick-start development settings - unsuitable for production

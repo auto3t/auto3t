@@ -59,6 +59,7 @@ pip install -r requirements-dev.txt
 Environment variables can be loaded from a `.env` file. For a minimal example, place this file it the same folder as `manage.py`: 
 
 ```
+APP_ROOT="."
 REDIS_CON=redis://localhost:6379
 JF_URL=http://localhost:8096
 JF_API_KEY=xxxxx

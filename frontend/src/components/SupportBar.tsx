@@ -36,7 +36,7 @@ export default function SupportBar({
   }
 
   if (
-    userProfile.user_support_confirmed === true ||
+    userProfile.user_support_confirmed === true &&
     userProfile.user_support_reminder === false
   )
     return null

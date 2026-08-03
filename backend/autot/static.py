@@ -114,5 +114,5 @@ TASK_OPTIONS: list[TaskItem] = [
     TaskItem(id=5, job="people.tasks.refresh_people", name="Refresh People", queue="default"),
     TaskItem(id=6, job="autot.tasks.cleanup", name="Cleanup Database", queue="default"),
     TaskItem(id=7, job="autot.tasks.clear_cache", name="Clear Redis Cache", queue="default"),
-    TaskItem(id=8, job="autot.tasks.media_server_identify", name="Mediaserver Identify", queue="default"),
+    TaskItem(id=8, job="autot.tasks.media_server_identify", name="Full Mediaserver Identify", queue="default"),
 ]

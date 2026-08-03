@@ -57,10 +57,10 @@ def download_watcher() -> None:
 
 
 @job
-def media_server_identify() -> None:
+def media_server_identify(full_scan: bool = False) -> None:
     """identify in media server"""
-    EpisodeIdentify().identify()
-    MovieIdentify().identify()
+    EpisodeIdentify().identify(full_scan=full_scan)
+    MovieIdentify().identify(full_scan=full_scan)
 
     if MediaServerIdentify().needs_matching():
         queue = get_queue("default")

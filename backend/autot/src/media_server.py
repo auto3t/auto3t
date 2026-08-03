@@ -44,7 +44,7 @@ class MediaServerIdentify:
         """get redis cache key"""
         return f"jf:{self.JF_ITEM_TYPE.lower()}"
 
-    def get_local(self):
+    def get_local(self, full_scan: bool):
         """implement in base class"""
         raise NotImplementedError
 
@@ -113,34 +113,49 @@ class MediaServerIdentify:
 
         return jf_items
 
-    def identify(self):
+    def identify(self, full_scan: bool) -> None:
         """identify movies"""
         jf_items = self.get_jf_data()
-        to_id = self.get_local()
+        to_id = self.get_local(full_scan=full_scan)
 
         for media_item in to_id:
             if hasattr(media_item, "the_moviedb_id"):
-                jf_data = jf_items.get(media_item.the_moviedb_id)
+                jf_data = jf_items.get(media_item.the_moviedb_id, {})
             elif hasattr(media_item, "tvmaze_id"):
-                jf_data = jf_items.get(media_item.tvmaze_id)
+                jf_data = jf_items.get(media_item.tvmaze_id, {})
             else:
                 raise NotImplementedError("did not find expected remote ID")
 
-            if not jf_data:
+            if not jf_data and not full_scan:
                 continue
 
             old_status = media_item.status
-            media_item.media_server_id = jf_data.pop("media_server_id")
-            media_item.media_server_meta = jf_data
-            media_item.status = "a"
-            log_change(
-                media_item,
-                "u",
-                field_name="status",
-                old_value=old_status,
-                new_value="a",
-                comment=f"Found Mediaserver ID: {media_item.media_server_id}",
-            )
+            old_media_server_id = media_item.media_server_id
+            media_item.media_server_id = jf_data.pop("media_server_id", None)
+            media_item.media_server_meta = jf_data or None
+
+            if media_item.media_server_meta:
+                media_item.status = "a"
+
+            if media_item.media_server_meta and old_status != "a":
+                log_change(
+                    media_item,
+                    "u",
+                    field_name="status",
+                    old_value=old_status,
+                    new_value="a",
+                    comment=f"Found Mediaserver ID: {media_item.media_server_id}",
+                )
+
+            if old_media_server_id and old_status != "a":
+                log_change(
+                    media_item,
+                    "u",
+                    field_name="media_server_id",
+                    old_value=old_media_server_id,
+                    comment="Removed Mediaserver metadata and ID",
+                )
+
             media_item.save()
 
     def needs_matching(self) -> bool:
@@ -174,8 +189,11 @@ class EpisodeIdentify(MediaServerIdentify):
     JF_ITEM_TYPE: str = "Episode"
     PROVIDER_ID: str = "TvMaze"
 
-    def get_local(self) -> QuerySet[TVEpisode]:
+    def get_local(self, full_scan: bool) -> QuerySet[TVEpisode]:
         """get tv episodes not identified"""
+        if full_scan:
+            return TVEpisode.objects.all()
+
         return TVEpisode.objects.filter(media_server_id__isnull=True)
 
 
@@ -185,8 +203,11 @@ class ShowIdentify(MediaServerIdentify):
     JF_ITEM_TYPE: str = "Series"
     PROVIDER_ID: str = "TvMaze"
 
-    def get_local(self) -> QuerySet[TVShow]:
+    def get_local(self, full_scan: bool) -> QuerySet[TVShow]:
         """get shows not identified"""
+        if full_scan:
+            return TVShow.objects.all()
+
         return TVShow.objects.filter(media_server_id__isnull=True)
 
     def get_jf_data(self) -> dict:
@@ -215,15 +236,18 @@ class ShowMissing(MediaServerIdentify):
     JF_ITEM_TYPE: str = "Series"
     PROVIDER_ID: str = "TvMaze"
 
-    def get_local(self):
+    def get_local(self, full_scan: bool) -> QuerySet[TVShow]:
         """get all local shows"""
+        if full_scan:
+            return TVShow.objects.all()
+
         return TVShow.objects.all()
 
-    def get_jf_data(self) -> dict:
+    def get_jf_data(self, full_scan: bool = False) -> dict:
         """get all jf episodes, partial result, only for matching"""
         url = f"Items?Recursive=true&IncludeItemTypes={self.JF_ITEM_TYPE}&fields=ProviderIds,Overview"
         response = self.make_request(url, "GET")
-        all_shows = self.get_local()
+        all_shows = self.get_local(full_scan=full_scan)
         indexed = {i[0] for i in all_shows.values_list("tvmaze_id")}
         jf_items = {}
         for item in response["Items"]:
@@ -272,6 +296,9 @@ class MovieIdentify(MediaServerIdentify):
     JF_ITEM_TYPE: str = "Movie"
     PROVIDER_ID: str = "Tmdb"
 
-    def get_local(self) -> QuerySet[TVEpisode]:
+    def get_local(self, full_scan) -> QuerySet[TVEpisode]:
         """get movies not identified"""
+        if full_scan:
+            return Movie.objects.all()
+
         return Movie.objects.filter(media_server_id__isnull=True)

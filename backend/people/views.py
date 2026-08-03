@@ -176,21 +176,19 @@ class CreditViewSet(viewsets.ReadOnlyModelViewSet):
         """filter on credit"""
         queryset = Credit.objects.all()
 
-        person = self.request.GET.get("person")
+        person = self.request.query_params.get("person")
         if person:
-            queryset = queryset.filter(person__id=person)
+            queryset = queryset.filter(person_id=person)
 
-        show_id = self.request.GET.get("show_id")
+        show_id = self.request.query_params.get("show_id")
         if show_id:
-            content_type = ContentType.objects.get_for_model(TVShow)
-            queryset = queryset.filter(content_type=content_type, object_id=show_id)
+            queryset = queryset.filter(tvshow__id=show_id)
 
-        movie_id = self.request.GET.get("movie_id")
+        movie_id = self.request.query_params.get("movie_id")
         if movie_id:
-            content_type = ContentType.objects.get_for_model(Movie)
-            queryset = queryset.filter(content_type=content_type, object_id=movie_id)
+            queryset = queryset.filter(movie__id=movie_id)
 
-        return queryset
+        return queryset.distinct()
 
 
 class PersonRemoteSearch(APIView):

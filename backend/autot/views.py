@@ -218,7 +218,12 @@ class TaskView(APIView):
             return Response({"message": "invalid job"}, status=400)
 
         queue = django_rq.get_queue(task["queue"])
-        job = queue.enqueue(task["job"])
+
+        job_kwargs = {}
+        if task.get("job") == "autot.tasks.media_server_identify":
+            job_kwargs["full_scan"] = True
+
+        job = queue.enqueue(task["job"], **job_kwargs)
 
         response = {
             "id": job.id,

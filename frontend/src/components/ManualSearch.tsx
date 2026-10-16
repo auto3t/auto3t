@@ -16,8 +16,11 @@ export type ManualSearchType = {
   publishDate: string
 }
 
+type SearchType = 'movie' | 'episode' | 'season' | 'show'
+type SearchCategory = 'movie' | 'tv'
+
 interface ManualSearchInterface {
-  searchType: string
+  searchType: SearchType
   searchTypeId: number
   searchDefault: string
   setRefresh?: (toRefresh: boolean) => void
@@ -25,9 +28,19 @@ interface ManualSearchInterface {
 
 interface ManualSearchResultInterface {
   result: ManualSearchType
-  searchType: string
+  searchType: SearchType
   searchTypeId: number
   setRefresh?: (toRefresh: boolean) => void
+}
+
+const getSearchCategory = (searchType: SearchType): SearchCategory => {
+  let searchCategory: SearchCategory
+  if (searchType == 'movie') {
+    searchCategory = 'movie'
+  } else {
+    searchCategory = 'tv'
+  }
+  return searchCategory
 }
 
 const ManualSearchResult: React.FC<ManualSearchResultInterface> = ({
@@ -44,12 +57,7 @@ const ManualSearchResult: React.FC<ManualSearchResultInterface> = ({
   const handleDownload = async (resultId: string) => {
     console.log(resultId)
     setAddDownloadLoading(true)
-    let searchCategory = null
-    if (searchType == 'movie') {
-      searchCategory = 'movie'
-    } else {
-      searchCategory = 'tv'
-    }
+    const searchCategory = getSearchCategory(searchType)
     try {
       const data = await post(
         `${searchCategory}/${searchType}/${searchTypeId}/torrent/`,
@@ -100,6 +108,8 @@ const ManualSearch: React.FC<ManualSearchInterface> = ({
   const [searchResults, setSearchResults] = useState<ManualSearchType[] | null>(
     null,
   )
+  const [manualItem, setManualItem] = useState('')
+  const [isManualAdding, setIsManualAdding] = useState(false)
 
   const handleSearch = async () => {
     setIsSearching(true)
@@ -118,6 +128,27 @@ const ManualSearch: React.FC<ManualSearchInterface> = ({
 
   const handleClear = () => {
     setSearchResults(null)
+  }
+
+  const handleManualAdd = async () => {
+    setIsManualAdding(true)
+    const searchCategory = getSearchCategory(searchType)
+
+    try {
+      const data = await post(
+        `${searchCategory}/${searchType}/${searchTypeId}/torrent/`,
+        {
+          manual_magnet: manualItem,
+        },
+      )
+      setManualItem('')
+      if (setRefresh) setRefresh(true)
+      console.log(data)
+    } catch (error) {
+      console.error('failed to manually add magnet', error)
+    } finally {
+      setIsManualAdding(false)
+    }
   }
 
   useEffect(() => {
@@ -172,6 +203,22 @@ const ManualSearch: React.FC<ManualSearchInterface> = ({
           <P>No results found</P>
         )
       ) : null}
+      <div className="mt-10">
+        <H2>Manual Magnet Add</H2>
+        <div className="flex gap-2">
+          <Input
+            type="text"
+            value={manualItem}
+            onChange={(e) => setManualItem(e.target.value)}
+          />
+          <Button
+            onClick={() => handleManualAdd()}
+            disabled={isManualAdding || !manualItem.trim()}
+          >
+            Add
+          </Button>
+        </div>
+      </div>
     </div>
   )
 }

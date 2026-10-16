@@ -1,11 +1,8 @@
 """all movie views"""
 
-import json
-
 from autot.models import SearchWord
 from autot.src.helper import bool_converter
-from autot.src.redis_con import AutotRedis
-from autot.src.search import SearchIndex
+from autot.src.torrent_manual import add_manual_torrent
 from autot.static import MovieProductionState, MovieStatus
 from django.conf import settings
 from django.core.exceptions import FieldError
@@ -226,27 +223,15 @@ class MovieViewSet(viewsets.ModelViewSet):
     def torrent(self, request, **kwargs) -> Response:
         """overwrite torrent on episode"""
         movie: Movie = self.get_object()
-        data = request.data
-        if not data:
-            return Response({"message": "missing request body"}, status=400)
 
-        search_id = data.get("search_id")
-        if not search_id:
-            return Response({"message": "missing search_id"}, status=400)
+        try:
+            response = add_manual_torrent(instance=movie, request_data=request.data)
+        except ValueError as err:
+            return Response({"message": str(err)}, status=400)
 
-        search_result = AutotRedis().get_message(f"search:{search_id}")
-        if not search_result:
-            return Response({"message": "did not find search result"}, status=404)
+        refresh_status.delay(refresh_remote=False)
 
-        result = json.loads(search_result)
-        magnet, title = SearchIndex().extract_magnet(result)
-        if not magnet:
-            return Response({"message": "failed to extract magnet url"}, status=400)
-
-        movie.add_magnet(magnet, title)
-        refresh_status.delay()
-
-        return Response(result)
+        return Response(response)
 
 
 class MovieReleaseTargetView(APIView):

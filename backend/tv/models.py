@@ -225,7 +225,7 @@ class TVShow(BaseModel):
 
     def add_magnet(self, magnet: str, title: str | None) -> None:
         """add magnet to all episodes in season"""
-        if not self.status == "e":
+        if self.status != "e":
             raise ValueError("can't add show torrent for show not ended")
 
         episodes = TVEpisode.objects.filter(season__show=self)
@@ -529,7 +529,7 @@ class TVEpisode(BaseModel):
         self.save()
         log_change(self, "u", comment="Cancel Torrent Download")
 
-    def add_magnet(self, magnet, title, torrent_type="e") -> None:
+    def add_magnet(self, magnet, title: str | None = None, torrent_type="e") -> None:
         """add magnet to episode"""
         from autot.src.download import Transmission
 

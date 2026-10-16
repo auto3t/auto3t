@@ -1,5 +1,7 @@
 """serialize backend models"""
 
+from urllib.parse import parse_qs
+
 from autot.models import ActionLog, AppConfig, AutotScheduler, SearchWord, SearchWordCategory, TargetBitrate, Torrent
 from rest_framework import serializers
 
@@ -46,10 +48,27 @@ class TorrentSerializer(serializers.ModelSerializer):
     torrent_type_display = serializers.CharField(source="get_torrent_type_display", read_only=True)
     torrent_state_display = serializers.CharField(source="get_torrent_state_display", read_only=True)
     magnet_hash = serializers.CharField(read_only=True)
+    title = serializers.SerializerMethodField()
 
     class Meta:
         model = Torrent
         fields = "__all__"
+
+    def get_title(self, obj) -> str | None:
+        """fallback to qs parsing"""
+        if obj.title:
+            return obj.title
+
+        magnet = obj.magnet
+        queries = parse_qs(magnet)
+        if not queries:
+            return None
+
+        title = queries.get("dn")
+        if not title or not isinstance(title, list) or not len(title) > 0:
+            return None
+
+        return title[0]
 
 
 class SchedulerSeralizer(serializers.ModelSerializer):

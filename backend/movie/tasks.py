@@ -57,10 +57,13 @@ def refresh_collection(the_moviedb_id: str, tracking: bool = False) -> None:
 
 
 @job("movie")
-def refresh_status() -> None:
+def refresh_status(refresh_remote: bool = True) -> None:
     """refresh movie status"""
-    found_magnets = MovieStatus().refresh()
-    if found_magnets:
+    found_magnets = False
+    if refresh_remote:
+        found_magnets = MovieStatus().refresh()
+
+    if not refresh_remote or found_magnets:
         Transmission().add_all()
         queue = get_queue("default")
         queue.enqueue_in(timedelta(seconds=60), download_watcher)

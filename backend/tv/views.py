@@ -1,14 +1,11 @@
 """all tv api views"""
 
-import json
-
 from autot.models import SearchWord, get_logs
 from autot.serializers import ActionLogSerializer
 from autot.src.helper import bool_converter
 from autot.src.imdb_request import get_cached_show_ratings
 from autot.src.media_server import ShowMissing
-from autot.src.redis_con import AutotRedis
-from autot.src.search import SearchIndex
+from autot.src.torrent_manual import add_manual_torrent
 from autot.static import TvShowStatus
 from django.conf import settings
 from django.db.models import F, OrderBy, Value
@@ -119,27 +116,15 @@ class ShowViewSet(viewsets.ModelViewSet):
     def torrent(self, request, **kwargs) -> Response:
         """overwrite torrent on season"""
         show: TVShow = self.get_object()
-        data = request.data
-        if not data:
-            return Response({"message": "missing request body"}, status=400)
 
-        search_id = data.get("search_id")
-        if not data:
-            return Response({"message": "missing search_id"}, status=400)
+        try:
+            response = add_manual_torrent(instance=show, request_data=request.data)
+        except ValueError as err:
+            return Response({"message": str(err)}, status=400)
 
-        search_result = AutotRedis().get_message(f"search:{search_id}")
-        if not search_result:
-            return Response({"message": "did not find search result"}, status=404)
+        refresh_status.delay(refresh_remote=False)
 
-        result = json.loads(search_result)
-        magnet, title = SearchIndex().extract_magnet(result)
-        if not magnet:
-            return Response({"message": "failed to extract magnet url"}, status=400)
-
-        show.add_magnet(magnet, title)
-        refresh_status.delay()
-
-        return Response(result)
+        return Response(response)
 
     @action(detail=True, methods=["get"])
     def ratings(self, request, **kwargs) -> Response:
@@ -214,27 +199,15 @@ class SeasonViewSet(viewsets.ModelViewSet):
     def torrent(self, request, **kwargs) -> Response:
         """overwrite torrent on season"""
         season: TVSeason = self.get_object()
-        data = request.data
-        if not data:
-            return Response({"message": "missing request body"}, status=400)
 
-        search_id = data.get("search_id")
-        if not data:
-            return Response({"message": "missing search_id"}, status=400)
+        try:
+            response = add_manual_torrent(instance=season, request_data=request.data)
+        except ValueError as err:
+            return Response({"message": str(err)}, status=400)
 
-        search_result = AutotRedis().get_message(f"search:{search_id}")
-        if not search_result:
-            return Response({"message": "did not find search result"}, status=404)
+        refresh_status.delay(refresh_remote=False)
 
-        result = json.loads(search_result)
-        magnet, title = SearchIndex().extract_magnet(result)
-        if not magnet:
-            return Response({"message": "failed to extract magnet url"}, status=400)
-
-        season.add_magnet(magnet, title)
-        refresh_status.delay()
-
-        return Response(result)
+        return Response(response)
 
     @action(detail=True, methods=["get"])
     def actionlog(self, request, **kwargs):
@@ -348,28 +321,16 @@ class EpisodeViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["post"])
     def torrent(self, request, **kwargs) -> Response:
         """overwrite torrent on episode"""
-        episode = self.get_object()
-        data = request.data
-        if not data:
-            return Response({"message": "missing request body"}, status=400)
+        episode: TVEpisode = self.get_object()
 
-        search_id = data.get("search_id")
-        if not data:
-            return Response({"message": "missing search_id"}, status=400)
+        try:
+            response = add_manual_torrent(instance=episode, request_data=request.data)
+        except ValueError as err:
+            return Response({"message": str(err)}, status=400)
 
-        search_result = AutotRedis().get_message(f"search:{search_id}")
-        if not search_result:
-            return Response({"message": "did not find search result"}, status=404)
+        refresh_status.delay(refresh_remote=False)
 
-        result = json.loads(search_result)
-        magnet, title = SearchIndex().extract_magnet(result)
-        if not magnet:
-            return Response({"message": "failed to extract magnet url"}, status=400)
-
-        episode.add_magnet(magnet, title)
-        refresh_status.delay()
-
-        return Response(result)
+        return Response(response)
 
 
 class ShowRemoteSearch(APIView):

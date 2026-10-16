@@ -43,10 +43,13 @@ def refresh_show(tvmaze_id: str) -> None:
 
 
 @job("show")
-def refresh_status() -> None:
+def refresh_status(refresh_remote: bool = True) -> None:
     """refresh status of all"""
-    found_magnets = EpisodeStatus().refresh()
-    if found_magnets:
+    found_magnets = False
+    if refresh_remote:
+        found_magnets = EpisodeStatus().refresh()
+
+    if not refresh_remote or found_magnets:
         Transmission().add_all()
         queue = get_queue("default")
         queue.enqueue_in(timedelta(seconds=60), download_watcher)

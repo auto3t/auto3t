@@ -179,11 +179,11 @@ MEDIA_URL = ""
 RQ_QUEUES = {
     "default": {
         "URL": AUTOT_CONFIG["REDIS_CON"],
-        "DEFAULT_TIMEOUT": 360,
+        "DEFAULT_TIMEOUT": 1800,
     },
     "thumbnails": {
         "URL": AUTOT_CONFIG["REDIS_CON"],
-        "DEFAULT_TIMEOUT": 30,
+        "DEFAULT_TIMEOUT": 60,
     },
     "show": {
         "URL": AUTOT_CONFIG["REDIS_CON"],

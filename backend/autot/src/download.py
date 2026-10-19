@@ -28,6 +28,13 @@ class Transmission:
             password=self.CONFIG["TM_PASS"],
         )
 
+    @property
+    def verify_inactive(self) -> bool:
+        """check if session is greater than ACTIVITY_THRESH"""
+        stats = self.transission_client.session_stats()
+
+        return stats.current_stats.seconds_active > self.ACTIVITY_THRESH
+
     def add_all(self) -> None:
         """add all undefined state"""
         to_add = Torrent.objects.filter(torrent_state="u")
@@ -78,38 +85,48 @@ class Transmission:
 
         for local_torrent in to_check:
             remote_torrent = in_queue.get(local_torrent.magnet_hash)
-            if not remote_torrent:
-                local_torrent.set_to_ignore(reason="Local torrent is missing from queue.")
-                continue
-
-            has_files = remote_torrent.get_files()
-            if has_files and not local_torrent.has_expected_files:
-                self.validate_expected(remote_torrent, local_torrent)
-                if local_torrent.torrent_state == "i":
-                    continue
-
-            state = remote_torrent.status.value
-            if state == "downloading":
-                local_torrent.torrent_state = "d"
-                local_torrent.progress = ceil(remote_torrent.progress)
-            elif state == "download pending":
-                local_torrent.torrent_state = "q"
-                if remote_torrent.progress:
-                    local_torrent.progress = ceil(remote_torrent.progress)
-
-            elif state == "stopped" and remote_torrent.is_finished:
-                local_torrent.torrent_state = "f"
-                local_torrent.progress = None
+            torrent_needs_archiving = self._update_single_torrent(local_torrent, remote_torrent)
+            if torrent_needs_archiving and not needs_archiving:
                 needs_archiving = True
-
-            self.check_trackers(local_torrent, remote_torrent)
-            self.check_inactive(local_torrent, remote_torrent)
-
-            local_torrent.save()
 
         return needs_checking, needs_archiving
 
-    def check_trackers(self, local_torrent: Torrent, remote_torrent: TransmissionTorrent):
+    def _update_single_torrent(self, local_torrent, remote_torrent) -> bool:
+        """update single torrent"""
+        needs_archiving = False
+        if not remote_torrent:
+            local_torrent.set_to_ignore(reason="Local torrent is missing from queue.")
+            return needs_archiving
+
+        has_files = remote_torrent.get_files()
+        if has_files and not local_torrent.has_expected_files:
+            self._validate_expected(remote_torrent, local_torrent)
+            if local_torrent.torrent_state == "i":
+                return needs_archiving
+
+        state = remote_torrent.status.value
+        if state == "downloading":
+            local_torrent.torrent_state = "d"
+            local_torrent.progress = ceil(remote_torrent.progress)
+        elif state == "download pending":
+            local_torrent.torrent_state = "q"
+            if remote_torrent.progress:
+                local_torrent.progress = ceil(remote_torrent.progress)
+
+        elif state == "stopped" and remote_torrent.is_finished:
+            local_torrent.torrent_state = "f"
+            local_torrent.progress = None
+            needs_archiving = True
+
+        self._check_trackers(local_torrent, remote_torrent)
+        if self.verify_inactive:
+            self.check_inactive(local_torrent, remote_torrent)
+
+        local_torrent.save()
+
+        return needs_archiving
+
+    def _check_trackers(self, local_torrent: Torrent, remote_torrent: TransmissionTorrent):
         """check if torrent needs trackerlist update"""
         if local_torrent.torrent_state != "d":
             return
@@ -135,7 +152,7 @@ class Transmission:
 
     def check_inactive(self, local_torrent: Torrent, remote_torrent: TransmissionTorrent) -> None:
         """check if torrent is inactive, trigger ignore"""
-        if remote_torrent.status.value != "downloading":
+        if remote_torrent.status.value not in ["downloading", "download pending"]:
             return
 
         is_new = remote_torrent.seconds_downloading < self.ACTIVITY_THRESH
@@ -151,7 +168,7 @@ class Transmission:
 
         self.cancel(torrent=local_torrent, reason="Torrent ignored due to lack of activity.")
 
-    def validate_expected(self, remote_torrent: TransmissionTorrent, local_torrent: Torrent):
+    def _validate_expected(self, remote_torrent: TransmissionTorrent, local_torrent: Torrent):
         """validate expected files are in torrent"""
         if local_torrent.torrent_type == "e":
             self._check_single_episode(remote_torrent, local_torrent)

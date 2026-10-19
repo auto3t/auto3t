@@ -67,7 +67,7 @@ class Transmission:
 
     def update_state(self) -> tuple[bool, bool]:
         """loop through torrents update model state"""
-        in_queue = {i.hashString: i for i in self.transission_client.get_torrents()}
+        in_queue = {i.hash_string: i for i in self.transission_client.get_torrents()}
         to_check = Torrent.objects.filter(torrent_state="q") | Torrent.objects.filter(torrent_state="d")
 
         needs_checking: bool = bool(to_check)

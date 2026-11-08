@@ -109,7 +109,7 @@ When configuring your indexer, if the config is available, make sure to select t
 ### Jellyfin
 
 > [!CAUTION]
-> Newest supported Jellyfin version is currently 10.10.7. Jellyfin 10.11.x is currently not yet supported due to the tvmaze plugin lacking support. That is tracked [here](https://github.com/jellyfin/jellyfin-plugin-tvmaze/issues/57).
+> Newest supported Jellyfin version is currently 10.10.7. Jellyfin 10.11.x is currently not yet supported due to the tvmaze plugin lacking support. That is tracked [here](https://github.com/jellyfin/jellyfin-plugin-tvmaze/issues/57). To update JF beyond that, you can use the patched fork of the plugin [bbilly1/jellyfin-plugin-tvmaze](https://github.com/bbilly1/jellyfin-plugin-tvmaze), at least until upstream has fixed this.
 
 This projects depends on various plugins to be installed and working correctly: 
 

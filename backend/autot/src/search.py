@@ -174,4 +174,7 @@ class SearchIndex:
         to_exclude = [i.word for i in to_search.get_keywords().filter(direction="e")]
         is_not_excluded = not any(i for i in to_exclude if i in result_item["title"])
 
-        return all([has_magnet, has_seeders, has_gain, is_valid_path, is_not_excluded, is_filesize_target])
+        to_include = [i.word for i in to_search.get_keywords().filter(direction="i")]
+        is_included = any(i for i in to_include if i in result_item["title"])
+
+        return all([has_magnet, has_seeders, has_gain, is_valid_path, is_not_excluded, is_included, is_filesize_target])

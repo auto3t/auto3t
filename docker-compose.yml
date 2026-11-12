@@ -51,7 +51,7 @@ services:
     ports:
       - 127.0.0.1:9696:9696
   auto3t-jellyfin:
-    image: jellyfin/jellyfin:10.10.7
+    image: jellyfin/jellyfin:10.10.7          # see readme for update compatibility
     container_name: auto3t-jellyfin
     restart: unless-stopped
     volumes:
